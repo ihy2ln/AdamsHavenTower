@@ -1,0 +1,410 @@
+[claude-bridge] listening on 127.0.0.1:9876
+Reloading external rigs...
+Reloading external metarigs...
+[claude-bridge] stopped
+addon_utils.disable: bl_ext.lab_blender_org.mcp not enabled
+00:41:53 | INFO: Data are loaded, start creating Blender stuff
+00:41:53 | INFO: Blender create Mesh node Mesh_0.001
+00:41:53 | INFO: glTF import finished in 0.32s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\amara\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7250 sec.
+EXPORTED amara
+00:41:54 | INFO: Data are loaded, start creating Blender stuff
+00:41:54 | INFO: Blender create Mesh node Sphere.010
+00:41:54 | INFO: Blender create Mesh node Sphere.015
+00:41:54 | INFO: Blender create Mesh node Sphere.011
+00:41:54 | INFO: Blender create Mesh node Sphere.012
+00:41:54 | INFO: Blender create Mesh node Sphere.014
+00:41:54 | INFO: Blender create Mesh node Sphere.013
+00:41:54 | INFO: Blender create Mesh node Sphere.016
+00:41:54 | INFO: Blender create Mesh node Sphere.021
+00:41:54 | INFO: Blender create Mesh node Sphere.017
+00:41:54 | INFO: Blender create Mesh node Sphere.018
+00:41:54 | INFO: Blender create Mesh node Sphere.020
+00:41:54 | INFO: Blender create Mesh node Sphere.019
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_Head
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_Hips
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftArm
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftFoot
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftForeArm
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftLeg
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftToeBase
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_LeftUpLeg
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_neck
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightArm
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightFoot
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightForeArm
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightHand
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightLeg
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightToeBase
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_RightUpLeg
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_Spine
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_Spine01
+00:41:54 | INFO: Blender create Mesh node celestium-hourglass_Shell_Spine02
+00:41:55 | INFO: glTF import finished in 0.20s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\celestium-hourglass\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.6758 sec.
+EXPORTED celestium-hourglass
+00:41:56 | INFO: Data are loaded, start creating Blender stuff
+00:41:56 | INFO: Blender create Mesh node Sphere.010
+00:41:56 | INFO: Blender create Mesh node Sphere.015
+00:41:56 | INFO: Blender create Mesh node Sphere.011
+00:41:56 | INFO: Blender create Mesh node Sphere.012
+00:41:56 | INFO: Blender create Mesh node Sphere.014
+00:41:56 | INFO: Blender create Mesh node Sphere.013
+00:41:56 | INFO: Blender create Mesh node Sphere.016
+00:41:56 | INFO: Blender create Mesh node Sphere.021
+00:41:56 | INFO: Blender create Mesh node Sphere.017
+00:41:56 | INFO: Blender create Mesh node Sphere.018
+00:41:56 | INFO: Blender create Mesh node Sphere.020
+00:41:56 | INFO: Blender create Mesh node Sphere.019
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_Head
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_Hips
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftArm
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftFoot
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftForeArm
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftHand
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftLeg
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftToeBase
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_LeftUpLeg
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_neck
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightArm
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightFoot
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightForeArm
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightHand
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightLeg
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightToeBase
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_RightUpLeg
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_Spine
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_Spine01
+00:41:56 | INFO: Blender create Mesh node celestium-muscle_Shell_Spine02
+00:41:56 | INFO: glTF import finished in 0.21s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\celestium-muscle\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.6652 sec.
+EXPORTED celestium-muscle
+00:41:57 | INFO: Data are loaded, start creating Blender stuff
+00:41:57 | INFO: Blender create Mesh node Sphere.010
+00:41:57 | INFO: Blender create Mesh node Sphere.015
+00:41:57 | INFO: Blender create Mesh node Sphere.011
+00:41:57 | INFO: Blender create Mesh node Sphere.012
+00:41:57 | INFO: Blender create Mesh node Sphere.014
+00:41:57 | INFO: Blender create Mesh node Sphere.013
+00:41:57 | INFO: Blender create Mesh node Sphere.016
+00:41:57 | INFO: Blender create Mesh node Sphere.021
+00:41:57 | INFO: Blender create Mesh node Sphere.017
+00:41:57 | INFO: Blender create Mesh node Sphere.018
+00:41:57 | INFO: Blender create Mesh node Sphere.020
+00:41:57 | INFO: Blender create Mesh node Sphere.019
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_Head
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_Hips
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftArm
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftFoot
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftForeArm
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftLeg
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftToeBase
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_LeftUpLeg
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_neck
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightArm
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightFoot
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightForeArm
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightHand
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightLeg
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightToeBase
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_RightUpLeg
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_Spine
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_Spine01
+00:41:57 | INFO: Blender create Mesh node celestium-normal_Shell_Spine02
+00:41:57 | INFO: glTF import finished in 0.20s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\celestium-normal\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.6722 sec.
+EXPORTED celestium-normal
+00:41:58 | INFO: Data are loaded, start creating Blender stuff
+00:41:58 | INFO: Blender create Mesh node Sphere.010
+00:41:58 | INFO: Blender create Mesh node Sphere.015
+00:41:58 | INFO: Blender create Mesh node Sphere.011
+00:41:58 | INFO: Blender create Mesh node Sphere.012
+00:41:58 | INFO: Blender create Mesh node Sphere.014
+00:41:58 | INFO: Blender create Mesh node Sphere.013
+00:41:58 | INFO: Blender create Mesh node Sphere.016
+00:41:58 | INFO: Blender create Mesh node Sphere.021
+00:41:58 | INFO: Blender create Mesh node Sphere.017
+00:41:58 | INFO: Blender create Mesh node Sphere.018
+00:41:58 | INFO: Blender create Mesh node Sphere.020
+00:41:58 | INFO: Blender create Mesh node Sphere.019
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_Head
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_Hips
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftArm
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftFoot
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftForeArm
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftHand
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftLeg
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftToeBase
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_LeftUpLeg
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_neck
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightArm
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightFoot
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightForeArm
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightHand
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightLeg
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightToeBase
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_RightUpLeg
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_Spine
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_Spine01
+00:41:58 | INFO: Blender create Mesh node celestium-short_Shell_Spine02
+00:41:58 | INFO: glTF import finished in 0.25s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\celestium-short\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7560 sec.
+EXPORTED celestium-short
+00:41:59 | INFO: Data are loaded, start creating Blender stuff
+00:41:59 | INFO: Blender create Mesh node Sphere.010
+00:41:59 | INFO: Blender create Mesh node Sphere.015
+00:41:59 | INFO: Blender create Mesh node Sphere.011
+00:41:59 | INFO: Blender create Mesh node Sphere.012
+00:41:59 | INFO: Blender create Mesh node Sphere.014
+00:41:59 | INFO: Blender create Mesh node Sphere.013
+00:41:59 | INFO: Blender create Mesh node Sphere.016
+00:41:59 | INFO: Blender create Mesh node Sphere.021
+00:41:59 | INFO: Blender create Mesh node Sphere.017
+00:41:59 | INFO: Blender create Mesh node Sphere.018
+00:41:59 | INFO: Blender create Mesh node Sphere.020
+00:41:59 | INFO: Blender create Mesh node Sphere.019
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_Head
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_Hips
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftArm
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftFoot
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftForeArm
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftHand
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftLeg
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftToeBase
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_LeftUpLeg
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_neck
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightArm
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightFoot
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightForeArm
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightHand
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightLeg
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightToeBase
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_RightUpLeg
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_Spine
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_Spine01
+00:41:59 | INFO: Blender create Mesh node celestium-tall_Shell_Spine02
+00:41:59 | INFO: glTF import finished in 0.22s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\celestium-tall\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7811 sec.
+EXPORTED celestium-tall
+00:42:00 | INFO: Data are loaded, start creating Blender stuff
+00:42:00 | INFO: Blender create Mesh node Mesh_0
+00:42:00 | INFO: glTF import finished in 0.12s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\clarity\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.5186 sec.
+EXPORTED clarity
+00:42:01 | INFO: Data are loaded, start creating Blender stuff
+00:42:01 | INFO: Blender create Mesh node Mesh_0.001
+00:42:02 | INFO: glTF import finished in 0.31s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\daisy\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7346 sec.
+EXPORTED daisy
+00:42:03 | INFO: Data are loaded, start creating Blender stuff
+00:42:03 | INFO: Blender create Mesh node Mesh_0.001
+00:42:03 | INFO: glTF import finished in 0.28s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\elara\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7023 sec.
+EXPORTED elara
+00:42:04 | INFO: Data are loaded, start creating Blender stuff
+00:42:04 | INFO: Blender create Mesh node Mesh_0.001
+00:42:04 | INFO: glTF import finished in 0.28s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\ghislaine\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.6702 sec.
+EXPORTED ghislaine
+00:42:05 | INFO: Data are loaded, start creating Blender stuff
+00:42:05 | INFO: Blender create Mesh node Mesh_0.001
+00:42:05 | INFO: glTF import finished in 0.28s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\helda\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.7244 sec.
+EXPORTED helda
+00:42:06 | INFO: Data are loaded, start creating Blender stuff
+00:42:06 | INFO: Blender create Mesh node Mesh_0.001
+00:42:07 | INFO: glTF import finished in 0.33s
+
+FBX export starting... 'S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\BattleModels\\kaela\\model.fbx'
+(bpy.data.armatures['AH_ChibiShared_v2'], 'POSE')
+export finished in 0.8535 sec.
+EXPORTED kaela
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

@@ -1,0 +1,28 @@
+{
+  "kind": "ult",
+  "unit": "kaela",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9107,
+  "keys": [
+    [
+      "first",
+      [
+        "kaela.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate attack cut-in, 16:9. Keep her exact face, golden eye, star eyepatch, snow-leopard ears, sky-blue hair, fangs, tattoos and white top. She looks straight at the camera with a fierce fanged grin, one fist raised beside her face with frost crackling off the knuckles, hair whipping in an icy wind. Dark midnight-blue background with drifting snow and cold rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "ult_kaela_avalanche.png",
+        "kaela.webp"
+      ],
+      "Reframe the first image as a wide 16:9 cinematic shot of the same moment: the snow-leopard fighter from the second image slams both fists into the frozen ground and a colossal eruption of ice crystals and snow bursts outward across the whole frame, white-blue light at the impact, avalanche and mountains behind. Keep her face, eyepatch, ears, hair, outfit and tattoos exactly. Dynamic low camera angle, speed lines, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate attack cinematic. Starting on a tight close-up, the snow-leopard fighter grins and cocks her frost-covered fist, her blue hair whipping; a white flash and fast speed lines; the camera whips back and down as she leaps and slams both fists into the ground, erupting a massive wave of ice crystals and snow outward with a bright shockwave. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

@@ -1,0 +1,62 @@
+{
+  "status": "integrated",
+  "reference": "Assets/Resources/AdamsHaven/Chibi/jd.png",
+  "model": {
+    "model_type": "standard",
+    "pose_mode": "a-pose",
+    "should_texture": true,
+    "texture_resolution": "4k",
+    "target_formats": [
+      "glb",
+      "fbx"
+    ]
+  },
+  "rig_height_meters": 1.3,
+  "motions": [
+    {
+      "stage": "draw-card",
+      "mode": "prime",
+      "duration": 3,
+      "prompt": "Stylized duelist stands firmly in place, left hand holds a card deck at waist height. Right hand reaches across to the deck, pinches and pulls one card sharply upward and outward to eye level, pauses to inspect it, then brings it to the cards held in the left hand. Confident dramatic anime performance, clear hand separation, feet planted, return to relaxed ready stance."
+    },
+    {
+      "stage": "place-card",
+      "mode": "prime",
+      "duration": 3,
+      "prompt": "Stylized duelist standing in place, left hand holds cards close to chest. Right hand selects one card, raises it beside face in a confident presentation, then extends forward and sweeps downward to place it onto a waist-height surface ahead. Brief emphatic hold, then right hand returns to chest ready pose. Feet planted, clear wrist turn, dramatic controlled anime gesture."
+    }
+  ],
+  "estimated_credits": 55,
+  "price_source": "https://help.meshy.ai/en/articles/16815622-how-many-credits-does-each-meshy-api-task-cost",
+  "pricing_checked": "2026-09-29",
+  "task_ids": [
+    {
+      "resource": "image-to-3d",
+      "id": "01a0ebff-19ab-7686-8e15-0e8d6a087f4c",
+      "consumed_credits": 30
+    },
+    {
+      "resource": "text-to-motion",
+      "id": "01a0ebff-f979-72af-9214-a5c5420258d6",
+      "stage": "draw-card",
+      "consumed_credits": 10
+    },
+    {
+      "resource": "text-to-motion",
+      "id": "01a0ec00-323a-759a-b925-cb69d772410c",
+      "stage": "place-card",
+      "consumed_credits": 10
+    },
+    {
+      "resource": "rigging",
+      "id": "01a0ec05-c042-751f-ac75-1e65848bbe19",
+      "consumed_credits": 5
+    }
+  ],
+  "retarget_required": true,
+  "card_props": "Attach deck to left hand and separate card to right hand in Blender; animate visibility/contact to match draw/place beats.",
+  "project": "MeshyJobs/20260929_010936_jd-card-duelist_01a0ebff",
+  "consumed_credits": 55,
+  "rig_triangles": 60000,
+  "unity_asset": "Assets/Resources/AdamsHaven/BattleModels/jd/model.fbx"
+}

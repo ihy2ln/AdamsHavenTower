@@ -1,0 +1,501 @@
+using System.Collections.Generic;
+using AdamsHaven.Tower;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+// Presentation-only layer. The simulation, save data and hit-test grid stay owned by the controller.
+[DefaultExecutionOrder(1000)]
+public sealed class TowerArtDirector : MonoBehaviour
+{
+    private const float Cell = 2.0f, Storey = 2.75f;
+    private const string Root = "AdamsHaven/TowerPresentation/";
+    private readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+    private readonly Dictionary<string, Material> terrainMaterials = new Dictionary<string, Material>();
+    private readonly List<TextMesh> roomLabels = new List<TextMesh>();
+    private AdamsHavenPrototype tower;
+    private Transform sourceRoot, artRoot;
+    private readonly List<SpriteRenderer> coreBeams = new List<SpriteRenderer>();
+    private Camera cameraView;
+    private TowerState framedState;
+    private int framedWest = -1;
+    private TowerHud styledHud;
+    private Font worldFont;
+    private float portraitTimer;
+    private GameObject residentPanel, roomPanel;
+    private bool residentsOpen, roomOpen;
+    private int lastSelectedRoom, framedPanels = -1, lastLesson = -1;
+    private Text residentToggleText, roomToggleText;
+    private RectTransform tutorialRect;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void Install()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        Attach();
+    }
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) { Attach(); }
+    private static void Attach()
+    {
+        var controller = Object.FindAnyObjectByType<AdamsHavenPrototype>();
+        if (controller != null && controller.GetComponent<TowerArtDirector>() == null)
+            controller.gameObject.AddComponent<TowerArtDirector>();
+    }
+    private void Awake() { tower = GetComponent<AdamsHavenPrototype>(); }
+
+    // The HUD dock drives the side panels; these keep the camera framing in step.
+    public bool ResidentsOpen { get { return residentsOpen; } }
+    public void SetResidentsOpen(bool open) { residentsOpen = open; }
+    public void ToggleResidents() { residentsOpen = !residentsOpen; }
+    public void SetRoomOpen(bool open) { roomOpen = open; }
+    private static float X(float cell) { return (cell - 17.5f) * Cell; }
+
+    private void LateUpdate()
+    {
+        if (tower == null || tower.Rules == null || Camera.main == null) return;
+        cameraView = Camera.main;
+        int selected = tower.SelectedRoom == null ? 0 : tower.SelectedRoom.uid;
+        if (selected != lastSelectedRoom)
+        { lastSelectedRoom = selected; roomOpen = selected != 0; }
+        int lesson = tower.Rules.State.introPhase == "complete" ? tower.Rules.State.tutorialStep : -1;
+        if (lesson != lastLesson)
+        {
+            lastLesson = lesson;
+            if (lesson == 1 || lesson == 4) residentsOpen = true; // these lessons need the roster and work buttons
+        }
+        if (residentPanel != null) residentPanel.SetActive(residentsOpen);
+        if (roomPanel != null) roomPanel.SetActive(roomOpen);
+        if (residentToggleText != null) residentToggleText.text = residentsOpen ? "RESIDENTS  −" : "RESIDENTS  +";
+        if (roomToggleText != null) roomToggleText.text = roomOpen ? "ROOM DETAILS  −" : "ROOM DETAILS  +";
+        if (sourceRoot == null)
+        {
+            var source = GameObject.Find("Celestium Tower Cutaway");
+            if (source != null) { sourceRoot = source.transform; RebuildArt(); }
+        }
+        int west = 1, east = 1;
+        foreach (var floor in tower.Rules.State.floors)
+        { west = Mathf.Max(west, floor.west); east = Mathf.Max(east, floor.east); }
+        int wings = west * 100 + east;
+        int panels = (residentsOpen ? 1 : 0) + (roomOpen ? 2 : 0);
+        bool newState = framedState != tower.Rules.State;
+        if (newState || framedWest != wings || framedPanels != panels)
+        {
+            framedState = tower.Rules.State;
+            framedWest = wings;
+            framedPanels = panels;
+            float width = (west + east + 1) * Cell;
+            float viewWidthFraction = 0.86f - (residentsOpen ? 0.19f : 0) - (roomOpen ? 0.19f : 0);
+            cameraView.orthographicSize = Mathf.Max(3.7f, (width + 1.8f) /
+                (2 * cameraView.aspect * viewWidthFraction));
+            float shift = ((roomOpen ? 1 : 0) - (residentsOpen ? 1 : 0)) *
+                0.105f * cameraView.orthographicSize * 2 * cameraView.aspect;
+            cameraView.transform.position = new Vector3(X(22.5f + (east - west) * 0.5f) + shift,
+                newState && west <= 2 ? 0.35f : cameraView.transform.position.y, -30);
+        }
+        foreach (var beam in coreBeams)
+            if (beam != null) beam.color = new Color(0.65f, 0.91f, 1,
+                0.32f + 0.07f * Mathf.Sin(tower.Rules.State.clock * 2.2f));
+        var hud = Object.FindAnyObjectByType<TowerHud>();
+        if (hud != null && hud != styledHud) { StyleHud(hud); styledHud = hud; }
+        portraitTimer += Time.unscaledDeltaTime;
+        if (hud != null && portraitTimer >= 0.4f) { portraitTimer = 0; RefreshPortraits(hud); }
+    }
+
+    private Sprite SpriteFor(string path, Rect crop)
+    {
+        string key = path + ":" + crop;
+        Sprite sprite;
+        if (sprites.TryGetValue(key, out sprite)) return sprite;
+        var texture = Resources.Load<Texture2D>(path);
+        if (texture == null) return null;
+        texture.wrapMode = TextureWrapMode.Clamp;
+        sprite = Sprite.Create(texture, new Rect(crop.x * texture.width, crop.y * texture.height,
+            crop.width * texture.width, crop.height * texture.height), new Vector2(0.5f, 0.5f),
+            100, 0, SpriteMeshType.FullRect);
+        sprite.name = path;
+        sprites.Add(key, sprite);
+        return sprite;
+    }
+    private GameObject Layer(string name, string path, Vector3 position, Vector2 size,
+        Rect crop, Color tint, Transform parent = null)
+    {
+        var sprite = SpriteFor(path, crop);
+        if (sprite == null) return null;
+        var go = new GameObject(name, typeof(SpriteRenderer));
+        go.transform.SetParent(parent == null ? artRoot : parent, false);
+        go.transform.localPosition = position;
+        var renderer = go.GetComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = tint;
+        go.transform.localScale = new Vector3(size.x / sprite.bounds.size.x,
+            size.y / sprite.bounds.size.y, 1);
+        return go;
+    }
+    private static readonly Rect Full = new Rect(0, 0, 1, 1);
+    private GameObject Art(string name, string path, float x, float y, float z,
+        float width, float height, Rect? crop = null, Color? tint = null)
+    {
+        return Layer(name, Root + path, new Vector3(x, y, z), new Vector2(width, height),
+            crop ?? Full, tint ?? Color.white);
+    }
+    private void RebuildArt()
+    {
+        roomLabels.Clear();
+        coreBeams.Clear();
+        // Hide placeholder architecture; preserve animated residents and event feedback.
+        foreach (Transform child in sourceRoot)
+        {
+            if (child.GetComponent<TowerChibiAnimator>() != null) continue;
+            var resident = tower.Rules.State.residents.Find(r => r.name == child.name);
+            if (resident != null && child.GetComponent<MeshRenderer>() != null &&
+                child.GetComponent<MeshFilter>() != null && resident.origin != "hero" && resident.origin != "body")
+            {
+                child.GetComponent<MeshRenderer>().enabled = false;
+                var scale = child.lossyScale;
+                float height = resident.ageStage == 1 ? 0.85f : 1.30f;
+                Layer("Illustrated civilian", Root + "Villagers/villager_" + (resident.id % 12).ToString("00"),
+                    new Vector3(0, 0.30f / scale.y, -0.30f / scale.z),
+                    new Vector2(height * 0.66f / scale.x, height / scale.y), Full, Color.white, child);
+                continue;
+            }
+            string n = child.name;
+            bool architecture = n.StartsWith("Floor ") || n.StartsWith("Room ") ||
+                n.StartsWith("Empty lot ") || n.StartsWith("Silverbrook ") ||
+                n.StartsWith("Heart") || n.StartsWith("Gate") || n == "Celestium crystal" ||
+                n.StartsWith("Bed") || n.StartsWith("Table") || n.StartsWith("Stove") ||
+                n.StartsWith("Crate") || n.StartsWith("Barrel") || n.StartsWith("Workbench") ||
+                n.StartsWith("Well") || n.StartsWith("Crop") || n.StartsWith("Furnace") ||
+                n.StartsWith("Storage");
+            if (architecture)
+                foreach (var renderer in child.GetComponentsInChildren<Renderer>()) renderer.enabled = false;
+        }
+        artRoot = new GameObject("Layered Tower Architecture").transform;
+        artRoot.SetParent(sourceRoot, false);
+        BuildLandscape();
+        int middle = Mathf.RoundToInt(cameraView.transform.position.y / Storey);
+        int range = Mathf.CeilToInt(cameraView.orthographicSize / Storey) + 2;
+        int highest = 0;
+        foreach (var f in tower.Rules.State.floors) highest = Mathf.Max(highest, f.number);
+        foreach (var f in tower.Rules.State.floors)
+        {
+            if (f.number < middle - range || f.number > middle + range) continue;
+            float y = f.number * Storey;
+            int endCell = 23 + f.east;
+            float left = X(22 - f.west), right = X(endCell);
+            float width = right - left;
+            float center = (left + right) / 2;
+            // Empty founded cells still have an actual timber interior.
+            Art("Floor " + f.number + " timber backing", "Structure/tower_structure",
+                center, y + 0.14f, 4.5f, width, 2.38f, new Rect(0.025f, 0.19f, 0.95f, 0.70f));
+            foreach (var room in tower.Rules.State.rooms)
+            {
+                if (room.floor != f.number) continue;
+                float cx = X(room.x + room.width * 0.5f), rw = room.width * Cell;
+                string grade = room.level >= 3 ? "D" : room.level == 2 ? "E" : "F";
+                if (room.type == "heart")
+                    Art("Celestium Heart sanctuary", "Structure/heart_sanctuary_v1", cx,
+                        y + 0.12f, 2, rw - 0.05f, 2.23f, new Rect(0.32f, 0, 0.36f, 1));
+                else if (room.type == "gate")
+                    Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
+                        rw * 1.05f, 2.30f, new Rect(0.13f, 0.01f, 0.79f, 0.98f));
+                else
+                {
+                    string path = "Rooms/" + room.type + "_" + grade;
+                    if (Resources.Load<Texture2D>(Root + path) == null)
+                        path = "Rooms/" + (room.type == "quarry" ? "warehouse" : "cottage") + "_F";
+                    Rect crop = new Rect(0.035f, 0.14f, 0.93f, 0.57f);
+                    if (room.type == "house" && Resources.Load<Texture2D>(Root + "Rooms/living_interior_v1") != null)
+                    { path = "Rooms/living_interior_v1"; crop = new Rect(0.2f, 0, 0.6f, 1); }
+                    if (room.type == "kitchen" && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
+                    { path = "Rooms/kitchen_interior_v1"; crop = Full; }
+                    Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
+                        rw - 0.07f, 2.20f, crop,
+                        new Color(1.12f, 1.08f, 1.01f));
+                }
+                Post(X(room.x), y);
+                string label = room.type == "heart" ? "HEART" : room.type == "gate" ? "GATE" :
+                    TowerCatalog.Get(room.type).displayName.ToUpperInvariant();
+                Label(label, new Vector3(cx, y + 1.38f, -1.2f), rw);
+            }
+            // Tiled beams retain the scale of stonework rather than stretching one texture across a floor.
+            for (int cell = 22 - f.west; cell < endCell; cell += 2)
+            {
+                float span = Mathf.Min(2, endCell - cell) * Cell;
+                float cx = X(cell) + span / 2;
+                Art("Crystal masonry footing", "Structure/tower_frame", cx, y - 1.16f, -0.9f,
+                    span, 0.34f, new Rect(0.04f, 0.012f, 0.27f, 0.14f));
+                Art("Carved oak lintel", "Structure/tower_frame", cx, y + 1.35f, -0.8f,
+                    span, 0.30f, new Rect(0.05f, 0.90f, 0.27f, 0.09f));
+            }
+            Post(left, y); Post(right, y);
+            if (f.number != 0)
+            {
+                Post(X(TowerRules.CoreX), y);
+                Post(X(TowerRules.CoreX + 1), y);
+                string landing = f.landing == "freight_lift" ? "freight_lift" : "stairwell";
+                if (f.landing != "energy")
+                    Art("Core landing " + f.number, "Structure/" + landing, X(22.5f),
+                        y + 0.06f, 1.7f, Cell * 0.90f, 2.24f);
+                Label(f.landing == "freight_lift" ? "FREIGHT" : f.landing == "stairs" ? "STAIRS" : "CELESTIUM",
+                    new Vector3(X(22.5f), y + 1.38f, -1.3f), Cell);
+            }
+            Label(f.number == 0 ? "GROUND" : (f.number > 0 ? "+" : "") + f.number.ToString("00"),
+                new Vector3(left - 0.48f, y - 1.13f, -1), 0.7f);
+            if (f.number == highest)
+                Roof(center, y + 2.18f, width + 0.72f);
+            if (f.number == 0)
+                Art("Ivy and stone foundation", "Structure/foundation_v1", center, y - 2.06f, 3.5f,
+                    width + 2.4f, 3.1f);
+            for (int cell = 22 - f.west; cell < endCell; cell++)
+                if (cell != TowerRules.CoreX && tower.Rules.RoomAt(f.number, cell) == null)
+                    Label("+", new Vector3(X(cell + 0.5f), y + 0.05f, -0.8f), 0.5f);
+        }
+    }
+
+    private void BuildLandscape()
+    {
+        // Match ShelterView's world coordinates: grass is fixed at the surface,
+        // Silverwood is east of the gate, and geology continues below every plot.
+        const float ground = -1.23f, worldWidth = 68f;
+        float center = X(22), skyHeight = (TowerRules.FloorMax + 3) * Storey;
+        Art("Silverbrook high sky", "Scenery/sky_strata_continuous", center,
+            ground + skyHeight / 2, 18, worldWidth, skyHeight);
+        var landscape = Resources.Load<Texture2D>(Root + "Scenery/silverbrook_world_extended_day");
+        if (landscape != null)
+        {
+            float height = worldWidth * landscape.height / landscape.width;
+            float bottom = ground - height * 0.215f;
+            var horizon = Art("Silverbrook plain and eastern Silverwood", "Scenery/silverbrook_world_extended_day",
+                center, bottom + height / 2, 16, worldWidth, height);
+            // A continuous shader blend avoids visible bands between the original sky paintings.
+            var material = Resources.Load<Material>(Root + "Scenery/TowerHorizon");
+            if (horizon != null && material != null)
+                horizon.GetComponent<SpriteRenderer>().sharedMaterial = material;
+        }
+        for (int cell = 0; cell < 42; cell += 6)
+        {
+            float cx = X(cell + 3);
+            TerrainBand("Continuous soil to Celestium rock " + cell, "strata_upper_continuous",
+                cx, ground, 12 * Storey, false);
+            TerrainBand("Deep bedrock " + cell, "stratum_bedrock", cx,
+                ground - 12 * Storey, 3 * Storey, true);
+            for (int depth = 15; depth < 27; depth += 3)
+                TerrainBand("Celestium depths " + cell + ":" + depth, "stratum_celestium",
+                    cx, ground - depth * Storey, 3 * Storey, true);
+        }
+        if (tower.Rules.State.introPhase == "complete")
+        {
+            for (int floor = TowerRules.FloorMin; floor <= TowerRules.FloorMax; floor += 3)
+            {
+                var beam = Art("Celestium core energy " + floor, "Structure/heart_beam",
+                    X(22.5f), (floor + 1) * Storey, 3.8f, Cell * 0.78f, 3 * Storey + 0.02f,
+                    new Rect(0.26f, 0.1f, 0.48f, 0.8f), new Color(0.65f, 0.91f, 1, 0.36f));
+                if (beam != null) coreBeams.Add(beam.GetComponent<SpriteRenderer>());
+            }
+        }
+    }
+    private void TerrainBand(string name, string texture, float x, float top, float height, bool blend)
+    {
+        var layer = Art(name, "Scenery/" + texture, x, top - height / 2, 12,
+            6 * Cell + 0.015f, height + 0.01f);
+        var material = Resources.Load<Material>(Root + "Scenery/TowerTerrainBlend");
+        if (blend && layer != null && material != null)
+        {
+            Material textured;
+            if (!terrainMaterials.TryGetValue(texture, out textured))
+            {
+                textured = new Material(material);
+                textured.mainTexture = layer.GetComponent<SpriteRenderer>().sprite.texture;
+                terrainMaterials.Add(texture, textured);
+            }
+            layer.GetComponent<SpriteRenderer>().sharedMaterial = textured;
+        }
+        // Continue the preceding rock below the boundary so the next stratum blends into it.
+        float overlap = Storey * 0.65f;
+        Art(name + " transition", "Scenery/" + texture, x, top - height - overlap / 2,
+            12.02f, 6 * Cell + 0.015f, overlap + 0.02f,
+            new Rect(0, 0, 1, Mathf.Min(1, overlap / height)));
+    }
+    private void Post(float x, float y)
+    {
+        Art("Ivy clad timber column", "Structure/tower_frame", x, y + 0.05f, -1,
+            0.17f, 2.54f, new Rect(0, 0.17f, 0.042f, 0.80f));
+    }
+    private void Roof(float center, float y, float width)
+    {
+        const float height = 2.3f, naturalWidth = 5.75f;
+        float left = center - width / 2, right = center + width / 2;
+        float capWidth = naturalWidth * 0.30f;
+        // Repeat only the plain roof pitch; preserve dormer and end-cap proportions.
+        for (float x = left + capWidth; x < right - capWidth; x += 0.5f)
+        {
+            float span = Mathf.Min(0.5f, right - capWidth - x);
+            Art("Slate roof pitch", "Structure/crown_v1", x + span / 2, y - 0.1955f, -0.92f,
+                span + 0.01f, height * 0.45f, new Rect(0.26f, 0.19f, 0.09f, 0.45f));
+        }
+        Art("Roof west cap", "Structure/crown_v1", left + capWidth / 2, y, -0.95f,
+            capWidth, height, new Rect(0, 0, 0.30f, 1));
+        Art("Roof east cap", "Structure/crown_v1", right - capWidth / 2, y, -0.95f,
+            capWidth, height, new Rect(0.70f, 0, 0.30f, 1));
+        Art("Central crystal dormer", "Structure/crown_v1", center, y, -0.97f,
+            naturalWidth * 0.40f, height, new Rect(0.30f, 0, 0.40f, 1));
+    }
+    private void Label(string value, Vector3 position, float width)
+    {
+        if (worldFont == null) worldFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        var go = new GameObject(value, typeof(TextMesh));
+        go.transform.SetParent(artRoot, false);
+        go.transform.localPosition = position;
+        var text = go.GetComponent<TextMesh>();
+        text.font = worldFont; text.fontSize = 48; text.characterSize = 0.037f;
+        text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center;
+        text.color = new Color(1, 0.85f, 0.53f); text.text = value;
+        var renderer = go.GetComponent<MeshRenderer>();
+        renderer.sharedMaterial = worldFont.material;
+        float actual = renderer.bounds.size.x;
+        if (actual > width * 0.86f) go.transform.localScale = Vector3.one * width * 0.86f / actual;
+        roomLabels.Add(text);
+    }
+    private void StyleHud(TowerHud hud)
+    {
+        var sidebar = SpriteFor(Root + "UI/sidebar", Full);
+        foreach (var image in hud.GetComponentsInChildren<Image>(true))
+        {
+            if (image.name == "Resident panel" || image.name == "Room panel")
+            { image.sprite = sidebar; image.color = new Color(0.82f, 0.88f, 1, 0.98f); }
+            else if (image.name == "Top bar" || image.name == "Build bar")
+            {
+                image.sprite = SpriteFor(Root + "UI/sidebar", new Rect(0.15f, 0.32f, 0.7f, 0.4f));
+                image.color = new Color(0.75f, 0.83f, 0.96f, 0.98f);
+            }
+            if (image.GetComponent<Button>() != null && image.GetComponent<TowerButtonFx>() == null &&
+                image.color.a > 0.05f)
+            {
+                var outline = image.gameObject.GetComponent<Outline>() ?? image.gameObject.AddComponent<Outline>();
+                outline.effectColor = new Color(0.69f, 0.52f, 0.26f, 0.75f);
+                outline.effectDistance = new Vector2(1, -1);
+                var colors = image.GetComponent<Button>().colors;
+                colors.normalColor = new Color(0.72f, 0.77f, 0.82f);
+                colors.highlightedColor = new Color(1.22f, 1.14f, 0.98f);
+                colors.pressedColor = new Color(0.64f, 0.72f, 0.78f);
+                image.GetComponent<Button>().colors = colors;
+            }
+        }
+        foreach (var text in hud.GetComponentsInChildren<Text>(true))
+        {
+            if (text.name == "Title") { text.text = "ADAMS HAVEN  /  TOWER"; text.fontSize = 20; }
+            if (text.name == "Resident heading" || text.name == "Room heading") text.enabled = false;
+            if (text.fontSize >= 20) text.fontStyle = FontStyle.Bold;
+        }
+        var images = hud.GetComponentsInChildren<Image>(true);
+        foreach (var image in images)
+        {
+            if (image.name == "Resident panel") residentPanel = image.gameObject;
+            if (image.name == "Room panel") roomPanel = image.gameObject;
+            if (image.name == "Tutorial") tutorialRect = image.rectTransform;
+        }
+    }
+    private Text PanelToggle(Transform parent, bool right, string label, UnityEngine.Events.UnityAction action)
+    {
+        var go = new GameObject(label, typeof(RectTransform), typeof(Image), typeof(Button));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(right ? 1 : 0, 1);
+        rect.pivot = new Vector2(right ? 1 : 0, 1);
+        rect.anchoredPosition = new Vector2(right ? -12 : 12, -81);
+        rect.sizeDelta = new Vector2(right ? 190 : 154, 34);
+        TowerUiSkin.Apply(go.GetComponent<Image>(), new Color(0.13f, 0.20f, 0.27f));
+        go.GetComponent<Button>().onClick.AddListener(action);
+        var textGo = new GameObject("Panel toggle label", typeof(RectTransform), typeof(Text));
+        textGo.transform.SetParent(go.transform, false);
+        var tr = textGo.GetComponent<RectTransform>();
+        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one; tr.offsetMin = tr.offsetMax = Vector2.zero;
+        var text = textGo.GetComponent<Text>();
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.fontSize = right ? 15 : 14; text.fontStyle = FontStyle.Bold; text.color = new Color(1, 0.85f, 0.53f);
+        text.alignment = TextAnchor.MiddleCenter; text.raycastTarget = false; text.text = label;
+        TowerUiSkin.StyleLabel(text);
+        return text;
+    }
+    private void RefreshPortraits(TowerHud hud)
+    {
+        foreach (var button in hud.GetComponentsInChildren<Button>(true))
+        {
+            var label = button.GetComponentInChildren<Text>();
+            if (label == null) continue;
+            if (button.image != null) button.image.enabled = !string.IsNullOrEmpty(label.text);
+            var outline = button.GetComponent<Outline>();
+            if (outline != null) outline.enabled = !string.IsNullOrEmpty(label.text);
+            if (button.name.StartsWith("Build choice "))
+            {
+                RefreshBuildArtwork(button, label);
+                continue;
+            }
+            if (!button.name.StartsWith("Resident row ")) continue;
+            var resident = tower.Rules.State.residents.Find(r => label.text.StartsWith(r.name + " "));
+            Transform portrait = button.transform.Find("Resident portrait");
+            if (resident == null) { if (portrait != null) portrait.gameObject.SetActive(false); continue; }
+            if (portrait == null)
+            {
+                var go = new GameObject("Resident portrait", typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(button.transform, false);
+                var rect = go.GetComponent<RectTransform>();
+                rect.anchorMin = rect.anchorMax = new Vector2(0, 0.5f);
+                rect.pivot = new Vector2(0, 0.5f); rect.anchoredPosition = new Vector2(3, 0);
+                rect.sizeDelta = new Vector2(34, 34);
+                go.GetComponent<Image>().raycastTarget = false;
+                portrait = go.transform;
+                label.rectTransform.anchoredPosition += new Vector2(35, 0);
+                label.rectTransform.sizeDelta -= new Vector2(35, 0);
+                label.alignment = TextAnchor.MiddleLeft;
+            }
+            string path = resident.origin == "hero" ? "AdamsHaven/Chibi/" + resident.unitId :
+                Root + "Villagers/villager_" + (resident.id % 12).ToString("00");
+            Rect crop = new Rect(0.08f, 0.49f, 0.84f, 0.5f);
+            if (resident.origin == "body")
+            {
+                path = "AdamsHaven/ChibiMotion/body_" + resident.chassisVariant + "/idle";
+                crop = new Rect(2f / 1024, 890f / 1024, 124f / 1024, 131f / 1024);
+            }
+            var sprite = SpriteFor(path, crop);
+            portrait.gameObject.SetActive(sprite != null);
+            portrait.GetComponent<Image>().sprite = sprite;
+        }
+    }
+    private void RefreshBuildArtwork(Button button, Text label)
+    {
+        TowerRoomDef definition = null;
+        foreach (var candidate in TowerCatalog.All)
+            if (label.text.Contains(candidate.displayName.ToUpperInvariant()))
+            { definition = candidate; break; }
+        if (definition == null) return;
+        var imageTransform = button.transform.Find("Building card artwork");
+        if (imageTransform == null)
+        {
+            var go = new GameObject("Building card artwork", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(button.transform, false);
+            imageTransform = go.transform;
+            var rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0, 0.5f);
+            rect.pivot = new Vector2(0, 0.5f);
+            rect.anchoredPosition = new Vector2(4, 0);
+            rect.sizeDelta = new Vector2(43, 41);
+            go.GetComponent<Image>().preserveAspect = true;
+            go.GetComponent<Image>().raycastTarget = false;
+            label.rectTransform.anchoredPosition += new Vector2(46, 0);
+            label.rectTransform.sizeDelta -= new Vector2(48, 0);
+            label.fontSize = 12;
+        }
+        string path = Root + "Cards/" + definition.id + "_F";
+        if (Resources.Load<Texture2D>(path) == null) path = Root + "Rooms/" + definition.id + "_F";
+        var sprite = SpriteFor(path, Full);
+        imageTransform.gameObject.SetActive(sprite != null);
+        imageTransform.GetComponent<Image>().sprite = sprite;
+    }
+    private void OnDestroy()
+    {
+        foreach (var sprite in sprites.Values) if (sprite != null) Destroy(sprite);
+        foreach (var material in terrainMaterials.Values) if (material != null) Destroy(material);
+    }
+}

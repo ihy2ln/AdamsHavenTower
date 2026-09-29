@@ -1,0 +1,29 @@
+{
+  "kind": "ult",
+  "unit": "ghislaine",
+  "out": "ult_ghislaine",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9111,
+  "keys": [
+    [
+      "first",
+      [
+        "ghislaine.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the white-tiger beastfolk swordswoman: long silver-white striped hair, tiger ears, golden eyes, tiger stripes on her face, dark green hooded cloak over brown leather armor, a long greatsword; keep her exact face, eyes, hair, ears and outfit. her tiger eyes narrow as she raises her greatsword beside her face, the blade igniting with orange flame. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\ghislaine.png",
+        "ghislaine.webp"
+      ],
+      "A wide 16:9 cinematic anime shot of the character from these images (the white-tiger beastfolk swordswoman: long silver-white striped hair, tiger ears, golden eyes, tiger stripes on her face, dark green hooded cloak over brown leather armor, a long greatsword); keep her exact face, hair and outfit. she leaps and rends downward with a huge flaming greatsword slash, a crescent of fire and tiger-claw streaks tearing across the frame. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the white-tiger beastfolk swordswoman: long silver-white striped hair, tiger ears, golden eyes, tiger stripes on her face, dark green hooded cloak over brown leather armor, a long greatsword: her tiger eyes narrow as she raises her greatsword beside her face, the blade igniting with orange flame. A white flash and fast speed lines, then the camera whips back to a wide shot: she leaps and rends downward with a huge flaming greatsword slash, a crescent of fire and tiger-claw streaks tearing across the frame. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

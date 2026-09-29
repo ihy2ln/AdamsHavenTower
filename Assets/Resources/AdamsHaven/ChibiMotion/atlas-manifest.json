@@ -1,0 +1,384 @@
+{
+  "sources": [
+    "S:\\AI\\Game Engine\\Godot\\AdamsHavenCardGame\\art\\character_cards\\chibi-roster-dual-look-v1",
+    "S:\\AI\\Game Engine\\Godot\\AdamsHavenCardGame\\art\\character_cards\\celestium-chibi-bodies-v2"
+  ],
+  "look": "Tower civilian",
+  "fps": 12,
+  "frames_per_clip": 24,
+  "atlas_size": [
+    1024,
+    1024
+  ],
+  "columns": 8,
+  "cell": [
+    128,
+    192
+  ],
+  "frame": [
+    124,
+    186
+  ],
+  "units": {
+    "kaela": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/idle.png",
+        "bytes": 952209,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/walk_in_place.png",
+        "bytes": 941556,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/task.png",
+        "bytes": 942496,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/knocked_down.png",
+        "bytes": 281551,
+        "loop": false
+      }
+    },
+    "ghislaine": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/idle.png",
+        "bytes": 884930,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/walk_in_place.png",
+        "bytes": 867890,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/task.png",
+        "bytes": 878577,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/knocked_down.png",
+        "bytes": 265631,
+        "loop": false
+      }
+    },
+    "elara": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/idle.png",
+        "bytes": 617341,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/walk_in_place.png",
+        "bytes": 612844,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/task.png",
+        "bytes": 609235,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/knocked_down.png",
+        "bytes": 191003,
+        "loop": false
+      }
+    },
+    "helda": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/idle.png",
+        "bytes": 817362,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/walk_in_place.png",
+        "bytes": 809791,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/task.png",
+        "bytes": 809672,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/knocked_down.png",
+        "bytes": 248068,
+        "loop": false
+      }
+    },
+    "daisy": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/idle.png",
+        "bytes": 689185,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/walk_in_place.png",
+        "bytes": 692877,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/task.png",
+        "bytes": 682455,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/knocked_down.png",
+        "bytes": 214363,
+        "loop": false
+      }
+    },
+    "clarity": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/idle.png",
+        "bytes": 596518,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/walk_in_place.png",
+        "bytes": 595537,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/task.png",
+        "bytes": 589143,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/knocked_down.png",
+        "bytes": 191306,
+        "loop": false
+      }
+    },
+    "amara": {
+      "idle": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/amara-the-alluring-empress/civilian/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/amara/idle.png",
+        "bytes": 639569,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/amara-the-alluring-empress/civilian/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/amara/walk_in_place.png",
+        "bytes": 643727,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/amara-the-alluring-empress/civilian/clips/task",
+        "source_clip": "task",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/amara/task.png",
+        "bytes": 632614,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/chibi-roster-dual-look-v1/amara-the-alluring-empress/civilian/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/amara/knocked_down.png",
+        "bytes": 202903,
+        "loop": false
+      }
+    },
+    "body_short": {
+      "idle": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/idle.png",
+        "bytes": 780300,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/walk_in_place.png",
+        "bytes": 675539,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/work_market",
+        "source_clip": "work_market",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/task.png",
+        "bytes": 485997,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/knocked_down.png",
+        "bytes": 206805,
+        "loop": false
+      }
+    },
+    "body_tall": {
+      "idle": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/tall/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_tall/idle.png",
+        "bytes": 596515,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/tall/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_tall/walk_in_place.png",
+        "bytes": 514960,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/tall/clips/work_well",
+        "source_clip": "work_well",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_tall/task.png",
+        "bytes": 288452,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/tall/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_tall/knocked_down.png",
+        "bytes": 162257,
+        "loop": false
+      }
+    },
+    "body_muscle": {
+      "idle": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/idle.png",
+        "bytes": 907958,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/walk_in_place.png",
+        "bytes": 784763,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/work_warehouse",
+        "source_clip": "work_warehouse",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/task.png",
+        "bytes": 463237,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/knocked_down.png",
+        "bytes": 223017,
+        "loop": false
+      }
+    },
+    "body_hourglass": {
+      "idle": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/hourglass/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_hourglass/idle.png",
+        "bytes": 801368,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/hourglass/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_hourglass/walk_in_place.png",
+        "bytes": 692714,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/hourglass/clips/work_farmstead",
+        "source_clip": "work_farmstead",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_hourglass/task.png",
+        "bytes": 451576,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/hourglass/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_hourglass/knocked_down.png",
+        "bytes": 201944,
+        "loop": false
+      }
+    },
+    "body_normal": {
+      "idle": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/idle",
+        "source_clip": "idle",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/idle.png",
+        "bytes": 765944,
+        "loop": true
+      },
+      "walk_in_place": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/walk_in_place",
+        "source_clip": "walk_in_place",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/walk_in_place.png",
+        "bytes": 660945,
+        "loop": true
+      },
+      "task": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/work_kitchen",
+        "source_clip": "work_kitchen",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/task.png",
+        "bytes": 471544,
+        "loop": true
+      },
+      "knocked_down": {
+        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/knocked_down",
+        "source_clip": "knocked_down",
+        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/knocked_down.png",
+        "bytes": 194030,
+        "loop": false
+      }
+    }
+  }
+}

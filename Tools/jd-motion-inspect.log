@@ -1,0 +1,116 @@
+[claude-bridge] listening on 127.0.0.1:9876
+Reloading external rigs...
+Reloading external metarigs...
+[claude-bridge] stopped
+addon_utils.disable: bl_ext.lab_blender_org.mcp not enabled
+FBX version: 7700
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+draw {1: {'Pelvis': [0.009064426645636559, -0.05482565984129906, 0.9663929343223572], 'Head': [0.028553089126944542, 0.05055096745491028, 1.5375620126724243], 'L_Wrist': [0.24473689496517181, -0.3449302613735199, 1.2450932264328003], 'R_Wrist': [-0.2881161570549011, 0.04365582764148712, 0.8728164434432983]}, 15: {'Pelvis': [0.017838789150118828, -0.026077134534716606, 0.9659292101860046], 'Head': [0.03420758247375488, 0.041631754487752914, 1.5457055568695068], 'L_Wrist': [0.4491920471191406, -0.1825656294822693, 1.1037136316299438], 'R_Wrist': [-0.49241819977760315, 0.069892019033432, 1.0115717649459839]}, 30: {'Pelvis': [0.024119645357131958, 0.008729859255254269, 0.9657810926437378], 'Head': [0.05373738333582878, 0.06005854159593582, 1.547512173652649], 'L_Wrist': [0.36343061923980713, -0.16168344020843506, 1.0712684392929077], 'R_Wrist': [-0.4136162996292114, -0.250565767288208, 1.6849937438964844]}, 45: {'Pelvis': [0.020556850358843803, -0.010321193374693394, 0.9659608006477356], 'Head': [0.09039049595594406, 0.06900729984045029, 1.533052682876587], 'L_Wrist': [0.33667993545532227, -0.1569410264492035, 1.0173401832580566], 'R_Wrist': [-0.38400015234947205, -0.19856604933738708, 1.8441402912139893]}, 60: {'Pelvis': [0.01540277898311615, -0.021452944725751877, 0.9632192850112915], 'Head': [0.09129080921411514, 0.0894569456577301, 1.5201104879379272], 'L_Wrist': [0.3177783191204071, -0.17017532885074615, 1.0103538036346436], 'R_Wrist': [-0.3392813801765442, -0.10331094264984131, 1.7315500974655151]}, 75: {'Pelvis': [0.01435801200568676, -0.02795984596014023, 0.9626619219779968], 'Head': [0.04998062923550606, 0.04391920939087868, 1.5359777212142944], 'L_Wrist': [0.33697885274887085, -0.19857993721961975, 1.04692804813385], 'R_Wrist': [-0.39125147461891174, -0.19177517294883728, 1.149906873703003]}, 90: {'Pelvis': [0.000226066549657844, -0.040994782000780106, 0.9650939702987671], 'Head': [0.0032416570466011763, 0.04721566289663315, 1.5403531789779663], 'L_Wrist': [0.3569614291191101, -0.28017935156822205, 1.2481021881103516], 'R_Wrist': [-0.3671427071094513, 0.07126637548208237, 0.9201579093933105]}}
+FBX version: 7700
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+WARNING: User property type 'Short' is not supported
+place {1: {'Pelvis': [-0.00961541198194027, -0.020419109612703323, 0.9757306575775146], 'Head': [-0.0015712428139522672, 0.02373395673930645, 1.5630923509597778], 'L_Wrist': [0.2196682244539261, -0.22590623795986176, 1.2430943250656128], 'R_Wrist': [-0.11558366566896439, -0.23372264206409454, 1.2061761617660522]}, 15: {'Pelvis': [-0.03964307904243469, -0.02203170396387577, 0.9750468134880066], 'Head': [-0.04083709791302681, 0.042593155056238174, 1.559375286102295], 'L_Wrist': [0.13256514072418213, -0.20433290302753448, 1.2645989656448364], 'R_Wrist': [-0.06595472991466522, -0.34282568097114563, 1.5535755157470703]}, 30: {'Pelvis': [-0.03527341037988663, -0.003188553499057889, 0.967433750629425], 'Head': [-0.03990801423788071, 0.057170573621988297, 1.552132487297058], 'L_Wrist': [0.40381622314453125, -0.2698330581188202, 1.2909419536590576], 'R_Wrist': [-0.44751501083374023, -0.027014832943677902, 1.1903493404388428]}, 45: {'Pelvis': [0.06170973181724548, -0.009554713033139706, 0.9682018160820007], 'Head': [0.072331003844738, 0.006231233943253756, 1.5572134256362915], 'L_Wrist': [0.3662063479423523, -0.4070383906364441, 1.3111072778701782], 'R_Wrist': [-0.09151385724544525, -0.3191254734992981, 1.231791615486145]}, 60: {'Pelvis': [0.09104964137077332, -0.03679976984858513, 0.9516749978065491], 'Head': [0.1499071717262268, -0.054966751486063004, 1.537497878074646], 'L_Wrist': [0.3774999976158142, -0.28975361585617065, 1.3569281101226807], 'R_Wrist': [0.005034639500081539, -0.7233795523643494, 1.391789197921753]}, 75: {'Pelvis': [0.031053876504302025, -0.029070256277918816, 0.9762365221977234], 'Head': [0.0556882880628109, -0.020733315497636795, 1.5642216205596924], 'L_Wrist': [0.33040788769721985, -0.2630808353424072, 1.2951980829238892], 'R_Wrist': [0.02925289049744606, -0.43607473373413086, 1.174070954322815]}, 90: {'Pelvis': [-0.0014313652645796537, -0.012538912706077099, 0.9810110926628113], 'Head': [0.01773008331656456, 0.03975837305188179, 1.5668591260910034], 'L_Wrist': [0.2482476681470871, -0.18340544402599335, 1.221773386001587], 'R_Wrist': [-0.08701632916927338, -0.19872306287288666, 1.207818627357483]}}
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

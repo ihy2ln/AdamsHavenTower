@@ -1,0 +1,1262 @@
+using System;
+using System.Collections.Generic;
+using AdamsHaven.Tower;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
+
+// Runtime-built uGUI keeps the existing Tower scene and its script GUID intact.
+// Layout: a slim top bar, a four-button dock, and popups. Tap a dock button for its popup; press and
+// hold it for a flyout of related shortcuts. Panels for people and rooms open on demand.
+public sealed class TowerHud : MonoBehaviour
+{
+    private static readonly Color Ink = new Color(0.035f, 0.055f, 0.085f, 0.94f);
+    private static readonly Color Panel = new Color(0.08f, 0.12f, 0.16f, 0.95f);
+    private static readonly Color Glass = new Color(0.62f, 0.78f, 1f, 1f);
+    private static readonly Color Gold = new Color(0.95f, 0.77f, 0.43f);
+    private static readonly Color Cream = new Color(0.95f, 0.92f, 0.82f);
+    private static readonly Color Teal = new Color(0.22f, 0.55f, 0.64f);
+    private static readonly Color Alert = new Color(0.86f, 0.30f, 0.24f);
+
+    private struct FlyItem
+    {
+        public string label; public Action action;
+        public FlyItem(string label, Action action) { this.label = label; this.action = action; }
+    }
+
+    private AdamsHavenPrototype tower;
+    private Canvas canvas;
+    private Font font;
+    private RectTransform safeRoot;
+
+    // top bar
+    private Text clockText, threatText, resources, materialsText;
+    private Image threatFill, materialsPanel;
+    private Button timeButton;
+    private float materialsTimer;
+
+    // dock, toast, placing chip
+    private Button dockBuild, dockFloors, dockPeople, dockTasks;
+    private Image toastPanel, chipPanel;
+    private Text toastText, chipText;
+    private string shownMessage = "";
+    private float toastTimer;
+
+    // popups and flyout
+    private Image popupBuild, popupFloors, popupTasks, popupMenu, flyoutPanel, flyoutCatcher;
+    private readonly Button[] flyoutButtons = new Button[6];
+    private Text buildPageText, floorText, incidentText;
+    private readonly Button[] categoryButtons = new Button[5];
+    private readonly string[] categoryIds = { "all", "home", "produce", "store", "service" };
+    private readonly string[] categoryNames = { "ALL", "HOMES", "PRODUCE", "STORE", "SERVICES" };
+    private string buildCategory = "all";
+    private Button floorOpenAbove, floorOpenBelow, floorWest, floorEast;
+    private Button recruit, autoHaul;
+    private readonly Text[] goalTexts = new Text[TowerRules.ActiveGoals];
+    private readonly Button[] goalClaims = new Button[TowerRules.ActiveGoals];
+
+    // resident and room panels
+    private Text residentDetail, roomDetail, roomAdvice, rosterPageText, priorityHint, moodText, adviceText;
+    private readonly Button[] rosterButtons = new Button[4], buildButtons = new Button[6], priorityButtons = new Button[6];
+    private readonly Text[] rosterLabels = new Text[4], buildLabels = new Text[6], priorityLabels = new Text[6];
+    private Button collect, rush, upgrade, assign, exploreSupplies, exploreRelics, explorePatrol, recall;
+    private Button craftTool, craftWeapon, familyPair, tutorialAction, scheduleButton;
+    private Image tutorialPanel, saveOverlay, defeatOverlay, advicePanel;
+    private Text tutorialTitle;
+    private readonly Button[] heroButtons = new Button[3];
+    private int rosterPage, buildPage, familyFirstId;
+    private string leftTab = "work";
+    private int lastScreenWidth, lastScreenHeight;
+    private float restoreSpeed = 1;
+    private readonly string[] priorityNames = { "production", "haul", "repair", "fire", "care", "defense" };
+    private readonly string[] priorityLabelsShort = { "PROD", "HAUL", "REPAIR", "FIRE", "CARE", "DEFEND" };
+
+    public void Initialize(AdamsHavenPrototype controller)
+    {
+        tower = controller;
+        font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (font == null) font = Font.CreateDynamicFontFromOSFont("Arial", 16);
+        var canvasObject = new GameObject("Tower Canvas", typeof(RectTransform), typeof(Canvas),
+            typeof(CanvasScaler), typeof(GraphicRaycaster));
+        canvasObject.transform.SetParent(transform, false);
+        canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 20;
+        var scaler = canvasObject.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280, 720);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = Screen.width / (float)Screen.height < 16f / 9f ? 0f : 1f;
+        if (EventSystem.current == null)
+        {
+            var events = new GameObject("Tower Event System", typeof(EventSystem));
+            var module = events.AddComponent<InputSystemUIInputModule>();
+            module.AssignDefaultActions();
+        }
+        safeRoot = Rect("Safe UI", canvas.transform, Vector2.zero, Vector2.one,
+            Vector2.zero, Vector2.zero, Color.clear).rectTransform;
+        safeRoot.GetComponent<Image>().raycastTarget = false;
+        BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
+        BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup();
+        BuildSaves(); BuildDefeat(); BuildFlyout();
+        UpdateSafeArea();
+        Refresh();
+    }
+
+    // ---------------------------------------------------------------- frame update
+
+    private void Update()
+    {
+        if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight) UpdateSafeArea();
+        if (tower == null) return;
+        if (toastTimer > 0)
+        {
+            toastTimer -= Time.unscaledDeltaTime;
+            float alpha = Mathf.Clamp01(toastTimer / 0.6f);
+            toastPanel.color = new Color(0.03f, 0.05f, 0.08f, 0.86f * alpha);
+            toastText.color = new Color(Gold.r, Gold.g, Gold.b, alpha);
+            if (toastTimer <= 0) toastPanel.gameObject.SetActive(false);
+        }
+        if (materialsPanel.gameObject.activeSelf)
+        {
+            materialsTimer -= Time.unscaledDeltaTime;
+            if (materialsTimer <= 0) materialsPanel.gameObject.SetActive(false);
+        }
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            if (flyoutPanel.gameObject.activeSelf) CloseFlyout();
+            else if (AnyPopupOpen()) CloseAllPopups();
+            else if (tower.Placing) { tower.CancelPlacing(); Refresh(); }
+        }
+    }
+
+    private void UpdateSafeArea()
+    {
+        lastScreenWidth = Screen.width; lastScreenHeight = Screen.height;
+        canvas.GetComponent<CanvasScaler>().matchWidthOrHeight =
+            Screen.width / (float)Screen.height < 16f / 9f ? 0f : 1f;
+        Rect area = Screen.safeArea;
+        safeRoot.anchorMin = new Vector2(area.xMin / Screen.width, area.yMin / Screen.height);
+        safeRoot.anchorMax = new Vector2(area.xMax / Screen.width, area.yMax / Screen.height);
+    }
+
+    // ---------------------------------------------------------------- widgets
+
+    private static Image Rect(string name, Transform parent, Vector2 min, Vector2 max,
+        Vector2 offsetMin, Vector2 offsetMax, Color color)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = min; rect.anchorMax = max;
+        rect.offsetMin = offsetMin; rect.offsetMax = offsetMax;
+        var image = go.GetComponent<Image>();
+        image.color = color;
+        return image;
+    }
+
+    // A fixed-size box positioned by its anchor point and pivot.
+    private static Image Box(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 position,
+        Vector2 size, Color color)
+    {
+        var image = Rect(name, parent, anchor, anchor, Vector2.zero, Vector2.zero, color);
+        var rect = image.rectTransform;
+        rect.pivot = pivot; rect.anchoredPosition = position; rect.sizeDelta = size;
+        return image;
+    }
+
+    private Text TextAt(Transform parent, string name, string value, float x, float y,
+        float width, float height, int size, Color color, TextAnchor align = TextAnchor.MiddleLeft)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(Text));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+        rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(x, -y);
+        rect.sizeDelta = new Vector2(width, height);
+        var label = go.GetComponent<Text>();
+        label.font = font; label.fontSize = size; label.color = color;
+        label.alignment = align; label.horizontalOverflow = HorizontalWrapMode.Wrap;
+        label.verticalOverflow = VerticalWrapMode.Truncate;
+        label.text = value; label.raycastTarget = false;
+        return label;
+    }
+
+    private Button ButtonAt(Transform parent, string name, string value, float x, float y,
+        float width, float height, Action action, Color color, int fontSize = 16)
+    {
+        var image = Rect(name, parent, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(x, -y - height), new Vector2(x + width, -y), color);
+        var button = image.gameObject.AddComponent<Button>();
+        var colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1.16f, 1.12f, 1.02f);
+        colors.pressedColor = new Color(0.78f, 0.76f, 0.72f);
+        colors.disabledColor = new Color(0.52f, 0.54f, 0.56f, 0.70f);
+        colors.fadeDuration = 0.06f;
+        button.colors = colors;
+        TowerUiSkin.Apply(image, color);
+        TowerUiSkin.StyleLabel(TextAt(image.transform, name + " label", value, 4, 0, width - 8, height,
+            fontSize, Cream, TextAnchor.MiddleCenter));
+        if (action != null) button.onClick.AddListener(() => action());
+        return button;
+    }
+
+    // A dock/top button: tap runs `tap`, press-and-hold opens a flyout built from `items`.
+    private Button HoldButtonAt(Transform parent, string name, string value, float x, float y, float width,
+        float height, Action tap, Func<FlyItem[]> items, bool flyUp, Color color, int fontSize = 16)
+    {
+        var button = ButtonAt(parent, name, value, x, y, width, height, null, color, fontSize);
+        var hold = button.gameObject.AddComponent<TowerHoldButton>();
+        var bar = Rect("Hold progress", button.transform, Vector2.zero, Vector2.zero, Vector2.zero,
+            Vector2.zero, new Color(1f, 0.86f, 0.5f, 0.95f));
+        bar.raycastTarget = false;
+        var barRect = bar.rectTransform;
+        barRect.pivot = Vector2.zero; barRect.anchoredPosition = new Vector2(10, 5);
+        barRect.sizeDelta = new Vector2(0, 4);
+        hold.progress = barRect; hold.fullWidth = width - 20;
+        for (int i = 0; i < 3; i++)
+        {
+            var dot = Box("Hold hint " + i, button.transform, new Vector2(1, 1), new Vector2(1, 1),
+                new Vector2(-9 - i * 6, -7), new Vector2(3.5f, 3.5f), new Color(1f, 0.88f, 0.55f, 0.85f));
+            dot.raycastTarget = false;
+        }
+        var rect = button.GetComponent<RectTransform>();
+        hold.onHold = () => ShowFlyout(rect, flyUp, items());
+        button.onClick.AddListener(() => { if (hold.Consume()) return; tap(); });
+        return button;
+    }
+
+    private Button CloseButton(Transform parent, float x, float y, Action action)
+    {
+        return ButtonAt(parent, "Close", "×", x, y, 30, 30, action, Alert, 20);
+    }
+
+    private static Text LabelOf(Button button)
+    { return button.GetComponentInChildren<Text>(); }
+
+    private void Divider(Transform parent, float x, float y, float width)
+    {
+        var texture = Resources.Load<Texture2D>("AdamsHaven/Tower/UI/divider_v1");
+        if (texture == null) return;
+        var go = new GameObject("Celestium divider", typeof(RectTransform), typeof(RawImage));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+        rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(x, -y);
+        rect.sizeDelta = new Vector2(width, 14);
+        var image = go.GetComponent<RawImage>();
+        image.texture = texture;
+        image.raycastTarget = false;
+    }
+
+    // ---------------------------------------------------------------- top bar
+
+    private void BuildTop()
+    {
+        var top = Rect("Top bar", safeRoot, new Vector2(0, 1), new Vector2(1, 1),
+            new Vector2(0, -52), Vector2.zero, Ink);
+        clockText = TextAt(top.transform, "Day", "", 16, 3, 300, 26, 18, Gold);
+        var bar = Rect("Threat bar", top.transform, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(16, -41), new Vector2(116, -34), new Color(0.13f, 0.16f, 0.2f, 1));
+        bar.raycastTarget = false;
+        threatFill = Rect("Threat fill", bar.transform, Vector2.zero, new Vector2(0.3f, 1),
+            Vector2.zero, Vector2.zero, Teal);
+        threatFill.raycastTarget = false;
+        threatText = TextAt(top.transform, "Threat label", "", 124, 28, 200, 20, 12, Cream);
+
+        // Primary stocks in one line; tap it to peek at the materials.
+        var strip = Rect("Resource strip", top.transform, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(330, -47), new Vector2(1070, -5), Color.clear);
+        var stripButton = strip.gameObject.AddComponent<Button>();
+        stripButton.transition = Selectable.Transition.None;
+        stripButton.onClick.AddListener(() =>
+        {
+            materialsPanel.gameObject.SetActive(!materialsPanel.gameObject.activeSelf);
+            materialsTimer = 7f; Refresh();
+        });
+        resources = TextAt(strip.transform, "Resources", "", 0, 0, 740, 42, 15, Cream, TextAnchor.MiddleCenter);
+
+        materialsPanel = Box("Materials", safeRoot, new Vector2(0.5f, 1), new Vector2(0.5f, 1),
+            new Vector2(0, -56), new Vector2(560, 34), new Color(0.05f, 0.08f, 0.12f, 0.96f));
+        materialsPanel.raycastTarget = false;
+        materialsText = TextAt(materialsPanel.transform, "Materials text", "", 8, 0, 544, 34, 14, Cream,
+            TextAnchor.MiddleCenter);
+        materialsPanel.gameObject.SetActive(false);
+
+        timeButton = HoldButtonAt(top.transform, "Time", "1×", 1092, 6, 76, 40,
+            () => tower.SetSpeed(tower.Speed == 0 ? restoreSpeed : 0), TimeItems, false, Teal, 18);
+        HoldButtonAt(top.transform, "Menu", "MENU", 1176, 6, 90, 40,
+            () => TogglePopup(popupMenu), MenuItems, false, Teal, 15);
+    }
+
+    private FlyItem[] TimeItems()
+    {
+        return new[] {
+            new FlyItem("PAUSE", () => SetTime(0)),
+            new FlyItem("1×  NORMAL", () => SetTime(1)),
+            new FlyItem("2×  FAST", () => SetTime(2)),
+            new FlyItem("4×  QUICK", () => SetTime(4)),
+            new FlyItem("8×  TIME LAPSE", () => SetTime(8))
+        };
+    }
+
+    private void SetTime(float speed)
+    {
+        if (speed > 0) restoreSpeed = speed;
+        tower.SetSpeed(speed);
+        Refresh();
+    }
+
+    private FlyItem[] MenuItems()
+    {
+        return new[] {
+            new FlyItem("SAVE NOW", () => tower.SaveNow()),
+            new FlyItem("CHECKPOINTS", () => saveOverlay.gameObject.SetActive(true))
+        };
+    }
+
+    // ---------------------------------------------------------------- dock
+
+    private void BuildToast()
+    {
+        toastPanel = Box("Toast", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 92),
+            new Vector2(600, 28), new Color(0.03f, 0.05f, 0.08f, 0.86f));
+        toastPanel.raycastTarget = false;
+        toastText = TextAt(toastPanel.transform, "Toast text", "", 8, 0, 584, 28, 14, Gold, TextAnchor.MiddleCenter);
+        toastPanel.gameObject.SetActive(false);
+
+        chipPanel = Box("Placing chip", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 124),
+            new Vector2(560, 38), new Color(0.10f, 0.07f, 0.03f, 0.92f));
+        TowerUiSkin.ApplyPanel(chipPanel, new Color(1f, 0.85f, 0.55f), true);
+        chipText = TextAt(chipPanel.transform, "Placing text", "", 14, 0, 400, 38, 14, Cream);
+        ButtonAt(chipPanel.transform, "Cancel placing", "CANCEL", 438, 4, 110, 30,
+            () => { tower.CancelPlacing(); Refresh(); }, Alert, 13);
+        chipPanel.gameObject.SetActive(false);
+    }
+
+    private void BuildDock()
+    {
+        var dock = Box("Dock", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8),
+            new Vector2(596, 78), Glass);
+        TowerUiSkin.ApplyPanel(dock, Glass, true);
+        dockBuild = HoldButtonAt(dock.transform, "Dock build", "BUILD", 14, 10, 134, 58,
+            () => TogglePopup(popupBuild), BuildItems, true, Teal, 18);
+        dockFloors = HoldButtonAt(dock.transform, "Dock floors", "FLOORS", 156, 10, 134, 58,
+            () => TogglePopup(popupFloors), FloorItems, true, Teal, 18);
+        dockPeople = HoldButtonAt(dock.transform, "Dock people", "PEOPLE", 298, 10, 134, 58,
+            TogglePeople, PeopleItems, true, Teal, 18);
+        dockTasks = HoldButtonAt(dock.transform, "Dock tasks", "TASKS", 440, 10, 142, 58,
+            () => TogglePopup(popupTasks), TaskItems, true, Teal, 18);
+    }
+
+    private FlyItem[] BuildItems()
+    {
+        return new[] {
+            new FlyItem("HOMES", () => OpenBuild("home")),
+            new FlyItem("PRODUCTION", () => OpenBuild("produce")),
+            new FlyItem("STORAGE", () => OpenBuild("store")),
+            new FlyItem("SERVICES", () => OpenBuild("service"))
+        };
+    }
+
+    private FlyItem[] FloorItems()
+    {
+        return new[] {
+            new FlyItem("GROUND FLOOR", () => tower.FocusOnFloor(0)),
+            new FlyItem("FLOOR +", () => tower.FocusOnFloor(tower.FocusFloor + 1)),
+            new FlyItem("FLOOR −", () => tower.FocusOnFloor(tower.FocusFloor - 1)),
+            new FlyItem("TOP FLOOR", () => tower.FocusOnFloor(HighestFloor()))
+        };
+    }
+
+    private FlyItem[] PeopleItems()
+    {
+        return new[] {
+            new FlyItem("WORK PRIORITIES", () => OpenPeople("work")),
+            new FlyItem("MOODS", () => OpenPeople("mood")),
+            new FlyItem("EXPEDITIONS", () => OpenPeople("explore")),
+            new FlyItem("FAMILY", () => OpenPeople("family"))
+        };
+    }
+
+    private FlyItem[] TaskItems()
+    {
+        return new[] {
+            new FlyItem("CLAIM ALL GOALS", ClaimAll),
+            new FlyItem("RECRUIT AT GATE", () => tower.Apply(tower.Rules.RecruitVisitor())),
+            new FlyItem("UNLOCK AUTO-HAUL", () => tower.Apply(tower.Rules.UnlockHauling()))
+        };
+    }
+
+    private int HighestFloor()
+    {
+        int top = 0;
+        foreach (var f in tower.Rules.State.floors) top = Mathf.Max(top, f.number);
+        return top;
+    }
+
+    private void ClaimAll()
+    {
+        for (int i = tower.Rules.State.goals.Count - 1; i >= 0; i--)
+            if (tower.Rules.GoalComplete(tower.Rules.State.goals[i])) tower.Apply(tower.Rules.ClaimGoal(i));
+    }
+
+    private void TogglePeople()
+    {
+        var director = tower.GetComponent<TowerArtDirector>();
+        if (director != null) director.ToggleResidents();
+        CloseAllPopups();
+    }
+
+    private void OpenPeople(string tab)
+    {
+        leftTab = tab;
+        var director = tower.GetComponent<TowerArtDirector>();
+        if (director != null) director.SetResidentsOpen(true);
+        Refresh();
+    }
+
+    // ---------------------------------------------------------------- flyout and popups
+
+    private void BuildFlyout()
+    {
+        flyoutCatcher = Rect("Flyout catcher", safeRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
+            new Color(0, 0, 0, 0.01f));
+        var catcherButton = flyoutCatcher.gameObject.AddComponent<Button>();
+        catcherButton.transition = Selectable.Transition.None;
+        catcherButton.onClick.AddListener(CloseFlyout);
+        flyoutPanel = Box("Flyout", safeRoot, Vector2.zero, new Vector2(0.5f, 0), Vector2.zero,
+            new Vector2(200, 100), Glass);
+        TowerUiSkin.ApplyPanel(flyoutPanel, Glass, true);
+        for (int i = 0; i < flyoutButtons.Length; i++)
+            flyoutButtons[i] = ButtonAt(flyoutPanel.transform, "Flyout item " + i, "", 8, 8 + i * 46, 184, 40,
+                null, Teal, 15);
+        flyoutCatcher.gameObject.SetActive(false);
+        flyoutPanel.gameObject.SetActive(false);
+    }
+
+    private void ShowFlyout(RectTransform anchor, bool up, FlyItem[] items)
+    {
+        CloseAllPopups();
+        int count = Mathf.Min(items.Length, flyoutButtons.Length);
+        flyoutCatcher.transform.SetAsLastSibling();
+        flyoutPanel.transform.SetAsLastSibling();
+        var rect = flyoutPanel.rectTransform;
+        rect.sizeDelta = new Vector2(200, 16 + count * 46 - 6);
+        var corners = new Vector3[4];
+        anchor.GetWorldCorners(corners);
+        Vector3 point = up ? (corners[1] + corners[2]) * 0.5f : (corners[0] + corners[3]) * 0.5f;
+        Vector3 local = safeRoot.InverseTransformPoint(point);
+        float x = Mathf.Clamp(local.x - safeRoot.rect.xMin, 108, safeRoot.rect.width - 108);
+        float y = local.y - safeRoot.rect.yMin + (up ? 8 : -8);
+        rect.pivot = new Vector2(0.5f, up ? 0 : 1);
+        rect.anchoredPosition = new Vector2(x, y);
+        for (int i = 0; i < flyoutButtons.Length; i++)
+        {
+            var button = flyoutButtons[i];
+            button.gameObject.SetActive(i < count);
+            if (i >= count) continue;
+            // The item nearest the pressed button comes first, whichever way the flyout opens.
+            int slot = up ? count - 1 - i : i;
+            var buttonRect = button.GetComponent<RectTransform>();
+            buttonRect.anchoredPosition = new Vector2(8, -8 - slot * 46 - 40);
+            buttonRect.anchorMin = buttonRect.anchorMax = new Vector2(0, 1);
+            buttonRect.pivot = new Vector2(0, 0);
+            buttonRect.sizeDelta = new Vector2(184, 40);
+            LabelOf(button).text = items[i].label;
+            var action = items[i].action;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => { CloseFlyout(); action(); });
+        }
+        flyoutCatcher.gameObject.SetActive(true);
+        flyoutPanel.gameObject.SetActive(true);
+    }
+
+    private void CloseFlyout()
+    {
+        if (flyoutPanel == null) return;
+        flyoutCatcher.gameObject.SetActive(false);
+        flyoutPanel.gameObject.SetActive(false);
+    }
+
+    private Image MakePopup(string name, float width, float height, bool top)
+    {
+        Image popup = top ?
+            Box(name, safeRoot, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-10, -58), new Vector2(width, height), Glass) :
+            Box(name, safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 94), new Vector2(width, height), Glass);
+        TowerUiSkin.ApplyPanel(popup, Glass, true);
+        popup.gameObject.SetActive(false);
+        return popup;
+    }
+
+    private bool AnyPopupOpen()
+    {
+        return popupBuild.gameObject.activeSelf || popupFloors.gameObject.activeSelf ||
+            popupTasks.gameObject.activeSelf || popupMenu.gameObject.activeSelf;
+    }
+
+    private void CloseAllPopups()
+    {
+        popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
+        popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
+        Refresh();
+    }
+
+    private void TogglePopup(Image popup)
+    {
+        bool open = !popup.gameObject.activeSelf;
+        popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
+        popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
+        popup.gameObject.SetActive(open);
+        if (open) popup.transform.SetAsLastSibling();
+        Refresh();
+    }
+
+    private void OpenBuild(string category)
+    {
+        buildCategory = category; buildPage = 0;
+        popupBuild.gameObject.SetActive(false);
+        TogglePopup(popupBuild);
+    }
+
+    private void BuildBuildPopup()
+    {
+        popupBuild = MakePopup("Build popup", 690, 262, false);
+        for (int i = 0; i < categoryButtons.Length; i++)
+        {
+            int index = i;
+            categoryButtons[i] = ButtonAt(popupBuild.transform, "Category " + categoryIds[i], categoryNames[i],
+                14 + i * 116, 12, 110, 32, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
+                Teal, 13);
+        }
+        CloseButton(popupBuild.transform, 648, 12, CloseAllPopups);
+        for (int i = 0; i < buildButtons.Length; i++)
+        {
+            int index = i;
+            buildButtons[i] = ButtonAt(popupBuild.transform, "Build choice " + i, "", 14 + (i % 3) * 224,
+                56 + (i / 3) * 66, 216, 58, () => ChooseBuild(index), Teal, 13);
+            buildLabels[i] = LabelOf(buildButtons[i]);
+        }
+        ButtonAt(popupBuild.transform, "Previous rooms", "‹", 14, 216, 56, 34,
+            () => { buildPage = Mathf.Max(0, buildPage - 1); Refresh(); }, Teal, 22);
+        buildPageText = TextAt(popupBuild.transform, "Build page", "", 76, 216, 538, 34, 14, Cream,
+            TextAnchor.MiddleCenter);
+        ButtonAt(popupBuild.transform, "Next rooms", "›", 620, 216, 56, 34,
+            () => { buildPage++; Refresh(); }, Teal, 22);
+    }
+
+    private void BuildFloorsPopup()
+    {
+        popupFloors = MakePopup("Floors popup", 470, 252, false);
+        TextAt(popupFloors.transform, "Floors title", "FLOORS AND FOUNDATIONS", 16, 10, 380, 28, 17, Gold);
+        CloseButton(popupFloors.transform, 428, 10, CloseAllPopups);
+        ButtonAt(popupFloors.transform, "Floor down", "FLOOR −", 14, 46, 130, 42,
+            () => tower.FocusOnFloor(tower.FocusFloor - 1), Teal, 15);
+        floorText = TextAt(popupFloors.transform, "Floor", "", 150, 46, 170, 42, 18, Cream, TextAnchor.MiddleCenter);
+        ButtonAt(popupFloors.transform, "Floor up", "FLOOR +", 326, 46, 130, 42,
+            () => tower.FocusOnFloor(tower.FocusFloor + 1), Teal, 15);
+        floorOpenAbove = ButtonAt(popupFloors.transform, "Open above", "OPEN ABOVE", 14, 98, 218, 46,
+            () => tower.Apply(tower.Rules.OpenFloor(tower.FocusFloor + 1)), Teal, 14);
+        floorOpenBelow = ButtonAt(popupFloors.transform, "Open below", "OPEN BELOW", 238, 98, 218, 46,
+            () => tower.Apply(tower.Rules.OpenFloor(tower.FocusFloor - 1)), Teal, 14);
+        floorWest = ButtonAt(popupFloors.transform, "Expand west", "< WEST", 14, 152, 218, 46,
+            () => ExpandFocused(-1), Teal, 14);
+        floorEast = ButtonAt(popupFloors.transform, "Expand east", "EAST >", 238, 152, 218, 46,
+            () => ExpandFocused(1), Teal, 14);
+        ButtonAt(popupFloors.transform, "Jump ground", "GROUND", 14, 206, 218, 36,
+            () => tower.FocusOnFloor(0), Teal, 13);
+        ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 238, 206, 218, 36,
+            () => tower.FocusOnFloor(HighestFloor()), Teal, 13);
+    }
+
+    private void BuildTasksPopup()
+    {
+        popupTasks = MakePopup("Tasks popup", 580, 376, false);
+        TextAt(popupTasks.transform, "Tasks title", "TASKS", 16, 10, 300, 28, 18, Gold);
+        CloseButton(popupTasks.transform, 538, 10, CloseAllPopups);
+        Divider(popupTasks.transform, 12, 40, 556);
+        for (int i = 0; i < goalTexts.Length; i++)
+        {
+            int index = i;
+            goalTexts[i] = TextAt(popupTasks.transform, "Goal " + i, "", 16, 56 + i * 56, 420, 48, 14, Cream);
+            goalClaims[i] = ButtonAt(popupTasks.transform, "Claim goal " + i, "CLAIM", 452, 58 + i * 56,
+                112, 40, () => tower.Apply(tower.Rules.ClaimGoal(index)), Teal, 14);
+        }
+        TextAt(popupTasks.transform, "Events title", "TOWER EVENTS", 16, 226, 300, 26, 16, Gold);
+        incidentText = TextAt(popupTasks.transform, "Incident list", "", 16, 252, 548, 58, 14, Cream);
+        recruit = ButtonAt(popupTasks.transform, "Recruit visitor", "RECRUIT AT GATE", 14, 318, 274, 46,
+            () => tower.Apply(tower.Rules.RecruitVisitor()), Teal, 15);
+        autoHaul = ButtonAt(popupTasks.transform, "Unlock hauling", "AUTO-HAUL", 294, 318, 274, 46,
+            () => tower.Apply(tower.Rules.UnlockHauling()), Teal, 15);
+    }
+
+    private void BuildMenuPopup()
+    {
+        popupMenu = MakePopup("Menu popup", 250, 158, true);
+        TextAt(popupMenu.transform, "Menu title", "MENU", 16, 8, 150, 28, 17, Gold);
+        CloseButton(popupMenu.transform, 208, 8, CloseAllPopups);
+        ButtonAt(popupMenu.transform, "Save now", "SAVE NOW", 14, 46, 222, 46,
+            () => { tower.SaveNow(); CloseAllPopups(); }, Teal, 16);
+        ButtonAt(popupMenu.transform, "Checkpoints", "CHECKPOINTS", 14, 100, 222, 46,
+            () => { CloseAllPopups(); saveOverlay.gameObject.SetActive(true); }, Teal, 16);
+    }
+
+    private void ExpandFocused(int side)
+    {
+        int floor = tower.FocusFloor;
+        var opened = tower.Rules.Floor(floor);
+        if (opened != null && floor < 0) tower.Rules.Excavate(floor, tower.Rules.NextExpansionX(floor, side));
+        tower.Apply(tower.Rules.ExpandFloor(floor, side));
+    }
+
+    // ---------------------------------------------------------------- resident and room panels
+
+    private void BuildLeft()
+    {
+        var left = Rect("Resident panel", safeRoot, new Vector2(0, 0), new Vector2(0, 1),
+            new Vector2(0, 8), new Vector2(294, -52), Panel);
+        TextAt(left.transform, "Resident heading", "RESIDENTS", 14, 10, 150, 32, 22, Gold);
+        Divider(left.transform, 9, 39, 279);
+        ButtonAt(left.transform, "Previous residents", "‹", 179, 10, 45, 36,
+            () => { rosterPage = Mathf.Max(0, rosterPage - 1); Refresh(); }, Teal, 23);
+        ButtonAt(left.transform, "Next residents", "›", 232, 10, 45, 36,
+            () => { rosterPage++; Refresh(); }, Teal, 23);
+        rosterPageText = TextAt(left.transform, "Roster page", "", 12, 53, 275, 20, 13, Cream);
+        for (int i = 0; i < rosterButtons.Length; i++)
+        {
+            int row = i;
+            rosterButtons[i] = ButtonAt(left.transform, "Resident row " + i, "", 12,
+                75 + i * 44, 270, 39, () => ClickResidentRow(row), Teal, 14);
+            rosterLabels[i] = LabelOf(rosterButtons[i]);
+            var drag = rosterButtons[i].gameObject.AddComponent<TowerResidentDrag>();
+            drag.OnDrop = position => DragResidentRow(row, position);
+        }
+        residentDetail = TextAt(left.transform, "Resident details", "", 14, 254, 267, 102, 14, Cream);
+        ButtonAt(left.transform, "Work tab", "WORK", 12, 360, 66, 38,
+            () => { leftTab = "work"; Refresh(); }, Teal, 13);
+        ButtonAt(left.transform, "Explore tab", "GO", 82, 360, 66, 38,
+            () => { leftTab = "explore"; Refresh(); }, Teal, 13);
+        ButtonAt(left.transform, "Family tab", "FAMILY", 152, 360, 66, 38,
+            () => { leftTab = "family"; Refresh(); }, Teal, 12);
+        ButtonAt(left.transform, "Mood tab", "MOOD", 222, 360, 66, 38,
+            () => { leftTab = "mood"; Refresh(); }, Teal, 13);
+        moodText = TextAt(left.transform, "Mood thoughts", "", 12, 402, 270, 74, 12, Cream);
+        scheduleButton = ButtonAt(left.transform, "Schedule", "SCHEDULE", 11, 478, 270, 26,
+            CycleSchedule, Teal, 13);
+        var work = Rect("Work controls", left.transform, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(0, -506), new Vector2(294, -403), Color.clear);
+        work.GetComponent<Image>().raycastTarget = false;
+        for (int i = 0; i < priorityButtons.Length; i++)
+        {
+            int index = i;
+            priorityButtons[i] = ButtonAt(work.transform, "Priority " + priorityNames[i], "",
+                10 + (i % 3) * 94, 2 + (i / 3) * 47, 88, 41,
+                () => CyclePriority(index), Teal, 13);
+            priorityLabels[i] = LabelOf(priorityButtons[i]);
+        }
+        priorityHint = TextAt(left.transform, "Context hint", "", 12, 402, 270, 49, 14, Cream);
+        priorityHint.gameObject.SetActive(false);
+        exploreSupplies = ButtonAt(left.transform, "Supplies expedition", "SUPPLIES", 11, 406,
+            86, 42, () => Explore("supplies"), Teal, 13);
+        exploreRelics = ButtonAt(left.transform, "Relics expedition", "RELICS", 103, 406,
+            86, 42, () => Explore("relics"), Teal, 13);
+        explorePatrol = ButtonAt(left.transform, "Battle expedition", "BATTLE", 195, 406,
+            86, 42, () => tower.LaunchBattleExpedition(), Teal, 13);
+        recall = ButtonAt(left.transform, "Recall", "RECALL", 11, 454, 86, 43,
+            () => { if (tower.SelectedPerson != null) tower.Apply(tower.Rules.Recall(tower.SelectedPerson.id)); },
+            Alert, 14);
+        craftTool = ButtonAt(left.transform, "Craft tool", "+ TOOL", 103, 454, 86, 43,
+            () => Craft("tool"), Teal, 13);
+        craftWeapon = ButtonAt(left.transform, "Craft weapon", "+ WEAPON", 195, 454, 86, 43,
+            () => Craft("weapon"), Teal, 12);
+        familyPair = ButtonAt(left.transform, "Pair family", "FORM FAMILY", 11, 455, 270, 45,
+            StartFamily, Teal, 17);
+    }
+
+    private void BuildRight()
+    {
+        var right = Rect("Room panel", safeRoot, new Vector2(1, 0), new Vector2(1, 1),
+            new Vector2(-300, 8), new Vector2(0, -52), Panel);
+        TextAt(right.transform, "Room heading", "SELECTED ROOM", 15, 11, 250, 32, 22, Gold);
+        CloseButton(right.transform, 262, 12, () =>
+        {
+            var director = tower.GetComponent<TowerArtDirector>();
+            if (director != null) director.SetRoomOpen(false);
+        });
+        Divider(right.transform, 10, 38, 280);
+        roomDetail = TextAt(right.transform, "Room details", "", 16, 52, 267, 87, 16, Cream);
+        collect = ButtonAt(right.transform, "Collect", "COLLECT", 15, 145, 128, 45,
+            () => RoomAction(r => tower.Rules.Collect(r.uid)), Teal, 16);
+        rush = ButtonAt(right.transform, "Rush", "RUSH", 155, 145, 130, 45,
+            () => RoomAction(r => tower.Rules.Rush(r.uid)), Alert, 16);
+        upgrade = ButtonAt(right.transform, "Upgrade", "UPGRADE", 15, 198, 128, 45,
+            () => RoomAction(r => tower.Rules.UpgradeRoom(r.uid)), Teal, 16);
+        assign = ButtonAt(right.transform, "Assign", "ASSIGN", 155, 198, 130, 45,
+            () => { if (tower.SelectedRoom != null) tower.AssignSelectedToRoom(tower.SelectedRoom.uid); },
+            Teal, 16);
+        roomAdvice = TextAt(right.transform, "Assignment advice", "", 15, 252, 270, 110, 14, Cream);
+    }
+
+    // ---------------------------------------------------------------- tutorial, overlays
+
+    private void BuildTutorial()
+    {
+        tutorialPanel = Rect("Tutorial", safeRoot, new Vector2(0.26f, 1), new Vector2(0.74f, 1),
+            new Vector2(0, -150), new Vector2(0, -58), Ink);
+        TowerUiSkin.ApplyPanel(tutorialPanel, Glass, true);
+        tutorialTitle = TextAt(tutorialPanel.transform, "Tutorial title", "", 9, 2, 592, 38,
+            20, Gold, TextAnchor.MiddleCenter);
+        tutorialAction = ButtonAt(tutorialPanel.transform, "Tutorial action", "", 139, 43,
+            325, 45, () =>
+            {
+                string phase = tower.Rules.State.introPhase;
+                tower.Apply(phase == "dormant" ? tower.Rules.AwakenHeart() : tower.Rules.PlaceIntroGate());
+            }, Teal, 17);
+        string[] ids = { "kaela", "ghislaine", "elara" };
+        for (int i = 0; i < 3; i++)
+        {
+            string id = ids[i];
+            heroButtons[i] = ButtonAt(tutorialPanel.transform, "Starter " + id, id.ToUpperInvariant(),
+                22 + i * 194, 44, 181, 44, () => tower.Apply(tower.Rules.ChooseStarter(id)), Teal, 15);
+        }
+        advicePanel = Box("Advice pill", safeRoot, new Vector2(0.5f, 1), new Vector2(0.5f, 1),
+            new Vector2(0, -58), new Vector2(600, 28), new Color(0.10f, 0.06f, 0.03f, 0.88f));
+        advicePanel.raycastTarget = false;
+        adviceText = TextAt(advicePanel.transform, "Advice", "", 10, 0, 580, 28, 14,
+            new Color(1f, 0.82f, 0.5f), TextAnchor.MiddleCenter);
+    }
+
+    private void BuildSaves()
+    {
+        saveOverlay = Rect("Checkpoint overlay", safeRoot, Vector2.zero, Vector2.one,
+            Vector2.zero, Vector2.zero, new Color(0.01f, 0.02f, 0.04f, 0.92f));
+        var card = Rect("Checkpoint card", saveOverlay.transform,
+            new Vector2(0.22f, 0.14f), new Vector2(0.78f, 0.86f), Vector2.zero, Vector2.zero, Panel);
+        TextAt(card.transform, "Checkpoint title", "TOWER CHECKPOINTS", 28, 19, 550, 44,
+            27, Gold);
+        ButtonAt(card.transform, "Close checkpoints", "CLOSE", 570, 18, 130, 43,
+            () => { saveOverlay.gameObject.SetActive(false); Refresh(); }, Alert, 16);
+        for (int i = 0; i < 10; i++)
+        {
+            int slot = i + 1;
+            ButtonAt(card.transform, "Slot " + slot, "DAY " + TowerMilestones.Days[i] + "  /  " +
+                TowerMilestones.Labels[i], 27 + i % 2 * 340, 79 + i / 2 * 77, 323, 65,
+                () => { tower.LoadCheckpoint(slot); saveOverlay.gameObject.SetActive(false); Refresh(); }, Teal, 15);
+        }
+        saveOverlay.gameObject.SetActive(false);
+    }
+
+    private void BuildDefeat()
+    {
+        defeatOverlay = Rect("Heart defeat", safeRoot, Vector2.zero, Vector2.one,
+            Vector2.zero, Vector2.zero, new Color(0.025f, 0.025f, 0.045f, 0.94f));
+        var card = Rect("Defeat card", defeatOverlay.transform,
+            new Vector2(0.25f, 0.31f), new Vector2(0.75f, 0.69f), Vector2.zero, Vector2.zero, Panel);
+        TextAt(card.transform, "Defeat title", "THE CELESTIUM HEART HAS FALLEN", 20, 23,
+            600, 54, 28, Gold, TextAnchor.MiddleCenter);
+        TextAt(card.transform, "Defeat detail", "This run has ended. Restore a checkpoint or begin again in this slot.",
+            32, 95, 575, 65, 17, Cream, TextAnchor.MiddleCenter);
+        ButtonAt(card.transform, "Choose checkpoint", "LOAD CHECKPOINT", 32, 182, 260, 58,
+            () => { saveOverlay.gameObject.SetActive(true); defeatOverlay.gameObject.SetActive(false); }, Teal, 17);
+        ButtonAt(card.transform, "Restart current slot", "RESTART THIS SLOT", 313, 182, 280, 58,
+            () => tower.RestartCurrentSlot(), Alert, 17);
+        defeatOverlay.gameObject.SetActive(false);
+    }
+
+    // ---------------------------------------------------------------- actions
+
+    private void CycleSchedule()
+    {
+        var person = tower.SelectedPerson;
+        if (person == null) return;
+        string next = person.schedule == "day" ? "night" : person.schedule == "night" ? "flexible" : "day";
+        tower.Apply(tower.Rules.SetSchedule(person.id, next));
+    }
+
+    private void ClickResidentRow(int row)
+    {
+        int index = rosterPage * 4 + row;
+        if (index >= tower.Rules.State.residents.Count) return;
+        int id = tower.Rules.State.residents[index].id;
+        if (familyFirstId > 0 && familyFirstId != id)
+        {
+            tower.Apply(tower.Rules.PairFamily(familyFirstId, id));
+            familyFirstId = 0;
+        }
+        tower.SelectPerson(id);
+    }
+
+    private void DragResidentRow(int row, Vector2 position)
+    {
+        int index = rosterPage * 4 + row;
+        if (index < tower.Rules.State.residents.Count)
+            tower.DragAssign(tower.Rules.State.residents[index].id, position);
+    }
+
+    private void ChooseBuild(int index)
+    {
+        var available = BuildChoices();
+        int number = buildPage * 6 + index;
+        if (number >= available.Count) return;
+        string id = available[number];
+        if (!tower.Rules.State.blueprints.Contains(id))
+        {
+            string result = tower.Rules.ResearchBlueprint(id);
+            tower.Apply(result);
+            if (result != null) return;
+            Refresh();
+            return;
+        }
+        popupBuild.gameObject.SetActive(false);
+        tower.SelectBuildType(id);
+    }
+
+    private static string CategoryOf(TowerRoomDef def)
+    {
+        switch (def.kind)
+        {
+            case "living": return "home";
+            case "produce": return "produce";
+            case "storage": return "store";
+            default: return "service";
+        }
+    }
+
+    private List<string> BuildChoices()
+    {
+        var choices = new List<string>();
+        foreach (var def in TowerCatalog.All)
+            if (def.kind != "heart" && def.kind != "gate" && tower.Rules.State.blueprints.Contains(def.id) &&
+                (buildCategory == "all" || CategoryOf(def) == buildCategory)) choices.Add(def.id);
+        if (tower.Rules.State.introPhase != "complete") return choices;
+        foreach (var def in TowerCatalog.All)
+            if (def.kind != "heart" && def.kind != "gate" && !tower.Rules.State.blueprints.Contains(def.id) &&
+                (buildCategory == "all" || CategoryOf(def) == buildCategory)) choices.Add(def.id);
+        return choices;
+    }
+
+    private void CyclePriority(int index)
+    {
+        var person = tower.SelectedPerson;
+        if (person == null) return;
+        int current = Priority(person, priorityNames[index]);
+        tower.Apply(tower.Rules.SetPriority(person.id, priorityNames[index], (current + 1) % 4));
+    }
+
+    private static int Priority(TowerResident resident, string key)
+    {
+        switch (key)
+        {
+            case "production": return resident.priorityProduction;
+            case "haul": return resident.priorityHaul;
+            case "repair": return resident.priorityRepair;
+            case "fire": return resident.priorityFire;
+            case "care": return resident.priorityCare;
+            case "defense": return resident.priorityDefense;
+            default: return 0;
+        }
+    }
+
+    private void Explore(string choice)
+    {
+        var person = tower.SelectedPerson;
+        if (person != null) tower.Apply(tower.Rules.SendExploring(person.id, choice));
+    }
+
+    private void Craft(string kind)
+    {
+        var person = tower.SelectedPerson;
+        if (person != null) tower.Apply(tower.Rules.CraftEquipment(person.id, kind));
+    }
+
+    private void StartFamily()
+    {
+        var person = tower.SelectedPerson;
+        if (person == null) return;
+        familyFirstId = person.id;
+        leftTab = "family";
+        Refresh();
+    }
+
+    private void RoomAction(Func<TowerRoom, string> action)
+    {
+        var room = tower.SelectedRoom;
+        if (room != null) tower.Apply(action(room));
+    }
+
+    // ---------------------------------------------------------------- refresh
+
+    public void Refresh()
+    {
+        if (tower == null || tower.Rules == null) return;
+        var state = tower.Rules.State;
+        defeatOverlay.gameObject.SetActive(state.defeated && !saveOverlay.gameObject.activeSelf);
+        RefreshTop(state);
+        RefreshToast();
+        RefreshResidents(); RefreshRoom(); RefreshTutorial(); RefreshAdvice(state);
+        RefreshDock(state);
+        if (popupBuild.gameObject.activeSelf) RefreshBuild();
+        if (popupFloors.gameObject.activeSelf) RefreshFloors(state);
+        if (popupTasks.gameObject.activeSelf) RefreshTasks(state);
+        RefreshChip();
+    }
+
+    private void RefreshToast()
+    {
+        string message = tower.CurrentMessage ?? "";
+        if (message == shownMessage) return;
+        shownMessage = message;
+        if (message.Length == 0) return;
+        toastText.text = message;
+        toastTimer = 4.5f;
+        toastPanel.gameObject.SetActive(true);
+    }
+
+    private void RefreshChip()
+    {
+        bool show = tower.Placing && !AnyPopupOpen() && tower.Rules.State.introPhase != "dormant" &&
+            tower.Rules.State.introPhase != "gate" && tower.Rules.State.introPhase != "choose";
+        chipPanel.gameObject.SetActive(show);
+        if (!show) return;
+        var def = TowerCatalog.Get(tower.BuildType);
+        chipText.text = "PLACING  " + (def == null ? "" : def.displayName.ToUpperInvariant() + "  " +
+            tower.Rules.BuildCost(def.id) + "g " + tower.Rules.BuildWoodCost(def.id) + "w " +
+            tower.Rules.BuildStoneCost(def.id) + "s") + "   -  tap a + lot";
+    }
+
+    private void RefreshTop(TowerState state)
+    {
+        float hour = tower.Rules.Hour();
+        clockText.text = "DAY " + state.day + "   " + ((int)hour).ToString("00") + ":" +
+            ((int)((hour % 1f) * 60f)).ToString("00");
+        float threat = Mathf.Clamp01(state.threat / 100f);
+        threatFill.rectTransform.anchorMax = new Vector2(Mathf.Max(0.03f, threat), 1);
+        threatFill.color = threat < 0.5f ? Color.Lerp(new Color(0.25f, 0.65f, 0.4f), Gold, threat * 2) :
+            Color.Lerp(Gold, Alert, (threat - 0.5f) * 2);
+        threatText.text = state.introPhase == "complete" ?
+            tower.Rules.ThreatLabel().ToUpperInvariant() + "   HEART " + Mathf.CeilToInt(state.heartHp) :
+            "HEART " + Mathf.CeilToInt(state.heartHp);
+        resources.text = "GOLD " + state.gold + "   CELESTIUM " + state.celestium +
+            "   FOOD " + Mathf.CeilToInt(state.food) + Trend("food") +
+            "   WATER " + Mathf.CeilToInt(state.water) + Trend("water") +
+            "   FIREWOOD " + Mathf.CeilToInt(state.firewood) + Trend("firewood");
+        materialsText.text = "WOOD " + state.wood + "    STONE " + state.stone + "    ORE " + state.ore +
+            "    TONICS " + state.tonics + "    ESSENCE " + state.essence + "    SIGILS " + state.sigils;
+        var face = timeButton.GetComponent<Image>();
+        LabelOf(timeButton).text = tower.Speed == 0 ? "II" : tower.Speed + "×";
+        face.color = tower.Speed == 0 ? Gold : tower.Speed >= 4 ? new Color(0.62f, 0.42f, 0.86f) : Teal;
+    }
+
+    // Net stock change per game minute, coloured so a falling store is obvious at a glance.
+    private string Trend(string resource)
+    {
+        if (tower.Rules.State.introPhase != "complete") return "";
+        float net = tower.Rules.NetPerMinute(resource);
+        if (Mathf.Abs(net) < 0.05f) return "";
+        string color = net < 0 ? "#ff8a70" : "#8fe39a";
+        return " <color=" + color + ">" + (net > 0 ? "+" : "") + net.ToString("0.0") + "/m</color>";
+    }
+
+    private void RefreshAdvice(TowerState state)
+    {
+        bool show = state.introPhase == "complete" && state.tutorialStep >= 7;
+        string advice = show ? tower.Rules.NeedsAdvice() : "";
+        advicePanel.gameObject.SetActive(advice.Length > 0);
+        adviceText.text = advice;
+    }
+
+    // Dock buttons carry badges so nothing needs its own always-on widget.
+    private void RefreshDock(TowerState state)
+    {
+        int claimable = 0;
+        if (state.introPhase == "complete")
+            foreach (var goal in state.goals) if (tower.Rules.GoalComplete(goal)) claimable++;
+        bool danger = state.incidents.Count > 0;
+        LabelOf(dockTasks).text = danger ? "TASKS  !" : claimable > 0 ? "TASKS  " + claimable : "TASKS";
+        dockTasks.GetComponent<Image>().color = danger ? Alert : claimable > 0 ? Gold : Teal;
+        dockBuild.GetComponent<Image>().color = tower.Placing || popupBuild.gameObject.activeSelf ? Gold : Teal;
+        var director = tower.GetComponent<TowerArtDirector>();
+        dockPeople.GetComponent<Image>().color = director != null && director.ResidentsOpen ? Gold : Teal;
+        dockFloors.GetComponent<Image>().color = popupFloors.gameObject.activeSelf ? Gold : Teal;
+        bool started = state.introPhase != "dormant" && state.introPhase != "gate";
+        dockBuild.interactable = dockFloors.interactable = dockTasks.interactable = started;
+        dockPeople.interactable = state.introPhase == "complete";
+    }
+
+    private void RefreshFloors(TowerState state)
+    {
+        int focus = tower.FocusFloor;
+        floorText.text = "FLOOR " + (focus >= 0 ? "+" : "") + focus;
+        var here = tower.Rules.Floor(focus);
+        LabelOf(floorOpenAbove).text = "OPEN ABOVE  " + tower.Rules.FloorOpenCost(focus + 1) + "C";
+        LabelOf(floorOpenBelow).text = "OPEN BELOW  " + tower.Rules.FloorOpenCost(focus - 1) + "C";
+        floorOpenAbove.interactable = tower.Rules.Floor(focus + 1) == null && focus < TowerRules.FloorMax;
+        floorOpenBelow.interactable = tower.Rules.Floor(focus - 1) == null && focus > TowerRules.FloorMin;
+        floorWest.interactable = floorEast.interactable = here != null;
+        if (here == null) return;
+        LabelOf(floorWest).text = "< WEST  " + tower.Rules.ExpandCost(focus, -1) + "C   (" +
+            tower.Rules.WingCellsOf(focus, -1) + "/" + TowerRules.WingCells + ")";
+        int eastCells = tower.Rules.WingCellsOf(focus, 1) - (focus == 0 ? 1 : 0);
+        LabelOf(floorEast).text = "EAST >  " + tower.Rules.ExpandCost(focus, 1) + "C   (" +
+            eastCells + "/" + TowerRules.WingCells + ")";
+    }
+
+    private void RefreshTasks(TowerState state)
+    {
+        int claimable = 0;
+        for (int i = 0; i < goalTexts.Length; i++)
+        {
+            bool has = state.introPhase == "complete" && i < state.goals.Count;
+            goalTexts[i].gameObject.SetActive(has);
+            goalClaims[i].gameObject.SetActive(has);
+            if (!has) continue;
+            var goal = state.goals[i];
+            var def = TowerRules.GoalDef(goal.id);
+            bool done = tower.Rules.GoalComplete(goal);
+            if (done) claimable++;
+            goalTexts[i].text = def.title + "\n" + tower.Rules.GoalProgress(goal) + " / " + def.target +
+                "     Reward: " + def.Reward;
+            goalClaims[i].interactable = done;
+            goalClaims[i].GetComponent<Image>().color = done ? Gold : Teal;
+        }
+        if (state.introPhase != "complete") goalTexts[0].gameObject.SetActive(false);
+        string incidents = "";
+        foreach (var incident in state.incidents)
+        {
+            var room = tower.Rules.Room(incident.roomUid);
+            incidents += incident.kind.ToUpperInvariant().Replace('_', ' ') + "  /  " +
+                (room == null ? "unknown room" : TowerCatalog.Get(room.type).displayName) + "\n";
+        }
+        incidentText.text = (incidents.Length == 0 ? "The Tower is safe." : incidents) +
+            "\nThreat " + tower.Rules.ThreatLabel() + "  •  next event in " + Mathf.CeilToInt(state.eventCooldown) + "s";
+        recruit.interactable = state.pendingVisitors > 0;
+        LabelOf(recruit).text = "RECRUIT AT GATE (" + state.pendingVisitors + ")";
+        autoHaul.interactable = !state.haulingUnlocked;
+        LabelOf(autoHaul).text = state.haulingUnlocked ? "AUTO-HAUL ON" : "UNLOCK AUTO-HAUL";
+    }
+
+    private void RefreshResidents()
+    {
+        var people = tower.Rules.State.residents;
+        rosterPage = Mathf.Clamp(rosterPage, 0, Mathf.Max(0, (people.Count - 1) / 4));
+        rosterPageText.text = "" + people.Count + " residents  /  page " + (rosterPage + 1) +
+            " of " + Mathf.Max(1, Mathf.CeilToInt(people.Count / 4f));
+        for (int i = 0; i < 4; i++)
+        {
+            int index = rosterPage * 4 + i;
+            rosterButtons[i].gameObject.SetActive(index < people.Count);
+            if (index >= people.Count) continue;
+            var person = people[index];
+            rosterLabels[i].text = person.name + "   " +
+                (person.ageStage == 1 ? "CHILD" : person.downed ? "DOWN" : person.currentTask.ToUpperInvariant());
+            rosterButtons[i].GetComponent<Image>().color = tower.SelectedPerson == person ? Gold :
+                person.downed ? Alert : Teal;
+        }
+        var selected = tower.SelectedPerson;
+        if (selected == null)
+        {
+            residentDetail.text = "Choose a starter at the Heart.";
+        }
+        else
+        {
+            residentDetail.text = selected.name + "   HP " + Mathf.CeilToInt(selected.hp) +
+                "   Mood " + Mathf.CeilToInt(selected.happiness) + " " + tower.Rules.MoodLabel(selected) +
+                "\nFood " + Mathf.CeilToInt(selected.hunger) + "  Water " +
+                Mathf.CeilToInt(selected.thirst) + "  Rest " + Mathf.CeilToInt(selected.rest) +
+                "\nM" + selected.might + " S" + selected.sight + " G" + selected.grit +
+                " C" + selected.charm + " W" + selected.wit + " A" + selected.grace +
+                " L" + selected.luck + "   T" + selected.tool + " B" + selected.weapon +
+                "\n" + (selected.injury > 0 ? "Injury " + Mathf.CeilToInt(selected.injury) + "  " : "") +
+                (selected.illness > 0 ? "Ill " + Mathf.CeilToInt(selected.illness) + "  " : "") +
+                tower.Rules.TaskExplanation(selected);
+        }
+        bool work = leftTab == "work", explore = leftTab == "explore", family = leftTab == "family";
+        bool mood = leftTab == "mood";
+        foreach (var button in priorityButtons) button.gameObject.SetActive(work);
+        moodText.gameObject.SetActive(mood);
+        scheduleButton.gameObject.SetActive(mood);
+        if (mood) RefreshMood(selected);
+        priorityHint.gameObject.SetActive(family);
+        priorityHint.text = familyFirstId > 0 ? "Select another adult resident above to form a family.\nA spare bed and good morale are required." :
+            "Families need two housed adults and a spare bed. Children live here and mature before work.";
+        familyPair.gameObject.SetActive(family);
+        exploreSupplies.gameObject.SetActive(explore);
+        exploreRelics.gameObject.SetActive(explore);
+        explorePatrol.gameObject.SetActive(explore);
+        recall.gameObject.SetActive(explore);
+        craftTool.gameObject.SetActive(explore);
+        craftWeapon.gameObject.SetActive(explore);
+        explorePatrol.interactable = tower.Rules.State.introPhase == "complete";
+        if (selected != null)
+        {
+            for (int i = 0; i < priorityButtons.Length; i++)
+            {
+                priorityLabels[i].text = priorityLabelsShort[i] + " " +
+                    Priority(selected, priorityNames[i]);
+                priorityButtons[i].interactable = selected.ageStage == 0;
+            }
+            exploreSupplies.interactable = exploreRelics.interactable =
+                selected.ageStage == 0 && !selected.exploring && !selected.downed;
+            recall.interactable = selected.exploring;
+            craftTool.interactable = craftWeapon.interactable = selected.ageStage == 0;
+            familyPair.interactable = selected.ageStage == 0 && selected.familyPartnerId == 0;
+        }
+        else
+        {
+            foreach (var button in priorityButtons) button.interactable = false;
+            exploreSupplies.interactable = exploreRelics.interactable = recall.interactable = false;
+            craftTool.interactable = craftWeapon.interactable = familyPair.interactable = false;
+        }
+    }
+
+    private void RefreshMood(TowerResident selected)
+    {
+        if (selected == null) { moodText.text = "Select a resident."; scheduleButton.interactable = false; return; }
+        var thoughts = tower.Rules.Thoughts(selected);
+        thoughts.Sort((a, b) => Mathf.Abs(b.value).CompareTo(Mathf.Abs(a.value)));
+        string text = (string.IsNullOrEmpty(selected.trait) ? "No trait" : selected.trait) + "   /   " +
+            (selected.origin == "body" ? "never sleeps" : selected.schedule + " schedule");
+        int shown = 0;
+        foreach (var thought in thoughts)
+        {
+            if (shown++ >= 4) break;
+            text += "\n" + (thought.value >= 0 ? "+" : "") + Mathf.RoundToInt(thought.value) + "  " + thought.label;
+        }
+        if (thoughts.Count == 0) text += "\nThis resident has no moods to manage.";
+        moodText.text = text;
+        scheduleButton.interactable = selected.ageStage == 0 && selected.origin != "body";
+        LabelOf(scheduleButton).text = "SCHEDULE: " + selected.schedule.ToUpperInvariant() + "  (tap to change)";
+    }
+
+    private void RefreshRoom()
+    {
+        var room = tower.SelectedRoom;
+        if (room == null)
+        {
+            roomDetail.text = "Tap a room in the cutaway.";
+            roomAdvice.text = "Drag a resident from the roster onto a room, or select both and press ASSIGN.";
+            collect.interactable = rush.interactable = upgrade.interactable = assign.interactable = false;
+            return;
+        }
+        var def = TowerCatalog.Get(room.type);
+        string activity = room.ready ? "READY TO COLLECT" : def.kind == "living" ?
+            "Housing " + tower.Rules.State.residents.FindAll(r => r.homeRoom == room.uid).Count +
+                "/" + tower.Rules.Capacity(room) : def.kind == "train" ?
+            "Training " + Mathf.RoundToInt(room.progress * 100) + "%" :
+            string.IsNullOrEmpty(def.produces) ? "Tower facility" : "Production " +
+                Mathf.RoundToInt(room.progress * 100) + "%  •  " +
+                tower.Rules.ProductionRate(room).ToString("0.0") + " rate";
+        roomDetail.text = def.displayName + "   /   Floor " + room.floor +
+            "\nLevel " + room.level + "   Condition " + Mathf.CeilToInt(room.condition) + "%" +
+            "   Workers " + tower.Rules.WorkerCount(room.uid) +
+            "\n" + activity + (tower.Rules.AdjacencyNote(room).Length > 0 ?
+                "\n" + tower.Rules.AdjacencyNote(room) : "");
+        collect.interactable = room.ready;
+        rush.interactable = !room.ready && !string.IsNullOrEmpty(def.produces) &&
+            tower.Rules.RushChance(room.uid) > 0;
+        LabelOf(rush).text = "RUSH " + Mathf.RoundToInt(tower.Rules.RushChance(room.uid) * 100) + "%";
+        upgrade.interactable = room.level < 3 && room.type != "heart" && room.type != "gate";
+        assign.interactable = tower.SelectedPerson != null && tower.SelectedPerson.ageStage == 0 &&
+            !tower.SelectedPerson.downed && !tower.SelectedPerson.exploring &&
+            room.type != "heart" && room.type != "gate";
+        var chosen = tower.SelectedPerson;
+        if (def.kind == "living")
+        {
+            int housed = tower.Rules.State.residents.FindAll(r => r.homeRoom == room.uid).Count;
+            roomAdvice.text = "Beds " + housed + "/" + tower.Rules.Capacity(room) +
+                "  •  shared housing supports family growth.";
+            return;
+        }
+        if (def.kind == "heart" || def.kind == "gate")
+        { roomAdvice.text = "The Heart and Gate connect every floor of the Tower."; return; }
+        TowerResident best = null;
+        float score = 0;
+        foreach (var resident in tower.Rules.State.residents)
+            if (!resident.downed && !resident.exploring && resident.ageStage == 0 &&
+                tower.Rules.MatchScore(resident, room) > score)
+            { best = resident; score = tower.Rules.MatchScore(resident, room); }
+        float gain = tower.Rules.AssignmentImpact(chosen, room);
+        float rate = tower.Rules.ProductionRate(room);
+        float cycle = def.kind == "train" ? 240f : 90f;
+        roomAdvice.text = "Best match: " + (best == null ? "none" : best.name + " (" + score.ToString("0.0") + ")") +
+            "\nSelected: " + (chosen == null ? "none" : chosen.name + " (" +
+                tower.Rules.MatchScore(chosen, room).ToString("0.0") + ")") +
+            "\nExpected: +" + gain.ToString("0.0") + " rate" +
+            (gain > 0 ? "  •  ~" + Mathf.CeilToInt(cycle / (rate + gain)) + "s cycle" : "") +
+            "\nRush failure: fire/pests, -7% condition";
+    }
+
+    private void RefreshBuild()
+    {
+        var available = BuildChoices();
+        buildPage = Mathf.Clamp(buildPage, 0, Mathf.Max(0, (available.Count - 1) / 6));
+        buildPageText.text = "ROOMS  " + (buildPage + 1) + " / " +
+            Mathf.Max(1, Mathf.CeilToInt(available.Count / 6f)) + "     (" + available.Count + " " +
+            (buildCategory == "all" ? "total" : buildCategory) + ")";
+        for (int i = 0; i < categoryButtons.Length; i++)
+            categoryButtons[i].GetComponent<Image>().color = buildCategory == categoryIds[i] ? Gold : Teal;
+        for (int i = 0; i < buildButtons.Length; i++)
+        {
+            int index = buildPage * 6 + i;
+            buildButtons[i].gameObject.SetActive(index < available.Count);
+            if (index >= available.Count) continue;
+            string id = available[index];
+            var def = TowerCatalog.Get(id);
+            bool known = tower.Rules.State.blueprints.Contains(id);
+            buildLabels[i].text = known ? def.displayName.ToUpperInvariant() + "  " +
+                tower.Rules.BuildCost(id) + "g  " + tower.Rules.BuildWoodCost(id) + "w " +
+                tower.Rules.BuildStoneCost(id) + "s" :
+                "STUDY " + def.displayName.ToUpperInvariant() + "  " +
+                tower.Rules.BlueprintGoldCost(id) + "g " +
+                tower.Rules.BlueprintCelestiumCost(id) + "C";
+            buildButtons[i].GetComponent<Image>().color = tower.Placing && tower.BuildType == id && known ? Gold : Teal;
+        }
+    }
+
+    private void RefreshTutorial()
+    {
+        string phase = tower.Rules.State.introPhase;
+        int step = tower.Rules.State.tutorialStep;
+        tutorialPanel.gameObject.SetActive(phase != "complete" || step < 7);
+        if (phase == "complete")
+        {
+            tutorialAction.gameObject.SetActive(false);
+            foreach (var button in heroButtons) button.gameObject.SetActive(false);
+            tutorialTitle.fontSize = 17;
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 82);
+            string[] lessons = {
+                "1 / BUILD  •  Open FLOORS and expand the foundation twice (WEST or EAST). Then open BUILD, choose Kitchen and tap the empty + lot.",
+                "2 / MATCH  •  In PEOPLE pick a resident, tap the Kitchen, compare the expected rate, then press ASSIGN.",
+                "3 / COLLECT  •  Let the Kitchen finish, then tap its food bubble (or COLLECT).",
+                "4 / RUSH  •  Review the success chance and failure risk, then rush the Kitchen.",
+                "5 / PRIORITIES  •  In PEOPLE > WORK, tap a priority button (PROD, HAUL, REPAIR...) to change it.",
+                "6 / INCIDENT  •  Watch the alert and responders travel to the affected room.",
+                "7 / RECOVER  •  Keep fire, care, and defense priorities active until danger ends."
+            };
+            if (step < lessons.Length) tutorialTitle.text = lessons[step];
+            return;
+        }
+        tutorialTitle.fontSize = 20;
+        tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 38);
+        tutorialTitle.text = phase == "dormant" ? "Awaken the Celestium Heart" :
+            phase == "gate" ? "Place the Celestium Gate" :
+            phase == "shack" ? "Build the Shack beside the Heart: tap the + lot" : "Choose your first resident";
+        tutorialAction.gameObject.SetActive(phase == "dormant" || phase == "gate");
+        LabelOf(tutorialAction).text = phase == "dormant" ? "AWAKEN HEART" : "PLACE GATE";
+        foreach (var button in heroButtons) button.gameObject.SetActive(phase == "choose");
+    }
+}
+
+public sealed class TowerResidentDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
+    public Action<Vector2> OnDrop;
+    public void OnBeginDrag(PointerEventData eventData) { }
+    public void OnDrag(PointerEventData eventData) { }
+    public void OnEndDrag(PointerEventData eventData)
+    { if (OnDrop != null) OnDrop(eventData.position); }
+}

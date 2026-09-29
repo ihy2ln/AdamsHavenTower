@@ -1,0 +1,12 @@
+[claude-bridge] listening on 127.0.0.1:9876
+Reloading external rigs...
+Reloading external metarigs...
+[claude-bridge] stopped
+addon_utils.disable: bl_ext.lab_blender_org.mcp not enabled
+01:15:55 | INFO: Data are loaded, start creating Blender stuff
+01:15:55 | INFO: Blender create Mesh node Mesh_0
+01:15:55 | INFO: glTF import finished in 0.09s
+00:01.781  render           | Saved: 'S:\AI\Game\Unity AHCG\My project\MeshyJobs\20260929_010936_jd-card-duelist_01a0ebff\game-mesh-preview.png'
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit
