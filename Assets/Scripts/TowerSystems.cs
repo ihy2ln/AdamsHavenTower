@@ -35,7 +35,7 @@ namespace AdamsHaven.Tower
             if (resident == null || room == null || resident.ageStage != 0 || resident.downed ||
                 resident.away || resident.exploring || resident.priorityProduction == 0 || room.ready ||
                 room.condition < 20 || State.incidents.Exists(i => i.roomUid == room.uid) ||
-                State.firewood <= 0 && room.type != "lumber_mill") return 0;
+                !IsPowered(room)) return 0;
             var def = TowerCatalog.Get(room.type);
             if (def == null || string.IsNullOrEmpty(def.produces) && def.kind != "train") return 0;
             if (resident.currentRoom == room.uid && resident.currentTask == "production") return 0;
@@ -62,8 +62,8 @@ namespace AdamsHaven.Tower
             if (resident.priorityProduction == 0) return "Idle: production priority is off.";
             if (room.ready) return "Idle: collect the ready room or unlock hauling.";
             if (room.condition < 20) return "Idle: workplace needs repair.";
-            if (State.firewood <= 0 && room.type != "lumber_mill")
-                return "Idle: waiting for firewood.";
+            if (!IsPowered(room))
+                return "Idle: the workplace is dark. Staff a Lumber Mill to relight it.";
             return "Idle: available for an urgent task.";
         }
 
@@ -221,9 +221,13 @@ namespace AdamsHaven.Tower
         {
             State.clock += dt;
             TickNeeds(dt, live);
+            FlushDeaths();
             TickLife(dt, live);
             TickFamilies(dt);
             TickExploration(dt, live);
+            TickPower();
+            TickSocial(dt, live);
+            if (State.steward) TickSteward(dt);
             PlanJobs();
             TickTravel(dt);
             TickWork(dt, live);

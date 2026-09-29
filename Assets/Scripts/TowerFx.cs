@@ -351,7 +351,21 @@ public sealed class TowerFx : MonoBehaviour
                 new Color(1, 0.92f, 0.5f)); break;
             case "reward": Float(text, at, new Color(1, 0.9f, 0.5f)); break;
             case "break": Burst(smokeBurst, at, 12, new Color(0.7f, 0.4f, 0.9f, 0.8f));
-                Float("MOOD BREAK", at, new Color(0.82f, 0.55f, 1)); break;
+                Float(string.IsNullOrEmpty(text) ? "MOOD BREAK" : text, at, new Color(0.82f, 0.55f, 1)); break;
+            case "level_up": Burst(sparkleBurst, at, 24, new Color(0.55f, 0.95f, 1f));
+                Pulse(at, new Color(0.55f, 0.95f, 1f), 1.8f);
+                Float("LEVEL " + text, at, new Color(0.6f, 0.95f, 1f)); break;
+            case "death": Burst(smokeBurst, at, 20, new Color(0.35f, 0.35f, 0.45f, 0.9f));
+                Float("In memory of " + text, at, new Color(0.78f, 0.78f, 0.9f)); break;
+            case "fight": Burst(dustBurst, at, 18); Pulse(at, new Color(1f, 0.45f, 0.3f), 1.5f);
+                Float("FIGHT!", at, new Color(1f, 0.5f, 0.35f)); break;
+            case "romance": Burst(sparkleBurst, at, 20, new Color(1f, 0.55f, 0.75f));
+                Float("In love: " + text, at, new Color(1f, 0.65f, 0.82f)); break;
+            case "raid_advance": Burst(smokeBurst, at, 14); Pulse(at, IncidentColor("raiders"), 3f);
+                Float("RAIDERS PUSH IN", at, IncidentColor("raiders")); break;
+            case "steward": Float("Steward: " + text, at, new Color(0.75f, 0.92f, 0.8f)); break;
+            case "brink": Burst(sparkleBurst, at, 26, new Color(0.45f, 0.9f, 1f));
+                Float("The Heart holds " + text, at, new Color(0.55f, 0.92f, 1f)); break;
             case "caravan": Float("Caravan +" + text, at, new Color(1, 0.85f, 0.5f));
                 Burst(sparkleBurst, at, 18, new Color(1, 0.85f, 0.5f)); break;
             case "festival":

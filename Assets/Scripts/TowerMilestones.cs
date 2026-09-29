@@ -5,6 +5,8 @@ namespace AdamsHaven.Tower
 {
     public static class TowerMilestones
     {
+        // Bump when checkpoint generation changes; older unplayed checkpoint files are rebuilt.
+        public const int Version = 2;
         public static readonly int[] Days = { 1, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
         public static readonly string[] Labels = {
             "Founding Day", "First Hearths", "Working Tower", "Established Haven",
@@ -24,6 +26,7 @@ namespace AdamsHaven.Tower
             int index = Mathf.Clamp(slot - 1, 0, 9);
             var rules = TowerRules.New(slot);
             TowerState state = rules.State;
+            state.generator = Version;
             state.day = Days[index];
             state.label = Labels[index];
             state.clock = (Days[index] - 1) * TowerRules.DaySeconds;
@@ -155,6 +158,17 @@ namespace AdamsHaven.Tower
                         rules.Assign(waterCandidates[i].id, upperWell.uid);
                 }
             }
+            // Checkpoints must be able to feed themselves: move workers until the stocks hold.
+            rules.StaffForSurvival(80);
+            if (index >= 2)
+            {
+                var gate = state.rooms.Find(r => r.type == "gate");
+                var guards = state.residents.FindAll(r => r.origin == "villager");
+                guards.Sort((a, b) => (b.might + b.weapon).CompareTo(a.might + a.weapon));
+                for (int i = 0; gate != null && i < 2 && i < guards.Count; i++)
+                    rules.Assign(guards[i].id, gate.uid);
+                rules.StaffForSurvival(20);
+            }
             float fill = Mathf.Min(1, 0.55f + index * 0.05f);
             state.food = state.water = state.firewood = rules.StockCap() * fill;
             state.eventCooldown = 180 + index * 15;
@@ -196,7 +210,16 @@ namespace AdamsHaven.Tower
         public static void EnsureSlots()
         {
             for (int slot = 1; slot <= 10; slot++)
-                if (TowerSaveFiles.Load(slot) == null) TowerSaveFiles.Save(Create(slot));
+            {
+                var existing = TowerSaveFiles.Load(slot);
+                if (existing == null) { TowerSaveFiles.Save(Create(slot)); continue; }
+                // Slot 1 is the player's own Tower. Slots 2-10 are developer checkpoints: rebuild
+                // ones made by an older generator, keeping the old file beside the new one.
+                if (slot == 1 || existing.generator >= Version) continue;
+                string path = TowerSaveFiles.PathFor(slot);
+                System.IO.File.Copy(path, path + ".gen" + existing.generator + ".bak", true);
+                TowerSaveFiles.Save(Create(slot));
+            }
         }
     }
 }

@@ -251,6 +251,8 @@ public sealed class TowerSimulationTests
         rules.State.residents[0].priorityDefense = 0;
         rules.State.heartHp = 0.2f;
         Assert.IsNull(rules.StartIncident("raiders", home.uid));
+        // Raiders only wound the Heart once they have fought their way into its chamber.
+        rules.State.incidents[0].roomUid = rules.State.rooms.Find(r => r.type == "heart").uid;
         rules.Advance(10, true);
         Assert.IsTrue(rules.State.defeated);
         Assert.AreEqual(0, rules.State.heartHp);
@@ -702,6 +704,182 @@ public sealed class TowerSimulationTests
         {
             Assert.IsFalse(resident.downed, resident.name + " collapsed");
             Assert.Greater(resident.happiness, 45f, resident.name + " is miserable");
+        }
+    }
+
+    // ---- Colony layer: levels, brownouts, raids, relationships, death, steward ----
+
+    private static TowerRules Quiet(TowerRules rules)
+    {
+        rules.State.eventCooldown = 100000;
+        return rules;
+    }
+
+    [Test]
+    public void CollectingGivesXpAndLevellingRaisesMaxHp()
+    {
+        var rules = Quiet(Started());
+        var kitchen = Kitchen(rules);
+        var worker = rules.State.residents[0];
+        float before = TowerRules.MaxHp(worker);
+        for (int i = 0; i < 12; i++) { kitchen.ready = true; Assert.IsNull(rules.Collect(kitchen.uid)); }
+        Assert.Greater(worker.level, 1);
+        Assert.Greater(TowerRules.MaxHp(worker), before);
+        Assert.AreEqual(TowerRules.MaxHp(worker), worker.hp, 0.01f, "a level up heals fully");
+    }
+
+    [Test]
+    public void BrownoutDarkensTheRoomsFarthestFromTheHeartFirst()
+    {
+        var rules = Quiet(Started());
+        rules.State.gold += 5000; rules.State.wood += 100; rules.State.stone += 100; rules.State.celestium += 100;
+        for (int i = 0; i < 6; i++) Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 3));
+        rules.State.blueprints.Add("silo");
+        Assert.IsNull(rules.Build("silo", 0, TowerRules.CoreX - 4));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 5));
+        rules.State.firewood = 0;
+        rules.Advance(1, true);
+        var near = rules.RoomAt(0, TowerRules.CoreX - 1);
+        var far = rules.RoomAt(0, TowerRules.CoreX - 5);
+        Assert.IsFalse(rules.IsPowered(far), "with no mill, the far room is dark");
+        Assert.Greater(rules.DarkRoomCount, 0);
+        rules.State.firewood = 50;
+        rules.Advance(1, true);
+        Assert.IsTrue(rules.IsPowered(far) && rules.IsPowered(near), "firewood relights everything");
+    }
+
+    [Test]
+    public void RaidersArriveAtTheGateAndGuardsDriveThemOff()
+    {
+        var rules = Quiet(Started());
+        var gate = rules.State.rooms.Find(r => r.type == "gate");
+        var guard = rules.State.residents[0];
+        guard.might = 10; guard.weapon = 3;
+        Assert.IsNull(rules.Assign(guard.id, gate.uid));
+        Assert.AreEqual(1, rules.GuardCount());
+        Assert.IsNull(rules.StartRaid());
+        Assert.AreEqual(gate.uid, rules.State.incidents[0].roomUid);
+        int gold = rules.State.gold;
+        for (int i = 0; i < 300 && rules.State.incidents.Count > 0; i++) rules.Advance(1, true);
+        Assert.AreEqual(0, rules.State.incidents.Count, "the guard should beat the raid");
+        Assert.GreaterOrEqual(rules.State.gold, gold, "beaten raiders return what they took, plus a bounty");
+    }
+
+    [Test]
+    public void UndefendedRaidersLootAndPushDeeper()
+    {
+        var rules = Quiet(Started());
+        foreach (var r in rules.State.residents) { r.priorityDefense = 0; r.priorityFire = 0; }
+        var gate = rules.State.rooms.Find(r => r.type == "gate");
+        rules.State.gold = 1000;
+        Assert.IsNull(rules.StartRaid());
+        for (int i = 0; i < (int)TowerRules.RaidMarchSeconds + 3; i++) rules.Advance(1, true);
+        Assert.AreEqual(1, rules.State.incidents.Count);
+        Assert.AreNotEqual(gate.uid, rules.State.incidents[0].roomUid, "raiders left the Gate");
+        Assert.Less(rules.State.gold, 1000);
+        Assert.Greater(rules.State.incidents[0].stolen, 0);
+    }
+
+    [Test]
+    public void SharingARoomBuildsFriendshipAndAThought()
+    {
+        var rules = Quiet(Started());
+        var kitchen = Kitchen(rules);
+        var a = rules.State.residents[0];
+        var b = rules.AddResident("", "Rowan", "villager", 1);
+        b.homeRoom = a.homeRoom;
+        Assert.IsNull(rules.Assign(b.id, kitchen.uid));
+        rules.State.food = rules.State.water = rules.State.firewood = 100;
+        rules.Advance(900, false);
+        Assert.Greater(rules.Opinion(a.id, b.id), 40f);
+        Assert.AreEqual("Friend", TowerRules.OpinionLabel(50));
+        a.currentRoom = a.targetRoom = b.currentRoom = b.targetRoom = kitchen.uid;
+        Assert.IsTrue(rules.Thoughts(a).Exists(t => t.label == "Beside a friend"));
+    }
+
+    [Test]
+    public void UntendedCriticalVillagerDiesAndIsMourned()
+    {
+        var rules = Quiet(Started());
+        var hero = rules.State.residents[0];
+        var victim = rules.AddResident("", "Bram", "villager", 1);
+        victim.homeRoom = victim.currentRoom = hero.homeRoom;
+        var bond = new TowerBond { a = hero.id, b = victim.id, opinion = 60 };
+        rules.State.bonds.Add(bond);
+        hero.priorityCare = 0;
+        victim.downed = true; victim.hp = 0; victim.injury = 80;
+        for (int i = 0; i < (int)TowerRules.CriticalLimit + 5; i++) rules.Advance(1, true);
+        Assert.IsNull(rules.Resident(victim.id), "the villager bled out");
+        Assert.AreEqual(1, rules.State.memorial.Count);
+        Assert.IsTrue(rules.Thoughts(hero).Exists(t => t.label.StartsWith("Mourning")));
+        // Heroes are pulled back by the Heart instead of dying.
+        hero.downed = true; hero.hp = 0; hero.injury = 80;
+        for (int i = 0; i < (int)TowerRules.CriticalLimit + 5; i++) rules.Advance(1, true);
+        Assert.IsNotNull(rules.Resident(hero.id));
+    }
+
+    [Test]
+    public void CaregiversStabiliseWithoutTonics()
+    {
+        var rules = Quiet(Started());
+        var nurse = rules.State.residents[0];
+        nurse.priorityCare = 3;
+        var patient = rules.AddResident("", "Bram", "villager", 1);
+        patient.homeRoom = patient.currentRoom = nurse.homeRoom;
+        rules.State.tonics = 0;
+        patient.downed = true; patient.hp = 0; patient.injury = 70;
+        for (int i = 0; i < 400; i++) rules.Advance(1, true);
+        Assert.IsNotNull(rules.Resident(patient.id), "a tended patient does not bleed out");
+        Assert.IsFalse(patient.downed);
+    }
+
+    [Test]
+    public void StewardMovesAWorkerOntoAFailingStock()
+    {
+        var rules = Quiet(Started());
+        rules.State.gold += 3000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
+        for (int i = 0; i < 3; i++) Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 3));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 4));
+        var worker = rules.State.residents[0];
+        Assert.IsNull(rules.Assign(worker.id, rules.RoomAt(0, TowerRules.CoreX - 3).uid));
+        rules.State.water = 2; rules.State.food = 100; rules.State.firewood = 100;
+        rules.Advance(25, true);
+        Assert.AreEqual(rules.RoomAt(0, TowerRules.CoreX - 4).uid, worker.jobRoom, "moved onto the Well");
+        Assert.IsNull(rules.SetSteward(false));
+        Assert.IsFalse(rules.State.steward);
+    }
+
+    [Test]
+    public void MoodBreaksFollowTemperament()
+    {
+        var rules = Quiet(Started());
+        var person = rules.State.residents[0];
+        person.trait = "Stout";
+        rules.State.food = 100;
+        person.happiness = 0; person.hunger = 20;
+        for (int i = 0; i < 40 && person.breakSeconds <= 0; i++) { person.happiness = 0; rules.Advance(1, true); }
+        Assert.Greater(person.breakSeconds, 0);
+        Assert.AreEqual("binge", person.breakKind);
+        Assert.AreEqual("Food binge", rules.MoodLabel(person));
+    }
+
+    [Test]
+    public void EveryCheckpointFeedsItselfForHalfAnHour()
+    {
+        for (int slot = 3; slot <= 10; slot++)
+        {
+            var state = TowerMilestones.Create(slot);
+            var rules = Quiet(new TowerRules(state));
+            Assert.AreEqual(TowerMilestones.Version, state.generator);
+            foreach (string stock in TowerRules.Stocks)
+                Assert.Greater(rules.PlannedNetPerMinute(stock), 0f, "slot " + slot + " " + stock);
+            int people = state.residents.Count;
+            for (int i = 0; i < 1800; i++) rules.Advance(1, true);
+            Assert.AreEqual(0, state.memorial.Count, "slot " + slot + " lost residents");
+            Assert.GreaterOrEqual(state.residents.Count, people);
+            Assert.IsFalse(state.residents.Exists(r => r.downed), "slot " + slot + " has downed residents");
         }
     }
 

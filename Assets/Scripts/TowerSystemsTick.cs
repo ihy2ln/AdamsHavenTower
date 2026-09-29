@@ -37,6 +37,7 @@ namespace AdamsHaven.Tower
                 resident.exploreCelestium + " Celestium.");
             resident.exploreGold = resident.exploreWood = resident.exploreStone = 0;
             resident.exploreOre = resident.exploreEssence = resident.exploreCelestium = 0;
+            GiveXp(resident, 15);
             var heart = RoomAt(0, CoreX);
             resident.currentRoom = resident.homeRoom > 0 ? resident.homeRoom : heart == null ? 0 : heart.uid;
             resident.currentTask = "idle";
@@ -81,10 +82,12 @@ namespace AdamsHaven.Tower
                 {
                     resident.hp = Mathf.Max(live ? 0 : 1, resident.hp -
                         (shortage ? 0.07f : 0.03f) * dt);
-                    if (resident.hp <= 0) { resident.downed = true; resident.injury = Mathf.Max(50, resident.injury); }
+                    // Collapsing from hunger is not a wound: feeding them is the cure.
+                    if (resident.hp <= 0) resident.downed = true;
                 }
-                else if (!resident.downed && resident.hp < 105 && resident.injury < 15)
-                    resident.hp = Mathf.Min(105, resident.hp + 0.025f * dt);
+                else if (!resident.downed && resident.hp < MaxHp(resident) && resident.injury < 15)
+                    resident.hp = Mathf.Min(MaxHp(resident), resident.hp + 0.025f * dt);
+                TickRecovery(resident, dt, live, shortage);
             }
         }
 
@@ -202,9 +205,7 @@ namespace AdamsHaven.Tower
                 }
                 if (resident.breakSeconds > 0)
                 {
-                    var refuge = State.rooms.Find(r => r.type == "heart");
-                    SetTask(resident, "break", resident.homeRoom > 0 ? resident.homeRoom :
-                        refuge == null ? 0 : refuge.uid);
+                    SetTask(resident, "break", BreakTarget(resident));
                     continue;
                 }
                 string task = "idle";
@@ -232,7 +233,8 @@ namespace AdamsHaven.Tower
                     score -= assigned * 6;
                     if (score > best) { best = score; task = candidate; target = incident.roomUid; }
                 }
-                if (resident.priorityCare > 0 && State.tonics > 0)
+                // Care still happens without tonics, only slower: triage keeps the downed alive.
+                if (resident.priorityCare > 0)
                     foreach (var patient in State.residents)
                     {
                         if (patient.id == resident.id ||
@@ -262,9 +264,14 @@ namespace AdamsHaven.Tower
                             if (score > best) { best = score; task = "haul"; target = room.uid; }
                         }
                 var workplace = Room(resident.jobRoom);
-                if (workplace != null && resident.priorityProduction > 0 && !workplace.ready &&
-                    workplace.condition >= 20 &&
-                    (State.firewood > 0 || workplace.type == "lumber_mill") &&
+                if (workplace != null && workplace.type == "gate")
+                {
+                    // The Gate is a guard post: guards hold it unless something more urgent calls.
+                    if (resident.priorityDefense > 0 && 40 + resident.priorityDefense * 8 > best)
+                    { best = 40 + resident.priorityDefense * 8; task = "guard"; target = workplace.uid; }
+                }
+                else if (workplace != null && resident.priorityProduction > 0 && !workplace.ready &&
+                    workplace.condition >= 20 && IsPowered(workplace) &&
                     40 + resident.priorityProduction * 8 > best)
                 { best = 40 + resident.priorityProduction * 8; task = "production"; target = workplace.uid; }
                 SetTask(resident, task, target);
@@ -314,8 +321,9 @@ namespace AdamsHaven.Tower
                     if (room.repairProgress >= 20)
                     { room.repairProgress -= 20; State.wood--; State.stone--; }
                 }
-                else if (resident.currentTask == "care" && State.tonics > 0)
+                else if (resident.currentTask == "care")
                 {
+                    float quality = State.tonics > 0 ? 1f : 0.45f;
                     TowerResident patient = null;
                     foreach (var other in State.residents)
                         if (other.id != resident.id &&
@@ -326,19 +334,24 @@ namespace AdamsHaven.Tower
                     {
                         float oldIllness = patient.illness;
                         float oldInjury = patient.injury;
-                        patient.hp = Mathf.Min(105, patient.hp + (0.3f + resident.wit * 0.1f) * dt);
-                        patient.injury = Mathf.Max(0, patient.injury - 0.25f * dt);
+                        patient.hp = Mathf.Min(MaxHp(patient), patient.hp + (0.3f + resident.wit * 0.1f) * quality * dt);
+                        patient.injury = Mathf.Max(0, patient.injury - 0.25f * quality * dt);
                         patient.illness = Mathf.Max(0, patient.illness -
-                            (0.25f + resident.wit * 0.10f) * dt);
+                            (0.25f + resident.wit * 0.10f) * quality * dt);
                         if (patient.hp >= 35 && patient.downed)
                         {
-                            patient.downed = false; State.tonics--; Note(patient.name + " was rescued.");
+                            patient.downed = false; patient.criticalSeconds = 0;
+                            if (State.tonics > 0) State.tonics--;
+                            Note(patient.name + " was rescued by " + resident.name + ".");
+                            GiveXp(resident, 8);
                             Bump("healed"); Emit("healed", room.uid, patient.id, patient.name);
                         }
                         else if (oldIllness >= 30 && patient.illness < 30 ||
                             oldInjury >= 30 && patient.injury < 30)
                         {
-                            State.tonics--; Note(patient.name + " recovered with care.");
+                            if (State.tonics > 0) State.tonics--;
+                            Note(patient.name + " recovered with care.");
+                            GiveXp(resident, 5);
                             Bump("healed"); Emit("healed", room.uid, patient.id, patient.name);
                         }
                     }
@@ -353,7 +366,7 @@ namespace AdamsHaven.Tower
                 room.rushFatigue = Mathf.Max(0, room.rushFatigue - dt / 220f);
                 var def = TowerCatalog.Get(room.type);
                 if (def == null || State.incidents.Exists(i => i.roomUid == room.uid) ||
-                    room.condition < 20 || (State.firewood <= 0 && room.type != "lumber_mill")) continue;
+                    room.condition < 20 || !IsPowered(room)) continue;
                 float rate = ProductionRate(room);
                 if (rate <= 0) continue;
                 if (def.kind == "train")
@@ -369,6 +382,7 @@ namespace AdamsHaven.Tower
                             {
                                 if (room.type == "forge") resident.might = Mathf.Min(10, resident.might + 1);
                                 else resident.wit = Mathf.Min(10, resident.wit + 1);
+                                GiveXp(resident, 6);
                                 Note(resident.name + " trained in " + def.displayName + ".");
                             }
                     }
@@ -411,7 +425,7 @@ namespace AdamsHaven.Tower
                     else if (incident.kind == "cave_in" && resident.currentTask == "repair")
                     { response += 0.30f + resident.might * 0.15f + resident.tool * 0.25f; defenders++; }
                     else if ((incident.kind == "raiders" || incident.kind == "pests") &&
-                        resident.currentTask == "defense")
+                        (resident.currentTask == "defense" || resident.currentTask == "guard"))
                     { response += (0.35f + resident.might * 0.17f + resident.weapon * 0.42f) * brave; defenders++; }
                 }
                 incident.hp -= response * dt;
@@ -419,17 +433,30 @@ namespace AdamsHaven.Tower
                 {
                     State.incidents.Remove(incident);
                     if (State.tutorialStep == 6) State.tutorialStep = 7;
-                    State.gold += incident.kind == "raiders" ? 50 : 20;
-                    Note("The " + incident.kind + " in " + TowerCatalog.Get(room.type).displayName + " was resolved.");
+                    State.gold += (incident.kind == "raiders" ? 50 : 20) + incident.stolen;
+                    Note("The " + IncidentName(incident.kind) + " in " + TowerCatalog.Get(room.type).displayName +
+                        " was resolved" + (incident.stolen > 0 ? " and " + incident.stolen + " stolen gold recovered." : "."));
                     State.threat = Mathf.Max(0, State.threat - 8);
+                    foreach (var resident in State.residents)
+                        if (resident.currentRoom == room.uid && !resident.downed && resident.ageStage == 0 &&
+                            resident.currentTask != "idle" && resident.currentTask != "rest")
+                            GiveXp(resident, incident.kind == "raiders" ? 20 : 10);
                     Bump("resolved");
                     Emit("resolved", room.uid, 0, incident.kind);
                     continue;
                 }
-                room.condition = Mathf.Max(0, room.condition -
-                    (incident.kind == "cave_in" ? 0.03f : 0.015f) * incident.severity * dt);
+                if (room.type != "heart" && room.type != "gate")
+                    room.condition = Mathf.Max(0, room.condition -
+                        (incident.kind == "cave_in" ? 0.03f : 0.015f) * incident.severity * dt);
                 if (incident.kind == "raiders" && defenders == 0)
-                    State.heartHp = Mathf.Max(0, State.heartHp - 0.55f * incident.severity * dt);
+                {
+                    // Undefended raiders loot, and in the Heart's own chamber they wound it.
+                    if (room.type == "heart")
+                        State.heartHp = Mathf.Max(0, State.heartHp - 1.4f * incident.severity * dt);
+                    int take = Mathf.Min(State.gold, Mathf.RoundToInt(0.6f * incident.severity * dt + 0.4f));
+                    State.gold -= take; incident.stolen += take;
+                    if (MarchRaiders(incident, room, dt)) continue;
+                }
                 if (incident.kind == "pests" && defenders == 0)
                     State.heartHp = Mathf.Max(0, State.heartHp - 0.08f * incident.severity * dt);
                 foreach (var resident in State.residents)
@@ -476,6 +503,7 @@ namespace AdamsHaven.Tower
                 var underground = rooms.FindAll(r => r.floor < 0);
                 if (underground.Count > 0) rooms = underground; else kind = "fire";
             }
+            if (kind == "raiders" && StartRaid() == null) return;
             var room = rooms[Mathf.Min(rooms.Count - 1, (int)(Random01() * rooms.Count))];
             StartIncident(kind, room.uid);
         }

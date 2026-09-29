@@ -39,3 +39,25 @@ Do not edit scripts while Play Mode is running: the domain reload leaves the con
 - Room panel opens when a room is selected and has its own close button. Rooms are only placed while a card is in hand
   (chip above the dock, CANCEL or Esc to drop it). TASKS turns red on an incident and gold when a goal can be claimed.
 - Messages are toasts that fade after a few seconds. `TowerHoldButton` (tap vs hold) and `TowerUiSkin.ApplyPanel` are reusable.
+
+## Sept 29 (4): colony layer (Fallout Shelter x RimWorld)
+
+All in `Assets/Scripts/TowerColony.cs` (partial `TowerRules`), hooked into the existing ticks.
+- Levels: collecting, training, rescues, repelling incidents and expeditions give XP. Level-ups heal fully and raise
+  `MaxHp` (105 + 2.5 per level). The roster shows `Lv`; resident details show xp/next and HP/max.
+- Brownout: with no firewood banked, `TickPower` keeps only as many cells lit as the mills can feed, nearest the Heart
+  first. Dark rooms stop working and are drawn dark with "NO FIREWOOD". Mills, Heart and Gate never go dark.
+- Gate guard post: the Gate takes 2 workers (task `guard`, uses Defend priority). `StartRaid` puts raiders at the Gate.
+  Undefended raiders loot gold (returned if beaten), push to a neighbouring room every 30s (same floor, or via the core
+  landing), and only wound the Heart inside its chamber. Merged same-type rooms draw without the dividing post.
+- Health: collapsing from hunger is not a wound. Downed residents who are fed get back up on bed rest. Critical ones
+  (injury >= 50) bleed out after 240 live seconds untended (a full day if starving). Villagers die into
+  `State.memorial`; heroes are pulled back by the Heart. Care works without tonics at 45% strength. Offline catch-up never kills.
+- Relationships: residents sharing a room build opinion (`State.bonds`); traits scale it, misery reverses it. Rivals
+  can fight (injuries), close friends can fall in love (auto family). Thoughts: friend/rival nearby, mourning, partner lost.
+- Mood breaks by temperament: sulk (home), binge (eats stores), tantrum (damages workplace), wander (to the Gate).
+- Steward (on by default, TASKS toggle): every 20s (5s when a stock is empty) moves one best-matching worker onto the
+  most urgent failing stock, using `PlannedNetPerMinute`. AUTO-ASSIGN IDLE places jobless adults by best stat.
+- Checkpoints: `TowerMilestones.Version = 2`. Generation staffs survival rooms and posts two Gate guards. On start, slots
+  2-10 built by an older generator are rebuilt and the old file is kept as `slot_XX.json.gen0.bak`. Slot 1 is never touched.
+- Tests: 50 in `TowerSimulationTests`, including every checkpoint feeding itself for 30 minutes with no deaths.

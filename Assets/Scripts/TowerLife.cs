@@ -259,6 +259,7 @@ namespace AdamsHaven.Tower
                 if (resident.tool >= 1) list.Add(new TowerThought("Good tools", 2));
             }
             if (State.festivalSeconds > 0) list.Add(new TowerThought("Harvest festival", 16));
+            if (resident.ageStage == 0) AddSocialThoughts(resident, list);
             return list;
         }
 
@@ -274,7 +275,7 @@ namespace AdamsHaven.Tower
 
         public string MoodLabel(TowerResident resident)
         {
-            if (resident.breakSeconds > 0) return "In a mood break";
+            if (resident.breakSeconds > 0) return BreakLabel(resident.breakKind);
             float m = resident.happiness;
             return m >= 80 ? "Delighted" : m >= 60 ? "Content" : m >= 40 ? "Uneasy" : m >= 20 ? "Unhappy" : "Breaking";
         }
@@ -469,6 +470,7 @@ namespace AdamsHaven.Tower
                 if (resident.origin == "body" || resident.ageStage != 0) continue;
                 if (resident.breakSeconds > 0)
                 {
+                    ApplyBreak(resident, dt);
                     resident.breakSeconds -= dt;
                     if (resident.breakSeconds <= 0)
                     {
@@ -481,12 +483,7 @@ namespace AdamsHaven.Tower
                 if (live && resident.happiness < 18 && !resident.downed && !resident.exploring)
                 {
                     resident.moodLow += dt;
-                    if (resident.moodLow >= 25)
-                    {
-                        resident.breakSeconds = 40;
-                        Note(resident.name + " is having a mood break.");
-                        Emit("break", resident.currentRoom, resident.id, resident.name);
-                    }
+                    if (resident.moodLow >= 25) BeginBreak(resident);
                 }
                 else resident.moodLow = Mathf.Max(0, resident.moodLow - dt * 2);
             }

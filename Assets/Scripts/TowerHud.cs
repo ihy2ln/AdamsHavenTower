@@ -53,7 +53,7 @@ public sealed class TowerHud : MonoBehaviour
     private readonly string[] categoryNames = { "ALL", "HOMES", "PRODUCE", "STORE", "SERVICES" };
     private string buildCategory = "all";
     private Button floorOpenAbove, floorOpenBelow, floorWest, floorEast;
-    private Button recruit, autoHaul;
+    private Button recruit, autoHaul, stewardButton, autoAssignButton;
     private readonly Text[] goalTexts = new Text[TowerRules.ActiveGoals];
     private readonly Button[] goalClaims = new Button[TowerRules.ActiveGoals];
 
@@ -389,7 +389,10 @@ public sealed class TowerHud : MonoBehaviour
         return new[] {
             new FlyItem("CLAIM ALL GOALS", ClaimAll),
             new FlyItem("RECRUIT AT GATE", () => tower.Apply(tower.Rules.RecruitVisitor())),
-            new FlyItem("UNLOCK AUTO-HAUL", () => tower.Apply(tower.Rules.UnlockHauling()))
+            new FlyItem("UNLOCK AUTO-HAUL", () => tower.Apply(tower.Rules.UnlockHauling())),
+            new FlyItem("AUTO-ASSIGN IDLE", () => tower.Apply(tower.Rules.AutoAssignIdle())),
+            new FlyItem(tower.Rules.State.steward ? "STEWARD: ON" : "STEWARD: OFF",
+                () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward)))
         };
     }
 
@@ -576,7 +579,7 @@ public sealed class TowerHud : MonoBehaviour
 
     private void BuildTasksPopup()
     {
-        popupTasks = MakePopup("Tasks popup", 580, 376, false);
+        popupTasks = MakePopup("Tasks popup", 580, 428, false);
         TextAt(popupTasks.transform, "Tasks title", "TASKS", 16, 10, 300, 28, 18, Gold);
         CloseButton(popupTasks.transform, 538, 10, CloseAllPopups);
         Divider(popupTasks.transform, 12, 40, 556);
@@ -593,6 +596,10 @@ public sealed class TowerHud : MonoBehaviour
             () => tower.Apply(tower.Rules.RecruitVisitor()), Teal, 15);
         autoHaul = ButtonAt(popupTasks.transform, "Unlock hauling", "AUTO-HAUL", 294, 318, 274, 46,
             () => tower.Apply(tower.Rules.UnlockHauling()), Teal, 15);
+        stewardButton = ButtonAt(popupTasks.transform, "Steward", "STEWARD", 14, 370, 274, 46,
+            () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward)), Teal, 15);
+        autoAssignButton = ButtonAt(popupTasks.transform, "Auto assign", "AUTO-ASSIGN IDLE", 294, 370, 274, 46,
+            () => tower.Apply(tower.Rules.AutoAssignIdle()), Teal, 15);
     }
 
     private void BuildMenuPopup()
@@ -1029,15 +1036,27 @@ public sealed class TowerHud : MonoBehaviour
         foreach (var incident in state.incidents)
         {
             var room = tower.Rules.Room(incident.roomUid);
-            incidents += incident.kind.ToUpperInvariant().Replace('_', ' ') + "  /  " +
-                (room == null ? "unknown room" : TowerCatalog.Get(room.type).displayName) + "\n";
+            incidents += TowerRules.IncidentName(incident.kind).ToUpperInvariant() + "  /  " +
+                (room == null ? "unknown room" : TowerCatalog.Get(room.type).displayName) +
+                (incident.stolen > 0 ? "  /  " + incident.stolen + "g stolen" : "") + "\n";
         }
-        incidentText.text = (incidents.Length == 0 ? "The Tower is safe." : incidents) +
-            "\nThreat " + tower.Rules.ThreatLabel() + "  •  next event in " + Mathf.CeilToInt(state.eventCooldown) + "s";
+        string lost = "";
+        if (state.memorial.Count > 0)
+        {
+            var last = state.memorial[state.memorial.Count - 1];
+            lost = "\nRemembered: " + last.name + " (day " + last.day + ", " + last.cause + ")" +
+                (state.memorial.Count > 1 ? " and " + (state.memorial.Count - 1) + " more" : "");
+        }
+        incidentText.text = (incidents.Length == 0 ? "The Tower is safe." : incidents.TrimEnd('\n')) +
+            "\nThreat " + tower.Rules.ThreatLabel() + "  •  next event " + Mathf.CeilToInt(state.eventCooldown) +
+            "s  •  Gate guards " + tower.Rules.GuardCount() + "/2" +
+            (tower.Rules.DarkRoomCount > 0 ? "  •  " + tower.Rules.DarkRoomCount + " rooms dark" : "") + lost;
         recruit.interactable = state.pendingVisitors > 0;
         LabelOf(recruit).text = "RECRUIT AT GATE (" + state.pendingVisitors + ")";
         autoHaul.interactable = !state.haulingUnlocked;
         LabelOf(autoHaul).text = state.haulingUnlocked ? "AUTO-HAUL ON" : "UNLOCK AUTO-HAUL";
+        LabelOf(stewardButton).text = state.steward ? "STEWARD: ON" : "STEWARD: OFF";
+        stewardButton.GetComponent<Image>().color = state.steward ? Gold : Teal;
     }
 
     private void RefreshResidents()
@@ -1052,8 +1071,9 @@ public sealed class TowerHud : MonoBehaviour
             rosterButtons[i].gameObject.SetActive(index < people.Count);
             if (index >= people.Count) continue;
             var person = people[index];
-            rosterLabels[i].text = person.name + "   " +
-                (person.ageStage == 1 ? "CHILD" : person.downed ? "DOWN" : person.currentTask.ToUpperInvariant());
+            rosterLabels[i].text = person.name + "  Lv" + person.level + "   " +
+                (person.ageStage == 1 ? "CHILD" : TowerRules.IsCritical(person) ? "CRITICAL" :
+                    person.downed ? "DOWN" : person.currentTask.ToUpperInvariant());
             rosterButtons[i].GetComponent<Image>().color = tower.SelectedPerson == person ? Gold :
                 person.downed ? Alert : Teal;
         }
@@ -1064,7 +1084,9 @@ public sealed class TowerHud : MonoBehaviour
         }
         else
         {
-            residentDetail.text = selected.name + "   HP " + Mathf.CeilToInt(selected.hp) +
+            residentDetail.text = selected.name + "  Lv " + selected.level +
+                (selected.ageStage == 0 ? " (" + selected.xp + "/" + TowerRules.XpToNext(selected) + " xp)" : "") +
+                "   HP " + Mathf.CeilToInt(selected.hp) + "/" + Mathf.CeilToInt(TowerRules.MaxHp(selected)) +
                 "   Mood " + Mathf.CeilToInt(selected.happiness) + " " + tower.Rules.MoodLabel(selected) +
                 "\nFood " + Mathf.CeilToInt(selected.hunger) + "  Water " +
                 Mathf.CeilToInt(selected.thirst) + "  Rest " + Mathf.CeilToInt(selected.rest) +
@@ -1124,8 +1146,16 @@ public sealed class TowerHud : MonoBehaviour
         int shown = 0;
         foreach (var thought in thoughts)
         {
-            if (shown++ >= 4) break;
+            if (shown++ >= 3) break;
             text += "\n" + (thought.value >= 0 ? "+" : "") + Mathf.RoundToInt(thought.value) + "  " + thought.label;
+        }
+        var relations = tower.Rules.Relations(selected);
+        if (relations.Count > 0)
+        {
+            text += "\n";
+            for (int i = 0; i < relations.Count && i < 2; i++)
+                text += (i > 0 ? "   " : "") + TowerRules.OpinionLabel(relations[i].Value) + ": " +
+                    relations[i].Key.name + " " + Mathf.RoundToInt(relations[i].Value);
         }
         if (thoughts.Count == 0) text += "\nThis resident has no moods to manage.";
         moodText.text = text;
@@ -1148,7 +1178,9 @@ public sealed class TowerHud : MonoBehaviour
             "Housing " + tower.Rules.State.residents.FindAll(r => r.homeRoom == room.uid).Count +
                 "/" + tower.Rules.Capacity(room) : def.kind == "train" ?
             "Training " + Mathf.RoundToInt(room.progress * 100) + "%" :
-            string.IsNullOrEmpty(def.produces) ? "Tower facility" : "Production " +
+            def.kind == "gate" ? "Guard post" :
+            string.IsNullOrEmpty(def.produces) ? "Tower facility" : !tower.Rules.IsPowered(room) ?
+                "DARK: no firewood reaches this room" : "Production " +
                 Mathf.RoundToInt(room.progress * 100) + "%  •  " +
                 tower.Rules.ProductionRate(room).ToString("0.0") + " rate";
         roomDetail.text = def.displayName + "   /   Floor " + room.floor +
@@ -1159,11 +1191,12 @@ public sealed class TowerHud : MonoBehaviour
         collect.interactable = room.ready;
         rush.interactable = !room.ready && !string.IsNullOrEmpty(def.produces) &&
             tower.Rules.RushChance(room.uid) > 0;
-        LabelOf(rush).text = "RUSH " + Mathf.RoundToInt(tower.Rules.RushChance(room.uid) * 100) + "%";
+        LabelOf(rush).text = string.IsNullOrEmpty(def.produces) ? "RUSH" :
+            "RUSH " + Mathf.RoundToInt(tower.Rules.RushChance(room.uid) * 100) + "%";
         upgrade.interactable = room.level < 3 && room.type != "heart" && room.type != "gate";
         assign.interactable = tower.SelectedPerson != null && tower.SelectedPerson.ageStage == 0 &&
             !tower.SelectedPerson.downed && !tower.SelectedPerson.exploring &&
-            room.type != "heart" && room.type != "gate";
+            room.type != "heart";
         var chosen = tower.SelectedPerson;
         if (def.kind == "living")
         {
@@ -1172,8 +1205,15 @@ public sealed class TowerHud : MonoBehaviour
                 "  •  shared housing supports family growth.";
             return;
         }
-        if (def.kind == "heart" || def.kind == "gate")
-        { roomAdvice.text = "The Heart and Gate connect every floor of the Tower."; return; }
+        if (def.kind == "heart")
+        { roomAdvice.text = "The Heart connects every floor. If raiders reach it, it bleeds."; return; }
+        if (def.kind == "gate")
+        {
+            roomAdvice.text = "GUARD POST  •  guards " + tower.Rules.GuardCount() + "/" + tower.Rules.Capacity(room) +
+                "\nSilverwood raiders arrive here first. Post strong residents (Might, weapons)." +
+                "\nUnfought raiders loot gold and push deeper every " + (int)TowerRules.RaidMarchSeconds + "s.";
+            return;
+        }
         TowerResident best = null;
         float score = 0;
         foreach (var resident in tower.Rules.State.residents)

@@ -63,6 +63,9 @@ namespace AdamsHaven.Tower
         public string trait = "";
         public string schedule = "";
         public float breakSeconds, moodLow;
+        public string breakKind = "";
+        public int xp;
+        public float criticalSeconds;
 
         public int Stat(string key)
         {
@@ -83,6 +86,26 @@ namespace AdamsHaven.Tower
         public float hp;
         public float spreadSeconds;
         public float severity = 1;
+        public float marchSeconds;   // raiders: time spent in this room without being fought
+        public int fromRoom;         // raiders: the room they just left, so they push onward
+        public int stolen;           // raiders: gold carried off, returned if they are beaten
+    }
+
+    // RimWorld-style opinion of one resident for another; symmetric, kept once per pair.
+    [Serializable] public sealed class TowerBond
+    {
+        public int a, b;
+        public float opinion;
+    }
+
+    [Serializable] public sealed class TowerMemorial
+    {
+        public string name;
+        public string cause;
+        public int day;
+        public float diedAt;
+        public int partnerId;
+        public List<int> friends = new List<int>();
     }
 
     [Serializable] public sealed class TowerState
@@ -121,6 +144,11 @@ namespace AdamsHaven.Tower
         public List<TowerGoal> goals = new List<TowerGoal>();
         public List<string> notifiedGoals = new List<string>();
         public List<TowerCounter> counters = new List<TowerCounter>();
+        public List<TowerBond> bonds = new List<TowerBond>();
+        public List<TowerMemorial> memorial = new List<TowerMemorial>();
+        public int generator;        // TowerMilestones.Version that built a checkpoint slot
+        public bool steward = true;  // re-staffs food, water and firewood before they run out
+        public float stewardTimer;
     }
 
     public sealed class TowerRoomDef
@@ -206,7 +234,8 @@ namespace AdamsHaven.Tower
             if (State.goals == null) State.goals = new List<TowerGoal>();
             if (State.notifiedGoals == null) State.notifiedGoals = new List<string>();
             if (State.counters == null) State.counters = new List<TowerCounter>();
-            if (State.randomState == 0) State.randomState = 77101;
+            if (State.bonds == null) State.bonds = new List<TowerBond>();
+            if (State.memorial == null) State.memorial = new List<TowerMemorial>();            if (State.randomState == 0) State.randomState = 77101;
             foreach (var resident in State.residents)
             {
                 if (string.IsNullOrEmpty(resident.schedule)) resident.schedule = "flexible";
@@ -534,7 +563,8 @@ namespace AdamsHaven.Tower
             if (resident.downed || resident.away || resident.exploring) return "This resident is unavailable.";
             if (resident.ageStage != 0) return "Children cannot be assigned to work.";
             var def = TowerCatalog.Get(room.type);
-            if (def.kind == "gate" || def.kind == "heart") return "The core is not a workplace.";
+            if (def.kind == "heart") return "The Heart is not a workplace.";
+            if (def.kind == "gate" && resident.origin == "body") return "Celestium Bodies cannot stand guard.";
             bool home = def.kind == "living";
             int used = 0;
             foreach (var other in State.residents)
@@ -553,7 +583,7 @@ namespace AdamsHaven.Tower
             int count = 0;
             foreach (var resident in State.residents)
                 if (resident.jobRoom == roomUid && resident.currentRoom == roomUid &&
-                    resident.currentTask == "production" && !resident.downed &&
+                    (resident.currentTask == "production" || resident.currentTask == "guard") && !resident.downed &&
                     !resident.away && !resident.exploring && resident.hp > 0) count++;
             return count;
         }
@@ -597,7 +627,10 @@ namespace AdamsHaven.Tower
             if (room.type == "lumber_mill") State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5));
             if (room.type == "quarry") { State.stone += room.level * 2; State.ore += room.level; }
             foreach (var resident in State.residents) if (resident.jobRoom == roomUid)
+            {
                 resident.happiness = Mathf.Min(100, resident.happiness + 2);
+                GiveXp(resident, 10 + room.level * 2);
+            }
             Note("Collected " + Mathf.RoundToInt(amount) + " " + def.produces + ".");
             Bump("collect");
             Emit("collect", room.uid, 0, def.produces + ":" + Mathf.RoundToInt(amount));

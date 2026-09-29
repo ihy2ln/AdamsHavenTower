@@ -33,6 +33,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private int shownReady;
     private int shownIncidents;
     private int shownDowned;
+    private int shownSignature;
     private int pendingWalkResident;
     private Vector3 pendingWalkFrom;
     private float speed = 1;
@@ -98,7 +99,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                     room.floor <= middle + visibleFloors) ready++;
             if (rules.State.residents.Count != shownResidents || ready != shownReady ||
                 rules.State.incidents.Count != shownIncidents ||
-                rules.State.residents.FindAll(r => r.downed || (r.origin == "body" && r.charge <= 0)).Count != shownDowned)
+                rules.State.residents.FindAll(r => r.downed || (r.origin == "body" && r.charge <= 0)).Count != shownDowned ||
+                SceneSignature() != shownSignature)
                 RebuildScene();
             if (hud != null) hud.Refresh();
         }
@@ -403,12 +405,23 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         shownIncidents = rules.State.incidents.Count;
         shownDowned = rules.State.residents.FindAll(r => r.downed ||
             (r.origin == "body" && r.charge <= 0)).Count;
+        shownSignature = SceneSignature();
         shownReady = 0;
         foreach (TowerRoom room in rules.State.rooms)
             if (room.ready && room.floor >= middle - visibleFloors &&
                 room.floor <= middle + visibleFloors) shownReady++;
         lastBuiltCameraY = view.transform.position.y;
         lastBuiltZoom = view.orthographicSize;
+    }
+
+    // Things the cutaway draws that the simple counts miss: where incidents are, which rooms
+    // are dark, and room layout changes such as upgrades.
+    private int SceneSignature()
+    {
+        int hash = rules.DarkRoomCount * 7919;
+        foreach (var incident in rules.State.incidents) hash = hash * 31 + incident.roomUid;
+        foreach (var room in rules.State.rooms) hash = hash * 17 + room.level + (rules.IsPowered(room) ? 0 : 3);
+        return hash;
     }
 
     private static void Fill(Rect rect, Color color)

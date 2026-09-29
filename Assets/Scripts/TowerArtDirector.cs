@@ -209,11 +209,17 @@ public sealed class TowerArtDirector : MonoBehaviour
                     { path = "Rooms/living_interior_v1"; crop = new Rect(0.2f, 0, 0.6f, 1); }
                     if (room.type == "kitchen" && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
                     { path = "Rooms/kitchen_interior_v1"; crop = Full; }
+                    // Rooms the hearths cannot light go dark, Fallout Shelter style.
+                    bool lit = tower.Rules.IsPowered(room);
                     Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
                         rw - 0.07f, 2.20f, crop,
-                        new Color(1.12f, 1.08f, 1.01f));
+                        lit ? new Color(1.12f, 1.08f, 1.01f) : new Color(0.26f, 0.30f, 0.42f));
+                    if (!lit) Label("NO FIREWOOD", new Vector3(cx, y + 0.35f, -1.2f), rw);
                 }
-                Post(X(room.x), y);
+                // Same-type neighbours read as one merged hall: no post between them.
+                var westNeighbour = tower.Rules.RoomAt(room.floor, room.x - 1);
+                if (westNeighbour == null || westNeighbour.type != room.type || room.type == "heart" || room.type == "gate")
+                    Post(X(room.x), y);
                 string label = room.type == "heart" ? "HEART" : room.type == "gate" ? "GATE" :
                     TowerCatalog.Get(room.type).displayName.ToUpperInvariant();
                 Label(label, new Vector3(cx, y + 1.38f, -1.2f), rw);
