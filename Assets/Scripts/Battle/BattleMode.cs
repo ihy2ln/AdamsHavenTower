@@ -131,6 +131,16 @@ public sealed partial class BattleMode : MonoBehaviour
 
     public void Begin(int towerFloor, Action<bool, int> onLeave)
     {
+        List<BattleUnit> party = BattleCatalog.Party();
+        Begin(towerFloor, party.GetRange(0, 3), party.GetRange(3, 3), onLeave);
+    }
+
+    // Expedition entry: the caller supplies the party (already scaled by gear and current HP) and reads
+    // the units' Hp back after onLeave. Text on the result screen names where the party returns to.
+    public string ReturnLabel = "RETURN TO TOWER";
+
+    public void Begin(int towerFloor, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool, int> onLeave)
+    {
         BattleGui.Build();
         ResetFx();
         cardVis.Clear(); handOrder.Clear(); slots.Clear(); drawOrder.Clear(); intents.Clear();
@@ -140,9 +150,8 @@ public sealed partial class BattleMode : MonoBehaviour
         auto = false; autoTimer = 0f; fastForward = false; speed = 1f;
         floor = towerFloor;
         leave = onLeave;
-        List<BattleUnit> party = BattleCatalog.Party();
-        List<BattleUnit> field = party.GetRange(0, 3);
-        List<BattleUnit> reserve = party.GetRange(3, 3);
+        var party = new List<BattleUnit>(field);
+        party.AddRange(reserve);
         battle = new BattleState(Environment.TickCount, field, reserve,
             BattleCatalog.Encounter(floor), BattleCatalog.Deck(party),
             BattleCatalog.JD(), BattleCatalog.EnemyCommander(floor));
@@ -1580,7 +1589,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Text(new Rect(0, 270f, VW, 130f), battle.Victory ? "VICTORY" : battle.Withdrawn ? "WITHDRAWN" : "DEFEAT", 110, c, TextAnchor.MiddleCenter, true, false, 5f);
         Text(new Rect(300f, 404f, 1000f, 50f), battle.Victory ? reward + " gold will return to the Tower." : battle.LastMessage, 26, Color.white, TextAnchor.MiddleCenter, true, false, 2f);
         Rect button = new Rect(620f, 500f, 360f, 70f);
-        if (MiniButton(button, "RETURN TO TOWER", true, true, c, -1f, 24)) ExitBattle();
+        if (MiniButton(button, ReturnLabel, true, true, c, -1f, 24)) ExitBattle();
     }
 
     private void DrawLog()

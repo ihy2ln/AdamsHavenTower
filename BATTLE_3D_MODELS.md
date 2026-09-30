@@ -3,7 +3,7 @@
 > **Sept 29: the field now uses the anime 2D chibis, not these 3D rigs.**
 > Allies draw animated battle-outfit clips from `Assets/Resources/AdamsHaven/BattleChibi/<id>/{idle,walk_in_place}.png`
 > (6x4 atlases, 24 frames at 12 fps, packed by `Tools/build_battle_chibi_atlases.py` from
-> `S:/AI/Game/art/character_cards/chibi-roster-dual-look-v1/<character>/battle/clips`). Idle loops; walk plays during melee dashes.
+> `S:/AI/Game/art/characters/character_cards/chibi-roster-dual-look-v1/<character>/battle/clips`). Idle loops; walk plays during melee dashes.
 > JD falls back to the painted `Chibi/jd.png`. The 3D rigs below are kept but disabled by `Use3DRigs` in `BattleModels.cs`.
 
 ## Play
@@ -79,3 +79,22 @@ construction, material conversion, clock sampling, and animation signals as the 
 The validation menu captures ready, placement, and draw poses as Battle3D-jd*.png in the project root.
 The six party rigs were also visually checked in ready and attack poses.
 The current Tower scene was retained during offscreen testing.
+
+## Anime battle models (Sept 29, pilot: Kaela)
+
+Pipeline per character:
+1. Meshy web (image-to-3D, Meshy 7.1, textured, A-pose) from the anime battle-outfit art
+   `chibi-roster-dual-look-v1/<character>/battle/neutral.png` (inputs in `MeshyJobs/anime-battle-v1/inputs`).
+2. Free remesh to 30K triangles, Humanoid auto-rig with hand-placed markers, preset motions added
+   (Hit Reaction, Knock Down, Victory + character moves), downloaded as one GLB with the MeshyRig skeleton.
+3. `Tools/retarget_anime_battle.py` (Blender, headless) copies the nine CZN-referenced actions from
+   `chibi-shared-3d-v2/<character>/battle-motion-v1/battle.glb` onto the new rig by bone name (world
+   direction + roll, hips scaled), renames the Meshy clips to AH_*, yaw-corrects side-on Meshy stances,
+   and exports `BattleModels/<id>/model.fbx` + textures.
+4. `AdamsHaven/AnimeToon` shader (cel two-tone + rim + ink outline) replaces URP Lit on the rigs.
+
+Runtime: units whose model has `AH_hit_react` (plus JD) render as 3D rigs; the rest use the painted
+BattleChibi loops. `MoveSets` in BattleModels.cs picks basic / skill / ultimate clips per unit; targets
+flinch with AH_hit_react and hold AH_knock_down when downed.
+Kaela: basic = AH_attack_cross_slash, skill = AH_attack_rising_strike, ultimate = AH_flying_kick.
+Meshy cost for Kaela: 35 credits (model); remesh, rig and preset animations were free in the web app.

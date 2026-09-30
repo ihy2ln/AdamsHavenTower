@@ -13,7 +13,7 @@ public static class AndroidReleaseBuilder
 {
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
-    private const string Version = "0.3.0";
+    private const string Version = "0.4.0";
     private const string ApkName = "AdamsHavenTower-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }
@@ -79,14 +79,22 @@ public static class AndroidReleaseBuilder
         PlayerSettings.productName = "Adams Haven Tower";
         PlayerSettings.SetApplicationIdentifier(android, "com.adamshaven.tower");
         PlayerSettings.bundleVersion = Version;
-        PlayerSettings.Android.bundleVersionCode = 3;
+        PlayerSettings.Android.bundleVersionCode = 4;
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
         EditorUserBuildSettings.buildAppBundle = false;
         EditorUserBuildSettings.development = false;
-        var scenes = new System.Collections.Generic.List<string>();
-        foreach (var scene in EditorBuildSettings.scenes) if (scene.enabled) scenes.Add(scene.path);
+        // Every Adams Haven scene ships in the one APK (Tower first = the launch scene).
+        var scenes = new System.Collections.Generic.List<string>
+        {
+            "Assets/Scenes/AdamsHavenTower.unity",
+            "Assets/Scenes/AdamsHavenTowerBattle.unity",
+            "Assets/Scenes/AdamsHavenBattleSandbox.unity"
+        };
+        var settingsScenes = new EditorBuildSettingsScene[scenes.Count];
+        for (int i = 0; i < scenes.Count; i++) settingsScenes[i] = new EditorBuildSettingsScene(scenes[i], true);
+        EditorBuildSettings.scenes = settingsScenes;
         string output = Path.Combine(BuildsFolder, ApkName);
         Note("building " + string.Join(",", scenes) + " -> " + output);
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions

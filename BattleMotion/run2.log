@@ -1,0 +1,16 @@
+h3 fx_fire
+  queued 5a6ff826-cbc6-4e46-b393-790ed2365717
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_fire_sheet.png frames [np.int64(4), np.int64(9), np.int64(13), np.int64(18), np.int64(23), np.int64(28), np.int64(32), np.int64(37)] of 56
+h3 fx_lightning
+  queued 75dd77a5-4e56-4db8-bff3-977f639c9f52
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_lightning_sheet.png frames [np.int64(5), np.int64(10), np.int64(16), np.int64(21), np.int64(27), np.int64(32), np.int64(38), np.int64(43)] of 56
+h3 fx_light
+  queued 935c720a-1453-4424-8835-18e68317655e
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_light_sheet.png frames [np.int64(5), np.int64(8), np.int64(11), np.int64(14), np.int64(18), np.int64(21), np.int64(24), np.int64(27)] of 56
+qwen edit first
+  queued 4cd4d575-b94d-4f73-bc76-eafef60f1b04
+qwen edit last
+  queued f919a191-021d-4ede-89ab-d084232569ba
+h3 ult_ghislaine
+  queued 9cc8a8c9-b9f0-478c-a02d-b9f412242838
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_ghislaine.mp4

@@ -1,0 +1,29 @@
+{
+  "kind": "ult",
+  "unit": "elara",
+  "out": "ult_elara_convergence",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9122,
+  "keys": [
+    [
+      "first",
+      [
+        "elara.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the elf mage-scholar: light brown hair in a messy bun, round glasses, pointed ears, freckles, navy coat with silver shoulder armor, white blouse, a heavy spellbook; keep her exact face, eyes, hair, ears and outfit. she points two fingers forward, a spark gathering at her fingertips, eyes glowing behind her glasses. Dark background with lightning energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\elara.png",
+        "elara.webp"
+      ],
+      "A wide 16:9 cinematic anime shot of the character from these images (the elf mage-scholar: light brown hair in a messy bun, round glasses, pointed ears, freckles, navy coat with silver shoulder armor, white blouse, a heavy spellbook); keep her exact face, hair and outfit. many rune circles line up in front of her outstretched hand and a single colossal blue-white lightning beam fires through them across the frame. Dynamic camera angle, speed lines, dramatic lightning lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the elf mage-scholar: light brown hair in a messy bun, round glasses, pointed ears, freckles, navy coat with silver shoulder armor, white blouse, a heavy spellbook: she points two fingers forward, a spark gathering at her fingertips, eyes glowing behind her glasses. A white flash and fast speed lines, then the camera whips back to a wide shot: many rune circles line up in front of her outstretched hand and a single colossal blue-white lightning beam fires through them across the frame. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

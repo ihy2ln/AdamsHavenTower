@@ -41,6 +41,19 @@ public static class BattleCatalog
         };
     }
 
+    // The chosen fighters, in the order given (expedition party selection).
+    public static List<BattleUnit> Party(IList<string> ids)
+    {
+        var all = Party();
+        var chosen = new List<BattleUnit>();
+        foreach (string id in ids)
+        {
+            BattleUnit unit = all.Find(u => u.Id == id);
+            if (unit != null) chosen.Add(unit);
+        }
+        return chosen;
+    }
+
     public static BattleUnit JD()
     {
         return new BattleUnit { Id = "jd", Name = "JD", Art = "Chibi/jd",

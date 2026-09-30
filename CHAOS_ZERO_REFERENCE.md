@@ -39,9 +39,9 @@ Frame study of the three videos drove these choices: ultimates cut to a ~3 s cin
 
 | Output | Used by |
 | --- | --- |
-| `Resources/AdamsHaven/UltCutIns/<unit id>.mp4` (720p60) | `DrawCutIn` plays it through a VideoPlayer when present; the cut length follows the clip. Units without a clip keep the card slide-in. |
+| `Resources/AdamsHaven/UltCutIns/<card id>.mp4` (720p60) | `DrawCutIn` plays it through a VideoPlayer. The cut length follows the clip. Lookup is by card id, then unit id. A card with no clip (Awakening, JD decrees) keeps the card slide-in. |
 | `Fx/Gen/fx_slash_sheet`, `fx_impact_sheet` | Layered over the procedural hit in `Impact()` |
-| `Fx/Gen/fx_frost_sheet` | Water-element hits |
+| `Fx/Gen/fx_frost_sheet`, `fx_fire_sheet`, `fx_lightning_sheet`, `fx_light_sheet` | Element burst on Water / Fire / Lightning / Light hits (`BattleGui.ElementSheet`) |
 | `Fx/Gen/fx_warp_sheet` | Full-screen flash on crits |
 
-Work files and keyframes are in `BattleMotion/<job>/`. Delete a job's `h3_24.mp4` to re-render. Without that, only the sheet is rebuilt. Only Kaela has an ultimate clip so far. To add a fighter, add a `ult_<id>` entry to `JOBS` with its art. When rigged clips arrive, these stay as the overlay layer. The rig driver listens to `AnimationSignal` for the body motion.
+Work files and keyframes are in `BattleMotion/<job>/`. Delete a job's `h3_24.mp4` to re-render. Without that, only the sheet is rebuilt. All six party fighters have both of their ultimates rendered (12 clips). To add or re-shoot one, edit its row in `ULTS` (close-up beat, wide shot, seed) and run the job. Delete its `h3_hi.mp4` to re-render the motion, and delete its `key_*.png` files to regenerate the keyframes. `python Tools/produce_battle_motion.py ult_*` runs every ultimate. When rigged clips arrive, these stay as the overlay layer. The rig driver listens to `AnimationSignal` for the body motion.

@@ -1,0 +1,69 @@
+{
+  "standard-combat-01-mossgate-arena": {
+    "title": "Mossgate Arena",
+    "scenery": "res://art/battle/presentation/mossgate-wide.png",
+    "ambience": "forest",
+    "tone": "8db5a7",
+    "entry": "THROUGH THE MOSSGATE"
+  },
+  "briar_hollow_01": {
+    "title": "Briar Hollow",
+    "ambience": "forest",
+    "entry": "Roots tighten around ancient stone.",
+    "tone": "203a31"
+  },
+  "briar_hollow_02": {
+    "title": "Briar Hollow",
+    "ambience": "forest",
+    "entry": "Roots tighten around ancient stone.",
+    "tone": "203a31"
+  },
+  "briar_hollow_03": {
+    "title": "Briar Hollow",
+    "ambience": "forest",
+    "entry": "Roots tighten around ancient stone.",
+    "tone": "203a31"
+  },
+  "briar-camp-01": {
+    "title": "Rootside Camp",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "ROOTSIDE CAMP"
+  },
+  "briar-treasure-01": {
+    "title": "Workshop Cache",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "WORKSHOP CACHE"
+  },
+  "briar-elite-01": {
+    "title": "Thornseal Vault",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "THORNSEAL VAULT"
+  },
+  "briar-entrance-03": {
+    "title": "Entrance",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "BRIAR ENTRANCE 03"
+  },
+  "briar-junction-03": {
+    "title": "Junction",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "BRIAR JUNCTION 03"
+  },
+  "briar-ranger-camp-03": {
+    "title": "Ranger Camp",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "BRIAR RANGER CAMP 03"
+  },
+  "briar-crystal-vault-03": {
+    "title": "Crystal Vault",
+    "ambience": "forest",
+    "tone": "203a31",
+    "entry": "BRIAR CRYSTAL VAULT 03"
+  }
+}

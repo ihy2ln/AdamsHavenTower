@@ -1,0 +1,29 @@
+{
+  "kind": "ult",
+  "unit": "kaela",
+  "out": "ult_kaela_bastion",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9108,
+  "keys": [
+    [
+      "first",
+      [
+        "kaela.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves; keep her exact face, eyes, hair, ears and outfit. she crosses her forearms in front of her face, frost spreading over her gloves, a determined grin. Dark background with ice energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\kaela.png",
+        "kaela.webp"
+      ],
+      "A wide 16:9 cinematic anime shot of the character from these images (the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves); keep her exact face, hair and outfit. she stands planted with arms spread as a huge translucent dome of ice crystal walls rises around her allies, glittering frost aurora overhead. Dynamic camera angle, speed lines, dramatic ice lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves: she crosses her forearms in front of her face, frost spreading over her gloves, a determined grin. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands planted with arms spread as a huge translucent dome of ice crystal walls rises around her allies, glittering frost aurora overhead. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

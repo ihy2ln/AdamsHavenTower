@@ -1,0 +1,76 @@
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_slash_sheet.png frames [np.int64(6), np.int64(11), np.int64(15), np.int64(20), np.int64(25), np.int64(30), np.int64(34), np.int64(39)] of 56
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_impact_sheet.png frames [np.int64(4), np.int64(7), np.int64(10), np.int64(13), np.int64(17), np.int64(20), np.int64(23), np.int64(26)] of 56
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_frost_sheet.png frames [np.int64(6), np.int64(11), np.int64(17), np.int64(22), np.int64(27), np.int64(32), np.int64(38), np.int64(43)] of 56
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_lightning_sheet.png frames [np.int64(5), np.int64(10), np.int64(16), np.int64(21), np.int64(27), np.int64(32), np.int64(38), np.int64(43)] of 56
+FX -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\Fx\Gen\fx_light_sheet.png frames [np.int64(5), np.int64(8), np.int64(11), np.int64(14), np.int64(18), np.int64(21), np.int64(24), np.int64(27)] of 56
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_kaela_avalanche.mp4
+qwen edit first
+  queued 52a2db16-f8d9-4ac0-aaa2-a5ebe1c90087
+qwen edit last
+  queued 64a0f644-0255-4ee6-806d-3005040a3b09
+h3 ult_kaela_bastion
+  queued e502131d-4c4f-455a-9a07-6e349cd3f292
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_kaela_bastion.mp4
+qwen edit first
+  queued e83d157e-8ba7-4b09-91dd-a011837d981c
+qwen edit last
+  queued 2e8689cc-d094-4e0c-918b-cf6550201a63
+h3 ult_ghislaine_oath
+  queued 0c504002-a8f2-4912-8fd5-5c191ba0f05a
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_ghislaine_oath.mp4
+qwen edit first
+  queued 202054da-e337-4a98-8e73-3e661cc123dd
+qwen edit last
+  queued ceee372e-2e03-41a6-9704-0603657b1b1b
+h3 ult_elara
+  queued a0dceb9d-16a9-494d-be5d-523f1027fae8
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_elara.mp4
+qwen edit first
+  queued b258cce3-8905-49d7-b25c-fbd6fde2ad61
+qwen edit last
+  queued a52504b8-df05-48ba-a4b1-4da211eb1e93
+h3 ult_elara_convergence
+  queued b4c65bf2-73f7-45ab-91f2-48f8b473a9b8
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_elara_convergence.mp4
+qwen edit first
+  queued a135cc78-878a-4eac-96c6-efcf8e5ddb8d
+qwen edit last
+  queued 39d239e7-ee77-4e73-82d3-a569d8a61035
+h3 ult_helda
+  queued 2e937c85-c755-4efd-8348-918e6df83b8d
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_helda.mp4
+qwen edit first
+  queued 8d739dc5-ccb1-4343-9d8c-b9b1bcc16a9d
+qwen edit last
+  queued 8d868d4d-4733-4e75-80ea-4531f801c503
+h3 ult_helda_sanctuary
+  queued 90b1ccc3-8dec-480d-8fb6-8a6b6a1a6869
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_helda_sanctuary.mp4
+qwen edit first
+  queued 237b1678-a2a6-41b9-a47f-81e3a43d9282
+qwen edit last
+  queued 6d6b6b18-ac7f-40d6-b416-80001cd4cf39
+h3 ult_daisy
+  queued f4f57450-34a4-4a7f-a1bd-667e1d1ea767
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_daisy.mp4
+qwen edit first
+  queued c03f75e1-4d08-4876-a6e9-065b697a9bce
+qwen edit last
+  queued f0079773-dd07-4e4d-b15d-7711a45b9d8a
+h3 ult_daisy_inferno
+  queued 64c780aa-4544-469f-adbb-2d79f906aa62
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_daisy_inferno.mp4
+qwen edit first
+  queued 484e2e77-0ab1-4df7-a9d9-299ef23510ea
+qwen edit last
+  queued a53ff9fc-11f0-4fe7-96e2-b649f3920cfd
+h3 ult_clarity
+  queued 8b7a63d3-0c99-417d-a3fd-6477d9d12660
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_clarity.mp4
+qwen edit first
+  queued b07b4045-3bfa-4244-ba12-fe879e65f34f
+qwen edit last
+  queued 77c42b94-e8e0-43e2-a50d-b21d994ab978
+h3 ult_clarity_feast
+  queued 1049534f-5ded-41b2-a5a3-42e025b329f6
+ULT -> S:\AI\Game\Unity AHCG\My project\Assets\Resources\AdamsHaven\UltCutIns\ult_clarity_feast.mp4

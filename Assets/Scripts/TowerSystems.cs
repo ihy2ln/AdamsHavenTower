@@ -220,6 +220,7 @@ namespace AdamsHaven.Tower
         private void Tick(float dt, bool live)
         {
             State.clock += dt;
+            TickConstruction(dt);
             TickNeeds(dt, live);
             FlushDeaths();
             TickLife(dt, live);

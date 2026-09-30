@@ -1,6 +1,6 @@
 """Pack the anime dual-look battle clips into Unity atlases for BattleMode.
 
-Source: S:/AI/Game/art/character_cards/chibi-roster-dual-look-v1/<character>/battle/clips/<clip>/NNN.png
+Source: S:/AI/Game/art/characters/character_cards/chibi-roster-dual-look-v1/<character>/battle/clips/<clip>/NNN.png
 Output: Assets/Resources/AdamsHaven/BattleChibi/<id>/<clip>.png
 Layout: 2048x2048, 6 columns x 4 rows, 24 frames, row 0 at the top. Every frame of a
 character shares one scale, horizontally centred and foot-aligned to the cell bottom.
@@ -8,7 +8,7 @@ character shares one scale, horizontally centred and foot-aligned to the cell bo
 import os
 from PIL import Image
 
-SRC = "S:/AI/Game/art/character_cards/chibi-roster-dual-look-v1"
+SRC = "S:/AI/Game/art/characters/character_cards/chibi-roster-dual-look-v1"
 DST = os.path.join(os.path.dirname(__file__), "..", "Assets", "Resources", "AdamsHaven", "BattleChibi")
 ROSTER = {"kaela": "kaela-stormfang", "amara": "amara-the-alluring-empress", "clarity": "clarity-lockhart",
           "daisy": "daisy-bonfire-wildheart", "elara": "elara-vellum", "ghislaine": "ghislaine-dedoldia",

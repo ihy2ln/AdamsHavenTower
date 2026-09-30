@@ -74,6 +74,14 @@ public static class TowerPortValidation
             finally { UnityEngine.Object.DestroyImmediate(probe); }
         }
         var simulation = new TowerSimulationTests();
+        simulation.InstantBuilds();
+        try { RunSimulation(simulation); }
+        finally { simulation.TimedBuilds(); }
+        Debug.Log("Tower validation passed: ten checkpoints, tutorial, motion atlases, and eighteen simulation tests.");
+    }
+
+    private static void RunSimulation(TowerSimulationTests simulation)
+    {
         simulation.StatMatchingAndPrioritiesChangeProduction();
         simulation.RushUsesMatchingSkillAndCreatesAResult();
         simulation.FamilyChildLivesAndMatures();
@@ -92,7 +100,6 @@ public static class TowerPortValidation
         simulation.VersionOneSaveMigratesWithoutLosingAssignments();
         simulation.AllMilestonesRemainPlayable();
         simulation.OlderPopulatedSaveSkipsTheFoundingGuide();
-        Debug.Log("Tower validation passed: ten checkpoints, tutorial, motion atlases, and eighteen simulation tests.");
     }
 
     private static void Require(bool condition, string message)

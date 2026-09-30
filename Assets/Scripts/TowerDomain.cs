@@ -27,6 +27,7 @@ namespace AdamsHaven.Tower
         public bool repairOrder;
         public float repairProgress;
         public float rushFatigue;
+        public bool flip;   // barn only: the anchor bay is on the left, so the barn grows right
     }
 
     [Serializable] public sealed class TowerResident
@@ -149,6 +150,12 @@ namespace AdamsHaven.Tower
         public int generator;        // TowerMilestones.Version that built a checkpoint slot
         public bool steward = true;  // re-staffs food, water and firewood before they run out
         public float stewardTimer;
+        public List<TowerWork> works = new List<TowerWork>();   // rooms, wings and floors still under construction
+        public List<string> regionsUnlocked = new List<string>();
+        public List<string> regionsConquered = new List<string>();
+        public bool hasRun;                                     // a guild expedition is under way (run is valid)
+        public TowerRun run = new TowerRun();
+        public string lastLayout = "";
     }
 
     public sealed class TowerRoomDef
@@ -181,7 +188,7 @@ namespace AdamsHaven.Tower
             new TowerRoomDef("well", "Stone Well", "produce", 1, 80, "sight", "water"),
             new TowerRoomDef("lumber_mill", "Lumber Mill", "produce", 3, 120, "might", "firewood"),
             new TowerRoomDef("quarry", "Stone Quarry", "produce", 3, 180, "grit", "celestium", false, true),
-            new TowerRoomDef("barn", "Barn", "storage", 2, 150, "grit"),
+            new TowerRoomDef("barn", "Barn", "storage", 1, 150, "grit"),
             new TowerRoomDef("silo", "Grain Silo", "storage", 1, 110, "grit"),
             new TowerRoomDef("warehouse", "Warehouse", "storage", 3, 260, "grit"),
             new TowerRoomDef("frosted_mug", "The Frosted Mug", "medic", 3, 260, "wit", "tonics"),
@@ -196,6 +203,16 @@ namespace AdamsHaven.Tower
             foreach (var def in All) if (def.id == id) return def;
             return null;
         }
+    }
+
+    // Barns climb nine tiers (F to SSR) and widen from one bay to three; every other room stops at level 3.
+    public static class TowerTiers
+    {
+        public static readonly string[] BarnNames = { "F", "E", "D", "C", "B", "A", "S", "SS", "SSR" };
+        public static int MaxLevel(string type) { return type == "barn" ? BarnNames.Length : 3; }
+        public static int BarnBays(int level) { return level <= 3 ? 1 : (level <= 5 ? 2 : 3); }
+        public static string BarnTier(int level)
+        { return BarnNames[Math.Max(0, Math.Min(BarnNames.Length - 1, level - 1))]; }
     }
 
     public sealed partial class TowerRules
@@ -235,6 +252,8 @@ namespace AdamsHaven.Tower
             if (State.notifiedGoals == null) State.notifiedGoals = new List<string>();
             if (State.counters == null) State.counters = new List<TowerCounter>();
             if (State.bonds == null) State.bonds = new List<TowerBond>();
+            if (State.works == null) State.works = new List<TowerWork>();
+            NormalizeExpeditions();
             if (State.memorial == null) State.memorial = new List<TowerMemorial>();            if (State.randomState == 0) State.randomState = 77101;
             foreach (var resident in State.residents)
             {
@@ -247,6 +266,17 @@ namespace AdamsHaven.Tower
                 // The Heart sits in the middle now: every founded floor also holds its east side.
                 foreach (var floor in State.floors) if (floor.east < 1) floor.east = 1;
                 RefillGoals();
+            }
+            foreach (var room in State.rooms)
+            {
+                if (room.type != "barn") continue;
+                // Older saves kept every barn two cells wide; the tiered barn is one bay until level 4.
+                int bays = TowerTiers.BarnBays(room.level);
+                if (room.width > bays)
+                {
+                    if (room.x + room.width <= CoreX) room.x += room.width - bays;   // west wing: free the outer (left) cells
+                    room.width = bays;
+                }
             }
             string[] bodyVariants = { "normal", "short", "tall", "muscle", "hourglass" };
             int bodyIndex = 0;
@@ -318,7 +348,7 @@ namespace AdamsHaven.Tower
             State.introPhase = "complete";
             State.tutorialStep = 0;
             RefillGoals();
-            foreach (string id in new[] { "kitchen", "well", "lumber_mill", "market", "nursery" })
+            foreach (string id in new[] { "kitchen", "well", "lumber_mill", "market", "nursery", "guild_hall" })
                 if (!State.blueprints.Contains(id)) State.blueprints.Add(id);
             // Tower-only progression needs a foundation and income path without battle rewards.
             State.celestium += 45;
@@ -413,10 +443,12 @@ namespace AdamsHaven.Tower
             if (eastSide && x + def.width - 1 > CoreX + f.east) return "Expand the Celestium foundation east first.";
             if (def.groundOnly && floor != 0) return "This room needs the ground floor.";
             if (def.undergroundOnly && floor >= 0) return "This room belongs underground.";
-            for (int cx = x; cx < x + def.width; cx++) if (RoomAt(floor, cx) != null) return "Another room occupies that space.";
-            if (westSide && x + def.width != CoreX && RoomAt(floor, x + def.width) == null)
+            for (int cx = x; cx < x + def.width; cx++)
+                if (RoomAt(floor, cx) != null || WorkRoomAt(floor, cx) != null) return "Another room occupies that space.";
+            if (westSide && x + def.width != CoreX && RoomAt(floor, x + def.width) == null &&
+                WorkRoomAt(floor, x + def.width) == null)
                 return "Build contiguously outward from the Heart shaft.";
-            if (eastSide && x != CoreX + 1 && RoomAt(floor, x - 1) == null)
+            if (eastSide && x != CoreX + 1 && RoomAt(floor, x - 1) == null && WorkRoomAt(floor, x - 1) == null)
                 return "Build contiguously outward from the Heart shaft.";
             if (State.gold < BuildCost(type)) return "Not enough gold.";
             if (State.wood < BuildWoodCost(type) || State.stone < BuildStoneCost(type))
@@ -432,6 +464,14 @@ namespace AdamsHaven.Tower
             State.gold -= BuildCost(type);
             State.wood -= BuildWoodCost(type);
             State.stone -= BuildStoneCost(type);
+            if (Timed)
+            {
+                float seconds = RoomBuildSeconds(type);
+                StartWork("room", floor, x, 0, type, seconds);
+                Note("Started building " + TowerCatalog.Get(type).displayName + " on floor " + floor +
+                    " (" + Clock(seconds) + ").");
+                return null;
+            }
             var built = AddRoom(type, floor, x);
             Bump("build");
             Emit("build", built.uid, 0, type);
@@ -449,10 +489,18 @@ namespace AdamsHaven.Tower
         {
             if (number < FloorMin || number > FloorMax) return "Floor out of range.";
             if (Floor(number) != null) return "Floor already open.";
+            if (FloorWork(number) != null) return "That floor is already being built.";
             if (Floor(number - 1) == null && Floor(number + 1) == null) return "Open floors outward from the Heart.";
             int cost = FloorOpenCost(number);
             if (State.celestium < cost) return "Not enough Celestium.";
             State.celestium -= cost;
+            if (Timed)
+            {
+                float seconds = FloorBuildSeconds(number);
+                StartWork("floor", number, 0, 0, null, seconds);
+                Note("Started building floor " + number + " (" + Clock(seconds) + ").");
+                return null;
+            }
             State.floors.Add(new TowerFloor { number = number, east = 1 });
             Note("Opened floor " + number + ".");
             return null;
@@ -498,6 +546,7 @@ namespace AdamsHaven.Tower
             var floor = Floor(number);
             if (floor == null) return "Open this floor first.";
             if (side >= 0) side = 1;
+            if (WingWork(number, side) != null) return "That foundation is already being extended.";
             if (WingCellsOf(number, side) >= WingCells + (side > 0 && number == 0 ? 1 : 0))
                 return side < 0 ? "The west wing is fully founded." : "The east wing is fully founded.";
             if (side > 0 && number == 0 && RoomAt(0, GateX) == null) return "Place the Gate first.";
@@ -507,6 +556,14 @@ namespace AdamsHaven.Tower
             int cost = ExpandCost(number, side);
             if (State.celestium < cost) return "Not enough Celestium.";
             State.celestium -= cost;
+            if (Timed)
+            {
+                float seconds = WingBuildSeconds(number, side);
+                StartWork("wing", number, 0, side, null, seconds);
+                Note("Started extending floor " + number + (side < 0 ? " westward" : " eastward") +
+                    " (" + Clock(seconds) + ").");
+                return null;
+            }
             if (side < 0) floor.west++; else floor.east++;
             Note("Expanded floor " + number + (side < 0 ? " westward." : " eastward."));
             return null;
@@ -637,17 +694,66 @@ namespace AdamsHaven.Tower
             return null;
         }
 
+        public int MaxLevel(TowerRoom room) { return TowerTiers.MaxLevel(room.type); }
+
+        public string LevelLabel(TowerRoom room)
+        {
+            return room.type == "barn" ? "Tier " + TowerTiers.BarnTier(room.level) + " (Lv " + room.level + ")" :
+                "Level " + room.level;
+        }
+
+        // A barn that gains a bay grows outward from the tower, or inward when that side is blocked.
+        // Single-bay barns are free to pick a side; wider barns keep the side they already grew toward.
+        private string BarnGrowth(TowerRoom room, int newWidth, out int newX, out bool newFlip)
+        {
+            newX = room.x; newFlip = room.flip;
+            int grow = newWidth - room.width;
+            var f = Floor(room.floor);
+            bool westSide = room.x + room.width <= CoreX;
+            bool left = true, right = true;
+            if (room.width > 1) { left = !room.flip; right = room.flip; }
+            bool preferRight = room.width > 1 ? room.flip : !westSide;
+            for (int pass = 0; pass < 2; pass++)
+            {
+                bool toRight = pass == 0 ? preferRight : !preferRight;
+                if (toRight ? !right : !left) continue;
+                int from = toRight ? room.x + room.width : room.x - grow;
+                bool free = f != null;
+                for (int cx = from; free && cx < from + grow; cx++)
+                {
+                    if (cx < MinBuildX || cx > MaxBuildX || cx == CoreX || cx == GateX && room.floor == 0) free = false;
+                    else if (RoomAt(room.floor, cx) != null || WorkRoomAt(room.floor, cx) != null) free = false;
+                    else if (westSide ? (cx > CoreX - 1 || cx < CoreX - f.west) : (cx <= CoreX || cx > CoreX + f.east))
+                        free = false;
+                }
+                if (!free) continue;
+                newX = toRight ? room.x : room.x - grow; newFlip = toRight;
+                return null;
+            }
+            return "The barn needs " + grow + " free, founded cell" + (grow > 1 ? "s" : "") + " beside it to grow.";
+        }
+
         public string UpgradeRoom(int roomUid)
         {
             var room = Room(roomUid);
-            if (room == null || room.type == "heart" || room.type == "gate" || room.level >= 3)
+            if (room == null || room.type == "heart" || room.type == "gate" || room.level >= MaxLevel(room))
                 return "That room cannot be upgraded.";
-            int cost = (room.level == 1 ? 200 : 600) * room.width;
+            int newWidth = room.type == "barn" ? TowerTiers.BarnBays(room.level + 1) : room.width;
+            int newX = room.x; bool newFlip = room.flip;
+            if (newWidth > room.width)
+            {
+                string blocked = BarnGrowth(room, newWidth, out newX, out newFlip);
+                if (blocked != null) return blocked;
+            }
+            int cost = room.type == "barn" ?
+                (room.level == 1 ? 200 : 600 * (room.level - 1)) * newWidth :
+                (room.level == 1 ? 200 : 600) * room.width;
             if (State.gold < cost) return "Not enough gold.";
-            int material = room.level * room.width * 2;
+            int material = room.level * newWidth * 2;
             if (State.wood < material || State.stone < material)
                 return "Upgrades need wood and stone.";
             State.gold -= cost; State.wood -= material; State.stone -= material; room.level++;
+            room.x = newX; room.width = newWidth; room.flip = newFlip;
             Note("Upgraded " + room.type + " to level " + room.level + ".");
             Bump("upgrade");
             Emit("upgrade", room.uid, 0, room.level.ToString());

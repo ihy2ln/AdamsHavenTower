@@ -61,3 +61,38 @@ All in `Assets/Scripts/TowerColony.cs` (partial `TowerRules`), hooked into the e
 - Checkpoints: `TowerMilestones.Version = 2`. Generation staffs survival rooms and posts two Gate guards. On start, slots
   2-10 built by an older generator are rebuilt and the old file is kept as `slot_XX.json.gen0.bak`. Slot 1 is never touched.
 - Tests: 50 in `TowerSimulationTests`, including every checkpoint feeding itself for 30 minutes with no deaths.
+
+## Sept 29 (5): construction time, zoom
+- `TowerConstruction.cs`: `Build`, `OpenFloor` and `ExpandFloor` start a `TowerWork` job in `State.works` (cost paid up front) that counts down in game
+  seconds, offline too (`CatchUp`). Room 15+10*width+cost/20 s, wing 20+3*cells, floor 45+3*|n|; halved while the guide runs (`tutorialStep < 7`).
+  Sites reserve their cells (`WorkRoomAt`), one wing job per side, one job per floor. `TowerRules.InstantConstruction` is for tests only.
+- Art (from S:\AI\Game\art): `Structure/construction_frame.png` (tower/pilot_hd_v1/building_shell_v1) and `construction_floor.png`
+  (tower/silverbrook_low_tier/empty_floor). `TowerArtDirector.BuildSites` draws frame, fading preview of the room, timer and bar.
+- Camera: mouse wheel and pinch zoom toward the cursor / pinch centre (2.5..30), two-finger drag pans, `UserView` stops auto-reframing.
+- Tests: 51 (adds `ConstructionTakesTimeAndCompletesOffline`).
+
+## Sept 29 (6): Guild Hall expeditions
+- `TowerGuild.cs`: expeditions are chosen at the Silverbrook Adventure Guild. `GuildRequired()` gates the HUD (build one first; the blueprint is granted at
+  `ChooseStarter`). Battle tiers by hall level: OUTSKIRTS (Lv1, depth 1, 80g), DEEP WOODS (Lv2, depth 4, 160g), BOSS LAIR (Lv3, depth 8, 300g).
+- HUD: selecting a Guild Hall opens the board (`popupGuild`): three battle tiers plus SUPPLIES / RELICS / PATROL / RECALL for the selected resident.
+  Also PEOPLE flyout -> GUILD EXPEDITIONS, the room panel EXPEDITIONS button, and the resident panel GO tab's GUILD button.
+  `SendExploring` itself stays ungated so tests and saves are unaffected.
+- Art: `Rooms/guild_hall_F_v2.png` from Game Assets/buildings/tower/buildings/Guild Hall (level 1). E and D still use the old art until replaced.
+
+## Sept 29 (7): Guild expeditions (region map -> plan -> forest map -> D&D dungeon crawl)
+- Entry: Guild Hall board -> OPEN THE EXPEDITION MAP (or RESUME). `AdamsHavenPrototype.OpenExpedition/CloseExpedition` hide/show the Tower
+  (`HideTower/ShowTower`, shared with battle). `TowerExpeditionUi` owns its own canvas.
+- Rules (no UI): `TowerExpedition.cs` (8 regions in an unlock chain starting at Silverbrook Edge, plan validation, provisions,
+  haul + 2-slot Safe Pocket, forest travel costs rations, EndExpedition), `TowerForestLayouts.cs` (15 maps; fog_hollow is hand-placed in
+  `Resources/AdamsHaven/Expedition/forest_layouts.json`, the rest come from a generator seeded by map id so each map never changes;
+  silverfall_glen / thornwood_gate / ashen_barrow show a mirrored stand-in plate until they get their own painting),
+  `TowerDungeon.cs` (20x20 grid, layout fixed by map+POI+floor, room contents rolled from the run seed; fog of war; room events;
+  stairs; goal room clears the POI; the lair's boss conquers the region). State: `regionsUnlocked/regionsConquered/hasRun/run/lastLayout`.
+- Themes (ruin, cave, marsh, crystal, briar, keep) come from the POI/landmark terrain. `TowerDungeonTiles.cs` paints each theme's
+  floor/corridor/wall (autotile by neighbour mask)/door at runtime; drop `Expedition/Tiles/<theme>_<part>.png` to override.
+- Battle hook (additive): `BattleMode.Begin(depth, field, reserve, onLeave)`, `BattleMode.ReturnLabel`, `BattleCatalog.Party(ids)`.
+  Gear: hero weapon level +8% attack, tool level +6% HP. HP carries between fights as percent.
+- Art copied from Game Assets (Godot-era, used only as art): expedition region/forest maps, trail props, dungeon parchment/fog mats,
+  room scenes per category, node icons. Importer rule in `TowerPresentationImporter` for `/AdamsHaven/Expedition/`.
+- Tests: 60 in `TowerSimulationTests` (layouts fixed and connected, dungeons deterministic and reachable, full crawl, wipe keeps pocket,
+  region unlocks, save round trip). The old guild tier buttons are gone; `ExpeditionTiers/CanLaunchBattle` remain but are unused.

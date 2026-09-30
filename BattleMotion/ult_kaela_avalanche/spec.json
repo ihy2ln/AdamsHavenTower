@@ -1,6 +1,7 @@
 {
   "kind": "ult",
   "unit": "kaela",
+  "out": "ult_kaela_avalanche",
   "size": [
     1248,
     704
@@ -13,16 +14,16 @@
       [
         "kaela.webp"
       ],
-      "Recompose this character as a tight cinematic anime close-up for an ultimate attack cut-in, 16:9. Keep her exact face, golden eye, star eyepatch, snow-leopard ears, sky-blue hair, fangs, tattoos and white top. She looks straight at the camera with a fierce fanged grin, one fist raised beside her face with frost crackling off the knuckles, hair whipping in an icy wind. Dark midnight-blue background with drifting snow and cold rim light. Sharp cel-shaded anime game illustration."
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves; keep her exact face, eyes, hair, ears and outfit. one fist raised beside her face with frost crackling off the knuckles, fierce fanged grin. Dark background with ice and snow energy and strong rim light. Sharp cel-shaded anime game illustration."
     ],
     [
       "last",
       [
-        "ult_kaela_avalanche.png",
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\kaela.png",
         "kaela.webp"
       ],
-      "Reframe the first image as a wide 16:9 cinematic shot of the same moment: the snow-leopard fighter from the second image slams both fists into the frozen ground and a colossal eruption of ice crystals and snow bursts outward across the whole frame, white-blue light at the impact, avalanche and mountains behind. Keep her face, eyepatch, ears, hair, outfit and tattoos exactly. Dynamic low camera angle, speed lines, sharp anime game illustration."
+      "A wide 16:9 cinematic anime shot of the character from these images (the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves); keep her exact face, hair and outfit. she slams both fists into the frozen ground and a colossal eruption of ice crystals and snow bursts outward across the whole frame, avalanche and mountains behind. Dynamic camera angle, speed lines, dramatic ice and snow lighting, sharp anime game illustration."
     ]
   ],
-  "prompt": "Anime game ultimate attack cinematic. Starting on a tight close-up, the snow-leopard fighter grins and cocks her frost-covered fist, her blue hair whipping; a white flash and fast speed lines; the camera whips back and down as she leaps and slams both fists into the ground, erupting a massive wave of ice crystals and snow outward with a bright shockwave. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the snow-leopard beastfolk brawler: sky-blue hair, one golden eye, a star-marked eyepatch, snow-leopard ears and spotted tail, fangs, leopard-spot tattoos, white top, black fingerless gloves: one fist raised beside her face with frost crackling off the knuckles, fierce fanged grin. A white flash and fast speed lines, then the camera whips back to a wide shot: she slams both fists into the frozen ground and a colossal eruption of ice crystals and snow bursts outward across the whole frame, avalanche and mountains behind. Punchy, fast, dramatic camera, consistent character, no text, no UI."
 }

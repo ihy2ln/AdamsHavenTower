@@ -14,14 +14,25 @@ public sealed partial class BattleMode
         public RenderTexture Image;
         public readonly Dictionary<string, AnimationClip> Clips = new Dictionary<string, AnimationClip>();
         public string Action = "AH_battle_guard";
-        public float Started, Rate = 1f;
+        public float Started, Rate = 1f, Offset;
+        public bool Hold;   // knocked down: stay on the last frame instead of returning to guard
         public readonly List<Material> Materials = new List<Material>();
     }
     readonly Dictionary<BattleUnit, FieldRig> fieldRigs = new Dictionary<BattleUnit, FieldRig>();
 
-    // The field uses the painted anime chibi clips (BattleChibi atlases) instead of the 3D FBX rigs.
-    // Set true to bring the skinned 3D rigs back for comparison.
-    static readonly bool Use3DRigs = false;
+    // Units with an anime-toon rig (Meshy battle-outfit model + retargeted CZN-style clips, marked by
+    // AH_hit_react) and JD's card duelist render in 3D; everyone else uses the painted BattleChibi loops.
+    // The older civilian-outfit 3D drafts are skipped. Set true to force every 3D rig back on.
+    static readonly bool UseOld3DRigs = false;
+    static bool IsAnimeRig(FieldRig rig, BattleUnit unit) { return unit.Id == "jd" || rig.Clips.ContainsKey("AH_hit_react"); }
+
+    // Move sets per unit: clip, start offset into the clip (skips long wind-ups) and first contact time.
+    struct Move { public string Clip; public float Start, Impact; public Move(string c, float s, float i) { Clip = c; Start = s; Impact = i; } }
+    static readonly Dictionary<string, Move[]> MoveSets = new Dictionary<string, Move[]>
+    {
+        // basic, skill, ultimate
+        { "kaela", new[] { new Move("AH_attack_cross_slash", 0, .52f), new Move("AH_attack_rising_strike", 0, .66f), new Move("AH_flying_kick", 1.7f, 2.54f) } },
+    };
     const int AnimeColumns = 6, AnimeRows = 4, AnimeFrames = 24;
     const float AnimeFps = 12f;
     readonly Dictionary<string, Texture2D> animeClips = new Dictionary<string, Texture2D>();
@@ -61,7 +72,6 @@ public sealed partial class BattleMode
     void BuildFieldRigs()
     {
         ReleaseFieldRigs();
-        if (!Use3DRigs) return;
         AnimationSignal -= AnimateFieldRig;
         AnimationSignal += AnimateFieldRig;
         foreach (var u in battle.Allies) AddFieldRig(u);
@@ -88,6 +98,7 @@ public sealed partial class BattleMode
             int start = clip.name.LastIndexOf("AH_", StringComparison.Ordinal);
             if (start >= 0) rig.Clips[clip.name.Substring(start)] = clip;
         }
+        if (!UseOld3DRigs && !IsAnimeRig(rig, unit)) { Destroy(rig.Stage); return; }
         AnimationClip idle;
         if (rig.Clips.TryGetValue("AH_battle_guard", out idle)) idle.SampleAnimation(rig.Model, 0);
         foreach (var helper in rig.Model.GetComponentsInChildren<MeshRenderer>())
@@ -126,6 +137,16 @@ public sealed partial class BattleMode
             {
                 var tex = mat.mainTexture;
                 var color = mat.color;
+                var toon = Shader.Find("AdamsHaven/AnimeToon");
+                if (toon)
+                {
+                    // Anime cel shading + ink outline; scene lighting is intentionally ignored.
+                    mat.shader = toon;
+                    mat.SetTexture("_BaseMap", tex);
+                    mat.SetColor("_BaseColor", color);
+                    rig.Materials.Add(mat);
+                    continue;
+                }
                 mat.shader = Shader.Find("Universal Render Pipeline/Lit");
                 mat.SetTexture("_BaseMap", tex);
                 mat.SetColor("_BaseColor", color);
@@ -147,7 +168,7 @@ public sealed partial class BattleMode
         rig.Camera.clearFlags = CameraClearFlags.SolidColor;
         rig.Camera.backgroundColor = Color.clear;
         rig.Camera.allowHDR = false;
-        rig.Image = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32);
+        rig.Image = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         rig.Image.Create(); rig.Camera.targetTexture = rig.Image;
         var lightObject = new GameObject("Portrait light");
         lightObject.transform.SetParent(rig.Stage.transform, false);
@@ -156,11 +177,23 @@ public sealed partial class BattleMode
         light.type = LightType.Point; light.range = 9; light.intensity = 35;
         fieldRigs.Add(unit, rig);
     }
+    void PlayRig(FieldRig rig, string clip, float start, float rate, bool hold = false)
+    {
+        if (!rig.Clips.ContainsKey(clip)) return;
+        rig.Action = clip; rig.Started = fx; rig.Offset = start; rig.Rate = rate; rig.Hold = hold;
+    }
     void AnimateFieldRig(BattleAnimationSignal signal)
     {
+        FieldRig hurt;
+        if (signal.Target != null && fieldRigs.TryGetValue(signal.Target, out hurt) && !hurt.Hold)
+        {
+            // Victim reactions: a flinch on damage, a held knockdown when the unit goes down.
+            if (signal.Phase == BattleAnimationPhase.Hit) PlayRig(hurt, "AH_hit_react", .35f, 1.6f);
+            else if (signal.Phase == BattleAnimationPhase.Down) PlayRig(hurt, "AH_knock_down", .2f, 1.3f, true);
+        }
         if (signal.Actor == null) return;
         FieldRig rig;
-        if (!fieldRigs.TryGetValue(signal.Actor, out rig)) return;
+        if (!fieldRigs.TryGetValue(signal.Actor, out rig) || rig.Hold) return;
         if (signal.Actor.Id == "jd")
         {
             string gesture = signal.Phase == BattleAnimationPhase.DrawCards ? "AH_draw_card"
@@ -173,6 +206,13 @@ public sealed partial class BattleMode
         }
         if (signal.Phase != BattleAnimationPhase.Action) return;
         var c = signal.Card;
+        float want = Mathf.Max(.15f, V(signal.Actor).Impact);
+        Move[] set;
+        if (c != null && c.Power > 0 && MoveSets.TryGetValue(signal.Actor.Id, out set))
+        {
+            var m = c.Kind == BattleCardKind.Ultimate ? set[2] : c.Id != null && c.Id.StartsWith("basic_") ? set[0] : set[1];
+            if (rig.Clips.ContainsKey(m.Clip)) { PlayRig(rig, m.Clip, m.Start, (m.Impact - m.Start) / want); return; }
+        }
         string name; float impact;
         if (c == null || c.Power <= 0) { name = "AH_attack_guard_pulse"; impact = .65f; }
         else if (c.Kind == BattleCardKind.Ultimate) { name = "AH_attack_overhead_burst"; impact = .91f; }
@@ -180,9 +220,7 @@ public sealed partial class BattleMode
         else if (signal.Actor.Role == BattleRole.Ranger) { name = "AH_attack_aimed_shot"; impact = .64f; }
         else if (signal.Actor.Id == "kaela") { name = "AH_attack_rising_strike"; impact = .66f; }
         else { name = "AH_attack_cross_slash"; impact = .52f; }
-        if (!rig.Clips.ContainsKey(name)) return;
-        rig.Action = name; rig.Started = fx;
-        rig.Rate = impact / Mathf.Max(.15f, V(signal.Actor).Impact);
+        PlayRig(rig, name, 0, impact / want);
     }
     void TickFieldRigs()
     {
@@ -194,10 +232,11 @@ public sealed partial class BattleMode
             if (!visible) continue;
             AnimationClip clip;
             if (!rig.Clips.TryGetValue(rig.Action, out clip)) continue;
-            float time = (fx - rig.Started) * rig.Rate;
-            if (rig.Action != "AH_battle_guard" && time >= clip.length)
+            float time = rig.Offset + (fx - rig.Started) * rig.Rate;
+            if (rig.Hold) time = Mathf.Min(time, clip.length - .01f);
+            else if (rig.Action != "AH_battle_guard" && time >= clip.length)
             {
-                rig.Action = "AH_battle_guard"; rig.Started = fx; rig.Rate = 1;
+                rig.Action = "AH_battle_guard"; rig.Started = fx; rig.Rate = 1; rig.Offset = 0;
                 if (!rig.Clips.TryGetValue(rig.Action, out clip)) continue;
                 time = 0;
             }
@@ -237,6 +276,21 @@ public sealed partial class BattleMode
         fx += .3f;
         TickFieldRigs();
         foreach (var rig in fieldRigs.Values) rig.Stage.SetActive(true);
+    }
+    // Writes each rig's current render target to <dir>/rig-<id>-<clip>.png.
+    public void DebugRigSnapshot(string dir)
+    {
+        foreach (var entry in fieldRigs)
+        {
+            var img = entry.Value.Image;
+            var previous = RenderTexture.active;
+            RenderTexture.active = img;
+            var tex = new Texture2D(img.width, img.height, TextureFormat.RGBA32, false);
+            tex.ReadPixels(new Rect(0, 0, img.width, img.height), 0, 0); tex.Apply();
+            RenderTexture.active = previous;
+            System.IO.File.WriteAllBytes(System.IO.Path.Combine(dir, "rig-" + entry.Key.Id + "-" + entry.Value.Action + ".png"), tex.EncodeToPNG());
+            Destroy(tex);
+        }
     }
     public string DebugRigReport()
     {

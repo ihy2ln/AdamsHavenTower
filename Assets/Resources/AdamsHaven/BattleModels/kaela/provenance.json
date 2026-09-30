@@ -1,6 +1,15 @@
 {
-  "source": "S:\\AI\\Harness\\Codex\\home\\worktrees\\chibi-3d-tpose\\AdamsHavenCardGame\\art\\character_cards\\chibi-shared-3d-v2\\kaela-stormfang\\battle-motion-v1\\battle.glb",
+  "model": "../MeshyJobs/anime-battle-v1/kaela/kaela-meshy-rigged-animated.glb",
+  "motions_from": "S:/AI/Harness/Codex/home/worktrees/chibi-3d-tpose/AdamsHavenCardGame/art/character_cards/chibi-shared-3d-v2/kaela-stormfang/battle-motion-v1/battle.glb",
+  "extra_motions": [],
   "clips": [
+    "AH_combo_double",
+    "AH_flying_kick",
+    "AH_hit_react",
+    "AH_knock_down",
+    "AH_combo_triple",
+    "AH_victory",
+    "AH_walk",
     "AH_attack_aimed_shot",
     "AH_attack_cast_release",
     "AH_attack_cross_slash",
@@ -10,5 +19,13 @@
     "AH_attack_overhead_burst",
     "AH_attack_rising_strike",
     "AH_battle_guard"
-  ]
+  ],
+  "shared_bones": 24,
+  "unmatched_bones": [
+    "LeftHand_End",
+    "RightHand_End",
+    "LeftToe_end",
+    "RightToe_end"
+  ],
+  "height_ratio": 1.181465426866041
 }

@@ -86,13 +86,20 @@ public sealed class TowerArtDirector : MonoBehaviour
             framedPanels = panels;
             float width = (west + east + 1) * Cell;
             float viewWidthFraction = 0.86f - (residentsOpen ? 0.19f : 0) - (roomOpen ? 0.19f : 0);
-            cameraView.orthographicSize = Mathf.Max(3.7f, (width + 1.8f) /
-                (2 * cameraView.aspect * viewWidthFraction));
-            float shift = ((roomOpen ? 1 : 0) - (residentsOpen ? 1 : 0)) *
-                0.105f * cameraView.orthographicSize * 2 * cameraView.aspect;
-            cameraView.transform.position = new Vector3(X(22.5f + (east - west) * 0.5f) + shift,
-                newState && west <= 2 ? 0.35f : cameraView.transform.position.y, -30);
+            float fit = Mathf.Max(3.7f, (width + 1.8f) / (2 * cameraView.aspect * viewWidthFraction));
+            // A player who zoomed or panned keeps their view when a wing finishes or a panel opens;
+            // a freshly loaded tower is framed to fit.
+            if (newState) tower.ClearUserView();
+            if (!tower.UserView)
+            {
+                cameraView.orthographicSize = fit;
+                float shift = ((roomOpen ? 1 : 0) - (residentsOpen ? 1 : 0)) *
+                    0.105f * cameraView.orthographicSize * 2 * cameraView.aspect;
+                cameraView.transform.position = new Vector3(X(22.5f + (east - west) * 0.5f) + shift,
+                    newState && west <= 2 ? 0.35f : cameraView.transform.position.y, -30);
+            }
         }
+        UpdateSites();
         foreach (var beam in coreBeams)
             if (beam != null) beam.color = new Color(0.65f, 0.91f, 1,
                 0.32f + 0.07f * Mathf.Sin(tower.Rules.State.clock * 2.2f));
@@ -139,8 +146,136 @@ public sealed class TowerArtDirector : MonoBehaviour
         return Layer(name, Root + path, new Vector3(x, y, z), new Vector2(width, height),
             crop ?? Full, tint ?? Color.white);
     }
+    // Barns are real 3D models (one per tier, Tools/barn_pipeline.py) seen through the orthographic camera.
+    private readonly Dictionary<string, GameObject> modelPrefabs = new Dictionary<string, GameObject>();
+    private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+    private bool BarnModel(TowerRoom room, float cx, float y, bool lit)
+    {
+        string path = "AdamsHaven/TowerModels/barn/barn_" + TowerTiers.BarnTier(room.level);
+        GameObject prefab;
+        if (!modelPrefabs.TryGetValue(path, out prefab))
+            modelPrefabs[path] = prefab = Resources.Load<GameObject>(path);
+        if (prefab == null) return false;
+        var model = Object.Instantiate(prefab, artRoot);
+        model.name = "Barn " + room.uid + " " + TowerTiers.BarnTier(room.level);
+        // The painted front is one bay per 2 units; the flipped barn anchors on its left bay and grows right.
+        model.transform.localPosition = new Vector3(cx, y - 1.0f, 2.6f);
+        // The FBX puts the painted front on +Z; turn it to face the camera at -Z.
+        model.transform.localRotation = Quaternion.Euler(0, 180, 0) * prefab.transform.localRotation;
+        model.transform.localScale = new Vector3(room.flip ? -1 : 1, 1, 1);
+        // Assign the tier's baked material directly; the prefab's own material reference can revert on FBX reimport.
+        var material = Resources.Load<Material>(path);
+        var block = new MaterialPropertyBlock();
+        block.SetColor(BaseColor, lit ? Color.white : new Color(0.26f, 0.30f, 0.42f));
+        foreach (var renderer in model.GetComponentsInChildren<Renderer>())
+        {
+            if (material != null) renderer.sharedMaterial = material;
+            renderer.SetPropertyBlock(block);
+        }
+        return true;
+    }
+
+    private string RoomArt(string type, string grade, out Rect crop)
+    {
+        string path = "Rooms/" + type + "_" + grade;
+        if (Resources.Load<Texture2D>(Root + path) == null)
+            path = "Rooms/" + (type == "quarry" ? "warehouse" : "cottage") + "_F";
+        crop = type == "barn" ? Full : new Rect(0.035f, 0.14f, 0.93f, 0.57f);
+        if (type == "house" && Resources.Load<Texture2D>(Root + "Rooms/living_interior_v1") != null)
+        { path = "Rooms/living_interior_v1"; crop = new Rect(0.2f, 0, 0.6f, 1); }
+        if (type == "kitchen" && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
+        { path = "Rooms/kitchen_interior_v1"; crop = Full; }
+        // Transparent guild hall cutaway (Game Assets/buildings/tower/buildings/Guild Hall); cropped to the hall itself.
+        if (type == "guild_hall" && grade == "F" && Resources.Load<Texture2D>(Root + "Rooms/guild_hall_F_v2") != null)
+        { path = "Rooms/guild_hall_F_v2"; crop = new Rect(0.04f, 0.145f, 0.92f, 0.55f); }
+        return path;
+    }
+
+    // ---------------------------------------------------------------- construction sites
+
+    private sealed class Site { public TextMesh label; public Transform fill; public float width; public TowerWork work;
+        public SpriteRenderer ghost; }
+    private readonly List<Site> sites = new List<Site>();
+    private Sprite whiteSprite;
+
+    private void BuildSites(int middle, int range)
+    {
+        foreach (var work in tower.Rules.State.works)
+        {
+            if (work.floor < middle - range || work.floor > middle + range) continue;
+            float y = work.floor * Storey;
+            float left, width;
+            SpriteRenderer ghostRenderer = null;
+            if (work.kind == "room")
+            {
+                var def = TowerCatalog.Get(work.type);
+                if (def == null) continue;
+                left = X(work.x); width = def.width * Cell;
+                Rect crop;
+                string grade = "F";
+                string path = RoomArt(work.type, grade, out crop);
+                // The finished room fades in behind the timber frame as the work advances.
+                // The barn painting is a wide bay sitting on the floor line, not a full-height room.
+                float ghostHeight = work.type == "barn" ? (width - 0.07f) * 0.82f : 2.20f;
+                float ghostY = work.type == "barn" ? y - 1.0f + ghostHeight / 2 : y + 0.14f;
+                var ghost = Art("Site preview " + work.type, path, left + width / 2, ghostY, 2.55f,
+                    width - 0.07f, ghostHeight, crop);
+                if (ghost != null) ghostRenderer = ghost.GetComponent<SpriteRenderer>();
+            }
+            else if (work.kind == "wing")
+            {
+                int cell = tower.Rules.NextExpansionX(work.floor, work.side);
+                left = X(cell); width = Cell;
+            }
+            else
+            {
+                left = X(21); width = 3 * Cell;
+            }
+            float cx = left + width / 2;
+            Art("Site floor " + work.kind, "Structure/construction_floor", cx, y + 0.14f, 2.7f,
+                width - 0.07f, 2.20f, new Rect(0.06f, 0.04f, 0.28f, 0.90f), new Color(0.8f, 0.8f, 0.85f));
+            Art("Site frame " + work.kind, "Structure/construction_frame", cx, y + 0.13f, -0.6f,
+                width + 0.06f, 2.32f, Full, new Color(1.15f, 1.08f, 0.95f));
+            // Progress bar under the label.
+            if (whiteSprite == null)
+                whiteSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0, 0.5f), 4);
+            float barWidth = Mathf.Max(0.7f, width * 0.7f);
+            var back = new GameObject("Site bar back", typeof(SpriteRenderer));
+            back.transform.SetParent(artRoot, false);
+            back.transform.localPosition = new Vector3(cx - barWidth / 2, y + 0.28f, -1.3f);
+            back.transform.localScale = new Vector3(barWidth, 0.10f, 1);
+            var backRenderer = back.GetComponent<SpriteRenderer>();
+            backRenderer.sprite = whiteSprite; backRenderer.color = new Color(0.05f, 0.06f, 0.09f, 0.85f);
+            var fill = new GameObject("Site bar fill", typeof(SpriteRenderer));
+            fill.transform.SetParent(artRoot, false);
+            fill.transform.localPosition = new Vector3(cx - barWidth / 2, y + 0.28f, -1.35f);
+            fill.transform.localScale = new Vector3(barWidth * work.Progress, 0.10f, 1);
+            var fillRenderer = fill.GetComponent<SpriteRenderer>();
+            fillRenderer.sprite = whiteSprite; fillRenderer.color = new Color(1f, 0.78f, 0.28f);
+            Label("BUILDING  0:00", new Vector3(cx, y + 0.62f, -1.3f), width);
+            var label = roomLabels[roomLabels.Count - 1];
+            sites.Add(new Site { label = label, fill = fill.transform, width = barWidth, work = work,
+                ghost = ghostRenderer });
+        }
+    }
+
+    private void UpdateSites()
+    {
+        foreach (var site in sites)
+        {
+            if (site.label == null || site.fill == null) continue;
+            site.label.text = "BUILDING  " + TowerRules.Clock(site.work.remaining);
+            var scale = site.fill.localScale;
+            scale.x = site.width * site.work.Progress;
+            site.fill.localScale = scale;
+            if (site.ghost != null)
+                site.ghost.color = new Color(1, 1, 1, 0.15f + 0.6f * site.work.Progress);
+        }
+    }
+
     private void RebuildArt()
     {
+        sites.Clear();
         roomLabels.Clear();
         coreBeams.Clear();
         // Hide placeholder architecture; preserve animated residents and event feedback.
@@ -199,16 +334,14 @@ public sealed class TowerArtDirector : MonoBehaviour
                 else if (room.type == "gate")
                     Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
                         rw * 1.05f, 2.30f, new Rect(0.13f, 0.01f, 0.79f, 0.98f));
+                else if (room.type == "barn" && BarnModel(room, cx, y, tower.Rules.IsPowered(room)))
+                {
+                    if (!tower.Rules.IsPowered(room)) Label("NO FIREWOOD", new Vector3(cx, y + 0.35f, -1.2f), rw);
+                }
                 else
                 {
-                    string path = "Rooms/" + room.type + "_" + grade;
-                    if (Resources.Load<Texture2D>(Root + path) == null)
-                        path = "Rooms/" + (room.type == "quarry" ? "warehouse" : "cottage") + "_F";
-                    Rect crop = new Rect(0.035f, 0.14f, 0.93f, 0.57f);
-                    if (room.type == "house" && Resources.Load<Texture2D>(Root + "Rooms/living_interior_v1") != null)
-                    { path = "Rooms/living_interior_v1"; crop = new Rect(0.2f, 0, 0.6f, 1); }
-                    if (room.type == "kitchen" && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
-                    { path = "Rooms/kitchen_interior_v1"; crop = Full; }
+                    Rect crop;
+                    string path = RoomArt(room.type, grade, out crop);
                     // Rooms the hearths cannot light go dark, Fallout Shelter style.
                     bool lit = tower.Rules.IsPowered(room);
                     Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
@@ -248,15 +381,17 @@ public sealed class TowerArtDirector : MonoBehaviour
             }
             Label(f.number == 0 ? "GROUND" : (f.number > 0 ? "+" : "") + f.number.ToString("00"),
                 new Vector3(left - 0.48f, y - 1.13f, -1), 0.7f);
-            if (f.number == highest)
+            if (f.number == highest && tower.Rules.FloorWork(f.number + 1) == null)
                 Roof(center, y + 2.18f, width + 0.72f);
             if (f.number == 0)
                 Art("Ivy and stone foundation", "Structure/foundation_v1", center, y - 2.06f, 3.5f,
                     width + 2.4f, 3.1f);
             for (int cell = 22 - f.west; cell < endCell; cell++)
-                if (cell != TowerRules.CoreX && tower.Rules.RoomAt(f.number, cell) == null)
+                if (cell != TowerRules.CoreX && tower.Rules.RoomAt(f.number, cell) == null &&
+                    tower.Rules.WorkRoomAt(f.number, cell) == null)
                     Label("+", new Vector3(X(cell + 0.5f), y + 0.05f, -0.8f), 0.5f);
         }
+        BuildSites(middle, range);
     }
 
     private void BuildLandscape()

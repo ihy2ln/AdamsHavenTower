@@ -1,0 +1,29 @@
+{
+  "kind": "ult",
+  "unit": "helda",
+  "out": "ult_helda",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9131,
+  "keys": [
+    [
+      "first",
+      [
+        "helda.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the sturdy brewmaster: auburn braided hair with a silver streak, blue eyes, braided headband, sapphire earrings, cream blouse with a red corset, a big brass-bound war hammer; keep her exact face, eyes, hair, ears and outfit. she smiles warmly and raises her glowing brass tankard in a toast, soft golden light on her face. Dark background with warm hearth light and gentle frost energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\helda.png",
+        "helda.webp"
+      ],
+      "A wide 16:9 cinematic anime shot of the character from these images (the sturdy brewmaster: auburn braided hair with a silver streak, blue eyes, braided headband, sapphire earrings, cream blouse with a red corset, a big brass-bound war hammer); keep her exact face, hair and outfit. she stands with her hammer lifted as a warm golden hearth glow and swirling healing motes spread over the whole field, snowflakes melting into sparkles. Dynamic camera angle, speed lines, dramatic warm hearth light and gentle frost lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the sturdy brewmaster: auburn braided hair with a silver streak, blue eyes, braided headband, sapphire earrings, cream blouse with a red corset, a big brass-bound war hammer: she smiles warmly and raises her glowing brass tankard in a toast, soft golden light on her face. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands with her hammer lifted as a warm golden hearth glow and swirling healing motes spread over the whole field, snowflakes melting into sparkles. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

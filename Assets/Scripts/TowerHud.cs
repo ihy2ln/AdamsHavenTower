@@ -45,7 +45,11 @@ public sealed class TowerHud : MonoBehaviour
     private float toastTimer;
 
     // popups and flyout
-    private Image popupBuild, popupFloors, popupTasks, popupMenu, flyoutPanel, flyoutCatcher;
+    private Image popupBuild, popupFloors, popupTasks, popupMenu, popupGuild, flyoutPanel, flyoutCatcher;
+    private Button guildMap;
+    private Button guildSupplies, guildRelics, guildPatrol, guildRecall, guildOpen;
+    private Text guildInfo, guildPerson;
+    private int guildAutoOpened;
     private readonly Button[] flyoutButtons = new Button[6];
     private Text buildPageText, floorText, incidentText;
     private readonly Button[] categoryButtons = new Button[5];
@@ -99,7 +103,7 @@ public sealed class TowerHud : MonoBehaviour
             Vector2.zero, Vector2.zero, Color.clear).rectTransform;
         safeRoot.GetComponent<Image>().raycastTarget = false;
         BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
-        BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup();
+        BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
         BuildSaves(); BuildDefeat(); BuildFlyout();
         UpdateSafeArea();
         Refresh();
@@ -379,7 +383,7 @@ public sealed class TowerHud : MonoBehaviour
         return new[] {
             new FlyItem("WORK PRIORITIES", () => OpenPeople("work")),
             new FlyItem("MOODS", () => OpenPeople("mood")),
-            new FlyItem("EXPEDITIONS", () => OpenPeople("explore")),
+            new FlyItem("GUILD EXPEDITIONS", OpenGuildBoard),
             new FlyItem("FAMILY", () => OpenPeople("family"))
         };
     }
@@ -500,21 +504,27 @@ public sealed class TowerHud : MonoBehaviour
     private bool AnyPopupOpen()
     {
         return popupBuild.gameObject.activeSelf || popupFloors.gameObject.activeSelf ||
-            popupTasks.gameObject.activeSelf || popupMenu.gameObject.activeSelf;
+            popupTasks.gameObject.activeSelf || popupMenu.gameObject.activeSelf ||
+            popupGuild.gameObject.activeSelf;
+    }
+
+    private void HidePopups()
+    {
+        popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
+        popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
+        popupGuild.gameObject.SetActive(false);
     }
 
     private void CloseAllPopups()
     {
-        popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
-        popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
+        HidePopups();
         Refresh();
     }
 
     private void TogglePopup(Image popup)
     {
         bool open = !popup.gameObject.activeSelf;
-        popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
-        popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
+        HidePopups();
         popup.gameObject.SetActive(open);
         if (open) popup.transform.SetAsLastSibling();
         Refresh();
@@ -602,6 +612,55 @@ public sealed class TowerHud : MonoBehaviour
             () => tower.Apply(tower.Rules.AutoAssignIdle()), Teal, 15);
     }
 
+    // ---------------------------------------------------------------- guild expedition board
+
+    private void OpenGuildBoard()
+    {
+        string error = tower.Rules.GuildRequired();
+        if (error != null) { tower.Apply(error); return; }
+        HidePopups();
+        popupGuild.gameObject.SetActive(true);
+        popupGuild.transform.SetAsLastSibling();
+        Refresh();
+    }
+
+    private void BuildGuildPopup()
+    {
+        popupGuild = MakePopup("Guild popup", 580, 296, false);
+        var t = popupGuild.transform;
+        TextAt(t, "Guild title", "SILVERBROOK ADVENTURE GUILD", 16, 10, 480, 28, 18, Gold);
+        CloseButton(t, 538, 10, CloseAllPopups);
+        Divider(t, 12, 40, 556);
+        guildInfo = TextAt(t, "Guild info", "", 16, 46, 548, 26, 14, Cream);
+        guildMap = ButtonAt(t, "Expedition map", "OPEN THE EXPEDITION MAP", 14, 76, 552, 74,
+            () => { CloseAllPopups(); tower.OpenExpedition(); }, Teal, 19);
+        TextAt(t, "Guild resident title", "SEND A RESIDENT", 16, 160, 300, 26, 16, Gold);
+        guildPerson = TextAt(t, "Guild resident", "", 16, 186, 548, 24, 14, Cream);
+        guildSupplies = ButtonAt(t, "Guild supplies", "SUPPLIES", 14, 220, 132, 46, () => Explore("supplies"), Teal, 15);
+        guildRelics = ButtonAt(t, "Guild relics", "RELICS", 154, 220, 132, 46, () => Explore("relics"), Teal, 15);
+        guildPatrol = ButtonAt(t, "Guild patrol", "PATROL", 294, 220, 132, 46, () => Explore("patrol"), Teal, 15);
+        guildRecall = ButtonAt(t, "Guild recall", "RECALL", 434, 220, 132, 46,
+            () => { if (tower.SelectedPerson != null) tower.Apply(tower.Rules.Recall(tower.SelectedPerson.id)); },
+            Alert, 15);
+    }
+
+    private void RefreshGuild()
+    {
+        var rules = tower.Rules;
+        var run = rules.Run;
+        guildInfo.text = run != null ? "An expedition is under way in " + TowerRules.Region(run.region).name + "." :
+            "Regions conquered " + rules.State.regionsConquered.Count + " / " + TowerRules.Regions.Length +
+            "  •  plan a party and venture into Silverbrook Forest.";
+        LabelOf(guildMap).text = run != null ? "RESUME EXPEDITION" : "OPEN THE EXPEDITION MAP";
+        var person = tower.SelectedPerson;
+        guildPerson.text = person == null ? "Select a resident in PEOPLE first." :
+            person.name + (person.exploring ? " is away on an expedition." : person.ageStage != 0 ? " is too young." :
+                person.downed ? " is down." : " is ready.");
+        bool ready = person != null && person.ageStage == 0 && !person.exploring && !person.downed;
+        guildSupplies.interactable = guildRelics.interactable = guildPatrol.interactable = ready;
+        guildRecall.interactable = person != null && person.exploring;
+    }
+
     private void BuildMenuPopup()
     {
         popupMenu = MakePopup("Menu popup", 250, 158, true);
@@ -673,7 +732,7 @@ public sealed class TowerHud : MonoBehaviour
         exploreRelics = ButtonAt(left.transform, "Relics expedition", "RELICS", 103, 406,
             86, 42, () => Explore("relics"), Teal, 13);
         explorePatrol = ButtonAt(left.transform, "Battle expedition", "BATTLE", 195, 406,
-            86, 42, () => tower.LaunchBattleExpedition(), Teal, 13);
+            86, 42, OpenGuildBoard, Teal, 13);
         recall = ButtonAt(left.transform, "Recall", "RECALL", 11, 454, 86, 43,
             () => { if (tower.SelectedPerson != null) tower.Apply(tower.Rules.Recall(tower.SelectedPerson.id)); },
             Alert, 14);
@@ -707,6 +766,9 @@ public sealed class TowerHud : MonoBehaviour
             () => { if (tower.SelectedRoom != null) tower.AssignSelectedToRoom(tower.SelectedRoom.uid); },
             Teal, 16);
         roomAdvice = TextAt(right.transform, "Assignment advice", "", 15, 252, 270, 110, 14, Cream);
+        guildOpen = ButtonAt(right.transform, "Guild expeditions", "EXPEDITIONS", 15, 366, 270, 46,
+            OpenGuildBoard, Teal, 16);
+        guildOpen.gameObject.SetActive(false);
     }
 
     // ---------------------------------------------------------------- tutorial, overlays
@@ -872,6 +934,8 @@ public sealed class TowerHud : MonoBehaviour
     private void Explore(string choice)
     {
         var person = tower.SelectedPerson;
+        string error = tower.Rules.GuildRequired();
+        if (error != null) { tower.Apply(error); return; }
         if (person != null) tower.Apply(tower.Rules.SendExploring(person.id, choice));
     }
 
@@ -910,6 +974,7 @@ public sealed class TowerHud : MonoBehaviour
         if (popupBuild.gameObject.activeSelf) RefreshBuild();
         if (popupFloors.gameObject.activeSelf) RefreshFloors(state);
         if (popupTasks.gameObject.activeSelf) RefreshTasks(state);
+        if (popupGuild.gameObject.activeSelf) RefreshGuild();
         RefreshChip();
     }
 
@@ -1002,15 +1067,24 @@ public sealed class TowerHud : MonoBehaviour
         var here = tower.Rules.Floor(focus);
         LabelOf(floorOpenAbove).text = "OPEN ABOVE  " + tower.Rules.FloorOpenCost(focus + 1) + "C";
         LabelOf(floorOpenBelow).text = "OPEN BELOW  " + tower.Rules.FloorOpenCost(focus - 1) + "C";
-        floorOpenAbove.interactable = tower.Rules.Floor(focus + 1) == null && focus < TowerRules.FloorMax;
-        floorOpenBelow.interactable = tower.Rules.Floor(focus - 1) == null && focus > TowerRules.FloorMin;
-        floorWest.interactable = floorEast.interactable = here != null;
+        var rules = tower.Rules;
+        var above = rules.FloorWork(focus + 1);
+        var below = rules.FloorWork(focus - 1);
+        floorOpenAbove.interactable = rules.Floor(focus + 1) == null && above == null && focus < TowerRules.FloorMax;
+        floorOpenBelow.interactable = rules.Floor(focus - 1) == null && below == null && focus > TowerRules.FloorMin;
+        if (above != null) LabelOf(floorOpenAbove).text = "BUILDING  " + TowerRules.Clock(above.remaining);
+        if (below != null) LabelOf(floorOpenBelow).text = "BUILDING  " + TowerRules.Clock(below.remaining);
+        var westWork = rules.WingWork(focus, -1);
+        var eastWork = rules.WingWork(focus, 1);
+        floorWest.interactable = here != null && westWork == null;
+        floorEast.interactable = here != null && eastWork == null;
         if (here == null) return;
-        LabelOf(floorWest).text = "< WEST  " + tower.Rules.ExpandCost(focus, -1) + "C   (" +
-            tower.Rules.WingCellsOf(focus, -1) + "/" + TowerRules.WingCells + ")";
-        int eastCells = tower.Rules.WingCellsOf(focus, 1) - (focus == 0 ? 1 : 0);
-        LabelOf(floorEast).text = "EAST >  " + tower.Rules.ExpandCost(focus, 1) + "C   (" +
-            eastCells + "/" + TowerRules.WingCells + ")";
+        LabelOf(floorWest).text = westWork != null ? "BUILDING  " + TowerRules.Clock(westWork.remaining) :
+            "< WEST  " + rules.ExpandCost(focus, -1) + "C   (" +
+            rules.WingCellsOf(focus, -1) + "/" + TowerRules.WingCells + ")";
+        int eastCells = rules.WingCellsOf(focus, 1) - (focus == 0 ? 1 : 0);
+        LabelOf(floorEast).text = eastWork != null ? "BUILDING  " + TowerRules.Clock(eastWork.remaining) :
+            "EAST >  " + rules.ExpandCost(focus, 1) + "C   (" + eastCells + "/" + TowerRules.WingCells + ")";
     }
 
     private void RefreshTasks(TowerState state)
@@ -1113,6 +1187,7 @@ public sealed class TowerHud : MonoBehaviour
         recall.gameObject.SetActive(explore);
         craftTool.gameObject.SetActive(explore);
         craftWeapon.gameObject.SetActive(explore);
+        LabelOf(explorePatrol).text = "GUILD";
         explorePatrol.interactable = tower.Rules.State.introPhase == "complete";
         if (selected != null)
         {
@@ -1171,9 +1246,20 @@ public sealed class TowerHud : MonoBehaviour
             roomDetail.text = "Tap a room in the cutaway.";
             roomAdvice.text = "Drag a resident from the roster onto a room, or select both and press ASSIGN.";
             collect.interactable = rush.interactable = upgrade.interactable = assign.interactable = false;
+            guildOpen.gameObject.SetActive(false);
+            guildAutoOpened = 0;
             return;
         }
         var def = TowerCatalog.Get(room.type);
+        bool isGuild = room.type == "guild_hall";
+        guildOpen.gameObject.SetActive(isGuild);
+        if (!isGuild) guildAutoOpened = 0;
+        else if (guildAutoOpened != room.uid)
+        {
+            // Selecting the Guild Hall opens its expedition board.
+            guildAutoOpened = room.uid;
+            OpenGuildBoard();
+        }
         string activity = room.ready ? "READY TO COLLECT" : def.kind == "living" ?
             "Housing " + tower.Rules.State.residents.FindAll(r => r.homeRoom == room.uid).Count +
                 "/" + tower.Rules.Capacity(room) : def.kind == "train" ?
@@ -1184,7 +1270,7 @@ public sealed class TowerHud : MonoBehaviour
                 Mathf.RoundToInt(room.progress * 100) + "%  •  " +
                 tower.Rules.ProductionRate(room).ToString("0.0") + " rate";
         roomDetail.text = def.displayName + "   /   Floor " + room.floor +
-            "\nLevel " + room.level + "   Condition " + Mathf.CeilToInt(room.condition) + "%" +
+            "\n" + tower.Rules.LevelLabel(room) + "   Condition " + Mathf.CeilToInt(room.condition) + "%" +
             "   Workers " + tower.Rules.WorkerCount(room.uid) +
             "\n" + activity + (tower.Rules.AdjacencyNote(room).Length > 0 ?
                 "\n" + tower.Rules.AdjacencyNote(room) : "");
@@ -1193,7 +1279,7 @@ public sealed class TowerHud : MonoBehaviour
             tower.Rules.RushChance(room.uid) > 0;
         LabelOf(rush).text = string.IsNullOrEmpty(def.produces) ? "RUSH" :
             "RUSH " + Mathf.RoundToInt(tower.Rules.RushChance(room.uid) * 100) + "%";
-        upgrade.interactable = room.level < 3 && room.type != "heart" && room.type != "gate";
+        upgrade.interactable = room.level < tower.Rules.MaxLevel(room) && room.type != "heart" && room.type != "gate";
         assign.interactable = tower.SelectedPerson != null && tower.SelectedPerson.ageStage == 0 &&
             !tower.SelectedPerson.downed && !tower.SelectedPerson.exploring &&
             room.type != "heart";

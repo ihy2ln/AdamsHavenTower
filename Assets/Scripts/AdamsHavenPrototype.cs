@@ -50,6 +50,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private bool pointerDown, pointerMoved;
     private Vector2 lastPointer, pointerStart;
     private float lastPinchDistance;
+    private Vector2 lastPinchCenter;
+    private bool pinching;
 
     private void Awake()
     {
@@ -82,8 +84,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private void Update()
     {
         if (rules == null) return;
-        if (battleMode != null) return;
+        if (battleMode != null || expedition != null) return;
         HandleCameraInput();
+        SettleZoom();
         rules.Advance(Mathf.Min(Time.deltaTime * speed, 0.25f), true);
         saveTimer += Time.deltaTime;
         if (saveTimer >= 20) { saveTimer = 0; Save(); }
@@ -421,7 +424,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         int hash = rules.DarkRoomCount * 7919;
         foreach (var incident in rules.State.incidents) hash = hash * 31 + incident.roomUid;
         foreach (var room in rules.State.rooms) hash = hash * 17 + room.level + (rules.IsPowered(room) ? 0 : 3);
-        return hash;
+        foreach (var work in rules.State.works) hash = hash * 13 + work.floor * 101 + work.x + work.side * 7 + work.kind.Length;
+        return hash + rules.State.rooms.Count * 104729 + rules.State.floors.Count * 1299709;
     }
 
     private static void Fill(Rect rect, Color color)
@@ -550,11 +554,11 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (room == null)
         { Label(new Rect(18, 610, 198, 78), "Touch a room to see its workers and upgrades.", 16, Color.white); return; }
         TowerRoomDef def = TowerCatalog.Get(room.type);
-        Label(new Rect(18, 607, 198, 48), def.displayName + "\nLevel " + room.level +
+        Label(new Rect(18, 607, 198, 48), def.displayName + "\n" + rules.LevelLabel(room) +
             "  •  " + Mathf.RoundToInt(room.condition) + "% condition", 17, Color.white);
         if (Button(new Rect(16, 658, 98, 51), room.ready ? "COLLECT" : "WAIT", room.ready))
             Action(rules.Collect(room.uid));
-        if (Button(new Rect(124, 658, 98, 51), "UPGRADE", room.level < 3 && room.type != "heart" && room.type != "gate"))
+        if (Button(new Rect(124, 658, 98, 51), "UPGRADE", room.level < rules.MaxLevel(room) && room.type != "heart" && room.type != "gate"))
             Action(rules.UpgradeRoom(room.uid));
         if (Button(new Rect(16, 709, 206, 20), "ASSIGN SELECTED RESIDENT", rules.State.residents.Count > 0 &&
             room.type != "heart" && room.type != "gate"))
@@ -744,9 +748,22 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (hud != null) hud.Refresh();
     }
 
-    public void LaunchBattleExpedition()
+    private int expeditionDepth;
+
+    public void LaunchBattleExpedition() { LaunchBattleExpedition(Mathf.Abs(floor)); }
+
+    public void LaunchBattleExpedition(int depth)
     {
-        if (battleMode != null || rules == null || rules.State.introPhase != "complete") return;
+        if (battleMode != null || expedition != null || rules == null || rules.State.introPhase != "complete") return;
+        expeditionDepth = depth;
+        HideTower();
+        battleMode = gameObject.AddComponent<BattleMode>();
+        battleMode.Begin(depth, OnBattleExpeditionComplete);
+    }
+
+    // Another mode (battle, guild expedition) takes the screen: pause, save, hide the Tower.
+    private void HideTower()
+    {
         Save();
         speedBeforeBattle = speed;
         speed = 0;
@@ -759,8 +776,63 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (hud != null) hud.gameObject.SetActive(false);
         var director = GetComponent<TowerArtDirector>();
         if (director != null) director.enabled = false;
+    }
+
+    private void ShowTower()
+    {
+        speed = speedBeforeBattle;
+        view.cullingMask = viewMaskBeforeBattle;
+        view.backgroundColor = viewColorBeforeBattle;
+        view.clearFlags = viewClearBeforeBattle;
+        pointerDown = false;
+        ignoreInputUntil = Time.unscaledTime + 0.3f;
+        var director = GetComponent<TowerArtDirector>();
+        if (director != null) director.enabled = true;
+        RebuildScene();
+        if (hud != null) { hud.gameObject.SetActive(true); hud.Refresh(); }
+        Save();
+    }
+
+    // ---------------------------------------------------------------- guild expeditions
+
+    private TowerExpeditionUi expedition;
+    public bool ExpeditionOpen { get { return expedition != null; } }
+
+    public void OpenExpedition()
+    {
+        if (battleMode != null || expedition != null || rules == null) return;
+        string error = rules.GuildRequired();
+        if (error != null) { Apply(error); return; }
+        HideTower();
+        expedition = gameObject.AddComponent<TowerExpeditionUi>();
+        expedition.Begin(this);
+    }
+
+    public void CloseExpedition(string result)
+    {
+        if (expedition != null) expedition.Shutdown();
+        expedition = null;
+        if (!string.IsNullOrEmpty(result)) message = result;
+        else if (rules.State.log.Count > 0) message = rules.State.log[rules.State.log.Count - 1];
+        ShowTower();
+    }
+
+    public void SaveExpedition() { Save(); }
+
+    // A dungeon fight: the expedition UI hands over the screen and gets the party back afterwards.
+    public void LaunchExpeditionBattle(int depth, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool> done)
+    {
+        if (battleMode != null) return;
+        Save();
         battleMode = gameObject.AddComponent<BattleMode>();
-        battleMode.Begin(Mathf.Abs(floor), OnBattleExpeditionComplete);
+        battleMode.ReturnLabel = "BACK TO THE DUNGEON";
+        battleMode.Begin(depth, field, reserve, (won, gold) =>
+        {
+            if (battleMode != null) Destroy(battleMode);
+            battleMode = null;
+            done(won);
+            Save();
+        });
     }
 
     public void RestartCurrentSlot()
@@ -782,23 +854,14 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (victory)
         {
             rules.State.gold += gold;
-            rules.State.ore += 1 + Mathf.Abs(floor) / 4;
+            rules.State.ore += 1 + expeditionDepth / 4;
             rules.Note("Battle expedition returned with " + gold + " gold and ore.");
             message = "Battle won: +" + gold + " gold and ore.";
         }
         else message = "The battle party withdrew. The Tower is ready for another expedition.";
         if (battleMode != null) Destroy(battleMode);
         battleMode = null;
-        speed = speedBeforeBattle;
-        view.cullingMask = viewMaskBeforeBattle;
-        view.backgroundColor = viewColorBeforeBattle;
-        view.clearFlags = viewClearBeforeBattle;
-        pointerDown = false;
-        ignoreInputUntil = Time.unscaledTime + 0.3f;
-        var director = GetComponent<TowerArtDirector>();
-        if (director != null) director.enabled = true;
-        if (hud != null) { hud.gameObject.SetActive(true); hud.Refresh(); }
-        Save();
+        ShowTower();
     }
 
     public void LoadCheckpoint(int number)
@@ -842,6 +905,13 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (Mathf.Abs(world.y - number * Storey) > 1.05f) return;
         var room = rules.RoomAt(number, x);
         if (room != null) { SelectRoomById(room.uid); return; }
+        var site = rules.WorkRoomAt(number, x);
+        if (site != null)
+        {
+            message = "Building " + TowerCatalog.Get(site.type).displayName + ": " + TowerRules.Clock(site.remaining) + " left.";
+            if (hud != null) hud.Refresh();
+            return;
+        }
         if (number >= TowerRules.FloorMin && number <= TowerRules.FloorMax &&
             rules.Floor(number) != null && rules.IsFounded(number, x))
         {
@@ -878,18 +948,49 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     {
         float unitsPerPixel = view.orthographicSize * 2 / Mathf.Max(1, Screen.height);
         var position = view.transform.position;
-        position.x = Mathf.Clamp(position.x - delta.x * unitsPerPixel, WorldX(11), WorldX(34));
-        position.y = Mathf.Clamp(position.y - delta.y * unitsPerPixel,
-            TowerRules.FloorMin * Storey, TowerRules.FloorMax * Storey);
-        view.transform.position = position;
+        position.x -= delta.x * unitsPerPixel;
+        position.y -= delta.y * unitsPerPixel;
+        view.transform.position = ClampCamera(position);
         floor = FocusFloor;
-        if (Mathf.Abs(position.y - lastBuiltCameraY) > Storey * 0.65f) RebuildScene();
+        if (Mathf.Abs(view.transform.position.y - lastBuiltCameraY) > Storey * 0.65f) RebuildScene();
     }
 
-    private void Zoom(float delta)
+    private static Vector3 ClampCamera(Vector3 position)
     {
-        view.orthographicSize = Mathf.Clamp(view.orthographicSize * (1 - delta), 3.7f, 30f);
-        if (Mathf.Abs(view.orthographicSize - lastBuiltZoom) > 0.3f) RebuildScene();
+        position.x = Mathf.Clamp(position.x, WorldX(11), WorldX(34));
+        position.y = Mathf.Clamp(position.y, TowerRules.FloorMin * Storey, TowerRules.FloorMax * Storey);
+        return position;
+    }
+
+    private const float ZoomMin = 2.5f, ZoomMax = 30f;
+    private float zoomChangedAt = -1;
+    // True once the player zoomed or panned by hand; the art director then stops re-framing the camera.
+    public bool UserView { get; private set; }
+    public void ClearUserView() { UserView = false; }
+
+    // scale > 1 zooms in. The world point under `anchor` (screen pixels) stays under it, like a map.
+    private void ZoomBy(float scale, Vector2 anchor)
+    {
+        float size = Mathf.Clamp(view.orthographicSize / Mathf.Max(0.05f, scale), ZoomMin, ZoomMax);
+        if (Mathf.Approximately(size, view.orthographicSize)) return;
+        Vector3 before = view.ScreenToWorldPoint(new Vector3(anchor.x, anchor.y, 0));
+        view.orthographicSize = size;
+        Vector3 after = view.ScreenToWorldPoint(new Vector3(anchor.x, anchor.y, 0));
+        var position = view.transform.position + (before - after);
+        position.z = view.transform.position.z;
+        view.transform.position = ClampCamera(position);
+        floor = FocusFloor;
+        UserView = true;
+        zoomChangedAt = Time.unscaledTime;
+        // Zooming out needs more floors drawn now; zooming in can wait until the gesture settles.
+        if (size > lastBuiltZoom * 1.12f) RebuildScene();
+    }
+
+    private void SettleZoom()
+    {
+        if (zoomChangedAt < 0 || Time.unscaledTime - zoomChangedAt < 0.25f) return;
+        zoomChangedAt = -1;
+        if (Mathf.Abs(view.orthographicSize - lastBuiltZoom) > 0.05f) RebuildScene();
     }
 
     private void HandleCameraInput()
@@ -900,7 +1001,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         {
             Vector2 position = Mouse.current.position.ReadValue();
             Vector2 wheel = Mouse.current.scroll.ReadValue();
-            if (wheel.y != 0 && !OverUI(position)) Zoom(Mathf.Clamp(wheel.y / 900f, -0.15f, 0.15f));
+            if (wheel.y != 0 && !OverUI(position))
+                ZoomBy(Mathf.Exp(Mathf.Clamp(wheel.y / 700f, -0.3f, 0.3f)), position);
             if (Mouse.current.leftButton.wasPressedThisFrame && !OverUI(position))
             { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = position; }
             if (pointerDown && Mouse.current.leftButton.isPressed)
@@ -924,12 +1026,20 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (count >= 2)
         {
             float distance = Vector2.Distance(a, b);
-            if (lastPinchDistance > 0) Zoom(Mathf.Clamp((distance - lastPinchDistance) / 400f, -0.12f, 0.12f));
+            if (lastPinchDistance > 20 && distance > 20)
+            {
+                ZoomBy(distance / lastPinchDistance, (a + b) * 0.5f);
+                Pan(((a + b) * 0.5f) - lastPinchCenter);   // two-finger drag pans too
+            }
             lastPinchDistance = distance;
+            lastPinchCenter = (a + b) * 0.5f;
+            pinching = true;
             pointerDown = false;
             return;
         }
         lastPinchDistance = 0;
+        // A finger left over after a pinch must not pan or tap until every finger is up.
+        if (pinching) { pinching = count > 0; pointerDown = false; return; }
         Vector2 finger = first.position.ReadValue();
         if (first.press.wasPressedThisFrame && !OverUI(finger))
         { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = finger; }

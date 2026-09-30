@@ -5,6 +5,20 @@ public sealed class TowerPresentationImporter : AssetPostprocessor
 {
     private void OnPreprocessTexture()
     {
+        if (assetPath.Contains("/AdamsHaven/Expedition/"))
+        {
+            var expedition = (TextureImporter)assetImporter;
+            expedition.textureType = TextureImporterType.Default;
+            expedition.alphaIsTransparency = true;
+            expedition.mipmapEnabled = false;
+            expedition.wrapMode = TextureWrapMode.Clamp;
+            expedition.filterMode = assetPath.Contains("/Icons/") ? FilterMode.Point : FilterMode.Bilinear;
+            expedition.maxTextureSize = 2048;
+            expedition.npotScale = TextureImporterNPOTScale.None;
+            expedition.textureCompression = assetPath.Contains("/Maps/") || assetPath.Contains("/Rooms/")
+                ? TextureImporterCompression.CompressedHQ : TextureImporterCompression.Uncompressed;
+            return;
+        }
         if (!assetPath.Contains("/AdamsHaven/TowerPresentation/")) return;
         var importer = (TextureImporter)assetImporter;
         importer.textureType = TextureImporterType.Default;

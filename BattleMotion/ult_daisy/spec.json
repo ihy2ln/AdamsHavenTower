@@ -1,0 +1,29 @@
+{
+  "kind": "ult",
+  "unit": "daisy",
+  "out": "ult_daisy",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9141,
+  "keys": [
+    [
+      "first",
+      [
+        "daisy.webp"
+      ],
+      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff; keep her exact face, eyes, hair, ears and outfit. she laughs wildly and twirls her staff beside her face, embers and petals swirling around her. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\daisy.png",
+        "daisy.webp"
+      ],
+      "A wide 16:9 cinematic anime shot of the character from these images (the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff); keep her exact face, hair and outfit. she spins her staff overhead as a volcanic firestorm sweeps across a tropical island battlefield, walls of flame and flying embers. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff: she laughs wildly and twirls her staff beside her face, embers and petals swirling around her. A white flash and fast speed lines, then the camera whips back to a wide shot: she spins her staff overhead as a volcanic firestorm sweeps across a tropical island battlefield, walls of flame and flying embers. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

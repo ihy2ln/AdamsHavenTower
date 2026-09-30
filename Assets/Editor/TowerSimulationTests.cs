@@ -1,9 +1,286 @@
+using System.Linq;
 using AdamsHaven.Tower;
 using NUnit.Framework;
 using UnityEngine;
 
 public sealed class TowerSimulationTests
 {
+    // Most scenarios lay out a tower in one go; the construction tests switch timing back on.
+    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; }
+    [TearDown] public void TimedBuilds() { TowerRules.InstantConstruction = false; }
+
+    private static TowerRules Expedition()
+    {
+        var rules = Started();
+        rules.AddRoom("guild_hall", 1, TowerRules.CoreX + 1);
+        rules.State.food = rules.State.water = 500;
+        rules.State.firewood = 200;
+        rules.State.tonics = 4;
+        Assert.IsNull(rules.StartExpedition("silverbrook_edge",
+            new System.Collections.Generic.List<string> { "kaela", "ghislaine", "elara" }, 6, 2, 3));
+        return rules;
+    }
+
+    [Test]
+    public void ForestLayoutsAreFixedAndConnected()
+    {
+        Assert.AreEqual(15, TowerForestLayouts.Ids.Length);
+        foreach (var id in TowerForestLayouts.Ids)
+        {
+            var layout = TowerForestLayouts.Get(id);
+            TowerForestLayouts.ClearCache();
+            var again = TowerForestLayouts.Get(id);
+            Assert.AreEqual(JsonUtility.ToJson(layout), JsonUtility.ToJson(again), id + " must be identical every time");
+            int landmarks = layout.nodes.FindAll(n => n.kind == "landmark").Count;
+            int pois = layout.nodes.FindAll(n => n.kind != "landmark" && n.kind != "camp").Count;
+            Assert.GreaterOrEqual(landmarks, 3, id);
+            Assert.GreaterOrEqual(pois, 8, id);
+            Assert.AreEqual(1, layout.nodes.FindAll(n => n.kind == "lair").Count, id);
+            // Every node is reachable from the camp.
+            var seen = new System.Collections.Generic.HashSet<string> { layout.entrance };
+            var queue = new System.Collections.Generic.Queue<string>(); queue.Enqueue(layout.entrance);
+            while (queue.Count > 0)
+            {
+                string at = queue.Dequeue();
+                foreach (var n in layout.nodes) if (!seen.Contains(n.id) && layout.Linked(at, n.id)) { seen.Add(n.id); queue.Enqueue(n.id); }
+            }
+            Assert.AreEqual(layout.nodes.Count, seen.Count, id + " has unreachable nodes");
+            foreach (var n in layout.nodes)
+                Assert.IsTrue(new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep" }.Contains(n.theme), id + " theme");
+        }
+    }
+
+    [Test]
+    public void DungeonsAreDeterministicAndReachable()
+    {
+        foreach (var id in TowerForestLayouts.Ids)
+            foreach (var node in TowerForestLayouts.Get(id).nodes)
+            {
+                if (node.kind == "camp") continue;
+                for (int floor = 0; floor < TowerForestLayouts.Floors(node.kind); floor++)
+                {
+                    var a = TowerDungeon.Build(id, node, floor, 1234);
+                    var b = TowerDungeon.Build(id, node, floor, 999);
+                    CollectionAssert.AreEqual(a.cell, b.cell, "layout must not depend on the run");
+                    Assert.GreaterOrEqual(a.rooms.Count, 4);
+                    var dist = a.Distances(a.rooms[0].CenterX, a.rooms[0].CenterY);
+                    foreach (var room in a.rooms) Assert.GreaterOrEqual(dist[TowerDungeon.Index(room.CenterX, room.CenterY)], 0);
+                    bool last = floor == TowerForestLayouts.Floors(node.kind) - 1;
+                    Assert.AreEqual(1, a.rooms.FindAll(r => last ? r.goal : r.kind == "stairs").Count);
+                    if (node.kind == "lair" && last) Assert.IsTrue(a.rooms.Exists(r => r.goal && r.kind == "boss"));
+                }
+            }
+    }
+
+    [Test]
+    public void ExpeditionPlanTakesProvisionsAndLeavingBanksTheHaul()
+    {
+        var rules = Started();
+        Assert.IsNotNull(rules.CanStartExpedition("silverbrook_edge", new System.Collections.Generic.List<string> { "kaela" }, 0, 0, 0),
+            "needs a guild hall");
+        rules.AddRoom("guild_hall", 1, TowerRules.CoreX + 1);
+        Assert.IsNotNull(rules.CanStartExpedition("old_bridge", new System.Collections.Generic.List<string> { "kaela" }, 0, 0, 0), "locked");
+        rules.State.food = rules.State.water = 100; rules.State.firewood = 50; rules.State.tonics = 3;
+        Assert.IsNotNull(rules.CanStartExpedition("silverbrook_edge", new System.Collections.Generic.List<string> { "kaela" }, 50, 0, 0));
+        Assert.IsNull(rules.StartExpedition("silverbrook_edge", new System.Collections.Generic.List<string> { "kaela", "elara" }, 4, 2, 2));
+        Assert.AreEqual(80, rules.State.food, 0.01f);
+        Assert.AreEqual(1, rules.State.tonics);
+        Assert.AreEqual(30, rules.State.firewood, 0.01f);
+        var run = rules.Run;
+        run.haul.Add(new TowerLoot { name = "test", gold = 100 });
+        int gold = rules.State.gold;
+        Assert.IsNull(rules.EndExpedition(false));
+        Assert.AreEqual(gold + 100, rules.State.gold);
+        Assert.AreEqual(100, rules.State.food, 0.01f, "unused rations come back");
+        Assert.AreEqual(3, rules.State.tonics);
+        Assert.IsNull(rules.Run);
+    }
+
+    [Test]
+    public void WipeKeepsOnlyThePocket()
+    {
+        var rules = Expedition();
+        var run = rules.Run;
+        run.haul.Add(new TowerLoot { name = "a", gold = 50 });
+        run.haul.Add(new TowerLoot { name = "b", gold = 70 });
+        run.haul.Add(new TowerLoot { name = "c", gold = 90 });
+        Assert.IsNull(rules.PocketLoot(2));
+        Assert.IsNull(rules.PocketLoot(0));
+        Assert.IsNotNull(rules.PocketLoot(0), "only two pocket slots");
+        int gold = rules.State.gold; float food = rules.State.food;
+        Assert.IsNull(rules.EndExpedition(true));
+        Assert.AreEqual(gold + 140, rules.State.gold);
+        Assert.AreEqual(food, rules.State.food, 0.01f, "provisions are lost");
+    }
+
+    [Test]
+    public void ForestTravelUsesRationsAndFog()
+    {
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        var camp = layout.Node(layout.entrance);
+        Assert.IsTrue(rules.NodeVisible(camp.links[0]));
+        var far = layout.nodes.Find(n => n.kind == "lair");
+        Assert.IsFalse(rules.NodeVisible(far.id), "the lair starts under fog");
+        Assert.IsNotNull(rules.ForestMove(far.id), "no trail");
+        Assert.IsNull(rules.ForestMove(camp.links[0]));
+        Assert.AreEqual(5, rules.Run.rations);
+        rules.Run.rations = 0;
+        Assert.IsNull(rules.ForestMove(layout.entrance));
+        Assert.AreEqual(90, rules.Run.hp[0], "attrition without rations");
+    }
+
+    [Test]
+    public void DungeonCrawlRevealsFogAndClearsThePoi()
+    {
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        var poi = layout.Node(layout.Node(layout.entrance).links[0]);
+        Assert.IsNull(rules.ForestMove(poi.id));
+        Assert.IsNull(rules.EnterPoi());
+        var d = rules.Dungeon;
+        Assert.IsNotNull(d);
+        int hidden = rules.Run.fog.Split('0').Length - 1;
+        Assert.Greater(hidden, 200, "most of the map starts fogged");
+        // Walk every floor: always head for the nearest revealed unexplored walkable cell, resolve rooms as found.
+        for (int guard = 0; guard < 2000 && rules.Run != null && rules.Run.dungeonPoi.Length > 0; guard++)
+        {
+            int pending = rules.PendingRoom;
+            if (pending >= 0)
+            {
+                string kind = rules.Dungeon.rooms[pending].kind;
+                if (TowerRules.BattleRoom(kind)) Assert.IsNull(rules.ResolveBattle(true, new System.Collections.Generic.List<int> { 90, 90, 90 }));
+                else if (kind == "stairs") Assert.IsNull(rules.ResolveRoom("descend"));
+                else if (kind == "merchant") Assert.IsNull(rules.ResolveRoom("leave"));
+                else Assert.IsNull(rules.ResolveRoom("investigate"));
+                continue;
+            }
+            d = rules.Dungeon;
+            int target = -1, best = int.MaxValue;
+            var dist = d.Distances(rules.Run.px, rules.Run.py);
+            for (int i = 0; i < dist.Length; i++)
+            {
+                int x = i % TowerDungeon.Size, y = i / TowerDungeon.Size;
+                if (dist[i] <= 0 || !rules.Revealed(x, y)) continue;
+                bool frontier = false;
+                for (int k = 0; k < 4; k++)
+                {
+                    int nx = x + (k == 0 ? 1 : k == 1 ? -1 : 0), ny = y + (k == 2 ? 1 : k == 3 ? -1 : 0);
+                    if (TowerDungeon.Inside(nx, ny) && !rules.Revealed(nx, ny)) frontier = true;
+                }
+                int r = d.RoomAt(x, y);
+                bool undone = r >= 0 && !rules.Run.roomsDone.Contains(r);
+                if ((frontier || undone) && dist[i] < best) { best = dist[i]; target = i; }
+            }
+            Assert.GreaterOrEqual(target, 0, "the crawl got stuck");
+            Assert.IsNull(rules.DungeonMove(target % TowerDungeon.Size, target / TowerDungeon.Size));
+        }
+        Assert.IsTrue(rules.Run.cleared.Contains(poi.id));
+        Assert.AreEqual("", rules.Run.dungeonPoi);
+        Assert.Greater(rules.Run.haul.Count, 0);
+    }
+
+    [Test]
+    public void ClearingTheLairConquersAndUnlocksRegions()
+    {
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        var lair = layout.nodes.Find(n => n.kind == "lair");
+        rules.Run.at = lair.id;
+        Assert.IsNull(rules.EnterPoi());
+        for (int floor = 0; floor < 3; floor++)
+        {
+            var d = rules.Dungeon;
+            var goal = d.rooms.Find(r => r.goal || r.kind == "stairs");
+            rules.Run.px = goal.CenterX; rules.Run.py = goal.CenterY;
+            if (goal.kind == "stairs") Assert.IsNull(rules.ResolveRoom("descend"));
+            else Assert.IsNull(rules.ResolveBattle(true, null));
+        }
+        Assert.IsTrue(rules.RegionConquered("silverbrook_edge"));
+        Assert.IsTrue(rules.RegionUnlocked("rootside_camp"));
+        Assert.IsTrue(rules.RegionUnlocked("shallow_ford"));
+        Assert.IsFalse(rules.RegionUnlocked("old_bridge"));
+    }
+
+    [Test]
+    public void LosingEveryoneEndsTheRunAndRunsSurviveSaving()
+    {
+        var rules = Expedition();
+        var json = JsonUtility.ToJson(rules.State);
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(json));
+        Assert.IsNotNull(loaded.Run);
+        Assert.AreEqual(rules.Run.layout, loaded.Run.layout);
+        var old = JsonUtility.FromJson<TowerState>("{\"schema\":2,\"introPhase\":\"complete\"}");
+        var fresh = new TowerRules(old);
+        Assert.IsNull(fresh.Run);
+        Assert.IsTrue(fresh.RegionUnlocked("silverbrook_edge"));
+
+        var layout = rules.RunLayout;
+        var poi = layout.nodes.Find(n => n.kind == "combat");
+        rules.Run.at = poi.id;
+        Assert.IsNull(rules.EnterPoi());
+        var goal = rules.Dungeon.rooms.Find(r => r.goal);
+        rules.Run.px = goal.CenterX; rules.Run.py = goal.CenterY;
+        Assert.IsNull(rules.ResolveBattle(false, new System.Collections.Generic.List<int> { 0, 0, 0 }));
+        Assert.IsNull(rules.Run, "a wiped party ends the expedition");
+    }
+
+    [Test]
+    public void GuildHallUnlocksExpeditionsByLevel()
+    {
+        var rules = Started();
+        Assert.IsTrue(rules.State.blueprints.Contains("guild_hall"));
+        Assert.IsNotNull(rules.GuildRequired());
+        Assert.IsNotNull(rules.CanLaunchBattle(0));
+        var hall = rules.AddRoom("guild_hall", 1, TowerRules.CoreX + 1);
+        Assert.IsNull(rules.GuildRequired());
+        Assert.IsNull(rules.CanLaunchBattle(0));
+        Assert.IsNotNull(rules.CanLaunchBattle(1));
+        hall.level = 2;
+        Assert.IsNull(rules.CanLaunchBattle(1));
+        Assert.IsNotNull(rules.CanLaunchBattle(2));
+        hall.level = 3;
+        Assert.IsNull(rules.CanLaunchBattle(2));
+    }
+
+    [Test]
+    public void ConstructionTakesTimeAndCompletesOffline()
+    {
+        var rules = Started();
+        TowerRules.InstantConstruction = false;
+        rules.State.tutorialStep = 7;
+        rules.State.celestium += 60;
+        rules.State.gold += 500;
+        rules.State.wood += 50;
+        rules.State.stone += 50;
+
+        Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNotNull(rules.ExpandFloor(0), "one wing job at a time");
+        Assert.IsNull(rules.OpenFloor(1));
+        Assert.IsNotNull(rules.OpenFloor(1), "duplicate floor job");
+        Assert.IsNull(rules.Floor(1), "floor does not exist yet");
+        int west = rules.Floor(0).west;
+        float wing = rules.WingWork(0, -1).remaining;
+        Assert.Greater(wing, 10f);
+
+        rules.Advance(wing - 2, true);
+        Assert.AreEqual(west, rules.Floor(0).west, "still building");
+        rules.Advance(3, true);
+        Assert.AreEqual(west + 1, rules.Floor(0).west);
+
+        Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - west - 1));
+        var site = rules.WorkRoomAt(0, TowerRules.CoreX - west - 1);
+        Assert.IsNotNull(site);
+        Assert.IsNull(rules.RoomAt(0, TowerRules.CoreX - west - 1));
+        Assert.IsNotNull(rules.Build("well", 0, TowerRules.CoreX - west - 1), "site is taken");
+
+        rules.CatchUp(600);
+        Assert.AreEqual(0, rules.State.works.Count);
+        Assert.IsNotNull(rules.Floor(1));
+        Assert.IsNotNull(rules.RoomAt(0, TowerRules.CoreX - west - 1));
+    }
+
     private static TowerRules Started()
     {
         var rules = TowerRules.New();
@@ -881,6 +1158,66 @@ public sealed class TowerSimulationTests
             Assert.GreaterOrEqual(state.residents.Count, people);
             Assert.IsFalse(state.residents.Exists(r => r.downed), "slot " + slot + " has downed residents");
         }
+    }
+
+    private static TowerRules BarnLot()
+    {
+        var rules = Started();
+        rules.State.gold = 999999; rules.State.wood = rules.State.stone = 9999; rules.State.celestium = 9999;
+        foreach (string id in new[] { "barn", "cottage" })
+            if (!rules.State.blueprints.Contains(id)) rules.State.blueprints.Add(id);
+        for (int i = 0; i < 5; i++) Assert.IsNull(rules.ExpandFloor(0));
+        return rules;
+    }
+
+    [Test]
+    public void BarnClimbsNineTiersAndWidensToThreeBays()
+    {
+        var rules = BarnLot();
+        Assert.IsNull(rules.Build("barn", 0, 20));
+        var barn = rules.RoomAt(0, 20);
+        Assert.AreEqual(1, barn.width);
+        int[] bays = { 1, 1, 1, 2, 2, 3, 3, 3, 3 };
+        for (int level = 1; level <= 9; level++)
+        {
+            Assert.AreEqual(level, barn.level);
+            Assert.AreEqual(bays[level - 1], barn.width, "tier " + TowerTiers.BarnTier(level));
+            Assert.AreEqual(20, barn.x + barn.width - 1, "the right bay stays on the anchor cell");
+            if (level < 9) Assert.IsNull(rules.UpgradeRoom(barn.uid), "upgrade from tier " + TowerTiers.BarnTier(level));
+        }
+        Assert.AreEqual("SSR", TowerTiers.BarnTier(barn.level));
+        Assert.AreEqual(18, barn.x);
+        Assert.IsNotNull(rules.UpgradeRoom(barn.uid), "SSR is the top tier");
+        Assert.AreEqual(3 * 9 * 60 + 120, rules.StockCap());
+    }
+
+    [Test]
+    public void BarnGrowsInwardWhenOutwardIsBlockedAndStopsWhenBoxedIn()
+    {
+        var rules = BarnLot();
+        Assert.IsNull(rules.Build("barn", 0, 20));
+        Assert.IsNull(rules.Build("cottage", 0, 18));      // cells 18-19: outward of the barn
+        var barn = rules.RoomAt(0, 20);
+        for (int i = 0; i < 2; i++) Assert.IsNull(rules.UpgradeRoom(barn.uid));
+        Assert.IsNotNull(rules.UpgradeRoom(barn.uid), "cell 19 is a cottage and cell 21 is the shack: no room to grow");
+        Assert.AreEqual(1, barn.width);
+        Assert.AreEqual(3, barn.level);
+        rules.Demolish(rules.RoomAt(0, 21).uid);
+        Assert.IsNull(rules.UpgradeRoom(barn.uid));
+        Assert.AreEqual(2, barn.width);
+        Assert.IsTrue(barn.flip, "growing toward the tower flips the bay order");
+        Assert.AreEqual(20, barn.x);
+    }
+
+    [Test]
+    public void OldTwoCellBarnsShrinkToTheirTierWidth()
+    {
+        var rules = Started();
+        var barn = rules.AddRoom("barn", 0, 19, 2);
+        barn.width = 2;
+        rules.Normalize();
+        Assert.AreEqual(1, barn.width);
+        Assert.AreEqual(20, barn.x, "the west wing frees its outer cell");
     }
 
     [Test]
