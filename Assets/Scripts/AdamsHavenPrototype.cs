@@ -48,6 +48,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private float ignoreInputUntil;
     private float lastBuiltCameraY, lastBuiltZoom;
     private bool pointerDown, pointerMoved;
+    private int dragResident;          // resident being carried to a room, 0 when none
+    private bool dragMoved;
+    private Vector2 dragStart, dragScreen;
     private Vector2 lastPointer, pointerStart;
     private float lastPinchDistance;
     private Vector2 lastPinchCenter;
@@ -1003,9 +1006,14 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             Vector2 wheel = Mouse.current.scroll.ReadValue();
             if (wheel.y != 0 && !OverUI(position))
                 ZoomBy(Mathf.Exp(Mathf.Clamp(wheel.y / 700f, -0.3f, 0.3f)), position);
-            if (Mouse.current.leftButton.wasPressedThisFrame && !OverUI(position))
+            if (Mouse.current.leftButton.wasPressedThisFrame && !OverUI(position) && !BeginDrag(position))
             { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = position; }
-            if (pointerDown && Mouse.current.leftButton.isPressed)
+            if (dragResident > 0)
+            {
+                if (Mouse.current.leftButton.isPressed) UpdateDrag(position);
+                if (Mouse.current.leftButton.wasReleasedThisFrame) EndDrag(position);
+            }
+            else if (pointerDown && Mouse.current.leftButton.isPressed)
             {
                 Vector2 delta = position - lastPointer;
                 if ((position - pointerStart).sqrMagnitude > 64) pointerMoved = true;
@@ -1041,9 +1049,14 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         // A finger left over after a pinch must not pan or tap until every finger is up.
         if (pinching) { pinching = count > 0; pointerDown = false; return; }
         Vector2 finger = first.position.ReadValue();
-        if (first.press.wasPressedThisFrame && !OverUI(finger))
+        if (first.press.wasPressedThisFrame && !OverUI(finger) && !BeginDrag(finger))
         { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = finger; }
-        if (pointerDown && first.press.isPressed)
+        if (dragResident > 0)
+        {
+            if (first.press.isPressed) UpdateDrag(finger);
+            if (first.press.wasReleasedThisFrame) EndDrag(finger);
+        }
+        else if (pointerDown && first.press.isPressed)
         {
             if ((finger - pointerStart).sqrMagnitude > 64) pointerMoved = true;
             if (pointerMoved) Pan(finger - lastPointer);
@@ -1051,6 +1064,50 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         }
         if (pointerDown && first.press.wasReleasedThisFrame)
         { pointerDown = false; if (!pointerMoved) WorldTap(finger); }
+    }
+
+    // Pressing on a chibi picks them up instead of panning; releasing over a room sends them to work there.
+    private bool BeginDrag(Vector2 screen)
+    {
+        Vector3 world = view.ScreenToWorldPoint(new Vector3(screen.x, screen.y, 0));
+        int found = 0;
+        float nearest = float.MaxValue;
+        foreach (var resident in rules.State.residents)
+        {
+            Vector3 at;
+            if (resident.ageStage != 0 || resident.downed || resident.away || resident.exploring ||
+                !TryResidentPosition(resident.id, out at)) continue;
+            float dx = Mathf.Abs(world.x - at.x), dy = world.y - at.y;
+            if (dx > 0.5f || dy < -0.45f || dy > 0.95f) continue;
+            float distance = dx + Mathf.Abs(dy - 0.25f) * 0.5f;
+            if (distance < nearest) { nearest = distance; found = resident.id; }
+        }
+        if (found == 0) return false;
+        dragResident = found;
+        dragMoved = false;
+        dragStart = dragScreen = screen;
+        pointerDown = false;
+        return true;
+    }
+
+    private void UpdateDrag(Vector2 screen)
+    {
+        dragScreen = screen;
+        if ((screen - dragStart).sqrMagnitude > 64 && !dragMoved)
+        {
+            dragMoved = true;
+            var person = rules.State.residents.Find(r => r.id == dragResident);
+            if (person != null) message = person.name + ": drop onto a room to put them to work.";
+        }
+    }
+
+    private void EndDrag(Vector2 screen)
+    {
+        int id = dragResident;
+        bool moved = dragMoved;
+        dragResident = 0; dragMoved = false;
+        if (!moved) { SelectPerson(id); return; }
+        DragAssign(id, screen);
     }
 
     private void UpdateResidentVisuals()
@@ -1078,12 +1135,20 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                         Vector3.Lerp(shaftAtEnd, destination, (t - 0.75f) * 4);
                 }
             }
+            bool carried = resident.id == dragResident && dragMoved;
+            if (carried)
+            {
+                Vector3 pointer = view.ScreenToWorldPoint(new Vector3(dragScreen.x, dragScreen.y, 0));
+                position = new Vector3(pointer.x, pointer.y - 0.25f, -1f);
+                traveling = false;
+            }
             TowerChibiAnimator animator;
             if (residentAnimators.TryGetValue(resident.id, out animator) && animator != null)
             {
                 animator.SetSleeping(resident.origin != "body" && resident.currentTask == "rest" &&
                     resident.currentRoom == resident.targetRoom && !resident.downed);
-                animator.SetPose(position, traveling, resident.currentTask == "production",
+                animator.SetPose(position, traveling, resident.currentTask == "production" ||
+                    resident.currentTask == "repair" || resident.currentTask == "haul",
                     resident.downed || (resident.origin == "body" && resident.charge <= 0));
             }
             else visual.localPosition = position + residentVisualOffsets[resident.id];

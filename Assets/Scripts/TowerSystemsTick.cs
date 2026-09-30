@@ -274,6 +274,15 @@ namespace AdamsHaven.Tower
                     workplace.condition >= 20 && IsPowered(workplace) &&
                     40 + resident.priorityProduction * 8 > best)
                 { best = 40 + resident.priorityProduction * 8; task = "production"; target = workplace.uid; }
+                if (workplace != null && workplace.type != "gate")
+                {
+                    if (resident.duty == "repair" && resident.priorityRepair > 0 && workplace.condition < 100 &&
+                        State.wood > 0 && State.stone > 0 && 60 + resident.priorityRepair * 8 > best)
+                    { best = 60 + resident.priorityRepair * 8; task = "repair"; target = workplace.uid; }
+                    else if (resident.duty == "haul" && resident.priorityHaul > 0 && workplace.ready &&
+                        60 + resident.priorityHaul * 8 > best)
+                    { best = 60 + resident.priorityHaul * 8; task = "haul"; target = workplace.uid; }
+                }
                 SetTask(resident, task, target);
             }
         }

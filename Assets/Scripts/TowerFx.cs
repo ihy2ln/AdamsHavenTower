@@ -22,6 +22,7 @@ public sealed class TowerFx : MonoBehaviour
     private sealed class Alert
     {
         public GameObject go; public SpriteRenderer disc; public ParticleSystem particles; public string kind;
+        public Transform fill; public TextMesh percent; public float maxHp, fillBase;
     }
     private sealed class Floater { public TextMesh text; public float age, life; public Vector3 start; }
     private sealed class Cloud { public Transform transform; public float speed; public SpriteRenderer renderer; }
@@ -589,6 +590,14 @@ public sealed class TowerFx : MonoBehaviour
             alert.go.transform.SetParent(root, false);
             alert.go.transform.position = new Vector3(X(room.x + 0.5f), Y(room.floor) + 0.95f, -2.7f);
             alert.disc = Quad("disc", disc, Vector3.zero, new Vector2(0.5f, 0.5f), color, 700, alert.go.transform);
+            alert.maxHp = Mathf.Max(1f, incident.hp);
+            Quad("bar back", white, new Vector3(0, -0.5f, 0), new Vector2(BarWidth + 0.08f, 0.2f),
+                new Color(0.05f, 0.04f, 0.04f, 0.9f), 705, alert.go.transform);
+            var fillRenderer = Quad("bar fill", white, new Vector3(-BarWidth * 0.5f, -0.5f, -0.01f),
+                new Vector2(BarWidth, 0.14f), new Color(0.45f, 0.9f, 0.4f), 706, alert.go.transform);
+            alert.fill = fillRenderer.transform; alert.fillBase = alert.fill.localScale.x;
+            alert.percent = Text("CLEARING 0%", Color.white, 0.045f, alert.go.transform, 710);
+            alert.percent.transform.localPosition = new Vector3(0, -0.34f, -0.02f);
             var mark = Text("!", Color.white, 0.055f, alert.go.transform, 710);
             mark.transform.localPosition = new Vector3(0, 0, -0.02f);
             float width = room.width * Cell;
@@ -607,11 +616,29 @@ public sealed class TowerFx : MonoBehaviour
         foreach (int uid in remove) { if (alerts[uid].go != null) Destroy(alerts[uid].go); alerts.Remove(uid); }
     }
 
+    private const float BarWidth = 1.3f;
+
     private void AnimateAlerts()
     {
-        foreach (var alert in alerts.Values)
+        foreach (var pair in alerts)
         {
+            var alert = pair.Value;
             if (alert.go == null) continue;
+            var incident = tower != null && tower.Rules != null
+                ? tower.Rules.State.incidents.Find(i => i.roomUid == pair.Key) : null;
+            if (incident != null && alert.fill != null)
+            {
+                alert.maxHp = Mathf.Max(alert.maxHp, incident.hp);
+                float done = Mathf.Clamp01(1f - incident.hp / alert.maxHp);
+                alert.fill.localScale = new Vector3(alert.fillBase * Mathf.Max(0.0001f, done),
+                    alert.fill.localScale.y, 1);
+                alert.fill.localPosition = new Vector3(-BarWidth * 0.5f + BarWidth * done * 0.5f,
+                    alert.fill.localPosition.y, alert.fill.localPosition.z);
+                alert.fill.GetComponent<SpriteRenderer>().color = done > 0.02f
+                    ? Color.Lerp(new Color(1f, 0.75f, 0.25f), new Color(0.45f, 0.9f, 0.4f), done)
+                    : new Color(1f, 0.75f, 0.25f, 0f);
+                alert.percent.text = "CLEARING " + Mathf.RoundToInt(done * 100) + "%";
+            }
             float pulse = 1f + 0.18f * Mathf.Sin(clock * 7f);
             alert.disc.transform.localScale = new Vector3(0.5f / alert.disc.sprite.bounds.size.x * pulse,
                 0.5f / alert.disc.sprite.bounds.size.y * pulse, 1);

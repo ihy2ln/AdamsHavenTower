@@ -62,6 +62,7 @@ namespace AdamsHaven.Tower
         public int weapon, tool;
         public int might = 3, sight = 3, grit = 3, charm = 3, wit = 3, grace = 3, luck = 3;
         public string trait = "";
+        public string duty = "";   // what this worker does in their job room: production, repair or haul
         public string schedule = "";
         public float breakSeconds, moodLow;
         public string breakKind = "";
@@ -628,11 +629,37 @@ namespace AdamsHaven.Tower
                 if (other.id != residentId && (home ? other.homeRoom : other.jobRoom) == roomUid) used++;
             if (used >= Capacity(room)) return "The room is full.";
             if (home) resident.homeRoom = roomUid; else resident.jobRoom = roomUid;
+            if (!home) resident.duty = BestDuty(resident, room);
             if (resident.currentRoom == 0) resident.currentRoom = roomUid;
             if (State.tutorialStep == 1 && room.type == "kitchen" && !home)
                 State.tutorialStep = 2;
-            Note(resident.name + " assigned to " + def.displayName + ".");
+            Note(resident.name + " assigned to " + def.displayName +
+                (home ? "." : ": " + DutyLabel(resident, room) + "."));
             return null;
+        }
+
+        // A worker does whatever their strongest applicable skill suits in the room they are sent to.
+        public string BestDuty(TowerResident resident, TowerRoom room)
+        {
+            var def = TowerCatalog.Get(room.type);
+            string best = "repair";
+            int score = resident.might;
+            if (def.kind == "gate" || def.kind == "train" || !string.IsNullOrEmpty(def.produces))
+            { best = "production"; score = resident.Stat(def.stat); if (resident.might > score) { best = "repair"; score = resident.might; } }
+            if (!string.IsNullOrEmpty(def.produces) && resident.grit > score) best = "haul";
+            return best;
+        }
+
+        public string DutyLabel(TowerResident resident, TowerRoom room)
+        {
+            var def = TowerCatalog.Get(room.type);
+            switch (resident.duty)
+            {
+                case "repair": return "repairs (Might " + resident.might + ")";
+                case "haul": return "hauls output (Grit " + resident.grit + ")";
+                default: return (def.kind == "gate" ? "guards" : def.kind == "train" ? "trains" : "works") +
+                    " (" + char.ToUpperInvariant(def.stat[0]) + def.stat.Substring(1) + " " + resident.Stat(def.stat) + ")";
+            }
         }
 
         public int WorkerCount(int roomUid)
