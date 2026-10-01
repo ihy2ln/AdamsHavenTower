@@ -5,7 +5,8 @@ public sealed class TowerPresentationImporter : AssetPostprocessor
 {
     private void OnPreprocessTexture()
     {
-        if (assetPath.Contains("/AdamsHaven/Expedition/"))
+        // Overworld layer art has its own rules (TowerOverworldArtImporter).
+        if (assetPath.Contains("/AdamsHaven/Expedition/") && !assetPath.Contains("/Expedition/Overworld/"))
         {
             var expedition = (TextureImporter)assetImporter;
             expedition.textureType = TextureImporterType.Default;

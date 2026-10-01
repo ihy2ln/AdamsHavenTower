@@ -62,6 +62,11 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private bool gridWalking;
     private int gridCenteredFor = -1;
     private GameObject gridBar;
+    // Phone test readout on the layered maps (frame rate, frame time, memory). Off once the map is tuned.
+    public static bool ShowMapStats = true;
+    private Text mapStats;
+    private float statsClock;
+    private int statsFrames;
     private RawImage shiftFade;             // the old forest fading out after a shift
     private RenderTexture shiftFrame;
     private float shiftClock;
@@ -143,6 +148,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         roomPanel = endPanel = null;
         Canvas.ForceUpdateCanvases();
         lastWidth = Screen.width; lastHeight = Screen.height;
+        mapStats = null;
         content = Stretch("Screen", root, Ink).rectTransform;
         content.GetComponent<Image>().color = new Color(0.02f, 0.03f, 0.05f, 1);
         switch (view)
@@ -196,6 +202,20 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
         if (view == View.Forest && (walking || fading || fadingIn)) UpdateWalk();
         if (view == View.Region && atlasLabels.Count > 0) PlaceAtlasLabels();
+        if (mapStats != null)
+        {
+            statsFrames++;
+            statsClock += Time.unscaledDeltaTime;
+            if (statsClock >= 0.5f)
+            {
+                float fps = statsFrames / statsClock;
+                long mem = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024);
+                var rt = gridView != null ? gridView.Texture : null;
+                mapStats.text = Mathf.RoundToInt(fps) + " fps  •  " + (1000f / Mathf.Max(1, fps)).ToString("0.0") + " ms" +
+                    (mem > 0 ? "  •  " + mem + " MB" : "") + (rt != null ? "  •  map " + rt.width + "x" + rt.height : "");
+                statsClock = 0; statsFrames = 0;
+            }
+        }
         if (shiftFrame != null)
         {
             shiftClock += Time.unscaledDeltaTime;
@@ -557,6 +577,15 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         PlaceAtlasLabels();
         TopBar("THE SILVERWOOD ATLAS  •  GUILD EXPEDITIONS", "BACK TO TOWER", () => tower.CloseExpedition(null));
         BuildRegionPanel();
+        AddMapStats(areaW);
+    }
+
+    private void AddMapStats(float areaW)
+    {
+        if (!ShowMapStats) return;
+        mapStats = TextAt(content, "Map stats", "", areaW - 440, Top + 6, 430, 20, 12, Cream, TextAnchor.MiddleRight);
+        mapStats.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(1, -1);
+        statsClock = 0; statsFrames = 0;
     }
 
     private void PlaceAtlasLabels()
@@ -835,6 +864,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         BuildRunPanel(false);
         if (lootOpen) BuildLoot();
         else BuildEventCard();
+        AddMapStats(areaW);
         // A walk an event interrupted carries on by itself once the event is settled.
         if (!gridWalking && !lootOpen && R.GridHasTarget && R.EventBlock() == null && string.IsNullOrEmpty(run.eventResult))
         {

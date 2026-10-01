@@ -75,19 +75,15 @@ public static class TowerOverworldArtImporter
             File.Copy(file, path, true);
             imported.Add(path);
         }
+        // Settings are applied by OverworldTextureRules on import, so a later reimport keeps them.
         AssetDatabase.Refresh();
-        foreach (var path in imported)
-        {
-            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (importer == null) continue;
-            Configure(importer, path);
-            importer.SaveAndReimport();
-        }
+        foreach (var path in imported) AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+        TowerMapArt.ClearCache();
         report.Insert(0, "Imported " + imported.Count + " files into " + Dest + (skipped > 0 ? " (" + skipped + " skipped)" : "") + ".\n" + Missing() + "\n");
         return report.ToString();
     }
 
-    private static void Configure(TextureImporter t, string path)
+    public static void Configure(TextureImporter t, string path)
     {
         string rel = path.Substring(Dest.Length);
         t.textureType = TextureImporterType.Default;
@@ -129,5 +125,16 @@ public static class TowerOverworldArtImporter
             if (!File.Exists(Dest + "props/poi_" + kind + ".png")) missing.Add("poi_" + kind);
         if (!File.Exists(Dest + "fx/cloud_tile.png")) missing.Add("cloud_tile");
         return missing.Count == 0 ? "Every layer now uses real art." : "Still placeholder: " + string.Join(", ", missing);
+    }
+}
+
+// Import settings for everything under Resources/AdamsHaven/Expedition/Overworld (see Configure).
+public sealed class OverworldTextureRules : AssetPostprocessor
+{
+    private void OnPreprocessTexture()
+    {
+        string path = assetPath.Replace("\\", "/");
+        if (!path.StartsWith("Assets/Resources/" + TowerMapArt.Root)) return;
+        TowerOverworldArtImporter.Configure((TextureImporter)assetImporter, path);
     }
 }

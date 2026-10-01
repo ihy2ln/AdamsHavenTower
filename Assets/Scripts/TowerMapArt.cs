@@ -34,6 +34,9 @@ namespace AdamsHaven.Tower
         private static readonly Dictionary<string, Texture2D> grounds = new Dictionary<string, Texture2D>();
         private static readonly Dictionary<string, List<Texture2D>> stamps = new Dictionary<string, List<Texture2D>>();
 
+        // Forget loaded and painted art (after new art is imported; statics outlive Play mode in this project).
+        public static void ClearCache() { grounds.Clear(); stamps.Clear(); }
+
         public static Texture2D Ground(int index)
         {
             string name = Grounds[index];
