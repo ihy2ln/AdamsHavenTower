@@ -57,6 +57,7 @@ namespace AdamsHaven.Tower
         {
             var run = Run; var layout = RunLayout;
             if (run == null || layout == null || layout.Node(nodeId) == null) return;
+            if (GridRun) { var poi = Overworld.Poi(nodeId); RevealCells(poi.x, poi.y, GridSightRadius); return; }
             var frontier = new List<string> { nodeId };
             if (!run.revealed.Contains(nodeId)) run.revealed.Add(nodeId);
             for (int hop = 0; hop < RevealRadius; hop++)
@@ -111,6 +112,14 @@ namespace AdamsHaven.Tower
         private void ForestStirs()
         {
             var run = Run; var layout = RunLayout;
+            if (GridRun)
+            {
+                int worn = GridStir();
+                run.threat = ThreatAfterStir;
+                if (TraversalEvents && TowerEvents.Get(TowerEvents.AmbushId) != null && !AmbushPending) StartEvent(TowerEvents.AmbushId);
+                Note(worn == 0 ? "The forest stirs, but your roads hold." : "The forest stirs: undergrowth creeps back over the trails.");
+                return;
+            }
             var candidates = new List<string>();
             foreach (var key in run.road)
             {

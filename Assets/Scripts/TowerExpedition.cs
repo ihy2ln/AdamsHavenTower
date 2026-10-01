@@ -59,6 +59,11 @@ namespace AdamsHaven.Tower
         public int steps, ambushDepth;                     // ambushDepth > 0: a fight waits on the forest map
         public bool lastStepEvent;
         public List<TowerTrail> trails = new List<TowerTrail>();   // the routes actually walked on the map
+        // Layered grid map (TowerOverworldRules.cs). "" = a painted-plate run from before the grid map.
+        // The grid is regenerated from biome + gridSeed + shift; only the party cell, fog and worn road are saved.
+        public string mapKind = "", biome = "", gridFog = "", gridRoad = "";
+        public int gridVersion, gridSeed, shift, cx, cy, targetX = -1, targetY = -1;
+        public float travelCarry, threatCarry;
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).
@@ -108,7 +113,8 @@ namespace AdamsHaven.Tower
 
         public TowerRun Run { get { return State.hasRun ? State.run : null; } }
         public TowerRegionDef RunRegion { get { return State.hasRun ? Region(State.run.region) : null; } }
-        public TowerForestLayout RunLayout { get { return State.hasRun ? TowerForestLayouts.Get(State.run.layout) : null; } }
+        public TowerForestLayout RunLayout
+        { get { return !State.hasRun ? null : State.run.mapKind == GridKind ? GridLayout : TowerForestLayouts.Get(State.run.layout); } }
 
         public bool RegionUnlocked(string id) { return State.regionsUnlocked.Contains(id); }
         public bool RegionConquered(string id) { return State.regionsConquered.Contains(id); }
@@ -119,8 +125,8 @@ namespace AdamsHaven.Tower
             if (State.regionsConquered == null) State.regionsConquered = new List<string>();
             if (State.run == null) { State.run = new TowerRun(); State.hasRun = false; }
             if (!State.regionsUnlocked.Contains(Regions[0].id)) State.regionsUnlocked.Add(Regions[0].id);
-            if (State.hasRun && TowerForestLayouts.Get(State.run.layout) == null) State.hasRun = false;
-            if (State.hasRun && State.run.dungeonPoi.Length > 0 && TowerForestLayouts.Get(State.run.layout).Node(State.run.dungeonPoi) == null)
+            if (State.hasRun && RunLayout == null) State.hasRun = false;
+            if (State.hasRun && State.run.dungeonPoi.Length > 0 && RunLayout.Node(State.run.dungeonPoi) == null)
                 State.run.dungeonPoi = "";
             if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
@@ -185,8 +191,9 @@ namespace AdamsHaven.Tower
             State.run = run;
             State.hasRun = true;
             State.lastLayout = layout.id;
-            RevealFrom(layout.entrance);
-            Note("Expedition set out for " + Region(region).name + " (" + layout.name + ").");
+            if (GridMaps) StartGridRun(run, region);
+            RevealFrom(run.at);
+            Note("Expedition set out for " + Region(region).name + " (" + RunLayout.name + ").");
             return null;
         }
 
@@ -204,6 +211,12 @@ namespace AdamsHaven.Tower
             if (run == null) return "No expedition.";
             if (run.dungeonPoi.Length > 0) return "Leave the dungeon first.";
             if (layout.Node(nodeId) == null) return "Unknown place.";
+            if (GridRun)
+            {
+                // On the grid any seen place can be walked to; an event on the way may stop the party short.
+                var poi = Overworld.Poi(nodeId);
+                return GridMove(poi.x, poi.y).error;
+            }
             if (!layout.Linked(run.at, nodeId)) return "No trail leads there from here.";
             string block = EventBlock();
             if (block != null) return block;

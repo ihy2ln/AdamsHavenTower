@@ -7,7 +7,8 @@ public sealed class TowerSimulationTests
 {
     // Most scenarios lay out a tower in one go; the construction tests switch timing back on.
     // Traversal events stay off unless a test is about them, so forest walks are predictable.
-    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; }
+    // Plate-map runs unless a test asks for the grid map (the game UI switches GridMaps on, and statics outlive Play mode).
+    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
     [TearDown] public void TimedBuilds() { TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; }
 
     private static TowerRules Expedition()
@@ -49,6 +50,183 @@ public sealed class TowerSimulationTests
             foreach (var n in layout.nodes)
                 Assert.IsTrue(new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep" }.Contains(n.theme), id + " theme");
         }
+    }
+
+    [Test]
+    public void OverworldIsDeterministicPerSeed()
+    {
+        foreach (var biome in TowerOverworldGen.Biomes)
+        {
+            var a = TowerOverworldGen.Generate(biome.id, 12345);
+            var b = TowerOverworldGen.Generate(biome.id, 12345);
+            var c = TowerOverworldGen.Generate(biome.id, 54321);
+            Assert.AreEqual(a.Hash(), b.Hash(), biome.id + " same seed, same map");
+            Assert.AreNotEqual(a.Hash(), c.Hash(), biome.id + " new seed, new map");
+        }
+    }
+
+    [Test]
+    public void OverworldPlacesAreAllReachable()
+    {
+        var themes = new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep", "mine", "blight", "heartwood" };
+        foreach (var biome in TowerOverworldGen.Biomes)
+            for (uint seed = 1; seed <= 40; seed++)
+            {
+                var map = TowerOverworldGen.Generate(biome.id, seed * 7919);
+                string tag = biome.id + " seed " + seed;
+                Assert.AreEqual(1, map.pois.FindAll(p => p.kind == "camp").Count, tag);
+                Assert.AreEqual(1, map.pois.FindAll(p => p.kind == "lair").Count, tag);
+                Assert.GreaterOrEqual(map.pois.Count, 11, tag + " enough places");
+                var camp = map.Camp;
+                var start = new Vector2Int(map.entranceX, map.height - 1);
+                Assert.IsNotNull(map.FindPath(start, new Vector2Int(camp.x, camp.y)), tag + " entrance to camp");
+                foreach (var p in map.pois)
+                {
+                    Assert.IsTrue(map.Walkable(p.x, p.y), tag + " " + p.id + " stands on open ground");
+                    Assert.IsNotNull(map.FindPath(new Vector2Int(camp.x, camp.y), new Vector2Int(p.x, p.y)), tag + " camp to " + p.id);
+                    Assert.IsTrue(themes.Contains(p.theme), tag + " theme " + p.theme);
+                }
+                // The lair is the far end of the map from camp.
+                var lair = map.Lair;
+                foreach (var p in map.pois)
+                    Assert.LessOrEqual((new Vector2Int(p.x, p.y) - new Vector2Int(camp.x, camp.y)).sqrMagnitude,
+                        (new Vector2Int(lair.x, lair.y) - new Vector2Int(camp.x, camp.y)).sqrMagnitude, tag);
+            }
+    }
+
+    private static TowerRules GridExpedition()
+    {
+        TowerRules.GridMaps = true;
+        try { return Expedition(); }
+        finally { TowerRules.GridMaps = false; }
+    }
+
+    private static TowerOverworldPoi NearestOther(TowerRules rules)
+    {
+        var map = rules.Overworld; var camp = map.Camp;
+        TowerOverworldPoi best = null;
+        foreach (var p in map.pois)
+            if (p.kind != "camp" && p.kind != "lair" && (best == null ||
+                (p.x - camp.x) * (p.x - camp.x) + (p.y - camp.y) * (p.y - camp.y) < (best.x - camp.x) * (best.x - camp.x) + (best.y - camp.y) * (best.y - camp.y)))
+                best = p;
+        return best;
+    }
+
+    [Test]
+    public void GridRunStartsAtCampInFog()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run; var map = rules.Overworld;
+        Assert.AreEqual(TowerRules.GridKind, run.mapKind);
+        Assert.AreEqual("camp", run.at);
+        Assert.AreEqual(map.Camp.x, run.cx);
+        Assert.IsTrue(rules.CellSeen(run.cx, run.cy));
+        Assert.IsFalse(rules.CellSeen(map.Lair.x, map.Lair.y), "the lair starts hidden");
+        Assert.IsTrue(rules.NodeVisible("camp"));
+        Assert.IsNotNull(rules.RunLayout.Node(map.Lair.id), "grid places act as forest nodes");
+        // Unseen ground cannot be targeted.
+        Assert.IsNotNull(rules.GridPreview(map.Lair.x, map.Lair.y).error);
+    }
+
+    [Test]
+    public void GridPreviewMatchesWhatTheWalkCosts()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run;
+        run.gridFog = new string('1', rules.Overworld.cells.Length);
+        var target = NearestOther(rules);
+        var preview = rules.GridPreview(target.x, target.y);
+        Assert.IsNull(preview.error);
+        int rations = run.rations; float carry = run.travelCarry;
+        var step = rules.GridMove(target.x, target.y);
+        Assert.IsNull(step.error);
+        Assert.IsFalse(step.halted);
+        Assert.AreEqual(target.id, run.at, "arrived at the place");
+        Assert.AreEqual(target, step.arrived);
+        float spent = (rations - run.rations) + (run.travelCarry - carry) / TowerRules.RationCost;
+        Assert.AreEqual(preview.rations, spent, 0.01f, "preview cost equals what the walk charged");
+        Assert.Greater(run.threat, 0);
+        Assert.IsNull(rules.EnterPoi(), "a grid place opens its dungeon");
+    }
+
+    [Test]
+    public void GridWalkingWearsARoad()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run; var map = rules.Overworld;
+        run.gridFog = new string('1', map.cells.Length);
+        var target = NearestOther(rules);
+        var camp = map.Camp;
+        var first = rules.GridPreview(target.x, target.y);
+        rules.GridMove(target.x, target.y);
+        var back = rules.GridPreview(camp.x, camp.y);
+        Assert.Less(back.cost, first.cost, "the walked route is road now and costs less");
+        Assert.IsTrue(rules.CellIsRoad(target.x, target.y));
+        Assert.Less(back.threat, first.threat, "road raises less threat");
+    }
+
+    [Test]
+    public void GridStirWearsAwayLooseRoad()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run; var map = rules.Overworld;
+        run.gridFog = new string('1', map.cells.Length);
+        var target = NearestOther(rules);
+        var path = rules.GridPreview(target.x, target.y).path;
+        rules.GridMove(target.x, target.y);
+        rules.GridMove(map.Camp.x, map.Camp.y);
+        var middle = path[path.Count / 2];
+        bool anchoredMiddle = (middle - new Vector2Int(map.Camp.x, map.Camp.y)).sqrMagnitude <= 9;
+        Assume.That(!anchoredMiddle && map.At(middle.x, middle.y) != TowerTerrain.Road, "middle of the route is loose trail");
+        int before = rules.RoadStrength(middle.x, middle.y), camp = rules.RoadStrength(map.Camp.x, map.Camp.y);
+        rules.RaiseThreat(TowerRules.ThreatMax);
+        Assert.AreEqual(TowerRules.ThreatAfterStir, run.threat);
+        Assert.Less(rules.RoadStrength(middle.x, middle.y), before, "loose road wears down");
+        Assert.AreEqual(camp, rules.RoadStrength(map.Camp.x, map.Camp.y), "ground by the camp is anchored");
+    }
+
+    [Test]
+    public void GridEventStopsTheWalkAndItResumes()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run; var map = rules.Overworld;
+        run.gridFog = new string('1', map.cells.Length);
+        var target = map.Lair;
+        TowerRules.TraversalEvents = true;
+        run.threat = TowerRules.ThreatMax - 1;           // the first stretch fills the meter: the forest stirs and ambushes
+        var step = rules.GridMove(target.x, target.y);
+        Assert.IsNull(step.error);
+        Assert.IsTrue(step.halted, "stopped short by the ambush");
+        Assert.IsNotNull(rules.EventBlock());
+        Assert.IsTrue(rules.GridHasTarget, "the target is remembered");
+        // The halt survives a save.
+        var copy = JsonUtility.FromJson<TowerRun>(JsonUtility.ToJson(run));
+        Assert.AreEqual(target.x, copy.targetX);
+        Assert.AreEqual(run.cx, copy.cx);
+        Assert.IsNotNull(rules.GridResume().error, "cannot walk on until it is settled");
+        TowerRules.TraversalEvents = false;
+        run.eventId = ""; run.ambushDepth = 0;
+        var rest = rules.GridResume();
+        Assert.IsNull(rest.error);
+        Assert.AreEqual(target.id, run.at);
+        Assert.IsFalse(rules.GridHasTarget);
+    }
+
+    [Test]
+    public void OverworldRoadsAreCheaperThanForest()
+    {
+        var map = new TowerOverworld(12, 3, "edge", 1);
+        for (int i = 0; i < map.cells.Length; i++) map.cells[i] = TowerTerrain.Forest;
+        var path = map.FindPath(new Vector2Int(0, 1), new Vector2Int(11, 1));
+        float forest = map.PathCost(path);
+        float worn = map.PathCost(path, i => true);
+        Assert.Less(worn, forest, "walked road costs less than fresh forest");
+        map.Set(5, 0, TowerTerrain.Water); map.Set(5, 1, TowerTerrain.Water); map.Set(5, 2, TowerTerrain.Water);
+        Assert.IsNull(map.FindPath(new Vector2Int(0, 1), new Vector2Int(11, 1)), "a river with no ford blocks the way");
+        map.Set(5, 2, TowerTerrain.Ford);
+        var around = map.FindPath(new Vector2Int(0, 1), new Vector2Int(11, 1));
+        Assert.IsNotNull(around);
+        Assert.IsTrue(around.Contains(new Vector2Int(5, 2)), "the route uses the ford");
     }
 
     [Test]

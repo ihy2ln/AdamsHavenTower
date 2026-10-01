@@ -56,6 +56,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private float walkPace = 1;
     private Texture2D trailTex;         // the worn roads, redrawn with the map
     private GameObject inspectCard;
+    // layered grid map (TowerMapView)
+    private TowerMapView gridView;
+    private Vector2Int gridSel = new Vector2Int(-1, -1);
+    private bool gridWalking;
+    private int gridCenteredFor = -1;
+    private GameObject gridBar;
     private readonly List<string> planParty = new List<string>();
     private int planRations, planTonics, planFirewood;
     private bool lootOpen;
@@ -89,6 +95,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     public void Begin(AdamsHavenPrototype controller)
     {
         tower = controller;
+        TowerRules.GridMaps = true;         // new expeditions use the layered grid map
         commitDungeonStep = tower.SaveExpedition;
         font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         var canvasObject = new GameObject("Expedition Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -113,6 +120,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     public void Shutdown()
     {
         if (canvas != null) Destroy(canvas.gameObject);
+        if (gridView != null) Destroy(gridView);
         Destroy(this);
     }
 
@@ -120,6 +128,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         view = next;
         lootOpen = false;
+        if (gridView != null) gridView.SetActive(next == View.Forest);
         Rebuild();
     }
 
@@ -176,7 +185,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void Update()
     {
         if (tower == null || canvas == null || !canvas.gameObject.activeSelf) return;
-        if ((Screen.width != lastWidth || Screen.height != lastHeight) && !walking && !fading && !fadingIn) Rebuild();
+        if ((Screen.width != lastWidth || Screen.height != lastHeight) && !walking && !fading && !fadingIn && !gridWalking) Rebuild();
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;
@@ -640,6 +649,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void BuildForest()
     {
+        if (R.GridRun) { BuildGridForest(); return; }
         var run = R.Run; var layout = R.RunLayout;
         float width = root.rect.width, height = root.rect.height;
         var tex = Resources.Load<Texture2D>(layout.backdrop) ?? Resources.Load<Texture2D>(Root + "Maps/region");
@@ -679,6 +689,141 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         else BuildEventCard();
         ResumeHaltedWalk(run);
         if (fadingIn) { MakeCurtain(1); fadeClock = 0; }
+    }
+
+    // ---------------------------------------------------------------- layered grid map
+
+    private void BuildGridForest()
+    {
+        var run = R.Run;
+        float width = root.rect.width, height = root.rect.height, areaW = width - Side - 12, areaH = height - Top;
+        var image = new GameObject("Map view", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+        image.transform.SetParent(content, false);
+        var rect = image.rectTransform;
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(0, -Top); rect.sizeDelta = new Vector2(areaW, areaH);
+        if (gridView == null) gridView = gameObject.AddComponent<TowerMapView>();
+        float scale = canvas.scaleFactor;
+        gridView.Resize(Mathf.RoundToInt(areaW * scale), Mathf.RoundToInt(areaH * scale));
+        gridView.Bind(R);
+        gridView.SetActive(true);
+        if (gridCenteredFor != run.gridSeed + run.shift * 31) { gridCenteredFor = run.gridSeed + run.shift * 31; gridView.CenterOnParty(); }
+        image.texture = gridView.Texture;
+        var input = image.gameObject.AddComponent<TowerMapInput>();
+        input.Tapped = TapGrid;
+        input.Dragged = d => { if (!gridWalking) gridView.Pan(d); };
+        input.Zoomed = (f, at) => gridView.ZoomBy(f, at);
+        gridBar = null;
+        if (gridSel.x >= 0) { var preview = R.GridPreview(gridSel.x, gridSel.y); if (preview.error == null) { gridView.ShowPreview(preview.path); BuildRouteBar(preview, gridSel); } else ClearGridSelection(); }
+
+        TopBar(R.RunRegion.name.ToUpperInvariant() + "  •  " + R.RunLayout.name.ToUpperInvariant(), "RETURN TO TOWER",
+            () => { tower.CloseExpedition(null); });
+        BuildRunPanel(false);
+        if (lootOpen) BuildLoot();
+        else BuildEventCard();
+        // A walk an event interrupted carries on by itself once the event is settled.
+        if (!gridWalking && !lootOpen && R.GridHasTarget && R.EventBlock() == null && string.IsNullOrEmpty(run.eventResult))
+        {
+            var step = R.GridResume();
+            if (step.error != null) { R.GridCancelTarget(); Say(step.error); }
+            else StartGridWalk(step);
+        }
+    }
+
+    private void TapGrid(Vector2 viewport)
+    {
+        if (gridWalking || R.Run == null) return;
+        var map = gridView.Map;
+        var cell = gridView.CellAt(viewport);
+        // A tap inside a place's glade means the place.
+        foreach (var p in map.pois)
+            if (Mathf.Abs(p.x - cell.x) <= 1 && Mathf.Abs(p.y - cell.y) <= 1 && R.CellSeen(p.x, p.y)) { cell = new Vector2Int(p.x, p.y); break; }
+        if (cell == gridSel) { GridGo(); return; }
+        var preview = R.GridPreview(cell.x, cell.y);
+        if (preview.error != null) { ClearGridSelection(); Say(preview.error); return; }
+        gridSel = cell;
+        gridView.ShowPreview(preview.path);
+        BuildRouteBar(preview, cell);
+    }
+
+    private void ClearGridSelection()
+    {
+        gridSel = new Vector2Int(-1, -1);
+        if (gridView != null) gridView.ClearPreview();
+        if (gridBar != null) { Destroy(gridBar); gridBar = null; }
+    }
+
+    // Route card along the bottom of the map: where, what it costs, and the button to go.
+    private void BuildRouteBar(TowerGridPreview preview, Vector2Int cell)
+    {
+        if (gridBar != null) Destroy(gridBar);
+        var run = R.Run; var map = gridView.Map;
+        var poi = map.PoiAt(cell.x, cell.y);
+        bool here = cell.x == run.cx && cell.y == run.cy;
+        float areaW = root.rect.width - Side - 12, w = Mathf.Min(640, areaW - 24), h = 84;
+        var panel = PanelAt("Route", content, (areaW - w) / 2, root.rect.height - h - 22, w, h);
+        gridBar = panel.gameObject;
+        string title = poi != null ? poi.name + (run.cleared.Contains(poi.id) ? "  (cleared)" : "") : GroundName(map.At(cell.x, cell.y));
+        string kind = poi != null ? PlaceKind(R.RunLayout.Node(poi.id)) : R.CellIsRoad(cell.x, cell.y) ? "Worn road" : "Open country";
+        var icon = poi != null ? Icon(poi.kind) : null;
+        float tx = 40, textW = w - tx - 200;
+        if (icon != null)
+        {
+            var glyph = At("Route icon", panel.transform, 38, 14, 34, 34, Color.white);
+            glyph.sprite = icon; glyph.preserveAspect = true; glyph.raycastTarget = false;
+            tx = 80; textW = w - tx - 200;
+        }
+        TextAt(panel.transform, "Route title", title, tx, 10, textW, 24, 16, Gold);
+        TextAt(panel.transform, "Route kind", kind, tx, 34, textW, 18, 12, Cream);
+        if (here)
+        {
+            TextAt(panel.transform, "Route cost", "You are here.", tx, 54, textW, 18, 12, new Color(0.8f, 0.86f, 0.92f));
+            return;
+        }
+        int roadPct = preview.roadCells + preview.trailCells == 0 ? 0 : Mathf.RoundToInt(100f * preview.roadCells / (preview.roadCells + preview.trailCells));
+        string cost = preview.rations.ToString("0.0") + " rations  •  +" + preview.threat + " threat  •  " + roadPct + "% on road";
+        TextAt(panel.transform, "Route cost", cost, tx, 54, textW, 18, 12, preview.rations > run.rations + 0.01f ? new Color(1f, 0.6f, 0.5f) : new Color(0.8f, 0.86f, 0.92f));
+        ButtonAt(panel.transform, "Walk", "WALK", w - 186, 18, 146, 48, GridGo, Teal, 17);
+    }
+
+    private static string GroundName(TowerTerrain t)
+    {
+        switch (t)
+        {
+            case TowerTerrain.DenseForest: return "Deep forest";
+            case TowerTerrain.Forest: return "Forest";
+            case TowerTerrain.Clearing: return "Clearing";
+            case TowerTerrain.Road: return "Old road";
+            case TowerTerrain.Bridge: return "Bridge";
+            case TowerTerrain.Ford: return "Ford";
+            case TowerTerrain.Hill: return "Hillside";
+            case TowerTerrain.RuinGround: return "Ruins";
+            case TowerTerrain.Blight: return "Blighted ground";
+            case TowerTerrain.Marsh: return "Marsh";
+            default: return TowerForestLayouts.Pretty(t.ToString().ToLowerInvariant());
+        }
+    }
+
+    private void GridGo()
+    {
+        if (gridWalking || gridSel.x < 0) return;
+        var step = R.GridMove(gridSel.x, gridSel.y);
+        StartGridWalk(step);
+    }
+
+    private void StartGridWalk(TowerGridStep step)
+    {
+        if (step.error != null) { Say(step.error); return; }
+        ClearGridSelection();
+        tower.SaveExpedition();
+        gridWalking = true;
+        MakeCurtain(0);         // swallows taps while the party is on the move
+        gridView.Walk(step.walked, () =>
+        {
+            gridWalking = false;
+            Act(null);
+            if (R.Run != null && step.arrived != null && !step.halted && R.EventBlock() == null) Say("Arrived: " + step.arrived.name + ".");
+        });
     }
 
     // First tap looks at a place, a second tap (or WALK THERE) sets off.
@@ -1090,9 +1235,18 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float width = root.rect.width, height = root.rect.height;
         var panel = PanelAt("Run panel", content, width - Side - 6, Top + 6, Side, height - Top - 12).transform;
         float y = 12;
-        if (!dungeon)
+        var here = dungeon ? null : R.RunLayout.Node(run.at);
+        if (!dungeon && here == null)
         {
-            var node = R.RunLayout.Node(run.at);
+            // On the grid map, between places.
+            var near = R.NearestPoi(run.cx, run.cy);
+            TextAt(panel, "Node", "THE WILDS", 16, y, Side - 32, 26, 18, Gold); y += 26;
+            TextAt(panel, "Kind", GroundName(R.Overworld.At(run.cx, run.cy)) + (near != null && R.NodeVisible(near.id) ? "  •  near " + near.name : ""),
+                16, y, Side - 32, 40, 13, Cream); y += 44;
+        }
+        if (!dungeon && here != null)
+        {
+            var node = here;
             TextAt(panel, "Node", node.name.ToUpperInvariant(), 16, y, Side - 32, 26, 18, Gold); y += 26;
             string kind = node.kind == "camp" ? "Camp: rest by the fire" : node.kind == "lair" ? "The region's lair: " +
                 TowerForestLayouts.Floors(node.kind) + " floors, boss at the bottom" : (node.kind == "landmark" ? "Landmark" :
@@ -1106,7 +1260,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                     () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); Go(View.Dungeon); } },
                     Teal, 16, !run.cleared.Contains(node.id));
             y += 50;
-            TextAt(panel, "Travel", "Tap a glowing place to look; tap it again or WALK THERE to set off. Brighter glows are one trail away.", 16, y, Side - 32, 34, 12, new Color(0.8f, 0.85f, 0.9f)); y += 38;
+        }
+        if (!dungeon)
+        {
+            TextAt(panel, "Travel", R.GridRun ? "Tap anywhere you can see to plan a route; tap again or WALK to go. Walked ground becomes road: cheaper and safer. Drag to pan, wheel or pinch to zoom." :
+                "Tap a glowing place to look; tap it again or WALK THERE to set off. Brighter glows are one trail away.", 16, y, Side - 32, R.GridRun ? 62 : 34, 12, new Color(0.8f, 0.85f, 0.9f));
+            y += R.GridRun ? 66 : 38;
         }
         else
         {
