@@ -64,6 +64,20 @@ namespace AdamsHaven.Tower
             return (s / 60) + ":" + (s % 60).ToString("00");
         }
 
+        // Gold as players read it: plain below 1,000, then one decimal and a suffix (1.4k, 205k, 1mil, 300.5mil, 12bil).
+        // The decimal is cut, not rounded, so 999,999 reads 999.9k rather than jumping to 1000k.
+        public static string Compact(long value)
+        {
+            if (value < 0) return "-" + Compact(-value);
+            if (value < 1000) return value.ToString();
+            string[] suffixes = { "k", "mil", "bil" };
+            long unit = 1000;
+            int i = 0;
+            while (i < suffixes.Length - 1 && value >= unit * 1000) { unit *= 1000; i++; }
+            long tenths = value * 10 / unit;
+            return (tenths / 10) + (tenths % 10 == 0 ? "" : "." + (tenths % 10)) + suffixes[i];
+        }
+
         private void StartWork(string kind, int floor, int x, int side, string type, float seconds)
         {
             State.works.Add(new TowerWork { kind = kind, floor = floor, x = x, side = side,

@@ -249,7 +249,7 @@ public sealed partial class TowerHud
         chipValues[0].text = Mathf.CeilToInt(state.firewood) + Arrow("firewood", live);
         chipValues[1].text = Mathf.CeilToInt(state.food) + Arrow("food", live);
         chipValues[2].text = Mathf.CeilToInt(state.water) + Arrow("water", live);
-        chipValues[3].text = state.gold.ToString();
+        chipValues[3].text = TowerRules.Compact(state.gold);
         chipValues[4].text = state.celestium.ToString();
         chipValues[5].text = state.sigils.ToString();
         peopleText.text = "PEOPLE " + tower.Rules.BiologicalPopulation() + "/" + tower.Rules.PopulationCap() +
@@ -402,7 +402,7 @@ public sealed partial class TowerHud
             "\n" + rules.ThreatLabel() +
             "\n" + rules.BiologicalPopulation() + " / " + rules.PopulationCap() +
             "\n" + state.regionsConquered.Count + " / " + TowerRules.Regions.Length + " conquered" +
-            "\n" + state.sigils + "\n" + state.celestium + "\n" + state.gold;
+            "\n" + state.sigils + "\n" + state.celestium + "\n" + TowerRules.Compact(state.gold);
         menuRun.text = "Run " + (state.runs + 1) + "   ·   Legacy " + state.legacyRank + "   ·   Steward " + (state.steward ? "on" : "off") +
             "\nHold a dock or top button for shortcuts.";
         if (menuSteward != null) menuSteward.GetComponent<Image>().color = state.steward ? Gold : Teal;

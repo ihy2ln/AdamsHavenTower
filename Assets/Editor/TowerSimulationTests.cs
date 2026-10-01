@@ -2205,6 +2205,21 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
+    public void GoldReadsAsACompactNumberFromOneThousand()
+    {
+        Assert.AreEqual("999", TowerRules.Compact(999));
+        Assert.AreEqual("1k", TowerRules.Compact(1000));
+        Assert.AreEqual("1.4k", TowerRules.Compact(1400));
+        Assert.AreEqual("1.4k", TowerRules.Compact(1499));
+        Assert.AreEqual("205k", TowerRules.Compact(205000));
+        Assert.AreEqual("999.9k", TowerRules.Compact(999999));
+        Assert.AreEqual("1mil", TowerRules.Compact(1000000));
+        Assert.AreEqual("300.5mil", TowerRules.Compact(300500000));
+        Assert.AreEqual("12bil", TowerRules.Compact(12000000000));
+        Assert.AreEqual("1500bil", TowerRules.Compact(1500000000000));
+    }
+
+    [Test]
     public void OldTwoCellBarnsShrinkToTheirTierWidth()
     {
         var rules = Started();
