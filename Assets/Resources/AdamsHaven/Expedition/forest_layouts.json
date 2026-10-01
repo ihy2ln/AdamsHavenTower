@@ -7,19 +7,151 @@
       "theme": "ruin",
       "entrance": "camp",
       "nodes": [
-        { "id": "camp", "kind": "camp", "name": "Expedition Camp", "theme": "keep", "x": 0.59, "y": 0.77, "links": ["spider", "trail", "marks"] },
-        { "id": "trail", "kind": "combat", "name": "Bandit Trail", "theme": "briar", "x": 0.28, "y": 0.91, "links": ["pool"] },
-        { "id": "spider", "kind": "combat", "name": "Spider Hollow", "theme": "cave", "x": 0.56, "y": 0.60, "links": ["cross"] },
-        { "id": "marks", "kind": "landmark", "name": "Ranger Marks", "theme": "briar", "prop": "ranger_marks", "x": 0.73, "y": 0.53, "links": ["bridge"] },
-        { "id": "pool", "kind": "landmark", "name": "Moon Pool", "theme": "crystal", "prop": "moon_pool", "x": 0.33, "y": 0.61, "links": ["cross"] },
-        { "id": "cross", "kind": "mystery", "name": "Whispering Crossroads", "theme": "ruin", "x": 0.51, "y": 0.47, "links": ["hut", "raider"] },
-        { "id": "hut", "kind": "treasure", "name": "Abandoned Cottage", "theme": "keep", "x": 0.29, "y": 0.35, "links": ["village", "oak"] },
-        { "id": "village", "kind": "merchant", "name": "Hollow Village", "theme": "keep", "x": 0.16, "y": 0.34, "links": [] },
-        { "id": "oak", "kind": "landmark", "name": "Hollow Oak", "theme": "cave", "prop": "hollow_oak", "x": 0.37, "y": 0.22, "links": ["chapel"] },
-        { "id": "raider", "kind": "combat", "name": "Raider Outpost", "theme": "keep", "x": 0.66, "y": 0.32, "links": ["bridge", "chapel"] },
-        { "id": "bridge", "kind": "elite", "name": "Warden's Bridge", "theme": "ruin", "x": 0.86, "y": 0.39, "links": ["shrine"] },
-        { "id": "shrine", "kind": "shrine", "name": "Moss Shrine", "theme": "ruin", "x": 0.95, "y": 0.27, "links": [] },
-        { "id": "chapel", "kind": "lair", "name": "The Fog Chapel", "theme": "ruin", "x": 0.58, "y": 0.08, "links": [] }
+        {
+          "id": "camp",
+          "kind": "camp",
+          "name": "Camp",
+          "theme": "keep",
+          "x": 0.59,
+          "y": 0.77,
+          "links": [
+            "spider",
+            "trail",
+            "marks"
+          ]
+        },
+        {
+          "id": "trail",
+          "kind": "combat",
+          "name": "Bandits",
+          "theme": "briar",
+          "x": 0.28,
+          "y": 0.91,
+          "links": [
+            "pool"
+          ]
+        },
+        {
+          "id": "spider",
+          "kind": "combat",
+          "name": "Spiders",
+          "theme": "cave",
+          "x": 0.56,
+          "y": 0.6,
+          "links": [
+            "cross"
+          ]
+        },
+        {
+          "id": "marks",
+          "kind": "landmark",
+          "name": "Ranger Marks",
+          "theme": "briar",
+          "prop": "ranger_marks",
+          "x": 0.73,
+          "y": 0.53,
+          "links": [
+            "bridge"
+          ]
+        },
+        {
+          "id": "pool",
+          "kind": "landmark",
+          "name": "Moon Pool",
+          "theme": "crystal",
+          "prop": "moon_pool",
+          "x": 0.33,
+          "y": 0.61,
+          "links": [
+            "cross"
+          ]
+        },
+        {
+          "id": "cross",
+          "kind": "mystery",
+          "name": "Crossroads",
+          "theme": "ruin",
+          "x": 0.51,
+          "y": 0.47,
+          "links": [
+            "hut",
+            "raider"
+          ]
+        },
+        {
+          "id": "hut",
+          "kind": "treasure",
+          "name": "Cottage",
+          "theme": "keep",
+          "x": 0.29,
+          "y": 0.35,
+          "links": [
+            "village",
+            "oak"
+          ]
+        },
+        {
+          "id": "village",
+          "kind": "merchant",
+          "name": "Village",
+          "theme": "keep",
+          "x": 0.16,
+          "y": 0.34,
+          "links": []
+        },
+        {
+          "id": "oak",
+          "kind": "landmark",
+          "name": "Hollow Oak",
+          "theme": "cave",
+          "prop": "hollow_oak",
+          "x": 0.37,
+          "y": 0.22,
+          "links": [
+            "chapel"
+          ]
+        },
+        {
+          "id": "raider",
+          "kind": "combat",
+          "name": "Raiders",
+          "theme": "keep",
+          "x": 0.66,
+          "y": 0.32,
+          "links": [
+            "bridge",
+            "chapel"
+          ]
+        },
+        {
+          "id": "bridge",
+          "kind": "elite",
+          "name": "Warden's Bridge",
+          "theme": "ruin",
+          "x": 0.86,
+          "y": 0.39,
+          "links": [
+            "shrine"
+          ]
+        },
+        {
+          "id": "shrine",
+          "kind": "shrine",
+          "name": "Moss Shrine",
+          "theme": "ruin",
+          "x": 0.95,
+          "y": 0.27,
+          "links": []
+        },
+        {
+          "id": "chapel",
+          "kind": "lair",
+          "name": "Fog Chapel",
+          "theme": "ruin",
+          "x": 0.58,
+          "y": 0.08,
+          "links": []
+        }
       ]
     }
   ]

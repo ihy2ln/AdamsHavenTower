@@ -44,8 +44,9 @@ namespace AdamsHaven.Tower
             }
         }
 
-        public static TowerDungeon Build(string layoutId, TowerForestNode node, int floor, int runSeed)
+        public static TowerDungeon Build(string layoutId, TowerForestNode node, int floor, int runSeed, int version = 1)
         {
+            if (version > 0) return BuildBranches(layoutId, node, floor, runSeed);
             var d = new TowerDungeon { theme = node.theme, poiKind = node.kind, floor = floor,
                 floors = Mathf.Max(1, TowerForestLayouts.Floors(node.kind)) };
             for (int i = 0; i < d.room.Length; i++) d.room[i] = -1;
@@ -85,6 +86,51 @@ namespace AdamsHaven.Tower
                         d.CellAt(x, y + 1) == Floor || d.CellAt(x, y - 1) == Floor) d.cell[Index(x, y)] = Door;
                 }
             d.AssignRooms(new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 7919 + runSeed)));
+            return d;
+        }
+
+        private static TowerDungeon BuildBranches(string layoutId, TowerForestNode node, int floor, int runSeed)
+        {
+            var d = new TowerDungeon { theme = node.theme, poiKind = node.kind, floor = floor,
+                floors = Mathf.Max(1, TowerForestLayouts.Floors(node.kind)) };
+            for (int i = 0; i < d.room.Length; i++) d.room[i] = -1;
+            var rng = new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id + ":branches", floor * 131 + 7));
+            // A central junction with three guaranteed arms; optional corner chambers are detours.
+            var slots = new List<int> { 3, 4, 1, 5, 7 };
+            var corners = new List<int> { 0, 2, 6, 8 };
+            int target = 6 + rng.Next(3);
+            while (slots.Count < target) { int pick = rng.Next(corners.Count); slots.Add(corners[pick]); corners.RemoveAt(pick); }
+            foreach (int slot in slots)
+            {
+                var r = new TowerDungeonRoom { x = 1 + slot % 3 * 6, y = 1 + slot / 3 * 6,
+                    w = 3 + rng.Next(2), h = 3 + rng.Next(2) };
+                for (int y = r.y; y < r.y + r.h; y++)
+                    for (int x = r.x; x < r.x + r.w; x++) { d.cell[Index(x, y)] = Floor; d.room[Index(x, y)] = d.rooms.Count; }
+                d.rooms.Add(r);
+            }
+            // Connect only adjacent sectors, preserving readable physical forks and leaf rooms.
+            var connections = new int[slots.Count];
+            for (int i = 1; i < slots.Count; i++)
+            {
+                var candidates = new List<int>();
+                for (int j = 0; j < i; j++)
+                    if (Math.Abs(slots[i] % 3 - slots[j] % 3) + Math.Abs(slots[i] / 3 - slots[j] / 3) == 1) candidates.Add(j);
+                int parent = candidates[rng.Next(candidates.Count)];
+                connections[parent]++; connections[i]++;
+                var a = d.rooms[parent]; var b = d.rooms[i];
+                d.Carve(a.CenterX, a.CenterY, b.CenterX, b.CenterY, slots[parent] / 3 == slots[i] / 3);
+            }
+            for (int y = 0; y < Size; y++) for (int x = 0; x < Size; x++)
+                if (d.CellAt(x, y) == Corridor && (d.CellAt(x + 1, y) == Floor || d.CellAt(x - 1, y) == Floor ||
+                    d.CellAt(x, y + 1) == Floor || d.CellAt(x, y - 1) == Floor)) d.cell[Index(x, y)] = Door;
+            d.AssignRooms(new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 7919 + runSeed)));
+            // At least one non-goal branch rewards exploration.
+            for (int i = d.rooms.Count - 1; i > 1; i--)
+                if (connections[i] == 1 && !d.rooms[i].goal && d.rooms[i].kind != "stairs" && d.rooms[i].kind != "elite")
+                { d.rooms[i].kind = "treasure"; break; }
+            if (!d.rooms.Exists(r => r.kind == "enemy" || r.kind == "elite" || r.kind == "boss"))
+                for (int i = 2; i < d.rooms.Count; i++)
+                    if (!d.rooms[i].goal && d.rooms[i].kind != "stairs" && d.rooms[i].kind != "treasure") { d.rooms[i].kind = "enemy"; break; }
             return d;
         }
 
@@ -157,10 +203,10 @@ namespace AdamsHaven.Tower
             {
                 var run = Run;
                 if (run == null || run.dungeonPoi.Length == 0 || RunLayout == null || RunLayout.Node(run.dungeonPoi) == null) return null;
-                string key = run.layout + ":" + run.dungeonPoi + ":" + run.floor + ":" + run.seed;
+                string key = run.layout + ":" + run.dungeonPoi + ":" + run.floor + ":" + run.seed + ":" + run.dungeonLayoutVersion;
                 if (key != dungeonKey || dungeonCache == null)
                 {
-                    dungeonCache = TowerDungeon.Build(run.layout, RunLayout.Node(run.dungeonPoi), run.floor, run.seed);
+                    dungeonCache = TowerDungeon.Build(run.layout, RunLayout.Node(run.dungeonPoi), run.floor, run.seed, run.dungeonLayoutVersion);
                     dungeonKey = key;
                 }
                 return dungeonCache;
@@ -216,6 +262,7 @@ namespace AdamsHaven.Tower
         private void StartFloor(int floor)
         {
             var run = Run;
+            run.dungeonLayoutVersion = 1;
             run.floor = floor;
             run.fog = new string('0', TowerDungeon.Size * TowerDungeon.Size);
             run.roomsDone.Clear();
@@ -243,6 +290,21 @@ namespace AdamsHaven.Tower
         // Walks along explored cells toward the target and stops at the first room with something in it.
         public string DungeonMove(int tx, int ty)
         {
+            List<int> path;
+            string error = DungeonRoute(tx, ty, out path);
+            if (error != null) return error;
+            foreach (int step in path)
+            {
+                error = DungeonAdvance(step % TowerDungeon.Size, step / TowerDungeon.Size);
+                if (error != null) return error;
+                if (PendingRoom >= 0) break;
+            }
+            return null;
+        }
+
+        public string DungeonRoute(int tx, int ty, out List<int> path)
+        {
+            path = new List<int>();
             var run = Run; var d = Dungeon;
             if (d == null) return "Not in a dungeon.";
             if (PendingRoom >= 0 && BattleRoom(d.rooms[PendingRoom].kind)) return "Deal with this room first.";
@@ -266,19 +328,23 @@ namespace AdamsHaven.Tower
                 }
             }
             if (prev[goal] == -2) return "No known path.";
-            var path = new List<int>();
             for (int i = goal; i != start; i = prev[i]) path.Add(i);
             path.Reverse();
-            foreach (int step in path)
-            {
-                run.prevX = run.px; run.prevY = run.py;
-                run.px = step % TowerDungeon.Size; run.py = step / TowerDungeon.Size;
-                RevealAround();
-                int r = d.RoomAt(run.px, run.py);
-                if (r >= 0 && !run.roomsDone.Contains(r) && (d.rooms[r].kind == "empty" || d.rooms[r].kind == "entrance"))
-                    run.roomsDone.Add(r);
-                if (PendingRoom >= 0) break;
-            }
+            return null;
+        }
+
+        public string DungeonAdvance(int x, int y)
+        {
+            var run = Run; var d = Dungeon;
+            if (d == null) return "Not in a dungeon.";
+            if (PendingRoom >= 0 && BattleRoom(d.rooms[PendingRoom].kind)) return "Deal with this room first.";
+            if (Math.Abs(x - run.px) + Math.Abs(y - run.py) != 1) return "Move one step at a time.";
+            if (!d.Walkable(x, y) || !Revealed(x, y)) return "You cannot see a way there.";
+            run.prevX = run.px; run.prevY = run.py;
+            run.px = x; run.py = y;
+            RevealAround();
+            int r = d.RoomAt(x, y);
+            if (r >= 0 && !run.roomsDone.Contains(r) && (d.rooms[r].kind == "empty" || d.rooms[r].kind == "entrance")) run.roomsDone.Add(r);
             return null;
         }
 

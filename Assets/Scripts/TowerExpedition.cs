@@ -44,6 +44,8 @@ namespace AdamsHaven.Tower
         // Dungeon crawl; empty dungeonPoi means the party is on the forest map.
         public string dungeonPoi = "";
         public int floor, px, py, prevX, prevY;
+        // Missing in older saves: zero keeps the active legacy floor intact.
+        public int dungeonLayoutVersion;
         public string fog = "";
         public List<int> roomsDone = new List<int>();
         // Forest fog, roads and threat (TowerThreat.cs). Older saves load these empty; NormalizeExpeditions refills the fog.
@@ -56,6 +58,14 @@ namespace AdamsHaven.Tower
         public List<string> flags = new List<string>();
         public int steps, ambushDepth;                     // ambushDepth > 0: a fight waits on the forest map
         public bool lastStepEvent;
+        public List<TowerTrail> trails = new List<TowerTrail>();   // the routes actually walked on the map
+    }
+
+    // One walked route between two forest places, as points on the painted map (normalised, y from the top).
+    [Serializable] public sealed class TowerTrail
+    {
+        public string a = "", b = "";
+        public List<Vector2> pts = new List<Vector2>();
     }
 
     public sealed partial class TowerRules
@@ -65,21 +75,35 @@ namespace AdamsHaven.Tower
 
         public static readonly TowerRegionDef[] Regions =
         {
-            new TowerRegionDef("silverbrook_edge", "Silverbrook Edge", "Trails just past the village fences.", 0.30f, 0.62f, 1, 3, 1f),
-            new TowerRegionDef("rootside_camp", "Rootside Camp", "An abandoned ranger camp in the pines.", 0.19f, 0.34f, 2, 3, 1.2f, "silverbrook_edge"),
-            new TowerRegionDef("shallow_ford", "Shallow Ford", "Stepping stones over the Silverbrook.", 0.47f, 0.69f, 2, 4, 1.3f, "silverbrook_edge"),
-            new TowerRegionDef("moon_shrine", "Moonlit Shrine", "A ruined shrine that hums at night.", 0.31f, 0.11f, 3, 5, 1.6f, "rootside_camp"),
+            new TowerRegionDef("silverbrook_edge", "Brook Edge", "Trails just past the village fences.", 0.30f, 0.62f, 1, 3, 1f),
+            new TowerRegionDef("rootside_camp", "Rootside", "An abandoned ranger camp in the pines.", 0.19f, 0.34f, 2, 3, 1.2f, "silverbrook_edge"),
+            new TowerRegionDef("shallow_ford", "Ford", "Stepping stones over the Silverbrook.", 0.47f, 0.69f, 2, 4, 1.3f, "silverbrook_edge"),
+            new TowerRegionDef("moon_shrine", "Moon Shrine", "A ruined shrine that hums at night.", 0.31f, 0.11f, 3, 5, 1.6f, "rootside_camp"),
             new TowerRegionDef("old_bridge", "Old Bridge", "The stone bridge and the isle beyond.", 0.52f, 0.45f, 3, 5, 1.7f, "shallow_ford"),
-            new TowerRegionDef("sunken_marsh", "Sunken Marsh", "Drowned groves and a sunken cache.", 0.80f, 0.76f, 4, 6, 2f, "shallow_ford"),
-            new TowerRegionDef("watchpost_ruin", "Ruined Watchpost", "Raiders hold the old watch tower.", 0.64f, 0.18f, 5, 7, 2.4f, "old_bridge"),
-            new TowerRegionDef("silverwood_gate", "Silverwood Gate", "The statue gate into the deep wood.", 0.86f, 0.37f, 7, 8, 3f,
+            new TowerRegionDef("sunken_marsh", "Marsh", "Drowned groves and a sunken cache.", 0.80f, 0.76f, 4, 6, 2f, "shallow_ford"),
+            new TowerRegionDef("watchpost_ruin", "Watchpost", "Raiders hold the old watch tower.", 0.64f, 0.18f, 5, 7, 2.4f, "old_bridge"),
+            new TowerRegionDef("silverwood_gate", "Wood Gate", "The statue gate into the deep wood.", 0.86f, 0.37f, 7, 8, 3f,
                 "watchpost_ruin", "sunken_marsh"),
+            // Beyond the Gate: five Silverwood depths, each fought on one of its three painted maps.
+            new TowerRegionDef("silverwood_d1", "Wood Edge", "Woodcutters' hamlets and fallen oaks past the Gate.", 0.88f, 0.09f, 8, 9, 3.4f, "silverwood_gate"),
+            new TowerRegionDef("silverwood_d2", "Lakes", "Still lakes, braided rivers and drowned groves.", 0.88f, 0.22f, 9, 10, 3.8f, "silverwood_d1"),
+            new TowerRegionDef("silverwood_d3", "Mountains", "Cliff ridges, old mines and crystal caverns.", 0.90f, 0.54f, 10, 11, 4.2f, "silverwood_d2"),
+            new TowerRegionDef("silverwood_d4", "Ruins", "A sunken city and blighted citadel under the roots.", 0.90f, 0.67f, 11, 12, 4.6f, "silverwood_d3"),
+            new TowerRegionDef("silverwood_d5", "Heart", "The world tree, the hollow gate and the blight.", 0.90f, 0.90f, 12, 13, 5.2f, "silverwood_d4"),
         };
 
         public static TowerRegionDef Region(string id)
         {
             foreach (var r in Regions) if (r.id == id) return r;
             return null;
+        }
+
+        // 1 to 5 for the Silverwood depth regions, 0 for the Silverbrook ones.
+        public static int SilverwoodDepth(string regionId)
+        {
+            if (string.IsNullOrEmpty(regionId) || !regionId.StartsWith("silverwood_d") || regionId.Length != 13) return 0;
+            int depth = regionId[12] - '0';
+            return depth >= 1 && depth <= 5 ? depth : 0;
         }
 
         public TowerRun Run { get { return State.hasRun ? State.run : null; } }
@@ -136,7 +160,8 @@ namespace AdamsHaven.Tower
             return null;
         }
 
-        public string StartExpedition(string region, List<string> party, int rations, int tonics, int firewood)
+        // layoutId picks the map. Null or "" (or a map outside the region's pool) keeps the random shift.
+        public string StartExpedition(string region, List<string> party, int rations, int tonics, int firewood, string layoutId = null)
         {
             string error = CanStartExpedition(region, party, rations, tonics, firewood);
             if (error != null) return error;
@@ -145,9 +170,13 @@ namespace AdamsHaven.Tower
             State.tonics -= tonics;
             State.firewood -= firewood * FirewoodBundle;
             // The forest shifts: a random layout, never the same one twice in a row.
-            var ids = TowerForestLayouts.Ids;
+            int silverwood = SilverwoodDepth(region);
+            var ids = silverwood > 0 ? TowerForestLayouts.SilverwoodDepthIds(silverwood) : TowerForestLayouts.Ids;
+            if (silverwood > 0 && (ids.Length == 0 || TowerForestLayouts.Get(ids[0]) == null)) ids = TowerForestLayouts.Ids;
             int pick = Mathf.Min(ids.Length - 1, Mathf.FloorToInt(Random01() * ids.Length));
             if (ids[pick] == State.lastLayout) pick = (pick + 1 + Mathf.FloorToInt(Random01() * (ids.Length - 1))) % ids.Length;
+            int chosen = string.IsNullOrEmpty(layoutId) ? -1 : Array.IndexOf(ids, layoutId);
+            if (chosen >= 0) pick = chosen;
             var layout = TowerForestLayouts.Get(ids[pick]);
             var run = new TowerRun { region = region, layout = layout.id, seed = State.randomState, rations = rations,
                 tonics = tonics, firewood = firewood, at = layout.entrance };

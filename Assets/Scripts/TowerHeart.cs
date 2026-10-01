@@ -92,7 +92,7 @@ namespace AdamsHaven.Tower
                     might = hero.might, sight = hero.sight, grit = hero.grit, charm = hero.charm,
                     wit = hero.wit, grace = hero.grace, luck = hero.luck, weapon = hero.weapon, tool = hero.tool });
             }
-            state.log.Add("The Heart fell and pulled its heroes back. A new run begins at Silverbrook Edge" +
+            state.log.Add("The Heart fell and pulled its heroes back. A new run begins at Brook Edge" +
                 (state.legacyHeroes.Count > 0 ? " with " + state.legacyHeroes.Count + " heroes waiting to return." : "."));
             return state;
         }

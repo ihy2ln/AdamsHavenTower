@@ -20,9 +20,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private static readonly Color Moss = new Color(0.35f, 0.62f, 0.38f);
     private const string Root = "AdamsHaven/Expedition/";
     private const float Side = 320, Top = 52, CellPx = 48;
-    private static readonly Color FogTint = new Color(0.55f, 0.5f, 0.46f, 1);   // unexplored map reads darker than the parchment
+    private static readonly Color FogTint = new Color(0.025f, 0.04f, 0.065f, 1);
 
-    private enum View { Region, Plan, Forest, Dungeon }
+    private enum View { Region, Map, Plan, Forest, Dungeon }
 
     private AdamsHavenPrototype tower;
     private TowerRules R { get { return tower.Rules; } }
@@ -35,6 +35,27 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private float toastTimer;
 
     private string selectedRegion = "";
+    private string selectedLayout = "";
+    private string selectedNode = "";
+    // forest walk
+    private RectTransform walkMap;
+    private List<Vector2> walkPts = new List<Vector2>();      // normalised on the plate
+    private List<Vector2> walkPx = new List<Vector2>();       // pixels on the map frame
+    private readonly List<RectTransform> walkFigures = new List<RectTransform>();
+    private readonly List<RectTransform> walkShadows = new List<RectTransform>();
+    private string walkFrom = "", walkTo = "";
+    private float walkDist, walkLen, walkPrint, fadeClock, walkCommitAt;
+    private bool walking, fading, fadingIn, printLeft, walkCommitted;
+    private Image fadeCurtain;
+    private TowerMapMask walkMask;
+    private bool walkMaskMirror;
+    // A walk stopped by an event: where the party stands until it is settled, then the rest of the way.
+    private List<Vector2> haltPts;
+    private float haltAt;               // 0..1 along haltPts
+    private string haltLayout = "", haltFrom = "", haltTo = "";
+    private float walkPace = 1;
+    private Texture2D trailTex;         // the worn roads, redrawn with the map
+    private GameObject inspectCard;
     private readonly List<string> planParty = new List<string>();
     private int planRations, planTonics, planFirewood;
     private bool lootOpen;
@@ -50,6 +71,16 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private Vector2 pointerStart, lastPointer;
     private float lastPinch;
     private RectTransform roomPanel, endPanel;
+    private readonly List<int> travelPath = new List<int>();
+    private readonly List<GameObject> routeMarks = new List<GameObject>();
+    private readonly List<RectTransform> partyFigures = new List<RectTransform>();
+    private readonly List<Vector2> partyOffsets = new List<Vector2>();
+    private int travelIndex;
+    private float travelClock;
+    private Action commitDungeonStep;
+    private bool Travelling { get { return travelIndex < travelPath.Count; } }
+    private Camera InputCamera { get { return canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera; } }
+    private TowerDungeonIllustration dungeonIllustration;
 
     private static Sprite disc, ring, white;
 
@@ -58,6 +89,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     public void Begin(AdamsHavenPrototype controller)
     {
         tower = controller;
+        commitDungeonStep = tower.SaveExpedition;
         font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         var canvasObject = new GameObject("Expedition Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         canvas = canvasObject.GetComponent<Canvas>();
@@ -93,6 +125,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void Rebuild()
     {
+        CancelTravel();
         if (content != null) Destroy(content.gameObject);
         boardKey = "";
         roomPanel = endPanel = null;
@@ -103,6 +136,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         switch (view)
         {
             case View.Region: BuildRegion(); break;
+            case View.Map: BuildMapChoice(); break;
             case View.Plan: BuildPlan(); break;
             case View.Forest: BuildForest(); break;
             case View.Dungeon: BuildDungeon(); break;
@@ -128,7 +162,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         if (error != null) Say(error);
         else tower.SaveExpedition();
-        if (R.Run == null && view != View.Region && view != View.Plan) { ShowEnd(); return; }
+        if (R.Run == null && view != View.Region && view != View.Map && view != View.Plan) { ShowEnd(); return; }
         if (view == View.Dungeon && R.Run.dungeonPoi.Length == 0)
         {
             string last = R.State.log.Count > 0 ? R.State.log[R.State.log.Count - 1] : "";
@@ -142,14 +176,21 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void Update()
     {
         if (tower == null || canvas == null || !canvas.gameObject.activeSelf) return;
-        if (Screen.width != lastWidth || Screen.height != lastHeight) Rebuild();
+        if ((Screen.width != lastWidth || Screen.height != lastHeight) && !walking && !fading && !fadingIn) Rebuild();
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;
             if (toastTimer <= 0 && toast != null) toast.transform.parent.gameObject.SetActive(false);
         }
-        if (view == View.Dungeon && R != null && R.Run != null && R.Dungeon != null && board != null && viewport != null) DungeonInput();
+        if (view == View.Forest && (walking || fading || fadingIn)) UpdateWalk();
+        if (view == View.Dungeon && R != null && R.Run != null && R.Dungeon != null && board != null && viewport != null)
+        {
+            UpdateTravel();
+            DungeonInput();
+        }
     }
+
+    private void OnDisable() { CancelTravel(); }
 
     // ---------------------------------------------------------------- widgets
 
@@ -362,7 +403,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         switch (theme)
         {
             case "cave": return "Root Cave"; case "marsh": return "Fern Marsh"; case "crystal": return "Crystal Grotto";
-            case "briar": return "Briar Thicket"; case "keep": return "Watchpost Keep"; default: return "Forest Ruin";
+            case "briar": return "Briar Thicket"; case "keep": return "Watchpost Keep";
+            case "mine": return "Abandoned Mine"; case "blight": return "Blighted Ground"; case "heartwood": return "Heartwood Hollow";
+            default: return "Forest Ruin";
         }
     }
 
@@ -420,7 +463,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" : isUnlocked ? "Open to explore" : "Locked: conquer " +
             string.Join(" and ", Array.ConvertAll(region0.requires, n => TowerRules.Region(n).name))), 18, 96, Side - 36, 60, 15,
             isUnlocked ? Cream : new Color(1f, 0.7f, 0.6f));
-        TextAt(panel.transform, "Rule", "Each run the forest shifts into one of 15 maps. Clear its lair to conquer the region.",
+        TextAt(panel.transform, "Rule", TowerRules.SilverwoodDepth(region0.id) > 0 ?
+            "Choose one of this depth's three maps. Clear its lair to conquer the region." :
+            "Each run the forest shifts into one of 15 maps. Clear its lair to conquer the region.",
             18, 160, Side - 36, 60, 13, new Color(0.8f, 0.85f, 0.9f));
         if (run != null)
             ButtonAt(panel.transform, "Resume", "RESUME EXPEDITION", 18, 250, Side - 36, 50, Resume, Teal, 17);
@@ -443,9 +488,62 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         Go(run.dungeonPoi.Length > 0 ? View.Dungeon : View.Forest);
     }
 
+    // ---------------------------------------------------------------- map choice
+
+    private void BuildMapChoice()
+    {
+        float width = root.rect.width, height = root.rect.height;
+        MapFrame(Resources.Load<Texture2D>(Root + "Maps/region"), 0, Top, width, height - Top, new Color(0.3f, 0.33f, 0.38f));
+        var region = TowerRules.Region(selectedRegion);
+        TopBar("CHOOSE MAP  •  " + region.name.ToUpperInvariant(), "BACK TO MAP", () => Go(View.Region));
+        int depth = TowerRules.SilverwoodDepth(selectedRegion);
+        var ids = TowerForestLayouts.SilverwoodDepthIds(depth);
+        float pw = Mathf.Min(1120, width - 40), px = (width - pw) / 2, ph = height - Top - 32;
+        var panel = PanelAt("Map choice panel", content, px, Top + 16, pw, ph).transform;
+        TextAt(panel, "Title", "Pick where to go. Each map has its own camp, points of interest and lair.", 20, 14, pw - 40, 28, 18, Gold);
+        float gap = 16, cw = (pw - 40 - gap * (ids.Length - 1)) / Mathf.Max(1, ids.Length), ch = ph - 150;
+        for (int i = 0; i < ids.Length; i++)
+        {
+            string id = ids[i];
+            var layout = TowerForestLayouts.Get(id);
+            float cx = 20 + i * (cw + gap);
+            var card = At("Map " + id, panel, cx, 56, cw, ch, new Color(0.08f, 0.11f, 0.15f, 0.97f));
+            var thumb = layout == null ? null : Resources.Load<Texture2D>(layout.backdrop);
+            float picH = Mathf.Min(ch - 112, (cw - 16) * 9f / 16f * 1.05f);
+            if (thumb != null)
+            {
+                var pic = new GameObject("Plate", typeof(RectTransform), typeof(RawImage));
+                pic.transform.SetParent(card.transform, false);
+                var pr = pic.GetComponent<RectTransform>();
+                pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0, 1);
+                pr.anchoredPosition = new Vector2(8, -8); pr.sizeDelta = new Vector2(cw - 16, picH);
+                var raw = pic.GetComponent<RawImage>();
+                raw.texture = thumb; raw.raycastTarget = false;
+                float uvW = Mathf.Clamp01(((cw - 16) / picH) / (thumb.width / (float)thumb.height));
+                raw.uvRect = new Rect((1f - uvW) * 0.5f, 0, uvW, 1);
+            }
+            string name = layout == null ? TowerForestLayouts.Pretty(id) : layout.name;
+            TextAt(card.transform, "Name", name.ToUpperInvariant(), 10, picH + 14, cw - 20, 28, 20, Gold, TextAnchor.MiddleCenter);
+            int pois = layout == null ? 0 : layout.nodes.FindAll(n => n.kind != "camp" && n.kind != "lair").Count;
+            TextAt(card.transform, "Info", ThemeName(layout == null ? "ruin" : layout.theme) + "  •  " + pois + " places  •  1 lair",
+                10, picH + 44, cw - 20, 22, 14, Cream, TextAnchor.MiddleCenter);
+            ButtonAt(card.transform, "Pick", "GO HERE", 16, ch - 56, cw - 32, 44, () => { selectedLayout = id; OpenParty(); }, Teal, 17);
+        }
+        ButtonAt(panel, "Random", "RANDOM MAP", pw - 280, ph - 66, 260, 46, () => { selectedLayout = ""; OpenParty(); }, Moss, 17);
+        TextAt(panel, "Note", "Random lets the forest shift decide.", 20, ph - 60, pw - 320, 30, 14, new Color(0.8f, 0.85f, 0.9f));
+    }
+
     // ---------------------------------------------------------------- plan
 
+    // Silverwood regions let the player choose one of the depth's maps first; Silverbrook regions keep the random shift.
     private void OpenPlan()
+    {
+        selectedLayout = "";
+        if (TowerRules.SilverwoodDepth(selectedRegion) > 0) Go(View.Map);
+        else OpenParty();
+    }
+
+    private void OpenParty()
     {
         planParty.Clear();
         foreach (var id in TowerRules.Fighters)
@@ -463,7 +561,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float width = root.rect.width, height = root.rect.height;
         MapFrame(Resources.Load<Texture2D>(Root + "Maps/region"), 0, Top, width, height - Top, new Color(0.35f, 0.38f, 0.42f));
         var region = TowerRules.Region(selectedRegion);
-        TopBar("PLAN EXPEDITION  •  " + region.name.ToUpperInvariant(), "BACK TO MAP", () => Go(View.Region));
+        TopBar("PLAN EXPEDITION  •  " + region.name.ToUpperInvariant() + (selectedLayout.Length > 0 ? "  •  " + TowerForestLayouts.Get(selectedLayout).name.ToUpperInvariant() : ""),
+            "BACK", () => Go(TowerRules.SilverwoodDepth(selectedRegion) > 0 ? View.Map : View.Region));
         float pw = Mathf.Min(1060, width - 40), px = (width - pw) / 2;
         var panel = PanelAt("Plan panel", content, px, Top + 16, pw, height - Top - 32).transform;
         TextAt(panel, "Party title", "PARTY  •  first three fight, the rest wait in reserve", 20, 12, pw - 40, 26, 17, Gold);
@@ -530,7 +629,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void StartRun()
     {
-        string error = R.StartExpedition(selectedRegion, planParty, planRations, planTonics, planFirewood);
+        string error = R.StartExpedition(selectedRegion, planParty, planRations, planTonics, planFirewood, selectedLayout);
         if (error != null) { Say(error); return; }
         tower.SaveExpedition();
         Go(View.Forest);
@@ -546,71 +645,442 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var tex = Resources.Load<Texture2D>(layout.backdrop) ?? Resources.Load<Texture2D>(Root + "Maps/region");
         var map = MapFrame(tex, 0, Top, width - Side - 12, height - Top, new Color(0.9f, 0.9f, 0.92f));
         if (layout.mirror) map.GetComponent<RawImage>().uvRect = new Rect(1, 0, -1, 1);
-        foreach (var node in layout.nodes)
-            foreach (var link in node.links)
-            {
-                if (!R.NodeVisible(node.id) || !R.NodeVisible(link)) continue;
-                var other = layout.Node(link);
-                bool live = node.id == run.at || link == run.at;
-                // Walked trails are road: a packed-earth band under a pale centre line.
-                bool road = R.OnRoad(node.id, link);
-                Vector2 a = OnMap(map, node.x, node.y), b = OnMap(map, other.x, other.y);
-                if (road) Line(map, a, b, 10, new Color(0.3f, 0.21f, 0.12f, 0.85f));
-                Line(map, a, b, live ? 5 : road ? 4 : 3,
-                    live ? new Color(1f, 0.82f, 0.4f, 0.95f) : road ? new Color(0.95f, 0.82f, 0.56f, 0.9f) : new Color(0.85f, 0.85f, 0.9f, 0.3f));
-            }
+        // Tapping open ground puts away the inspect card.
+        var ground = map.gameObject.AddComponent<Button>();
+        ground.transition = Selectable.Transition.None;
+        ground.onClick.AddListener(() => { if (selectedNode.Length > 0 && !walking && !fading) { selectedNode = ""; Rebuild(); } });
+        walkMap = map;
+        walkFigures.Clear(); walkShadows.Clear();
+        walking = false; fading = false;
+        inspectCard = null;
+        // The routes the party actually walked, worn into the ground (never a line to somewhere it has not been).
+        DrawTrails(map, run.trails);
         foreach (var node in layout.nodes)
         {
             var at = OnMap(map, node.x, node.y);
             if (!R.NodeVisible(node.id))
             {
-                var fog = Box("Fog", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(260, 230), new Color(0.12f, 0.14f, 0.17f, 0.95f));
+                // Unseen places hide in the fog; a faint glow gives them away.
+                var fog = Box("Fog", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(260, 230), new Color(0.12f, 0.14f, 0.17f, 0.9f));
                 fog.sprite = Puff; fog.raycastTarget = false;
+                var hint = Box("Glow in the fog", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(54, 54), new Color(0.7f, 0.85f, 1f, 0.30f));
+                hint.sprite = Puff; hint.raycastTarget = false;
                 continue;
             }
-            bool here = node.id == run.at, cleared = run.cleared.Contains(node.id), visited = run.visited.Contains(node.id);
-            if (node.kind == "landmark" && !string.IsNullOrEmpty(node.prop))
-            {
-                var prop = Load(Root + "Props/" + node.prop);
-                if (prop != null)
-                {
-                    var pic = Box("Landmark", map, new Vector2(0, 1), new Vector2(0.5f, 0.15f), at, new Vector2(110, 110), Color.white);
-                    pic.sprite = prop; pic.preserveAspect = true; pic.raycastTarget = false;
-                }
-            }
-            string id = node.id;
-            Color color = cleared ? Moss : node.kind == "lair" ? Alert : node.kind == "camp" ? Gold :
-                visited ? new Color(0.35f, 0.6f, 0.7f) : new Color(0.3f, 0.4f, 0.48f, 0.9f);
-            Badge(map, at, here ? 54 : 44, color, Icon(node.kind), () => TapNode(id));
-            if (here)
-            {
-                var halo = Box("Party", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(74, 74), Gold);
-                halo.sprite = Disc(true); halo.raycastTarget = false;
-                var chibi = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + run.party[0]);
-                if (chibi != null)
-                {
-                    var pic = new GameObject("Party token", typeof(RectTransform), typeof(RawImage));
-                    pic.transform.SetParent(map, false);
-                    var pr = pic.GetComponent<RectTransform>();
-                    pr.anchorMin = pr.anchorMax = new Vector2(0, 1); pr.pivot = new Vector2(0.5f, 0);
-                    pr.anchoredPosition = at + new Vector2(0, 22); pr.sizeDelta = new Vector2(64 * chibi.width / (float)chibi.height, 64);
-                    pic.GetComponent<RawImage>().texture = chibi; pic.GetComponent<RawImage>().raycastTarget = false;
-                }
-            }
-            Label(map, at + new Vector2(0, -34), node.name + (cleared ? " (cleared)" : ""), 13, cleared ? new Color(0.7f, 1f, 0.7f) : Cream);
+            DrawPlace(map, node, run);
         }
+        SpawnParty(map, run);
+        if (selectedNode.Length > 0 && R.EventBlock() == null && string.IsNullOrEmpty(run.eventResult))
+            BuildInspect(map, layout.Node(selectedNode));
         TopBar(R.RunRegion.name.ToUpperInvariant() + "  •  " + layout.name.ToUpperInvariant(), "RETURN TO TOWER",
             () => { tower.CloseExpedition(null); });
         BuildRunPanel(false);
         if (lootOpen) BuildLoot();
         else BuildEventCard();
+        ResumeHaltedWalk(run);
+        if (fadingIn) { MakeCurtain(1); fadeClock = 0; }
     }
 
+    // First tap looks at a place, a second tap (or WALK THERE) sets off.
     private void TapNode(string id)
     {
+        if (walking || fading || fadingIn) return;
         var run = R.Run;
-        if (id == run.at) return;
-        Act(R.ForestMove(id));
+        if (id == run.at) { selectedNode = selectedNode == id ? "" : id; Rebuild(); return; }
+        if (id != selectedNode) { selectedNode = id; Rebuild(); return; }
+        WalkTo(id);
+    }
+
+    private void WalkTo(string id)
+    {
+        if (walking || fading || fadingIn) return;
+        string block = R.EventBlock();
+        if (block != null) { Say(block); return; }
+        if (!R.RunLayout.Linked(R.Run.at, id)) { Say("No known way there yet."); return; }
+        StartWalk(id);
+    }
+
+    // A visible place: a soft glow, no ring, no lines, no icon. Landmarks show their painted prop.
+    // Places one trail away glow brighter, so the next steps read without drawing a path.
+    private void DrawPlace(RectTransform map, TowerForestNode node, TowerRun run)
+    {
+        var at = OnMap(map, node.x, node.y);
+        bool here = node.id == run.at, cleared = run.cleared.Contains(node.id), visited = run.visited.Contains(node.id);
+        bool near = !here && R.RunLayout.Linked(run.at, node.id), picked = node.id == selectedNode;
+        Color tint = cleared ? new Color(0.5f, 1f, 0.6f, 0.5f) : node.kind == "lair" ? new Color(1f, 0.4f, 0.35f, 0.55f) :
+            node.kind == "camp" ? new Color(1f, 0.82f, 0.45f, 0.6f) : visited ? new Color(0.6f, 0.9f, 1f, 0.5f) : new Color(0.7f, 0.85f, 1f, 0.42f);
+        if (!here && !near) tint.a *= 0.55f;
+        if (picked) tint.a = Mathf.Min(0.95f, tint.a * 1.6f);
+        float size = here ? 84 : picked ? 92 : near ? 74 : 62;
+        var glow = Box("Place " + node.id, map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(size, size), tint);
+        glow.sprite = Puff;
+        string id = node.id;
+        glow.gameObject.AddComponent<Button>().onClick.AddListener(() => TapNode(id));
+        if (node.kind == "landmark" && !string.IsNullOrEmpty(node.prop))
+        {
+            var prop = Load(Root + "Props/" + node.prop);
+            if (prop != null)
+            {
+                var pic = Box("Landmark", map, new Vector2(0, 1), new Vector2(0.5f, 0.15f), at, new Vector2(110, 110), Color.white);
+                pic.sprite = prop; pic.preserveAspect = true; pic.raycastTarget = false;
+            }
+        }
+        // A warm spark marks the camp fire; everything else is told apart in the inspect card.
+        if (node.kind == "camp")
+        {
+            var fire = Box("Camp fire", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(18, 18), new Color(1f, 0.75f, 0.35f, 0.95f));
+            fire.sprite = Puff; fire.raycastTarget = false;
+        }
+        if (here && !picked)
+            Label(map, at + new Vector2(0, -40), node.name + (cleared ? " (cleared)" : ""), 13, cleared ? new Color(0.7f, 1f, 0.7f) : Cream);
+    }
+
+    private static string PlaceKind(TowerForestNode node)
+    {
+        int floors = TowerForestLayouts.Floors(node.kind);
+        if (node.kind == "camp") return "Camp";
+        if (node.kind == "lair") return "The region's lair  •  " + floors + " floors";
+        return (node.kind == "landmark" ? "Landmark" : TowerForestLayouts.Pretty(node.kind)) + "  •  " + ThemeName(node.theme) +
+            ", " + floors + (floors == 1 ? " floor" : " floors");
+    }
+
+    // Small card beside a tapped place: what it is, what the way costs, and the button to go.
+    private void BuildInspect(RectTransform map, TowerForestNode node)
+    {
+        if (node == null || !R.NodeVisible(node.id)) return;
+        var run = R.Run;
+        bool here = node.id == run.at, linked = !here && R.RunLayout.Linked(run.at, node.id), cleared = run.cleared.Contains(node.id);
+        float w = 250, h = here ? 70 : linked ? 128 : 92;
+        var at = OnMap(map, node.x, node.y);
+        float x = at.x + 40, y = -at.y - h / 2;
+        if (x + w > map.rect.width - 6) x = at.x - 40 - w;
+        x = Mathf.Clamp(x, 6, Mathf.Max(6, map.rect.width - w - 6));
+        y = Mathf.Clamp(y, 6, Mathf.Max(6, map.rect.height - h - 6));
+        var card = PanelAt("Inspect", map, x, y, w, h);
+        inspectCard = card.gameObject;
+        var icon = Icon(node.kind);
+        if (icon != null)
+        {
+            var glyph = At("Inspect icon", card.transform, 10, 10, 32, 32, Color.white);
+            glyph.sprite = icon; glyph.preserveAspect = true; glyph.raycastTarget = false;
+        }
+        TextAt(card.transform, "Inspect name", node.name + (cleared ? "  (cleared)" : ""), 50, 8, w - 60, 22, 15, cleared ? new Color(0.7f, 1f, 0.7f) : Gold);
+        TextAt(card.transform, "Inspect kind", PlaceKind(node), 50, 30, w - 60, 18, 11, Cream);
+        if (here) return;
+        string way = !linked ? "No known way from here yet." : R.OnRoad(run.at, node.id) ?
+            "Road: a ration every 2nd trip, little threat." : "New trail: 1 ration, raises threat.";
+        TextAt(card.transform, "Inspect way", way, 10, 54, w - 20, 22, 12, linked ? new Color(0.8f, 0.86f, 0.92f) : new Color(1f, 0.6f, 0.5f));
+        if (linked)
+        {
+            string id = node.id;
+            ButtonAt(card.transform, "Walk", "WALK THERE", 10, h - 46, w - 20, 36, () => WalkTo(id), Teal, 15);
+        }
+    }
+
+    // Every walked route pressed into the ground as one soft texture: older routes fainter, edges ragged.
+    private void DrawTrails(RectTransform map, List<TowerTrail> trails)
+    {
+        if (trailTex != null) { Destroy(trailTex); trailTex = null; }
+        if (trails == null || trails.Count == 0 || map.rect.height <= 0) return;
+        int tw = 512, th = Mathf.Clamp(Mathf.RoundToInt(tw * map.rect.height / map.rect.width), 64, 512);
+        var alpha = new float[tw * th];
+        float radius = tw / 200f;
+        for (int t = 0; t < trails.Count; t++)
+        {
+            var pts = trails[t].pts;
+            if (pts == null || pts.Count < 2) continue;
+            float strength = Mathf.Lerp(0.5f, 0.85f, trails.Count == 1 ? 1 : t / (float)(trails.Count - 1));
+            float walked = 0;
+            for (int i = 1; i < pts.Count; i++)
+            {
+                Vector2 a = new Vector2(pts[i - 1].x * tw, pts[i - 1].y * th), b = new Vector2(pts[i].x * tw, pts[i].y * th);
+                float seg = Vector2.Distance(a, b);
+                int steps = Mathf.Max(1, Mathf.CeilToInt(seg / 0.6f));
+                for (int s = 0; s < steps; s++)
+                {
+                    float d = walked + seg * s / steps;
+                    float r = radius * (0.7f + 0.6f * Mathf.PerlinNoise(d * 0.07f, t * 3.1f));
+                    Stamp(alpha, tw, th, Vector2.Lerp(a, b, s / (float)steps), r, strength);
+                }
+                walked += seg;
+            }
+        }
+        var px = new Color32[tw * th];
+        for (int y = 0; y < th; y++)
+            for (int x = 0; x < tw; x++)
+            {
+                float a = alpha[y * tw + x];
+                if (a <= 0) continue;
+                // Grit so it reads as trodden earth rather than paint.
+                float grit = 0.75f + 0.5f * Mathf.PerlinNoise(x * 0.5f, y * 0.5f);
+                px[(th - 1 - y) * tw + x] = new Color32(168, 136, 92, (byte)Mathf.Clamp(a * grit * 120f, 0, 255));
+            }
+        trailTex = new Texture2D(tw, th, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+        trailTex.SetPixels32(px); trailTex.Apply();
+        var go = new GameObject("Worn trails", typeof(RectTransform), typeof(RawImage));
+        go.transform.SetParent(map, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
+        var raw = go.GetComponent<RawImage>();
+        raw.texture = trailTex; raw.raycastTarget = false;
+    }
+
+    private static void Stamp(float[] alpha, int w, int h, Vector2 c, float r, float strength)
+    {
+        int x0 = Mathf.Max(0, Mathf.FloorToInt(c.x - r)), x1 = Mathf.Min(w - 1, Mathf.CeilToInt(c.x + r));
+        int y0 = Mathf.Max(0, Mathf.FloorToInt(c.y - r)), y1 = Mathf.Min(h - 1, Mathf.CeilToInt(c.y + r));
+        for (int y = y0; y <= y1; y++)
+            for (int x = x0; x <= x1; x++)
+            {
+                float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), c) / r;
+                if (d >= 1) continue;
+                float a = strength * (1 - d * d);
+                int i = y * w + x;
+                if (a > alpha[i]) alpha[i] = a;
+            }
+    }
+
+    // The lead hero stands at the current place with the others close behind.
+    private void SpawnParty(RectTransform map, TowerRun run)
+    {
+        var node = R.RunLayout.Node(run.at);
+        if (node == null) return;
+        var at = OnMap(map, node.x, node.y) + new Vector2(0, 6);
+        int shown = 0;
+        for (int i = 0; i < run.party.Count && shown < 3; i++)
+        {
+            if (run.hp[i] <= 0) continue;
+            var chibi = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + run.party[i]);
+            if (chibi == null) continue;
+            var shadow = Box("Party shadow", map, new Vector2(0, 1), new Vector2(0.5f, 0.5f), at, new Vector2(38, 12), new Color(0, 0, 0, 0.4f));
+            shadow.sprite = Disc(false); shadow.raycastTarget = false;
+            var pic = new GameObject("Party " + run.party[i], typeof(RectTransform), typeof(RawImage));
+            pic.transform.SetParent(map, false);
+            var pr = pic.GetComponent<RectTransform>();
+            float h = shown == 0 ? 62 : 52;
+            pr.anchorMin = pr.anchorMax = new Vector2(0, 1); pr.pivot = new Vector2(0.5f, 0);
+            pr.sizeDelta = new Vector2(h * chibi.width / (float)chibi.height, h);
+            pic.GetComponent<RawImage>().texture = chibi; pic.GetComponent<RawImage>().raycastTarget = false;
+            walkFigures.Add(pr); walkShadows.Add(shadow.rectTransform);
+            Place(shown, at + Formation(shown), false);
+            shown++;
+        }
+        // Lead drawn last so it stands in front.
+        for (int i = walkFigures.Count - 1; i >= 0; i--) walkFigures[i].SetAsLastSibling();
+    }
+
+    // Resting formation: followers stand just behind the lead.
+    private static Vector2 Formation(int i) { return new Vector2(-18 * i, 6 * i); }
+
+    private void Place(int i, Vector2 pos, bool faceLeft, float bob = 0)
+    {
+        if (i >= walkFigures.Count) return;
+        // Lower on the painting reads as nearer the viewer.
+        float s = walkMap == null ? 1 : Mathf.Lerp(0.86f, 1.08f, Mathf.Clamp01(-pos.y / walkMap.rect.height));
+        walkFigures[i].anchoredPosition = pos + new Vector2(0, bob);
+        walkFigures[i].localScale = new Vector3(faceLeft ? -s : s, s, 1);
+        walkShadows[i].anchoredPosition = pos;
+        walkShadows[i].localScale = new Vector3(s * (1 - bob * 0.05f), s, 1);
+    }
+
+    // ---------------------------------------------------------------- walking
+
+    private const float WalkGap = 30f, CommitAt = 0.55f;
+
+    // The painting's own ground. Stand-in plates are shown mirrored, so their mask is read mirrored too.
+    private void LoadWalkMask(TowerForestLayout layout)
+    {
+        walkMaskMirror = false;
+        walkMask = layout.mirror ? null : TowerMapMask.Load(layout.id);
+        if (walkMask != null) return;
+        walkMask = TowerMapMask.Load(System.IO.Path.GetFileName(layout.backdrop));
+        walkMaskMirror = walkMask != null && layout.mirror;
+    }
+
+    private Vector2 MaskSpace(Vector2 p) { return walkMaskMirror ? new Vector2(1 - p.x, p.y) : p; }
+
+    private void StartWalk(string to)
+    {
+        var run = R.Run; var layout = R.RunLayout;
+        var a = layout.Node(run.at); var b = layout.Node(to);
+        if (a == null || b == null || walkMap == null) return;
+        selectedNode = "";
+        if (inspectCard != null) { Destroy(inspectCard); inspectCard = null; }
+        walkFrom = run.at; walkTo = to;
+        haltPts = null;
+        // Believable route over the painting's own ground; without one the party fades across.
+        LoadWalkMask(layout);
+        List<Vector2> route = null;
+        if (walkMask != null) route = walkMask.FindPath(MaskSpace(new Vector2(a.x, a.y)), MaskSpace(new Vector2(b.x, b.y)));
+        if (route != null) for (int i = 0; i < route.Count; i++) route[i] = MaskSpace(route[i]);
+        if (route == null || route.Count < 2) { fading = true; fadeClock = 0; MakeCurtain(0); return; }
+        BeginWalk(route, 0, false);
+        MakeCurtain(0);     // swallows taps while the party is on the move
+    }
+
+    private void BeginWalk(List<Vector2> route, float startAt, bool committed)
+    {
+        walkPts = route;
+        walkPx.Clear();
+        foreach (var p in route) walkPx.Add(OnMap(walkMap, p.x, p.y) + new Vector2(0, 6));
+        walkLen = 0;
+        for (int i = 1; i < walkPx.Count; i++) walkLen += Vector2.Distance(walkPx[i - 1], walkPx[i]);
+        walkDist = startAt * walkLen; walkPrint = walkDist; printLeft = true; walkPace = 1;
+        walkCommitted = committed; walkCommitAt = walkLen * CommitAt;
+        walking = true;
+    }
+
+    // An event stopped the party on the way: stand there until it is settled, then walk the rest.
+    private void ResumeHaltedWalk(TowerRun run)
+    {
+        if (haltPts == null) return;
+        if (haltLayout != run.layout || haltTo != run.at || walkMap == null) { haltPts = null; return; }
+        if (walkMask == null) LoadWalkMask(R.RunLayout);
+        BeginWalk(haltPts, haltAt, true);
+        walkFrom = haltFrom; walkTo = haltTo;
+        if (R.EventBlock() != null || !string.IsNullOrEmpty(run.eventResult) || lootOpen)
+        {
+            walking = false;
+            PoseParty(walkDist, false);
+            return;
+        }
+        haltPts = null;
+        PoseParty(walkDist, true);
+        MakeCurtain(0);
+    }
+
+    private void MakeCurtain(float alpha)
+    {
+        fadeCurtain = Stretch("Curtain", content, new Color(0, 0, 0, alpha));
+        fadeCurtain.raycastTarget = true;
+    }
+
+    private Vector2 PointAlong(float d, out Vector2 dir)
+    {
+        d = Mathf.Clamp(d, 0, walkLen);
+        float run = 0;
+        for (int i = 1; i < walkPx.Count; i++)
+        {
+            float seg = Vector2.Distance(walkPx[i - 1], walkPx[i]);
+            if (run + seg >= d || i == walkPx.Count - 1)
+            {
+                dir = seg > 0.001f ? (walkPx[i] - walkPx[i - 1]) / seg : Vector2.right;
+                return Vector2.Lerp(walkPx[i - 1], walkPx[i], seg > 0.001f ? Mathf.Clamp01((d - run) / seg) : 0);
+            }
+            run += seg;
+        }
+        dir = Vector2.right;
+        return walkPx[walkPx.Count - 1];
+    }
+
+    // Lead at distance `lead` along the route, followers a step behind; they fall in from and out to the resting formation.
+    private void PoseParty(float lead, bool moving)
+    {
+        if (walkPx.Count < 2) return;
+        for (int i = 0; i < walkFigures.Count; i++)
+        {
+            float d = lead - i * WalkGap;
+            Vector2 dir;
+            var pos = PointAlong(d, out dir);
+            if (d < 0) pos = Vector2.Lerp(pos, walkPx[0] + Formation(i), Mathf.Clamp01(-d / WalkGap));
+            else if (d > walkLen) pos = Vector2.Lerp(pos, walkPx[walkPx.Count - 1] + Formation(i), Mathf.Clamp01((d - walkLen) / WalkGap));
+            bool stepping = moving && d > 0 && d < walkLen;
+            float bob = stepping ? Mathf.Abs(Mathf.Sin(d * 0.18f)) * 3f : 0;
+            bool left = stepping && Mathf.Abs(dir.x) > 0.2f ? dir.x < 0 : walkFigures[i].localScale.x < 0;
+            Place(i, pos, left, bob);
+        }
+    }
+
+    private void UpdateWalk()
+    {
+        if (fadingIn)
+        {
+            fadeClock += Time.unscaledDeltaTime;
+            if (fadeCurtain == null) { fadingIn = false; return; }
+            fadeCurtain.color = new Color(0, 0, 0, 1 - Mathf.Clamp01(fadeClock / 0.35f));
+            if (fadeClock >= 0.35f) { Destroy(fadeCurtain.gameObject); fadeCurtain = null; fadingIn = false; }
+            return;
+        }
+        if (fading)
+        {
+            fadeClock += Time.unscaledDeltaTime;
+            if (fadeCurtain != null) fadeCurtain.color = new Color(0, 0, 0, Mathf.Clamp01(fadeClock / 0.3f));
+            if (fadeClock < 0.3f) return;
+            fading = false;
+            string error = R.ForestMove(walkTo);
+            if (error != null) { Rebuild(); Say(error); return; }
+            fadingIn = true;
+            Act(null);
+            return;
+        }
+        // Slower over rough ground, easing in and out at the ends.
+        float terrain = 1f;
+        if (walkMask != null && walkDist < walkLen)
+        {
+            Vector2 dir;
+            var p = PointAlong(walkDist, out dir);
+            var n = MaskSpace(new Vector2(p.x / walkMap.rect.width, (6 - p.y) / walkMap.rect.height));
+            if (walkMask.Cost(n.x, n.y) > TowerMapMask.OpenCost) terrain = 0.6f;
+        }
+        walkPace = Mathf.MoveTowards(walkPace, terrain, Time.unscaledDeltaTime * 2f);
+        float ease = Mathf.Min(Mathf.Clamp01(0.4f + walkDist / 50f), Mathf.Clamp(0.4f + (walkLen - walkDist) / 50f, 0.4f, 1f));
+        walkDist += Mathf.Max(110f, walkMap.rect.width * 0.11f) * walkPace * ease * Time.unscaledDeltaTime;
+        PoseParty(walkDist, true);
+        // Footprints behind the lead.
+        if (walkDist < walkLen && walkDist - walkPrint > 22f && walkFigures.Count > 0)
+        {
+            walkPrint = walkDist;
+            Vector2 dir;
+            var spot = PointAlong(walkDist - 14f, out dir);
+            var normal = new Vector2(-dir.y, dir.x);
+            var print = Box("Footprint", walkMap, new Vector2(0, 1), new Vector2(0.5f, 0.5f), spot + normal * (printLeft ? 4f : -4f) + new Vector2(0, -5),
+                new Vector2(8, 4.5f), new Color(0.2f, 0.14f, 0.08f, 0.55f));
+            print.sprite = Disc(false); print.raycastTarget = false;
+            print.rectTransform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+            print.rectTransform.SetSiblingIndex(Mathf.Max(0, walkFigures[walkFigures.Count - 1].GetSiblingIndex() - walkFigures.Count));
+            printLeft = !printLeft;
+        }
+        // Partway along, the step happens in the rules; an event there stops the party on the spot.
+        if (!walkCommitted && walkDist >= Mathf.Min(walkCommitAt, walkLen))
+        {
+            walkCommitted = true;
+            string error = R.ForestMove(walkTo);
+            if (error != null) { walking = false; Rebuild(); Say(error); return; }
+            if (R.EventBlock() != null)
+            {
+                walking = false;
+                float at = Mathf.Clamp01(walkDist / walkLen);
+                haltPts = walkPts; haltAt = at; haltLayout = R.Run.layout; haltFrom = walkFrom; haltTo = walkTo;
+                R.RecordTrail(walkFrom, walkTo, Partial(walkPts, at));
+                Act(null);
+                return;
+            }
+            tower.SaveExpedition();
+        }
+        // Done once the last follower has fallen in beside the lead.
+        if (walkDist >= walkLen + WalkGap * walkFigures.Count)
+        {
+            walking = false;
+            R.RecordTrail(walkFrom, walkTo, walkPts);
+            Act(null);
+        }
+    }
+
+    // The first part of a route, up to `at` (0..1) of its length.
+    private static List<Vector2> Partial(List<Vector2> pts, float at)
+    {
+        float total = 0;
+        for (int i = 1; i < pts.Count; i++) total += Vector2.Distance(pts[i - 1], pts[i]);
+        var part = new List<Vector2> { pts[0] };
+        float left = total * at;
+        for (int i = 1; i < pts.Count && left > 0; i++)
+        {
+            float seg = Vector2.Distance(pts[i - 1], pts[i]);
+            part.Add(seg <= left ? pts[i] : Vector2.Lerp(pts[i - 1], pts[i], left / seg));
+            left -= seg;
+        }
+        if (part.Count < 2) part.Add(pts[0]);
+        return part;
     }
 
     // Right-hand panel shared by the forest map and the dungeon.
@@ -636,7 +1106,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                     () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); Go(View.Dungeon); } },
                     Teal, 16, !run.cleared.Contains(node.id));
             y += 50;
-            TextAt(panel, "Travel", "Tap a linked place to travel. New trail: 1 ration. Road: 1 ration every 2nd trip, less threat.", 16, y, Side - 32, 34, 12, new Color(0.8f, 0.85f, 0.9f)); y += 38;
+            TextAt(panel, "Travel", "Tap a glowing place to look; tap it again or WALK THERE to set off. Brighter glows are one trail away.", 16, y, Side - 32, 34, 12, new Color(0.8f, 0.85f, 0.9f)); y += 38;
         }
         else
         {
@@ -644,7 +1114,19 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             var d = R.Dungeon;
             TextAt(panel, "Node", node.name.ToUpperInvariant(), 16, y, Side - 32, 26, 18, Gold); y += 26;
             TextAt(panel, "Floor", ThemeName(d.theme) + "  •  Floor " + (d.floor + 1) + " / " + d.floors, 16, y, Side - 32, 22, 14, Cream); y += 26;
-            TextAt(panel, "Help", "Tap an explored cell to walk there. Arrow keys / WASD step. Wheel or pinch to zoom, drag to pan.",
+            var vista = Resources.Load<Texture2D>(TowerDungeonIllustration.ArtRoot + d.theme + "_vista");
+            if (vista != null && height >= 650)
+            {
+                var picture = new GameObject("POI battle artwork", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+                picture.transform.SetParent(panel, false); picture.texture = vista; picture.raycastTarget = false;
+                var rect = picture.rectTransform; rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
+                rect.anchoredPosition = new Vector2(16, -y); rect.sizeDelta = new Vector2(Side - 32, 116);
+                float aspect = (Side - 32) / 116f, sourceAspect = (float)vista.width / vista.height;
+                if (sourceAspect < aspect) { float h = sourceAspect / aspect; picture.uvRect = new Rect(0, (1 - h) / 2, 1, h); }
+                else { float w = aspect / sourceAspect; picture.uvRect = new Rect((1 - w) / 2, 0, w, 1); }
+                y += 124;
+            }
+            TextAt(panel, "Help", "Tap a discovered room to send the party there. Tap a visible path to explore. WASD / arrows step. Pinch or wheel to zoom; drag to pan.",
                 16, y, Side - 32, 48, 12, new Color(0.8f, 0.85f, 0.9f)); y += 52;
         }
         TextAt(panel, "Party title", "PARTY", 16, y, 120, 22, 15, Gold); y += 24;
@@ -728,7 +1210,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void BuildBoard()
     {
         var run = R.Run; var d = R.Dungeon;
-        boardKey = run.layout + run.dungeonPoi + run.floor;
+        boardKey = run.layout + run.dungeonPoi + run.floor + ":" + run.dungeonLayoutVersion;
         float size = TowerDungeon.Size * CellPx;
         board = new GameObject("Board", typeof(RectTransform)).GetComponent<RectTransform>();
         board.SetParent(viewport, false);
@@ -737,67 +1219,85 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         board.sizeDelta = new Vector2(size, size);
         zoom = Mathf.Min(viewport.rect.width / (size + 60), viewport.rect.height / (size + 60)) * 1.6f;
         board.localScale = Vector3.one * zoom;
-        var mat = new GameObject("Parchment", typeof(RectTransform), typeof(RawImage));
-        mat.transform.SetParent(board, false);
-        var mr = mat.GetComponent<RectTransform>();
-        mr.anchorMin = Vector2.zero; mr.anchorMax = Vector2.one; mr.offsetMin = new Vector2(-40, -40); mr.offsetMax = new Vector2(40, 40);
-        mat.GetComponent<RawImage>().texture = Resources.Load<Texture2D>(Root + "Dungeon/mat_blank");
-        mat.GetComponent<RawImage>().raycastTarget = false;
-        mat.GetComponent<RawImage>().color = new Color(0.72f, 0.66f, 0.58f);   // solid rock: dim parchment, not a bright hole
-        var fogTex = Resources.Load<Texture2D>(Root + "Dungeon/mat_fog");
-        fogCells = new Image[TowerDungeon.Size * TowerDungeon.Size];
-        for (int y = 0; y < TowerDungeon.Size; y++)
-            for (int x = 0; x < TowerDungeon.Size; x++)
-            {
-                Sprite sprite = CellSprite(d, x, y);
-                if (sprite != null)
+        if (TowerDungeonIllustration.Available(d.theme))
+        {
+            dungeonIllustration = board.gameObject.AddComponent<TowerDungeonIllustration>();
+            dungeonIllustration.Build(d, CellPx);
+            dungeonIllustration.BuildMist(CellPx);
+            fogCells = null;
+        }
+        else
+        {
+            dungeonIllustration = null;
+            var mat = new GameObject("Parchment", typeof(RectTransform), typeof(RawImage));
+            mat.transform.SetParent(board, false);
+            var mr = mat.GetComponent<RectTransform>();
+            mr.anchorMin = Vector2.zero; mr.anchorMax = Vector2.one; mr.offsetMin = new Vector2(-40, -40); mr.offsetMax = new Vector2(40, 40);
+            mat.GetComponent<RawImage>().texture = Resources.Load<Texture2D>(Root + "Dungeon/Silverbrook/" + d.theme + "_terrain");
+            mat.GetComponent<RawImage>().raycastTarget = false;
+            mat.GetComponent<RawImage>().color = new Color(0.24f, 0.29f, 0.35f);
+            fogCells = new Image[TowerDungeon.Size * TowerDungeon.Size];
+            for (int y = 0; y < TowerDungeon.Size; y++)
+                for (int x = 0; x < TowerDungeon.Size; x++)
                 {
-                    var tile = CellImage("Tile", x, y, Color.white);
-                    tile.sprite = sprite;
+                    if (d.Walkable(x, y) || IsDungeonWall(d, x, y))
+                    {
+                        var terrain = Resources.Load<Texture2D>(Root + "Dungeon/Silverbrook/" + d.theme + "_terrain");
+                        if (terrain != null) { BuildTerrainCell(d, x, y, terrain); BuildTerrainEdges(d, x, y); continue; }
+                    }
+                    Sprite sprite = CellSprite(d, x, y);
+                    if (sprite != null)
+                    {
+                        var tile = CellImage("Tile", x, y, Color.white);
+                        tile.sprite = sprite;
+                    }
                 }
-            }
-        // Fog: unexplored cells show the darkened map, cut cell by cell from the fog mat.
-        for (int y = 0; y < TowerDungeon.Size; y++)
-            for (int x = 0; x < TowerDungeon.Size; x++)
-            {
-                var fog = CellImage("Fog", x, y, Color.white);
-                if (fogTex != null)
+            BuildCelestiumPaths(d);
+            // Opaque live fog hides terrain and route topology until discovered.
+            for (int y = 0; y < TowerDungeon.Size; y++)
+                for (int x = 0; x < TowerDungeon.Size; x++)
                 {
-                    float c = fogTex.width / (float)TowerDungeon.Size;
-                    fog.sprite = Sprite.Create(fogTex, new Rect(x * c, (TowerDungeon.Size - 1 - y) * c, c, c), new Vector2(0.5f, 0.5f), c);
+                    var fog = CellImage("Fog", x, y, Color.white);
+                    fog.sprite = White;
+                    fogCells[TowerDungeon.Index(x, y)] = fog;
                 }
-                fogCells[TowerDungeon.Index(x, y)] = fog;
-            }
+        }
         board.anchoredPosition = -(CellCenter(run.px, run.py) + new Vector2(-size / 2, size / 2)) * zoom;
         ClampBoard();
-        // Grid lines, D&D style.
-        for (int i = 0; i <= TowerDungeon.Size; i++)
-        {
-            var v = new GameObject("Grid", typeof(RectTransform), typeof(Image)).GetComponent<Image>();
-            v.transform.SetParent(board, false); v.color = new Color(0.1f, 0.07f, 0.04f, 0.28f); v.raycastTarget = false;
-            v.rectTransform.anchorMin = v.rectTransform.anchorMax = new Vector2(0, 1); v.rectTransform.pivot = new Vector2(0.5f, 1);
-            v.rectTransform.anchoredPosition = new Vector2(i * CellPx, 0); v.rectTransform.sizeDelta = new Vector2(1.2f, size);
-            var h = new GameObject("Grid", typeof(RectTransform), typeof(Image)).GetComponent<Image>();
-            h.transform.SetParent(board, false); h.color = new Color(0.1f, 0.07f, 0.04f, 0.28f); h.raycastTarget = false;
-            h.rectTransform.anchorMin = h.rectTransform.anchorMax = new Vector2(0, 1); h.rectTransform.pivot = new Vector2(0, 0.5f);
-            h.rectTransform.anchoredPosition = new Vector2(0, -i * CellPx); h.rectTransform.sizeDelta = new Vector2(size, 1.2f);
-        }
         token = new GameObject("Party", typeof(RectTransform)).GetComponent<RectTransform>();
         token.SetParent(board, false);
         token.anchorMin = token.anchorMax = new Vector2(0, 1); token.pivot = new Vector2(0.5f, 0.5f);
         token.sizeDelta = new Vector2(CellPx, CellPx);
-        var ringImage = Box("Ring", token, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(CellPx, CellPx), Gold);
+        var ringImage = Box("Ring", token, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(CellPx, CellPx), new Color(0.45f, 0.9f, 1, 0.65f));
         ringImage.sprite = Disc(true); ringImage.raycastTarget = false;
-        var chibi = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + run.party[0]);
-        if (chibi != null)
+        partyFigures.Clear(); partyOffsets.Clear();
+        for (int i = 0; i < run.party.Count; i++)
         {
-            var pic = new GameObject("Leader", typeof(RectTransform), typeof(RawImage));
+            var chibi = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + run.party[i]);
+            var pic = new GameObject("Party " + run.party[i], typeof(RectTransform));
             pic.transform.SetParent(token, false);
             var pr = pic.GetComponent<RectTransform>();
             pr.anchorMin = pr.anchorMax = new Vector2(0.5f, 0.5f); pr.pivot = new Vector2(0.5f, 0.2f);
-            pr.sizeDelta = new Vector2(CellPx * 1.1f * chibi.width / chibi.height, CellPx * 1.1f);
-            pic.GetComponent<RawImage>().texture = chibi; pic.GetComponent<RawImage>().raycastTarget = false;
+            float height = CellPx * (run.party.Count > 1 ? 1f : 1.25f);
+            Vector2 offset = i == 0 ? Vector2.zero : new Vector2((i % 2 == 1 ? -1 : 1) * CellPx * 0.36f,
+                -Mathf.Ceil(i / 2f) * CellPx * 0.3f);
+            pr.anchoredPosition = offset;
+            pr.sizeDelta = new Vector2(chibi != null ? height * chibi.width / chibi.height : height, height);
+            if (chibi != null)
+            {
+                var image = pic.AddComponent<RawImage>(); image.texture = chibi; image.raycastTarget = false;
+                if (pic.AddComponent<TowerDungeonPortrait>().Configure(run.party[i]))
+                    pr.sizeDelta = new Vector2(height * 124 / 186f, height);
+            }
+            else
+            {
+                var label = TextAt(pic.transform, "Missing portrait", run.party[i], 0, 0, height, height, 11, Glass, TextAnchor.MiddleCenter);
+                label.raycastTarget = false;
+            }
+            partyFigures.Add(pr); partyOffsets.Add(offset);
         }
+        // Back-row figures first, leader in front.
+        for (int i = partyFigures.Count - 1; i >= 0; i--) partyFigures[i].SetAsLastSibling();
         roomIcons.Clear();
     }
 
@@ -811,6 +1311,82 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         rect.anchoredPosition = new Vector2(x * CellPx, -y * CellPx);
         rect.sizeDelta = new Vector2(CellPx + 0.5f, CellPx + 0.5f);
         return image;
+    }
+
+    private void BuildTerrainCell(TowerDungeon d, int x, int y, Texture2D terrain)
+    {
+        var tile = new GameObject("POI terrain", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+        tile.transform.SetParent(board, false);
+        tile.texture = terrain; tile.raycastTarget = false;
+        var rect = tile.rectTransform;
+        rect.anchorMin = rect.anchorMax = new Vector2(0, 1); rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(x * CellPx, -y * CellPx); rect.sizeDelta = new Vector2(CellPx, CellPx);
+        int room = d.RoomAt(x, y);
+        if (room >= 0)
+        {
+            var r = d.rooms[room];
+            tile.uvRect = new Rect((x - r.x) / (float)r.w, (r.y + r.h - 1 - y) / (float)r.h, 1f / r.w, 1f / r.h);
+        }
+        else
+        {
+            tile.uvRect = new Rect(x / 4f, -y / 4f, 0.25f, 0.25f);
+            tile.color = d.Walkable(x, y) ? new Color(0.68f, 0.75f, 0.8f) : new Color(0.25f, 0.32f, 0.39f);
+        }
+    }
+
+    private void BuildTerrainEdges(TowerDungeon d, int x, int y)
+    {
+        if (d.Walkable(x, y))
+        {
+            if (d.CellAt(x, y) == TowerDungeon.Door)
+            {
+                bool vertical = d.Walkable(x, y - 1) && d.Walkable(x, y + 1);
+                var threshold = Box("POI threshold", board, new Vector2(0, 1), new Vector2(0, 1), CellCenter(x, y),
+                    vertical ? new Vector2(CellPx * 0.75f, 3) : new Vector2(3, CellPx * 0.75f),
+                    new Color(0.55f, 0.66f, 0.72f, 0.6f));
+                threshold.raycastTarget = false;
+            }
+            return;
+        }
+        foreach (var direction in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+        {
+            if (!d.Walkable(x + direction.x, y + direction.y)) continue;
+            Vector2 delta = new Vector2(direction.x, -direction.y);
+            var edge = Box("Silverwood room edge", board, new Vector2(0, 1), new Vector2(0, 1),
+                CellCenter(x, y) + delta * (CellPx * 0.5f - 2),
+                direction.x == 0 ? new Vector2(CellPx, 3) : new Vector2(3, CellPx), new Color(0.48f, 0.61f, 0.7f, 0.65f));
+            edge.raycastTarget = false;
+        }
+    }
+
+    private void BuildCelestiumPaths(TowerDungeon d)
+    {
+        for (int y = 0; y < TowerDungeon.Size; y++) for (int x = 0; x < TowerDungeon.Size; x++)
+        {
+            int type = d.CellAt(x, y);
+            if (type != TowerDungeon.Corridor && type != TowerDungeon.Door) continue;
+            // Each arm lives inside its cell so fog hides undiscovered branches completely.
+            foreach (var direction in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+            {
+                if (!d.Walkable(x + direction.x, y + direction.y)) continue;
+                Vector2 center = CellCenter(x, y);
+                Vector2 delta = new Vector2(direction.x, -direction.y);
+                // Two fine mineral veins flank the physical walking surface.
+                Vector2 normal = new Vector2(-delta.y, delta.x);
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    var glow = Box("Celestium vein", board, new Vector2(0, 1), new Vector2(0, 1),
+                        center + delta * CellPx * 0.25f + normal * side * CellPx * 0.27f,
+                        direction.x == 0 ? new Vector2(5, CellPx * 0.5f + 1) : new Vector2(CellPx * 0.5f + 1, 5),
+                        new Color(0.2f, 0.75f, 0.88f, 0.22f));
+                    glow.raycastTarget = false;
+                    var core = Box("Silver mineral core", glow.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero,
+                        direction.x == 0 ? new Vector2(1.2f, CellPx * 0.5f + 1) : new Vector2(CellPx * 0.5f + 1, 1.2f),
+                        new Color(0.55f, 0.88f, 1, 0.65f));
+                    core.raycastTarget = false;
+                }
+            }
+        }
     }
 
     private static Sprite CellSprite(TowerDungeon d, int x, int y)
@@ -828,14 +1404,22 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         return TowerDungeonTiles.Wall(d.theme, mask);
     }
 
+    private static bool IsDungeonWall(TowerDungeon d, int x, int y)
+    {
+        for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
+            if (d.Walkable(x + dx, y + dy)) return true;
+        return false;
+    }
+
     private Vector2 CellCenter(int x, int y) { return new Vector2((x + 0.5f) * CellPx, -(y + 0.5f) * CellPx); }
 
     private void RefreshDungeon()
     {
         var run = R.Run; var d = R.Dungeon;
         if (run == null || d == null) return;
-        if (board == null || boardKey != run.layout + run.dungeonPoi + run.floor) { Rebuild(); return; }
-        for (int y = 0; y < TowerDungeon.Size; y++)
+        if (board == null || boardKey != run.layout + run.dungeonPoi + run.floor + ":" + run.dungeonLayoutVersion) { Rebuild(); return; }
+        if (dungeonIllustration != null) dungeonIllustration.Refresh(R);
+        else for (int y = 0; y < TowerDungeon.Size; y++)
             for (int x = 0; x < TowerDungeon.Size; x++)
             {
                 var fog = fogCells[TowerDungeon.Index(x, y)];
@@ -850,16 +1434,16 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             var room = d.rooms[i];
             if (run.roomsDone.Contains(i) || room.kind == "empty" || room.kind == "entrance") continue;
             if (!R.Revealed(room.CenterX, room.CenterY)) continue;
-            var badge = Badge(board, CellCenter(room.CenterX, room.CenterY), CellPx * 0.95f,
-                room.kind == "boss" ? Alert : room.kind == "stairs" ? Gold : new Color(0.2f, 0.18f, 0.15f, 0.92f),
-                room.kind == "stairs" ? null : Icon(room.kind), null);
-            if (room.kind == "stairs")
-            {
-                var label = TextAt(badge.transform, "Stairs", "STAIRS", 0, 0, CellPx * 0.95f, CellPx * 0.95f, 10, Color.black, TextAnchor.MiddleCenter);
-                label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                label.rectTransform.anchoredPosition = Vector2.zero;
-                label.fontStyle = FontStyle.Bold;
-            }
+            var position = CellCenter(room.CenterX, room.CenterY);
+            position.y += (room.h * 0.5f - 0.65f) * CellPx;
+            var badge = At("Encounter marker", board, position.x - 39, -position.y - 12, 78, 24,
+                new Color(0.035f, 0.07f, 0.13f, 0.94f));
+            badge.raycastTarget = false;
+            string title = room.kind == "boss" ? "BOSS" : room.kind == "stairs" ? "DESCEND" :
+                room.kind == "treasure" ? "CACHE" : room.kind == "rest" ? "CAMP" :
+                room.kind == "merchant" ? "TRADE" : room.kind == "enemy" ? "BATTLE" : room.kind.ToUpperInvariant();
+            TextAt(badge.transform, "Encounter", title, 2, 0, 74, 24, 11,
+                room.kind == "boss" ? Alert : room.kind == "stairs" ? Gold : new Color(0.65f, 0.94f, 1), TextAnchor.MiddleCenter);
             roomIcons.Add(badge.gameObject);
         }
         token.SetAsLastSibling();
@@ -876,7 +1460,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void DungeonInput()
     {
-        if (roomPanel != null || endPanel != null || lootOpen) return;
+        if (roomPanel != null || endPanel != null || lootOpen || Travelling) return;
         var run = R.Run;
         var keyboard = Keyboard.current;
         if (keyboard != null)
@@ -925,11 +1509,17 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (!dragged)
             {
                 Vector2 local;
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(board, pos, null, out local))
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(board, pos, InputCamera, out local))
                 {
                     int x = Mathf.FloorToInt((local.x + board.rect.width / 2) / CellPx);
                     int y = Mathf.FloorToInt((board.rect.height / 2 - local.y) / CellPx);
-                    if (TowerDungeon.Inside(x, y)) Step(x, y);
+                    if (TowerDungeon.Inside(x, y))
+                    {
+                        int room = R.Dungeon.RoomAt(x, y);
+                        if (room >= 0 && R.Revealed(R.Dungeon.rooms[room].CenterX, R.Dungeon.rooms[room].CenterY))
+                        { x = R.Dungeon.rooms[room].CenterX; y = R.Dungeon.rooms[room].CenterY; }
+                        Step(x, y);
+                    }
                 }
             }
         }
@@ -937,12 +1527,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private bool OverViewport(Vector2 screen)
     {
-        if (!RectTransformUtility.RectangleContainsScreenPoint(viewport, screen, null)) return false;
+        if (!RectTransformUtility.RectangleContainsScreenPoint(viewport, screen, InputCamera)) return false;
         var data = new PointerEventData(EventSystem.current) { position = screen };
         var hits = new List<RaycastResult>();
         EventSystem.current.RaycastAll(data, hits);
-        foreach (var hit in hits) if (hit.gameObject != viewport.gameObject) return false;
-        return true;
+        // Background panels also raycast; only the foremost hit should block board input.
+        return hits.Count == 0 || hits[0].gameObject == viewport.gameObject;
     }
 
     private void PanBy(Vector2 screenDelta)
@@ -956,10 +1546,10 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         float next = Mathf.Clamp(zoom * factor, 0.35f, 3f);
         Vector2 before, after;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(board, screen, null, out before);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(board, screen, InputCamera, out before);
         zoom = next;
         board.localScale = Vector3.one * zoom;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(board, screen, null, out after);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(board, screen, InputCamera, out after);
         board.anchoredPosition += (after - before) * zoom;
         ClampBoard();
     }
@@ -973,11 +1563,58 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void Step(int x, int y)
     {
-        string error = R.DungeonMove(x, y);
+        if (Travelling) return;
+        List<int> path;
+        string error = R.DungeonRoute(x, y, out path);
         if (error != null) { Say(error); return; }
-        tower.SaveExpedition();
-        // Keep the party in view.
-        Vector2 cell = CellCenter(R.Run.px, R.Run.py) + new Vector2(-board.rect.width / 2, board.rect.height / 2);
+        CancelTravel();
+        travelPath.AddRange(path);
+        foreach (var figure in partyFigures)
+        { var portrait = figure.GetComponent<TowerDungeonPortrait>(); if (portrait != null) portrait.SetTravelling(Travelling); }
+        foreach (int cell in path)
+        {
+            var mark = CellImage("Selected route", cell % TowerDungeon.Size, cell / TowerDungeon.Size, new Color(0.55f, 0.85f, 1, 0.16f));
+            routeMarks.Add(mark.gameObject);
+        }
+        token.SetAsLastSibling();
+    }
+
+    private void CancelTravel()
+    {
+        travelPath.Clear(); travelIndex = 0; travelClock = 0;
+        foreach (var mark in routeMarks) if (mark != null) Destroy(mark);
+        routeMarks.Clear();
+        for (int i = 0; i < partyFigures.Count; i++) if (partyFigures[i] != null) partyFigures[i].anchoredPosition = partyOffsets[i];
+        foreach (var figure in partyFigures) if (figure != null)
+        { var portrait = figure.GetComponent<TowerDungeonPortrait>(); if (portrait != null) portrait.SetTravelling(false); }
+        if (token != null && tower != null && R.Run != null) token.anchoredPosition = CellCenter(R.Run.px, R.Run.py);
+    }
+
+    private void UpdateTravel()
+    {
+        if (!Travelling) return;
+        if (roomPanel != null || endPanel != null || lootOpen) { CancelTravel(); return; }
+        int cell = travelPath[travelIndex];
+        int x = cell % TowerDungeon.Size, y = cell / TowerDungeon.Size;
+        travelClock += Time.unscaledDeltaTime * 5;
+        token.anchoredPosition = Vector2.Lerp(CellCenter(R.Run.px, R.Run.py), CellCenter(x, y), Mathf.Min(1, travelClock));
+        for (int i = 0; i < partyFigures.Count; i++)
+            partyFigures[i].anchoredPosition = partyOffsets[i] + new Vector2(0, Mathf.Sin(Time.unscaledTime * 22 + i * 1.5f) * 1.5f);
+        KeepPartyInView();
+        if (travelClock < 1) return;
+        string error = R.DungeonAdvance(x, y);
+        if (error != null) { CancelTravel(); Say(error); return; }
+        travelIndex++; travelClock = 0;
+        commitDungeonStep();
+        if (travelIndex <= routeMarks.Count && routeMarks[travelIndex - 1] != null) routeMarks[travelIndex - 1].SetActive(false);
+        RefreshDungeon();
+        if (R.PendingRoom >= 0 || !Travelling) CancelTravel();
+    }
+
+    private void KeepPartyInView()
+    {
+        // Keep the animated party in view without changing its authoritative cell.
+        Vector2 cell = token.anchoredPosition + new Vector2(-board.rect.width / 2, board.rect.height / 2);
         Vector2 onScreen = board.anchoredPosition + cell * zoom;
         float hw = viewport.rect.width / 2 - 80, hh = viewport.rect.height / 2 - 80;
         if (Mathf.Abs(onScreen.x) > hw || Mathf.Abs(onScreen.y) > hh)
@@ -985,14 +1622,14 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             board.anchoredPosition = -cell * zoom;
             ClampBoard();
         }
-        RefreshDungeon();
     }
 
     // ---------------------------------------------------------------- rooms
 
     private static readonly string[] CaveThemes = { "cave", "crystal" };
 
-    private static string RoomArt(string kind, string theme, int seed)
+    // silverwoodDepth is 1 to 5 inside the Silverwood depth regions (signature boss rooms), 0 elsewhere.
+    private static string RoomArt(string kind, string theme, int seed, int silverwoodDepth = 0)
     {
         bool cave = Array.IndexOf(CaveThemes, theme) >= 0;
         string folder;
@@ -1000,14 +1637,28 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         {
             case "enemy": folder = "standard_combat"; break;
             case "elite": folder = "elite_combat"; break;
-            case "boss": folder = cave ? "cave_boss" : "boss_arena"; break;
+            case "boss":
+                if (silverwoodDepth > 0)
+                {
+                    string signature = Root + "Rooms/boss_d" + silverwoodDepth;
+                    if (Resources.Load<Texture2D>(signature) != null) return signature;
+                }
+                folder = cave ? "cave_boss" : "boss_arena"; break;
             case "treasure": folder = cave ? "cave_loot" : "loot"; break;
-            case "rest": folder = cave ? "cave_camp" : "safe_camp"; break;
+            case "rest": folder = cave ? "cave_camp" : (Mathf.Abs(seed) % 2 == 0 ? "safe_camp" : "rest_alcove"); break;
             case "merchant": folder = "merchant"; break;
             case "stairs": folder = "exit"; break;
-            default: folder = new[] { "secret", "shrine", "puzzle" }[Mathf.Abs(seed) % 3]; break;
+            case "trap": folder = "trap"; break;
+            case "skillcheck": folder = "skill_check"; break;
+            case "story": folder = "story"; break;
+            case "keygate": folder = "key_gate"; break;
+            default: folder = new[] { "secret", "shrine", "puzzle", "skill_check", "story" }[Mathf.Abs(seed) % 5]; break;
         }
-        return Root + "Rooms/" + folder + "_" + (Mathf.Abs(seed) % 3);
+        string path = Root + "Rooms/" + folder + "_" + (Mathf.Abs(seed) % 3);
+        // A kind whose art has not arrived yet falls back to the original set.
+        if (folder == "rest_alcove" || folder == "skill_check" || folder == "story" || folder == "trap" || folder == "key_gate")
+            if (Resources.Load<Texture2D>(path) == null) return Root + "Rooms/" + (kind == "rest" ? "safe_camp" : "puzzle") + "_" + (Mathf.Abs(seed) % 3);
+        return path;
     }
 
     private static string RoomTitle(string kind, bool goal, string poiName)
@@ -1025,7 +1676,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         string place = theme == "cave" ? "Roots tighten around the rock." : theme == "marsh" ? "Black water laps at rotten boards." :
             theme == "crystal" ? "Cold light pulses in the crystal." : theme == "briar" ? "Thorns scrape at every step." :
-            theme == "keep" ? "Old banners hang in the dark." : "Moss swallows the broken stones.";
+            theme == "keep" ? "Old banners hang in the dark." : theme == "mine" ? "Rusted rails vanish into the dark." :
+            theme == "blight" ? "Violet rot creeps across the stone." : theme == "heartwood" ? "Golden light drifts between living roots." :
+            "Moss swallows the broken stones.";
         switch (kind)
         {
             case "enemy": return place + " Something moves in the shadows. Fight!";
@@ -1049,7 +1702,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float pw = Mathf.Min(760, width - Side - 60), ph = 440;
         float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
         var panel = PanelAt("Room", shade.transform, px, py, pw, ph).transform;
-        var art = Resources.Load<Texture2D>(RoomArt(room.kind, d.theme, (int)TowerForestLayouts.Hash(run.dungeonPoi, index + run.floor * 17)));
+        var art = Resources.Load<Texture2D>(RoomArt(room.kind, d.theme, (int)TowerForestLayouts.Hash(run.dungeonPoi, index + run.floor * 17),
+            TowerRules.SilverwoodDepth(run.region)));
         float artW = 260;
         if (art != null)
         {
@@ -1165,9 +1819,25 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float width = root.rect.width, height = root.rect.height;
         var shade = Stretch("Event shade", content, new Color(0, 0, 0, 0.55f));
         int choices = ambush || def == null ? 1 : def.choices.Count;
-        float pw = Mathf.Min(760, width - Side - 60), ph = Mathf.Min(height - Top - 20, 230 + choices * 56);
+        // Optional scene plate for this event (Events/Art/<id>); events without one keep the plain card.
+        var art = def == null ? null : Resources.Load<Texture2D>("AdamsHaven/Events/Art/" + def.id);
+        float pw = Mathf.Min(760, width - Side - 60), banner = art == null ? 0 : Mathf.Min(190, (height - Top) * 0.28f);
+        float ph = Mathf.Min(height - Top - 20, 230 + choices * 56 + banner);
         float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
         var panel = PanelAt("Event", shade.transform, px, py, pw, ph).transform;
+        if (art != null)
+        {
+            var scene = new GameObject("Scene", typeof(RectTransform), typeof(RawImage));
+            scene.transform.SetParent(panel, false);
+            var sr = scene.GetComponent<RectTransform>();
+            sr.anchorMin = sr.anchorMax = sr.pivot = new Vector2(0, 1);
+            sr.anchoredPosition = new Vector2(8, -8); sr.sizeDelta = new Vector2(pw - 16, banner);
+            var raw = scene.GetComponent<RawImage>();
+            raw.texture = art; raw.raycastTarget = false;
+            // Centre-crop the 16:9 plate to the banner's wider shape.
+            float uvH = Mathf.Clamp01((pw - 16) / banner > 0 ? (art.width / (float)art.height) / ((pw - 16) / banner) : 1f);
+            raw.uvRect = new Rect(0, (1f - uvH) * 0.5f, 1, uvH);
+        }
 
         // The first fighter still standing speaks for the party.
         string speaker = run.party[0];
@@ -1181,9 +1851,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             var pr = pic.GetComponent<RectTransform>();
             pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0, 1);
             float ah = 150, aw = ah * chibi.width / chibi.height;
-            pr.anchoredPosition = new Vector2(16, -16); pr.sizeDelta = new Vector2(aw, ah);
+            pr.anchoredPosition = new Vector2(16, -16 - banner); pr.sizeDelta = new Vector2(aw, ah);
             pic.GetComponent<RawImage>().texture = chibi; pic.GetComponent<RawImage>().raycastTarget = false;
-            TextAt(panel, "Speaker name", FighterName(speaker), 16, 168, aw, 20, 12, Gold, TextAnchor.MiddleCenter);
+            TextAt(panel, "Speaker name", FighterName(speaker), 16, 168 + banner, aw, 20, 12, Gold, TextAnchor.MiddleCenter);
             tx = aw + 32;
         }
         float tw = pw - tx - 20, by = ph - 20 - choices * 56;
@@ -1202,8 +1872,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
         else
         {
-            TextAt(panel, "Title", def.title.ToUpperInvariant(), tx, 18, tw, 34, 22, Gold);
-            TextAt(panel, "Text", def.text, tx, 58, tw, by - 66, 16, Cream);
+            TextAt(panel, "Title", def.title.ToUpperInvariant(), tx, 18 + banner, tw, 34, 22, Gold);
+            TextAt(panel, "Text", def.text, tx, 58 + banner, tw, by - 66 - banner, 16, Cream);
             for (int i = 0; i < def.choices.Count; i++)
             {
                 int index = i;

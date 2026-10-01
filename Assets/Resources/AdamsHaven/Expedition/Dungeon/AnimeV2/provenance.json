@@ -1,0 +1,162 @@
+{
+  "generator": "Codex builtin image generation",
+  "references": [
+    "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\cave-dungeon-boss-rooms-v1\\boss-04-rootbound-throne.png",
+    "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\forest_dungeon_set\\shrine\\shrine-02-moonwell-altar.png",
+    "S:\\AI\\Game\\Game Assets\\environments\\battle\\presentation\\production\\battle-showcase-09\\enhancement\\briar-crystal-vault-03-hd09\\master.png"
+  ],
+  "assets": [
+    {
+      "theme": "cave",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-03affedf-6f4f-48dd-83b8-b405db539802.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, cave theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. A deep root cavern, sculpted blue slate cliffs, massive pale silverwood roots, warm lantern alcoves, turquoise mineral glints. Cave geology dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "cave_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "ruin",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-a9db4a1a-02a3-4cfd-9283-7741bb994e9a.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, ruin theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. A ruined moonwell temple, beautifully carved ivory-grey broken masonry, moss, pale silverwood roots, cyan moonlight, scattered violet leaves. Ancient temple architecture dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "ruin_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "keep",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-62c7372a-a083-4cbd-883b-928fa94c3a63.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, keep theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. An abandoned forest watchkeep chamber, carved silverwood floorboards, elevated stone ramparts, broken timber beams, amber lanterns, blue-purple magical sconces. Fort architecture dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "keep_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "marsh",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-f75ffd04-edbd-4729-8748-6e0ea26ef7c5.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, marsh theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. A sunken grove chamber, silverwood boardwalks and little stone platforms above luminous teal water, reeds, water reflections, mist, fallen ivory trunks. Wetland terrain dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "marsh_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "briar",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-7db27d9c-82da-4a7b-a03d-4618d6d64dc4.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, briar theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. A thornbound silverwood hollow, massive sculpted pale tree roots surrounding an open earthy courtyard, violet foliage, moss, flowers, teal mushroom clusters. Root-and-thorn terrain dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "briar_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "crystal",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-0f250977-f60b-4446-b923-53148882a150.png",
+      "prompt": "Use case stylized-concept. Create ONE high-fidelity modern ANIME fantasy RPG dungeon ROOM DIORAMA sprite, crystal theme, for Adams Haven in Silverbrook Forest. Reference images are MATERIAL AND LORE references only: reimagine their root-wrapped architecture, moonlight and crystal craftsmanship as beautiful bright premium hand-painted anime game environment art. A crystal vault chamber, elegant blue slate, towering amethyst clusters around the edges, silverwood roots, sparkling cyan Celestium minerals. Crystal geology dominates. Camera: nearly overhead orthographic 2.5D cutaway, with a little visible thickness on raised perimeter walls, aligned square footprint (NOT diamond isometric), north at top. Composition: open square playable center occupies central 70 percent, walls, props, ledges, carved pillars, rocks and foliage around the perimeter; narrow open passage centered on each of four edges so runtime corridors can join. All walking surfaces on a flat plane. Four cardinal openings, NO tall objects blocking center. Exquisite crisp architectural detail, atmospheric bounced light, rich blue-violet shadows, luminous teal Celestium inlays, silver highlights, warm amber light pools. Clearly ANIME illustrated visual style, clean intentional shapes, depth through raised structures and cast shadows, polished current-generation JRPG environment fidelity, NOT photorealistic texture noise, NOT pixel art. Square high-resolution artwork, aim 2048x2048. Isolate entire room and its soft contact shadow on genuine transparent background, cropped close to square footprint with minimal padding. No other rooms, no paths outside the room, no labels, no UI, no grids, no characters, no badges or numbers. This is reusable room environment art, not a finished game screenshot.",
+      "asset": "crystal_room.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "corridor",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-8f764b7e-f7c0-4d85-b9b8-f3175542cb4d.png",
+      "prompt": "Use case stylized-concept. High-resolution production asset for a premium modern ANIME fantasy RPG environment, Adams Haven in Silverbrook Forest. Polished vibrant hand-painted anime rendering, beautiful clean shapes and subtle microdetail, restrained luminous teal, blue-violet atmosphere, cinematic lighting. Square image aim 2048x2048, no photorealistic noise, no pixel art. One square modular dungeon passage floor sprite, directly overhead, narrow carved ivory-blue stone and silverwood walkway running vertically from top edge to bottom edge, continuous OPEN walking surface occupies middle 60 percent, tiny sculpted stone steps and silver root tendrils at sides, Celestium crystal veins along both edges, glowing cyan mineral cracks integrated organically into real materials, amber tiny lamps, rich purple-blue shadows below the raised sides. Genuine transparency outside walkway. Edge to edge repeatable along vertical axis. No room, no junction, no scenery backdrop, no UI, no characters, no text.",
+      "asset": "corridor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "theme": "backdrop",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-b120a25e-4d40-4280-9c1c-8f9f696d7aad.png",
+      "prompt": "Use case stylized-concept. High-resolution production asset for a premium modern ANIME fantasy RPG environment, Adams Haven in Silverbrook Forest. Polished vibrant hand-painted anime rendering, beautiful clean shapes and subtle microdetail, restrained luminous teal, blue-violet atmosphere, cinematic lighting. Square image aim 2048x2048, no photorealistic noise, no pixel art. One full square richly illustrated overhead landscape of Silverbrook's underground Silverwood forest dungeon surround, dark sculpted blue rock shelves, enormous pale ivory roots weaving around outer margins, violet foliage, clusters of luminous teal fungi and amethyst, soft moonlit blue mist in the recesses. A quiet dark navy-purple center with atmospheric texture, no bright central focal point. Layered cliffs and roots have convincing relief, rim lighting and soft cast shadows. NO rooms, NO traversable paths, NO buildings, no grids, no characters, no text, no UI. This is decorative negative-space art behind a procedural dungeon, not a fixed navigable map. Opaque image.",
+      "asset": "backdrop.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": null
+    },
+    {
+      "theme": "mist",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-b7c06673-bee3-403e-947f-47ab2e58561a.png",
+      "prompt": "Use case stylized-concept. High-resolution production asset for a premium modern ANIME fantasy RPG environment, Adams Haven in Silverbrook Forest. Polished vibrant hand-painted anime rendering, beautiful clean shapes and subtle microdetail, restrained luminous teal, blue-violet atmosphere, cinematic lighting. Square image aim 2048x2048, no photorealistic noise, no pixel art. One square softly billowing magical silver-blue and violet fog texture, mist wisps, faint luminous moon motes, painterly soft flowing clouds, gentle depth, darker blue-purple recesses and soft pale silver highlights, subtle variations and no strong central focal point, luminous mist on midnight navy atmosphere. Opaque image so hidden areas are fully concealed. No landscape, no objects, no paths, no map geometry, no characters, no UI, no text.",
+      "asset": "mist.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alphaExtrema": null
+    }
+  ],
+  "existingArt": [
+    {
+      "theme": "cave",
+      "source": "S:\\AI\\Game\\Game Assets\\environments\\battle\\standard_combat\\briar-junction-03.png",
+      "asset": "cave_vista.png"
+    },
+    {
+      "theme": "ruin",
+      "source": "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\forest_dungeon_set\\shrine\\shrine-02-moonwell-altar.png",
+      "asset": "ruin_vista.png"
+    },
+    {
+      "theme": "keep",
+      "source": "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\forest_dungeon_set\\standard_combat\\standard-combat-01-mossgate-arena.png",
+      "asset": "keep_vista.png"
+    },
+    {
+      "theme": "marsh",
+      "source": "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\forest_dungeon_set\\shrine\\shrine-02-moonwell-altar.png",
+      "asset": "marsh_vista.png"
+    },
+    {
+      "theme": "briar",
+      "source": "S:\\AI\\Game\\Game Assets\\_staging\\battle\\Dungeon\\cave-dungeon-boss-rooms-v1\\boss-04-rootbound-throne.png",
+      "asset": "briar_vista.png"
+    },
+    {
+      "theme": "crystal",
+      "source": "S:\\AI\\Game\\Game Assets\\environments\\battle\\presentation\\production\\battle-showcase-09\\enhancement\\briar-crystal-vault-03-hd09\\master.png",
+      "asset": "crystal_vista.png"
+    }
+  ]
+}

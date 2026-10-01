@@ -42,7 +42,7 @@ namespace AdamsHaven.Tower
     public static class TowerEvents
     {
         public const string Path = "AdamsHaven/Events/traversal";
-        public const string AmbushId = "threat_ambush", RestId = "quiet_glade";
+        public const string AmbushId = "threat_ambush", RestId = "camp_quiet_glade";
 
         private static List<TowerEventDef> all;
 

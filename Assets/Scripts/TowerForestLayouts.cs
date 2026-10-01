@@ -61,12 +61,35 @@ namespace AdamsHaven.Tower
 
         private static readonly Dictionary<string, TowerForestLayout> cache = new Dictionary<string, TowerForestLayout>();
 
+        // Silverwood depth maps (five depths, three plates each). Loaded from silverwood_layouts.json only.
+        public static readonly string[] SilverwoodIds = {
+            "silverwood_d1_forest_edge_hamlet", "silverwood_d1_forest_edge_fallen_oaks", "silverwood_d1_forest_edge_charcoal_burn",
+            "silverwood_d2_lakes_mirror_lake", "silverwood_d2_lakes_braided_river", "silverwood_d2_lakes_drowned_marsh",
+            "silverwood_d3_mountains_switchback_ridge", "silverwood_d3_mountains_mine_valley", "silverwood_d3_mountains_crystal_caverns",
+            "silverwood_d4_ruins_sunken_city", "silverwood_d4_ruins_moonlit_terraces", "silverwood_d4_ruins_blighted_citadel",
+            "silverwood_d5_heart_world_tree_grove", "silverwood_d5_heart_hollow_gate_ruins", "silverwood_d5_heart_blighted_wild" };
+
+        // The three plates for a Silverwood depth (1 to 5).
+        public static string[] SilverwoodDepthIds(int depth)
+        {
+            var list = new List<string>();
+            foreach (var id in SilverwoodIds) if (id.StartsWith("silverwood_d" + depth + "_")) list.Add(id);
+            return list.ToArray();
+        }
+
+        public static bool IsKnown(string id)
+        { return !string.IsNullOrEmpty(id) && (Array.IndexOf(Ids, id) >= 0 || Array.IndexOf(SilverwoodIds, id) >= 0); }
+
         public static TowerForestLayout Get(string id)
         {
-            if (string.IsNullOrEmpty(id) || Array.IndexOf(Ids, id) < 0) return null;
+            if (!IsKnown(id)) return null;
             if (cache.Count == 0) Load();
             TowerForestLayout layout;
-            if (!cache.TryGetValue(id, out layout)) { layout = Generate(id); cache[id] = layout; }
+            if (!cache.TryGetValue(id, out layout))
+            {
+                if (Array.IndexOf(Ids, id) < 0) return null;
+                layout = Generate(id); cache[id] = layout;
+            }
             return layout;
         }
 
@@ -75,12 +98,18 @@ namespace AdamsHaven.Tower
         // Hand-placed layouts override the generator, one entry per map.
         private static void Load()
         {
-            var text = Resources.Load<TextAsset>("AdamsHaven/Expedition/forest_layouts");
+            LoadFile("AdamsHaven/Expedition/forest_layouts");
+            LoadFile("AdamsHaven/Expedition/silverwood_layouts");
+        }
+
+        private static void LoadFile(string path)
+        {
+            var text = Resources.Load<TextAsset>(path);
             if (text == null) return;
             var file = JsonUtility.FromJson<TowerForestLayoutFile>(text.text);
             if (file == null || file.layouts == null) return;
             foreach (var layout in file.layouts)
-                if (layout != null && Array.IndexOf(Ids, layout.id) >= 0 && layout.nodes.Count > 0) cache[layout.id] = layout;
+                if (layout != null && IsKnown(layout.id) && layout.nodes.Count > 0) cache[layout.id] = layout;
         }
 
         public static string Pretty(string id)
@@ -126,7 +155,7 @@ namespace AdamsHaven.Tower
                 columns.Add(column);
             }
             var camp = columns[0][0];
-            camp.id = "camp"; camp.kind = "camp"; camp.name = "Expedition Camp";
+            camp.id = "camp"; camp.kind = "camp"; camp.name = "Camp";
             var lair = columns[perColumn.Length - 1][0];
             lair.kind = "lair"; lair.name = LairNames[rng.Next(LairNames.Length)];
 
@@ -175,20 +204,20 @@ namespace AdamsHaven.Tower
 
         private static void Link(TowerForestNode a, TowerForestNode b) { if (!a.links.Contains(b.id)) a.links.Add(b.id); }
 
-        private static readonly string[] LairNames = { "Thornmother's Den", "The Rootbound Throne", "Wolf King's Barrow",
-            "The Hollow Crown", "Moonscar Lair", "The Briar Heart" };
+        private static readonly string[] LairNames = { "Thorn Den", "Root Throne", "Wolf Barrow",
+            "Hollow Crown", "Moon Lair", "Briar Heart" };
 
         private static string NameFor(string kind, TowerRng rng)
         {
             string[] pool;
             switch (kind)
             {
-                case "combat": pool = new[] { "Bandit Trail", "Wolf Den", "Goblin Warren", "Spider Hollow", "Boar Thicket", "Raider Outpost" }; break;
-                case "elite": pool = new[] { "Warden's Circle", "Thornseal Vault", "Old Guard Post", "Iron Maw Grotto" }; break;
-                case "treasure": pool = new[] { "Sunken Cache", "Smuggler's Hoard", "Workshop Cache", "Fallen Armory" }; break;
-                case "shrine": pool = new[] { "Moss Shrine", "Moonstone Altar", "Weeping Idol" }; break;
-                case "mystery": pool = new[] { "Whispering Stones", "Strange Lights", "Hidden Root Door" }; break;
-                case "merchant": pool = new[] { "Wandering Peddler", "Caravan Stop", "Tinker's Wagon" }; break;
+                case "combat": pool = new[] { "Bandits", "Wolves", "Goblins", "Spiders", "Boars", "Raiders" }; break;
+                case "elite": pool = new[] { "Warden Circle", "Thornseal", "Old Guard", "Iron Maw" }; break;
+                case "treasure": pool = new[] { "Cache", "Hoard", "Workshop Cache", "Armory" }; break;
+                case "shrine": pool = new[] { "Moss Shrine", "Moon Altar", "Idol" }; break;
+                case "mystery": pool = new[] { "Stones", "Lights", "Root Door" }; break;
+                case "merchant": pool = new[] { "Peddler", "Caravan", "Tinker" }; break;
                 default: pool = new[] { "Clearing" }; break;
             }
             return pool[rng.Next(pool.Length)];

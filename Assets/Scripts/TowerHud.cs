@@ -16,8 +16,8 @@ public sealed partial class TowerHud : MonoBehaviour
     private static readonly Color Ink = new Color(0.035f, 0.055f, 0.085f, 0.94f);
     private static readonly Color Panel = new Color(0.08f, 0.12f, 0.16f, 0.95f);
     private static readonly Color Glass = new Color(0.62f, 0.78f, 1f, 1f);
-    private static readonly Color Gold = new Color(0.95f, 0.77f, 0.43f);
-    private static readonly Color Cream = new Color(0.95f, 0.92f, 0.82f);
+    private static readonly Color Gold = new Color(0.91f, 0.80f, 0.55f);
+    private static readonly Color Cream = new Color(0.93f, 0.91f, 0.86f);
     private static readonly Color Teal = new Color(0.22f, 0.55f, 0.64f);
     private static readonly Color Alert = new Color(0.86f, 0.30f, 0.24f);
 
@@ -123,7 +123,7 @@ public sealed partial class TowerHud : MonoBehaviour
             toastTimer -= Time.unscaledDeltaTime;
             float alpha = Mathf.Clamp01(toastTimer / 0.6f);
             toastPanel.color = new Color(0.03f, 0.05f, 0.08f, 0.86f * alpha);
-            toastText.color = new Color(Gold.r, Gold.g, Gold.b, alpha);
+            toastText.color = new Color(Cream.r, Cream.g, Cream.b, alpha);
             if (toastTimer <= 0) toastPanel.gameObject.SetActive(false);
         }
         if (materialsPanel.gameObject.activeSelf)
@@ -131,11 +131,7 @@ public sealed partial class TowerHud : MonoBehaviour
             materialsTimer -= Time.unscaledDeltaTime;
             if (materialsTimer <= 0) materialsPanel.gameObject.SetActive(false);
         }
-        if (dockHeart != null)
-        {
-            float glow = HeartReady() ? 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f) : 0;
-            dockHeart.GetComponent<Image>().color = Color.Lerp(new Color(0.45f, 0.33f, 0.72f), Gold, glow);
-        }
+        PulseHeart();
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (flyoutPanel.gameObject.activeSelf) CloseFlyout();
@@ -244,73 +240,23 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private Button CloseButton(Transform parent, float x, float y, Action action)
     {
-        return ButtonAt(parent, "Close", "×", x, y, 30, 30, action, Alert, 20);
+        return ButtonAt(parent, "Close", "×", x, y, 30, 30, action, Teal, 19);
     }
 
     private static Text LabelOf(Button button)
     { return button.GetComponentInChildren<Text>(); }
 
+    // A 1px hairline under a section title.
     private void Divider(Transform parent, float x, float y, float width)
     {
-        var texture = Resources.Load<Texture2D>("AdamsHaven/Tower/UI/divider_v1");
-        if (texture == null) return;
-        var go = new GameObject("Celestium divider", typeof(RectTransform), typeof(RawImage));
-        go.transform.SetParent(parent, false);
-        var rect = go.GetComponent<RectTransform>();
-        rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
-        rect.pivot = new Vector2(0, 1);
-        rect.anchoredPosition = new Vector2(x, -y);
-        rect.sizeDelta = new Vector2(width, 14);
-        var image = go.GetComponent<RawImage>();
-        image.texture = texture;
-        image.raycastTarget = false;
+        var line = Rect("Divider", parent, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(x + 4, -y - 8), new Vector2(x + width - 4, -y - 7), new Color(1, 1, 1, 0.12f));
+        line.raycastTarget = false;
     }
 
     // ---------------------------------------------------------------- top bar
 
-    private void BuildTop()
-    {
-        var top = Rect("Top bar", safeRoot, new Vector2(0, 1), new Vector2(1, 1),
-            new Vector2(0, -52), Vector2.zero, Ink);
-        clockText = TextAt(top.transform, "Day", "", 16, 3, 300, 26, 18, Gold);
-        var bar = Rect("Threat bar", top.transform, new Vector2(0, 1), new Vector2(0, 1),
-            new Vector2(16, -41), new Vector2(116, -34), new Color(0.13f, 0.16f, 0.2f, 1));
-        bar.raycastTarget = false;
-        threatFill = Rect("Threat fill", bar.transform, Vector2.zero, new Vector2(0.3f, 1),
-            Vector2.zero, Vector2.zero, Teal);
-        threatFill.raycastTarget = false;
-        threatText = TextAt(top.transform, "Threat label", "", 124, 28, 200, 20, 12, Cream);
-
-        // Primary stocks in one line; tap it to peek at the materials.
-        var strip = Rect("Resource strip", top.transform, new Vector2(0, 1), new Vector2(0, 1),
-            new Vector2(300, -50), new Vector2(866, -2), Color.clear);
-        var stripButton = strip.gameObject.AddComponent<Button>();
-        stripButton.transition = Selectable.Transition.None;
-        stripButton.onClick.AddListener(() =>
-        {
-            materialsPanel.gameObject.SetActive(!materialsPanel.gameObject.activeSelf);
-            materialsTimer = 7f; Refresh();
-        });
-        resources = TextAt(strip.transform, "Resources", "", 0, 0, 566, 48, 13, Cream, TextAnchor.MiddleCenter);
-
-        materialsPanel = Box("Materials", safeRoot, new Vector2(0.5f, 1), new Vector2(0.5f, 1),
-            new Vector2(0, -56), new Vector2(560, 34), new Color(0.05f, 0.08f, 0.12f, 0.96f));
-        materialsPanel.raycastTarget = false;
-        materialsText = TextAt(materialsPanel.transform, "Materials text", "", 8, 0, 544, 34, 14, Cream,
-            TextAnchor.MiddleCenter);
-        materialsPanel.gameObject.SetActive(false);
-
-        alertsButton = ButtonAt(top.transform, "Alerts", "ALERTS", 872, 6, 76, 40,
-            () => TogglePopup(popupAlerts), Teal, 13);
-        goalsButton = HoldButtonAt(top.transform, "Goals", "GOALS", 952, 6, 72, 40,
-            () => TogglePopup(popupTasks), TaskItems, false, Teal, 13);
-        stewardTop = ButtonAt(top.transform, "Steward toggle", "STEWARD", 1028, 6, 82, 40,
-            () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward)), Teal, 12);
-        timeButton = HoldButtonAt(top.transform, "Time", "1×", 1114, 6, 60, 40,
-            () => tower.SetSpeed(tower.Speed == 0 ? restoreSpeed : 0), TimeItems, false, Teal, 18);
-        HoldButtonAt(top.transform, "Menu", "MENU", 1178, 6, 88, 40,
-            () => TogglePopup(popupMenu), MenuItems, false, Teal, 15);
-    }
+    private void BuildTop() { BuildTopChrome(); }
 
     private FlyItem[] TimeItems()
     {
@@ -342,13 +288,13 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildToast()
     {
-        toastPanel = Box("Toast", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 92),
-            new Vector2(600, 28), new Color(0.03f, 0.05f, 0.08f, 0.86f));
-        toastPanel.raycastTarget = false;
-        toastText = TextAt(toastPanel.transform, "Toast text", "", 8, 0, 584, 28, 14, Gold, TextAnchor.MiddleCenter);
+        toastPanel = Box("Toast", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 106),
+            new Vector2(600, 30), new Color(0.03f, 0.05f, 0.08f, 0.86f));
+        Pill(toastPanel, 0.86f).raycastTarget = false;
+        toastText = TextAt(toastPanel.transform, "Toast text", "", 8, 0, 584, 30, 13, Cream, TextAnchor.MiddleCenter);
         toastPanel.gameObject.SetActive(false);
 
-        chipPanel = Box("Placing chip", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 124),
+        chipPanel = Box("Placing chip", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 142),
             new Vector2(560, 38), new Color(0.10f, 0.07f, 0.03f, 0.92f));
         TowerUiSkin.ApplyPanel(chipPanel, new Color(1f, 0.85f, 0.55f), true);
         chipText = TextAt(chipPanel.transform, "Placing text", "", 14, 0, 400, 38, 14, Cream);
@@ -357,23 +303,7 @@ public sealed partial class TowerHud : MonoBehaviour
         chipPanel.gameObject.SetActive(false);
     }
 
-    private void BuildDock()
-    {
-        var dock = Box("Dock", safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8),
-            new Vector2(724, 78), Glass);
-        TowerUiSkin.ApplyPanel(dock, Glass, true);
-        dockBuild = HoldButtonAt(dock.transform, "Dock build", "BUILD", 14, 10, 124, 58,
-            () => TogglePopup(popupBuild), BuildItems, true, Teal, 18);
-        dockPeople = HoldButtonAt(dock.transform, "Dock people", "PEOPLE", 146, 10, 124, 58,
-            TogglePeople, PeopleItems, true, Teal, 18);
-        // The Heart is the large centre button; it breathes gold while a summon or upgrade is waiting.
-        dockHeart = ButtonAt(dock.transform, "Dock heart", "HEART", 278, -6, 168, 74, OpenHeart,
-            new Color(0.45f, 0.33f, 0.72f), 21);
-        dockExpeditions = ButtonAt(dock.transform, "Dock expeditions", "EXPEDITIONS", 454, 10, 136, 58,
-            OpenGuildBoard, Teal, 15);
-        dockBattle = ButtonAt(dock.transform, "Dock battle", "BATTLE", 598, 10, 112, 58,
-            () => { CloseAllPopups(); tower.LaunchBattleExpedition(); }, Alert, 18);
-    }
+    private void BuildDock() { BuildDockChrome(); }
 
     private FlyItem[] BuildItems()
     {
@@ -674,16 +604,7 @@ public sealed partial class TowerHud : MonoBehaviour
         guildRecall.interactable = person != null && person.exploring;
     }
 
-    private void BuildMenuPopup()
-    {
-        popupMenu = MakePopup("Menu popup", 250, 158, true);
-        TextAt(popupMenu.transform, "Menu title", "MENU", 16, 8, 150, 28, 17, Gold);
-        CloseButton(popupMenu.transform, 208, 8, CloseAllPopups);
-        ButtonAt(popupMenu.transform, "Save now", "SAVE NOW", 14, 46, 222, 46,
-            () => { tower.SaveNow(); CloseAllPopups(); }, Teal, 16);
-        ButtonAt(popupMenu.transform, "Checkpoints", "CHECKPOINTS", 14, 100, 222, 46,
-            () => { CloseAllPopups(); saveOverlay.gameObject.SetActive(true); }, Teal, 16);
-    }
+    private void BuildMenuPopup() { BuildMainMenu(); }
 
     private void ExpandFocused(int side)
     {
@@ -698,7 +619,8 @@ public sealed partial class TowerHud : MonoBehaviour
     private void BuildLeft()
     {
         var left = Rect("Resident panel", safeRoot, new Vector2(0, 0), new Vector2(0, 1),
-            new Vector2(0, 8), new Vector2(294, -52), Panel);
+            new Vector2(0, 8), new Vector2(294, -104), Panel);
+        TowerUiSkin.ApplyPanel(left, Glass, true);
         TextAt(left.transform, "Resident heading", "RESIDENTS", 14, 10, 150, 32, 22, Gold);
         Divider(left.transform, 9, 39, 279);
         ButtonAt(left.transform, "Previous residents", "‹", 179, 10, 45, 36,
@@ -760,7 +682,8 @@ public sealed partial class TowerHud : MonoBehaviour
     private void BuildRight()
     {
         var right = Rect("Room panel", safeRoot, new Vector2(1, 0), new Vector2(1, 1),
-            new Vector2(-300, 8), new Vector2(0, -52), Panel);
+            new Vector2(-300, 8), new Vector2(0, -104), Panel);
+        TowerUiSkin.ApplyPanel(right, Glass, true);
         TextAt(right.transform, "Room heading", "SELECTED ROOM", 15, 11, 250, 32, 22, Gold);
         CloseButton(right.transform, 262, 12, () =>
         {
@@ -789,7 +712,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private void BuildTutorial()
     {
         tutorialPanel = Rect("Tutorial", safeRoot, new Vector2(0.26f, 1), new Vector2(0.74f, 1),
-            new Vector2(0, -150), new Vector2(0, -58), Ink);
+            new Vector2(0, -178), new Vector2(0, -86), Ink);
         TowerUiSkin.ApplyPanel(tutorialPanel, Glass, true);
         tutorialTitle = TextAt(tutorialPanel.transform, "Tutorial title", "", 9, 2, 592, 38,
             20, Gold, TextAnchor.MiddleCenter);
@@ -807,8 +730,8 @@ public sealed partial class TowerHud : MonoBehaviour
                 22 + i * 194, 44, 181, 44, () => tower.Apply(tower.Rules.ChooseStarter(id)), Teal, 15);
         }
         advicePanel = Box("Advice pill", safeRoot, new Vector2(0.5f, 1), new Vector2(0.5f, 1),
-            new Vector2(0, -58), new Vector2(600, 28), new Color(0.10f, 0.06f, 0.03f, 0.88f));
-        advicePanel.raycastTarget = false;
+            new Vector2(0, -86), new Vector2(600, 28), new Color(0.10f, 0.06f, 0.03f, 0.88f));
+        Pill(advicePanel, 0.88f).raycastTarget = false;
         adviceText = TextAt(advicePanel.transform, "Advice", "", 10, 0, 580, 28, 14,
             new Color(1f, 0.82f, 0.5f), TextAnchor.MiddleCenter);
     }
@@ -819,6 +742,7 @@ public sealed partial class TowerHud : MonoBehaviour
             Vector2.zero, Vector2.zero, new Color(0.01f, 0.02f, 0.04f, 0.92f));
         var card = Rect("Checkpoint card", saveOverlay.transform,
             new Vector2(0.22f, 0.14f), new Vector2(0.78f, 0.86f), Vector2.zero, Vector2.zero, Panel);
+        TowerUiSkin.ApplyPanel(card, Glass, true);
         TextAt(card.transform, "Checkpoint title", "TOWER CHECKPOINTS", 28, 19, 550, 44,
             27, Gold);
         ButtonAt(card.transform, "Close checkpoints", "CLOSE", 570, 18, 130, 43,
@@ -839,6 +763,7 @@ public sealed partial class TowerHud : MonoBehaviour
             Vector2.zero, Vector2.zero, new Color(0.025f, 0.025f, 0.045f, 0.94f));
         var card = Rect("Defeat card", defeatOverlay.transform,
             new Vector2(0.25f, 0.31f), new Vector2(0.75f, 0.69f), Vector2.zero, Vector2.zero, Panel);
+        TowerUiSkin.ApplyPanel(card, Glass, true);
         TextAt(card.transform, "Defeat title", "THE CELESTIUM HEART HAS FALLEN", 20, 23,
             600, 54, 28, Gold, TextAnchor.MiddleCenter);
         TextAt(card.transform, "Defeat detail", "This run has ended. Begin a new run: your heroes and Sigils carry over, the tower starts again.",
@@ -990,6 +915,7 @@ public sealed partial class TowerHud : MonoBehaviour
         if (popupGuild.gameObject.activeSelf) RefreshGuild();
         if (popupHeart.gameObject.activeSelf) RefreshHeart(state);
         if (popupAlerts.gameObject.activeSelf) RefreshAlerts(state);
+        if (popupMenu.gameObject.activeSelf) RefreshMainMenu(state);
         RefreshChip();
     }
 
@@ -1019,27 +945,16 @@ public sealed partial class TowerHud : MonoBehaviour
     private void RefreshTop(TowerState state)
     {
         float hour = tower.Rules.Hour();
-        clockText.text = "DAY " + state.day + "   " + ((int)hour).ToString("00") + ":" +
+        clockText.text = "DAY " + state.day + "  ·  " + ((int)hour).ToString("00") + ":" +
             ((int)((hour % 1f) * 60f)).ToString("00");
         float threat = Mathf.Clamp01(state.threat / 100f);
         threatFill.rectTransform.anchorMax = new Vector2(Mathf.Max(0.03f, threat), 1);
         threatFill.color = threat < 0.5f ? Color.Lerp(new Color(0.25f, 0.65f, 0.4f), Gold, threat * 2) :
             Color.Lerp(Gold, Alert, (threat - 0.5f) * 2);
         threatText.text = state.introPhase == "complete" ?
-            tower.Rules.ThreatLabel().ToUpperInvariant() + "   HEART " + Mathf.CeilToInt(state.heartHp) :
+            tower.Rules.ThreatLabel().ToUpperInvariant() + "  ·  HEART " + Mathf.CeilToInt(state.heartHp) :
             "HEART " + Mathf.CeilToInt(state.heartHp);
-        // GDD 12.5 order: Firewood, Food, Water, Gold, Tonics, Celestium, Sigils, People, (Threat left), Satisfaction.
-        resources.text = "FIREWOOD " + Mathf.CeilToInt(state.firewood) + Trend("firewood") +
-            "   FOOD " + Mathf.CeilToInt(state.food) + Trend("food") +
-            "   WATER " + Mathf.CeilToInt(state.water) + Trend("water") +
-            "\nGOLD " + state.gold + "   TONICS " + state.tonics + "   CELESTIUM " + state.celestium +
-            "   SIGILS " + state.sigils + "   PEOPLE " + tower.Rules.BiologicalPopulation() + "/" +
-            tower.Rules.PopulationCap() + "   " + SatisfactionLabel(state);
-        materialsText.text = "WOOD " + state.wood + "    STONE " + state.stone + "    ORE " + state.ore +
-            "    TONICS " + state.tonics + "    ESSENCE " + state.essence + "    SIGILS " + state.sigils;
-        var face = timeButton.GetComponent<Image>();
-        LabelOf(timeButton).text = tower.Speed == 0 ? "II" : tower.Speed + "×";
-        face.color = tower.Speed == 0 ? Gold : tower.Speed >= 4 ? new Color(0.62f, 0.42f, 0.86f) : Teal;
+        RefreshTopChrome(state);
     }
 
     // Net stock change per game minute, coloured so a falling store is obvious at a glance.
@@ -1067,18 +982,19 @@ public sealed partial class TowerHud : MonoBehaviour
         if (state.introPhase == "complete")
             foreach (var goal in state.goals) if (tower.Rules.GoalComplete(goal)) claimable++;
         bool danger = state.incidents.Count > 0;
-        LabelOf(goalsButton).text = claimable > 0 ? "GOALS " + claimable : "GOALS";
+        SetBadge(goalsButton, claimable);
         goalsButton.GetComponent<Image>().color = claimable > 0 ? Gold : Teal;
-        LabelOf(alertsButton).text = danger ? "ALERTS " + state.incidents.Count : "ALERTS";
+        SetBadge(alertsButton, state.incidents.Count);
         alertsButton.GetComponent<Image>().color = danger ? Alert : Teal;
-        LabelOf(stewardTop).text = state.steward ? "STEWARD ON" : "STEWARD OFF";
-        stewardTop.GetComponent<Image>().color = state.steward ? Teal : new Color(0.32f, 0.36f, 0.4f);
+        stewardTop.GetComponent<Image>().color = state.steward ? Gold : Muted;
+        LabelOf(stewardTop).text = state.steward ? "Steward" : "Steward off";
         dockBuild.GetComponent<Image>().color = tower.Placing || popupBuild.gameObject.activeSelf ||
             popupFloors.gameObject.activeSelf ? Gold : Teal;
         var director = tower.GetComponent<TowerArtDirector>();
         dockPeople.GetComponent<Image>().color = director != null && director.ResidentsOpen ? Gold : Teal;
         dockExpeditions.GetComponent<Image>().color = popupGuild.gameObject.activeSelf ? Gold : Teal;
-        LabelOf(dockHeart).text = HeartReady() ? "HEART  ✦" : "HEART";
+        // Gold switches the Heart emblem to its READY art (or a gold rim on the flat skin).
+        dockHeart.GetComponent<Image>().color = HeartReady() ? Gold : Violet;
         bool started = state.introPhase != "dormant" && state.introPhase != "gate";
         bool complete = state.introPhase == "complete";
         dockBuild.interactable = goalsButton.interactable = started;

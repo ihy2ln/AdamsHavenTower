@@ -15,6 +15,17 @@ namespace AdamsHaven.Tower
 
         public static string RoadKey(string a, string b) { return string.CompareOrdinal(a, b) < 0 ? a + "|" + b : b + "|" + a; }
 
+        // Remembers the route the party walked so the map can draw it as a worn trail.
+        public void RecordTrail(string a, string b, List<Vector2> pts)
+        {
+            var run = Run;
+            if (run == null || pts == null || pts.Count < 2) return;
+            if (run.trails == null) run.trails = new List<TowerTrail>();
+            run.trails.RemoveAll(x => (x.a == a && x.b == b) || (x.a == b && x.b == a));
+            run.trails.Add(new TowerTrail { a = a, b = b, pts = new List<Vector2>(pts) });
+            if (run.trails.Count > 60) run.trails.RemoveAt(0);
+        }
+
         public bool OnRoad(string a, string b) { var run = Run; return run != null && run.road.Contains(RoadKey(a, b)); }
 
         public bool PartyHasTrait(string trait)

@@ -500,18 +500,11 @@ public sealed class TowerArtDirector : MonoBehaviour
     }
     private void StyleHud(TowerHud hud)
     {
-        var sidebar = SpriteFor(Root + "UI/sidebar", Full);
+        // Panels keep the HUD's flat glass skin (TowerUiSkin); only legacy unskinned buttons get restyled here.
         foreach (var image in hud.GetComponentsInChildren<Image>(true))
         {
-            if (image.name == "Resident panel" || image.name == "Room panel")
-            { image.sprite = sidebar; image.color = new Color(0.82f, 0.88f, 1, 0.98f); }
-            else if (image.name == "Top bar" || image.name == "Build bar")
-            {
-                image.sprite = SpriteFor(Root + "UI/sidebar", new Rect(0.15f, 0.32f, 0.7f, 0.4f));
-                image.color = new Color(0.75f, 0.83f, 0.96f, 0.98f);
-            }
             if (image.GetComponent<Button>() != null && image.GetComponent<TowerButtonFx>() == null &&
-                image.color.a > 0.05f)
+                image.GetComponent<Button>().transition != Selectable.Transition.None && image.color.a > 0.05f)
             {
                 var outline = image.gameObject.GetComponent<Outline>() ?? image.gameObject.AddComponent<Outline>();
                 outline.effectColor = new Color(0.69f, 0.52f, 0.26f, 0.75f);

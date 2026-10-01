@@ -52,6 +52,76 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
+    public void MapMaskPathsGoAroundBlockedGround()
+    {
+        // 10x10, a vertical wall at x=5 with a gap only at the bottom row.
+        var v = new byte[100];
+        for (int i = 0; i < 100; i++) v[i] = 255;
+        for (int y = 0; y < 9; y++) v[y * 10 + 5] = 0;
+        var mask = TowerMapMask.FromValues(10, 10, v);
+        var path = mask.FindPath(new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.05f));
+        Assert.IsNotNull(path);
+        Assert.Greater(path.Count, 2);
+        foreach (var p in path) Assert.IsTrue(mask.Walkable(p.x, p.y), "path must stay on walkable ground");
+        Assert.Greater(TowerMapMask.Length(path, 1f), 1.5f, "has to detour round the wall");
+        // A sealed target has no route.
+        for (int y = 0; y < 10; y++) v[y * 10 + 5] = 0;
+        Assert.IsNull(TowerMapMask.FromValues(10, 10, v).FindPath(new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.05f)));
+    }
+
+    [Test]
+    public void SilverwoodMasksLoadAndLinkCampToLair()
+    {
+        foreach (var id in TowerForestLayouts.SilverwoodIds)
+        {
+            var mask = TowerMapMask.Load(id);
+            Assert.IsNotNull(mask, id + " mask must import as a readable texture");
+            var layout = TowerForestLayouts.Get(id);
+            var camp = layout.Node(layout.entrance);
+            var lair = layout.nodes.Find(n => n.kind == "lair");
+            Assert.IsNotNull(mask.FindPath(new Vector2(camp.x, camp.y), new Vector2(lair.x, lair.y)), id + " camp to lair");
+        }
+    }
+
+    [Test]
+    public void WalkedTrailsAreRemembered()
+    {
+        var rules = Expedition();
+        var run = rules.Run;
+        rules.RecordTrail("camp", "n1", new System.Collections.Generic.List<Vector2> { new Vector2(0.1f, 0.1f), new Vector2(0.2f, 0.2f) });
+        rules.RecordTrail("n1", "camp", new System.Collections.Generic.List<Vector2> { new Vector2(0.2f, 0.2f), new Vector2(0.1f, 0.1f), new Vector2(0.1f, 0.2f) });
+        Assert.AreEqual(1, run.trails.Count, "the same route is replaced, not duplicated");
+        Assert.AreEqual(3, run.trails[0].pts.Count);
+    }
+
+    [Test]
+    public void SilverwoodLayoutsLoadAndAreConnected()
+    {
+        Assert.AreEqual(15, TowerForestLayouts.SilverwoodIds.Length);
+        for (int depth = 1; depth <= 5; depth++) Assert.AreEqual(3, TowerForestLayouts.SilverwoodDepthIds(depth).Length, "depth " + depth);
+        var themes = new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep", "mine", "blight", "heartwood" };
+        foreach (var id in TowerForestLayouts.SilverwoodIds)
+        {
+            var layout = TowerForestLayouts.Get(id);
+            Assert.IsNotNull(layout, id);
+            Assert.IsNotNull(Resources.Load<Texture2D>(layout.backdrop), id + " backdrop");
+            Assert.AreEqual(1, layout.nodes.FindAll(n => n.kind == "lair").Count, id);
+            var seen = new System.Collections.Generic.HashSet<string> { layout.entrance };
+            var queue = new System.Collections.Generic.Queue<string>(); queue.Enqueue(layout.entrance);
+            while (queue.Count > 0)
+            {
+                string at = queue.Dequeue();
+                foreach (var n in layout.nodes) if (!seen.Contains(n.id) && layout.Linked(at, n.id)) { seen.Add(n.id); queue.Enqueue(n.id); }
+            }
+            Assert.AreEqual(layout.nodes.Count, seen.Count, id + " has unreachable nodes");
+            foreach (var n in layout.nodes) Assert.IsTrue(themes.Contains(n.theme), id + " theme " + n.theme);
+        }
+        for (int depth = 1; depth <= 5; depth++) Assert.IsNotNull(TowerRules.Region("silverwood_d" + depth));
+        Assert.AreEqual(3, TowerRules.SilverwoodDepth("silverwood_d3"));
+        Assert.AreEqual(0, TowerRules.SilverwoodDepth("silverwood_gate"));
+    }
+
+    [Test]
     public void DungeonsAreDeterministicAndReachable()
     {
         foreach (var id in TowerForestLayouts.Ids)
@@ -300,7 +370,7 @@ public sealed class TowerSimulationTests
         var rules = Expedition();
         rules.HeroResident("kaela").trait = "Brave";
         var run = rules.Run;
-        run.eventId = "hermit_herbalist";
+        run.eventId = "social_hermit_herbalist";
         var def = rules.PendingEvent;
         var help = def.choices[0]; var barter = def.choices[1];
         Assert.AreEqual(0.7f, rules.ChoiceChance(help), 0.001f);

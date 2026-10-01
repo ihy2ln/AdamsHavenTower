@@ -1,21 +1,21 @@
 {
  "events": [
   {
-   "id": "wounded_stag",
-   "title": "The Snared Stag",
-   "text": "A silver stag thrashes in a poacher's snare, one leg bleeding.",
+   "id": "animal_snared_stag",
+   "title": "Snared Stag",
+   "text": "A silver stag thrashes against a poacher's snare, the wire biting deep into one foreleg. Its antlers glow faintly as it pulls, and every pull tears the wound wider. The forest has gone very quiet around it, as if waiting to see what you will do.",
    "choices": [
     {
      "label": "Free it",
      "trait": "Kind",
      "chance": 0.55,
      "success": {
-      "text": "It bounds away. The party feels lighter for it.",
+      "text": "You talk low and steady while working the wire loose. The stag stands trembling, then bows its head once and is gone between the trunks. Something in the air feels lighter, kinder, and the party walks on a little straighter.",
       "hp": 10,
       "threat": -8
      },
      "failure": {
-      "text": "A hoof catches someone square in the ribs.",
+      "text": "The wire comes free, but the stag panics before you can step back. A hoof catches someone square in the ribs and it vanishes into the dark, leaving you winded and a little ashamed.",
       "hp": -8
      }
     },
@@ -24,12 +24,12 @@
      "trait": "Brave",
      "chance": 0.7,
      "success": {
-      "text": "Fresh venison for the road.",
+      "text": "A clean, quick hunt. Fresh venison is wrapped in leaves and stowed, but the forest remembers a kill, and the shadows seem to lean in a little closer.",
       "rations": 2,
       "threat": 4
      },
      "failure": {
-      "text": "It tears free and the chase costs you.",
+      "text": "The stag lunges, tears itself half free and bolts, leaving a long chase and a few bruises. You come back with a scrap of meat and the uneasy sense that you were noticed.",
       "rations": 1,
       "hp": -5,
       "threat": 6
@@ -40,120 +40,120 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "You walk on. The cries follow you for a while."
+      "text": "You walk on. The stag's cries follow you for a good while, thinning slowly into the mist."
      }
     }
    ]
   },
   {
-   "id": "fog_fork",
-   "title": "Fork in the Fog",
-   "text": "The trail splits and both ways vanish into white.",
+   "id": "hazard_fog_fork",
+   "title": "Foggy Fork",
+   "text": "The trail splits in two, and both branches vanish into milk-white fog within a few paces. Water drips somewhere off to the right. Whichever way you choose, you will not see what is waiting until you are in it.",
    "choices": [
     {
      "label": "Scout ahead",
      "trait": "Curious",
      "chance": 0.45,
      "success": {
-      "text": "Your scout comes back with a sketch of what lies beyond.",
+      "text": "Your scout slips ahead and returns minutes later with a hasty sketch in the dirt: a bend, a clearing, and a place worth marking. The fog thins a little just for you.",
       "reveal": 3
      },
      "partial": {
-      "text": "A glimpse before the fog closes.",
+      "text": "A brief glimpse before the fog folds shut again: a stone, a gap in the trees. It is something, at least.",
       "reveal": 1
      },
      "failure": {
-      "text": "Your scout gets lost and the party waits, eating into supplies.",
+      "text": "Your scout loses the trail, circles back and finds you by shouting. An hour burns away and the supplies burn with it.",
       "rations": -1
      }
     },
     {
-     "label": "Trust the left path",
+     "label": "Go left",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The left path holds. Nothing gained, nothing lost."
+      "text": "The left path holds firm and the fog eventually thins. Nothing gained, nothing lost, only the faint feeling that the other road was watching you go."
      }
     }
    ]
   },
   {
-   "id": "lantern_stranger",
-   "title": "The Lantern-Lit Stranger",
-   "text": "A hooded figure with a green lantern offers trade under the trees.",
+   "id": "social_lantern_stranger",
+   "title": "Lantern Stranger",
+   "text": "A hooded figure stands beneath the trees with a green lantern held low, its light pooling on a cloth of strange wares. Their face is lost in shadow, but you hear a smile in their voice. \"Travellers. You look like you could use something.\"",
    "choices": [
     {
-     "label": "Buy a tonic (30g)",
+     "label": "Buy tonic (30g)",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "A stoppered vial, still warm.",
+      "text": "Coins change hands without a word. A stoppered vial, still warm, is pressed into your palm, and the figure inclines their head as if you had passed some small test.",
       "tonics": 1
      },
      "costGold": 30
     },
     {
-     "label": "Accept a gift",
+     "label": "Take gift",
      "trait": "Careful",
      "chance": 0.5,
      "success": {
-      "text": "A pouch of glittering essence. No strings, it seems.",
+      "text": "A pouch of glittering essence, no price asked. Your party is uneasy, but the weight in your hand is real, and the stranger only laughs softly as the lantern fades from sight.",
       "essence": 2
      },
      "failure": {
-      "text": "The gift whispers. Something in the dark now knows your scent.",
+      "text": "The gift whispers when you close your fingers around it. Somewhere in the dark, something turns its head to find you. The lantern is gone, but its green light stays at the edge of your sight.",
       "hp": -10,
       "threat": 15
      }
     },
     {
-     "label": "Refuse politely",
+     "label": "Refuse",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The lantern drifts off between the trunks."
+      "text": "You decline with a polite word. The lantern drifts away between the trunks, bobbing like a small, patient moon."
      }
     }
    ],
    "time": "night"
   },
   {
-   "id": "collapsed_bridge",
-   "title": "Collapsed Bridge",
-   "text": "A footbridge has given way over a cold, fast stream.",
+   "id": "hazard_collapsed_bridge",
+   "title": "Broken Bridge",
+   "text": "A footbridge has given way over a cold, fast stream, planks hanging by a single frayed rope. The far bank looks easy, but the water below is loud and white over the rocks. A long way upstream, the stream narrows.",
    "choices": [
     {
-     "label": "Force the crossing",
+     "label": "Force it",
      "trait": "Stout",
      "chance": 0.55,
      "success": {
-      "text": "Soaked but across.",
+      "text": "You wade in as a line, bracing each other against the current. Soaked to the knees but across, you laugh at the cold and shake the water from your cloaks.",
       "threat": -2
      },
      "failure": {
-      "text": "The current slams someone into the rocks.",
+      "text": "The current takes someone's legs out and slams them into the rocks. They come up spitting and cursing, but not without a nasty bruise.",
       "hp": -15
      }
     },
     {
-     "label": "Repair it (1 firewood)",
+     "label": "Repair (1 wood)",
      "trait": "Industrious",
      "chance": 0.55,
      "success": {
-      "text": "A sturdy crossing. The forest seems to approve.",
+      "text": "A bundle of firewood becomes new planks and a steady rail. The crossing holds, and the forest seems to approve of anyone who mends what it has lost.",
       "threat": -10
      },
      "failure": {
-      "text": "The planks wash away with your firewood."
+      "text": "You lash the planks together, but the stream rips them away with your firewood in tow. You watch them spin off downstream."
      },
      "costFirewood": 1
     },
     {
-     "label": "Detour upstream",
+     "label": "Detour",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "A long walk around. It costs a ration.",
+      "text": "The detour upstream is long and muddy, and your supplies thin a little before you find a place to cross.",
       "rations": -1
      }
     }
@@ -161,25 +161,25 @@
    "themes": "marsh,ruin,briar"
   },
   {
-   "id": "moonwell",
-   "title": "Whispering Moonwell",
-   "text": "A still pool glows faintly. Voices hum beneath the surface.",
+   "id": "spirit_moonwell",
+   "title": "Moonwell",
+   "text": "A still pool glows faintly in a ring of old stones, silver light rippling on its surface. Voices hum beneath the water, too soft to understand, like a lullaby sung in a language the forest forgot. The pool is very cold, and very inviting.",
    "choices": [
     {
      "label": "Drink",
      "trait": "Curious",
      "chance": 0.55,
      "success": {
-      "text": "Cool light runs through the party's veins.",
+      "text": "The water tastes of moonlight and cold iron. Aches fade from your bones and the whispers settle into a quiet, friendly murmur.",
       "hp": 20
      },
      "partial": {
-      "text": "Refreshing, but the humming follows you.",
+      "text": "The water soothes your body, but the voices rise to a hum that makes the hair stand on your neck. Whatever listens here has noticed you.",
       "hp": 10,
       "threat": 8
      },
      "failure": {
-      "text": "The water burns going down.",
+      "text": "The water burns going down and the voices turn sharp. You stumble back with your head ringing and a feeling of being watched from below.",
       "hp": -10,
       "threat": 10
      }
@@ -189,49 +189,49 @@
      "trait": "Frugal",
      "chance": 0.4,
      "success": {
-      "text": "The water keeps its glow in the bottle.",
+      "text": "You fill your flasks carefully. One of them hums when you stopper it, and you take it for a tonic.",
       "tonics": 1
      },
      "failure": {
-      "text": "The glow fades the moment it leaves the pool."
+      "text": "You dip the flasks, but the glow dims the moment they touch the water. By the time you cork them, they are only water."
      }
     },
     {
-     "label": "Leave it be",
+     "label": "Leave",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "Some things are best left humming."
+      "text": "You leave the pool as you found it. Behind you, the lullaby swells for a moment, and then fades."
      }
     }
    ],
    "themes": "crystal,ruin"
   },
   {
-   "id": "raider_tracks",
+   "id": "social_raider_tracks",
    "title": "Raider Tracks",
-   "text": "Fresh boot prints and a dropped knife. Raiders passed here within the hour.",
+   "text": "Fresh boot prints churn the mud, and a dropped knife still glints beside a half-trampled campfire. The raiders passed within the hour, and they were not careful. A hook of dark smoke rises just beyond the trees.",
    "choices": [
     {
-     "label": "Set an ambush",
+     "label": "Ambush",
      "trait": "Brave",
      "chance": 0.6,
      "success": {
-      "text": "You hit them first and take their purse.",
+      "text": "You wait in the brush until the stragglers wander into your trap. It is over before they can shout, and their loot is yours.",
       "gold": 40,
       "ore": 1
      },
      "failure": {
-      "text": "They spot your trap and turn on you!",
+      "text": "A twig snaps and the raiders spin on you before you are ready. Weapons come out and there is nowhere left to hide.",
       "ambush": true
      }
     },
     {
-     "label": "Avoid them",
+     "label": "Avoid",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "You give the tracks a wide berth, but you're noticed.",
+      "text": "You choose a long way around, quiet as thieves. Nothing follows, but you can feel the raiders' trail pointing the way you did not go.",
       "threat": 10
      }
     }
@@ -239,21 +239,21 @@
    "minDepth": 2
   },
   {
-   "id": "sleepless_night",
-   "title": "A Sleepless Night",
-   "text": "Nobody can sleep. Eyes keep drifting to the dark between the trees.",
+   "id": "camp_sleepless_night",
+   "title": "Sleepless Night",
+   "text": "Nobody can sleep. Eyes keep drifting to the dark between the trees, where nothing is moving, and that is almost worse. The fire pops and settles, and somewhere very far away something long and low calls out once.",
    "choices": [
     {
-     "label": "Share stories (1 firewood)",
+     "label": "Stories (1 wood)",
      "trait": "Gregarious",
      "chance": 0.7,
      "success": {
-      "text": "Laughter around the fire. Everyone wakes rested.",
+      "text": "You pile the fire high and pass stories around until the dark loses its teeth. Laughter spills out, tension drains away, and even the cold seems to back off a little.",
       "hp": 15,
       "threat": -10
      },
      "failure": {
-      "text": "The stories turn grim. Still, the warmth helps.",
+      "text": "The stories fall flat, but the fire is warm and the company is real. You sleep a little at least.",
       "hp": 5
      },
      "costFirewood": 1
@@ -263,11 +263,11 @@
      "trait": "Night Owl",
      "chance": 0.55,
      "success": {
-      "text": "Your watch spots nothing, and nothing spots you.",
+      "text": "You keep watch with open eyes and a steady hand. Nothing dares to approach a camp so awake, and the night gives way to a grey, safe dawn.",
       "threat": -15
      },
      "failure": {
-      "text": "A long cold night. Everyone is worn.",
+      "text": "You nod off at your post and wake with a start. Nothing has happened, but the party is on edge and the forest knows it.",
       "hp": -5,
       "threat": 5
      }
@@ -276,30 +276,30 @@
    "time": "night"
   },
   {
-   "id": "mushroom_ring",
+   "id": "magic_mushroom_ring",
    "title": "Mushroom Ring",
-   "text": "A perfect circle of pale mushrooms. The air inside shimmers.",
+   "text": "A perfect circle of pale mushrooms glows in the mossy dark, and the air inside shimmers like heat over stone. Outside the ring the forest is ordinary, but inside it everything seems to listen. Tiny lights drift up from the caps like slow sparks.",
    "choices": [
     {
-     "label": "Step inside",
+     "label": "Step in",
      "trait": "Curious",
      "chance": 0.4,
      "success": {
-      "text": "You step out with pockets full of something strange and valuable.",
+      "text": "You step into the ring and the world turns soft and strange. When you step out, a few pockets are heavier: strange crystal, odd little coins, nothing you can name.",
       "essence": 2,
       "gold": 30
      },
      "failure": {
-      "text": "The ring wakes its guardians!",
+      "text": "The shimmer folds around you and for a moment the ring is full of eyes. Then the forest snaps back, and you are not alone.",
       "ambush": true
      }
     },
     {
-     "label": "Burn it (1 firewood)",
+     "label": "Burn (1 wood)",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The ring blackens and the shimmer dies.",
+      "text": "You burn the ring down with a careful torch. The shimmer dies with a sigh, and the forest feels calmer for it.",
       "threat": -6
      },
      "costFirewood": 1
@@ -309,41 +309,41 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "You give it a wide berth."
+      "text": "You walk around the ring with a respectful distance. The little lights follow for a few steps, then let go."
      }
     }
    ],
    "themes": "marsh,briar,cave"
   },
   {
-   "id": "abandoned_wagon",
-   "title": "Abandoned Wagon",
-   "text": "A tipped wagon, its oxen long gone. The cargo is still under the canvas.",
+   "id": "find_abandoned_wagon",
+   "title": "Old Wagon",
+   "text": "A tipped wagon rests across the trail, its canvas torn, its oxen long gone. Crates still lie under the cover, and a trunk stands half-open, lined with straw. Whoever left this left in a hurry, and did not come back for it.",
    "choices": [
     {
-     "label": "Search the cargo",
+     "label": "Search",
      "trait": "Careful",
      "chance": 0.65,
      "success": {
-      "text": "Coins and a crate of ore.",
+      "text": "You work through the cargo with a careful hand, and your patience pays: coin, ore, and a tidy little cache the owners would have wept to leave.",
       "gold": 35,
       "ore": 1
      },
      "failure": {
-      "text": "A viper was nesting in the crates.",
+      "text": "A hidden spring catches a hand when you reach in. It is a small trap, but a nasty one, and the cargo is not worth the pain.",
       "hp": -10
      }
     },
     {
-     "label": "Break it for firewood",
+     "label": "Break it up",
      "trait": "Industrious",
      "chance": 0.8,
      "success": {
-      "text": "Good dry wood.",
+      "text": "A broken axle and a few good boards make a decent bundle of firewood. The wagon's last journey is a warm one.",
       "firewood": 1
      },
      "failure": {
-      "text": "Rotten through. Barely worth it."
+      "text": "The wood is rotten through and crumbles in your hands. Nothing is gained but a lesson."
      }
     },
     {
@@ -351,50 +351,50 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "Not worth the risk."
+      "text": "You pass the wagon without a look back. Whatever happened here is not your story."
      }
     }
    ],
    "themes": "keep,ruin,briar"
   },
   {
-   "id": "howling_pack",
-   "title": "The Howling Pack",
-   "text": "Howls on three sides, getting closer.",
+   "id": "animal_howling_pack",
+   "title": "Wolf Pack",
+   "text": "Howls rise on three sides, rolling through the trees and getting closer. Pale eyes flicker between the trunks, and the pack is circling, patient and sure. There is no good ground here, only a dark ring and a narrowing gap.",
    "choices": [
     {
-     "label": "Light torches (1 firewood)",
+     "label": "Torches (1 wood)",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The pack circles and loses interest.",
+      "text": "Torches flare and the howls break into yelps. The pack hesitates at the edge of the light, then slinks away into the night.",
       "threat": -5
      },
      "costFirewood": 1
     },
     {
-     "label": "Stand your ground",
+     "label": "Stand firm",
      "trait": "Brave",
      "chance": 0.5,
      "success": {
-      "text": "A roar sends them scattering.",
+      "text": "You stand your ground and meet the alpha's stare until it looks away. The pack melts back into the dark, and you hold your breath for a long time after.",
       "threat": -10
      },
      "failure": {
-      "text": "They rush you!",
+      "text": "The alpha does not blink. It lunges, and the circle closes in a rush of fur and teeth.",
       "ambush": true
      }
     },
     {
-     "label": "Run for it",
+     "label": "Run",
      "trait": "Stout",
      "chance": 0.6,
      "success": {
-      "text": "You outpace them.",
+      "text": "You run, and the pack lets you. The howls fade behind you and you stop only when your lungs give out.",
       "threat": 4
      },
      "failure": {
-      "text": "You scatter. Supplies are lost and legs are bitten.",
+      "text": "You run, but the pack runs faster. A bite tears through a pack strap and a good deal of supplies are lost in the dark.",
       "rations": -1,
       "hp": -10
      }
@@ -404,20 +404,20 @@
    "minDepth": 2
   },
   {
-   "id": "hermit_herbalist",
-   "title": "The Hermit Herbalist",
-   "text": "An old woman tends a herb patch in a sunny clearing.",
+   "id": "social_hermit_herbalist",
+   "title": "Hermit Herbalist",
+   "text": "An old woman tends a herb patch in a sunny clearing, humming over rows of lavender and bitter greens. Bundles dry along the eaves of her small thatched hut and a kettle smokes above a low fire. She does not look up, but she says, \"Mind the thyme, dear. It bites.\"",
    "choices": [
     {
-     "label": "Help her gather",
+     "label": "Help her",
      "trait": "Kind",
      "chance": 0.7,
      "success": {
-      "text": "She thanks you with a fresh tonic.",
+      "text": "You kneel in the dirt and work beside her until the shadows lengthen. She presses a stoppered vial into your hand, smiling. \"For the road, then.\"",
       "tonics": 1
      },
      "failure": {
-      "text": "Hours of picking, and your own food gets eaten.",
+      "text": "Your help is clumsy and half the patch is trampled. She shoos you off with a sigh and a stern word, and a few of your own supplies stay behind to pay for it.",
       "rations": -1
      }
     },
@@ -426,50 +426,50 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "She trades a tonic for coin.",
+      "text": "A fair price, a firm handshake, and a small tonic wrapped in leaves. She counts your coin twice and nods.",
       "tonics": 1
      },
      "costGold": 25
     },
     {
-     "label": "Wave and move on",
+     "label": "Move on",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "She waves back."
+      "text": "You wave and move on. She waves back without looking up, still humming."
      }
     }
    ],
    "time": "day"
   },
   {
-   "id": "bramble_wall",
-   "title": "Wall of Brambles",
-   "text": "Thorns as thick as wrists block the trail.",
+   "id": "hazard_bramble_wall",
+   "title": "Bramble Wall",
+   "text": "Thorns as thick as wrists knit across the trail in a wall taller than a tall man, black and glossy and bristling. Scraps of cloth hang snagged on it, and a few pale bones lie at its foot. There is a gap, but a thin one.",
    "choices": [
     {
      "label": "Cut through",
      "trait": "Industrious",
      "chance": 0.6,
      "success": {
-      "text": "A clean path, and a view of what lies beyond.",
+      "text": "You hack a path through, blade ringing on bark. On the far side, you can see further than you could before.",
       "reveal": 1
      },
      "failure": {
-      "text": "The thorns fight back.",
+      "text": "The thorns bite back with the first swing and a long, ugly gash opens along someone's arm.",
       "hp": -10
      }
     },
     {
-     "label": "Squeeze through",
+     "label": "Squeeze by",
      "trait": "Careful",
      "chance": 0.7,
      "success": {
-      "text": "Scratched but through.",
+      "text": "You squeeze through the gap with a held breath and careful steps. A few scratches, and nothing more.",
       "hp": -2
      },
      "failure": {
-      "text": "Snagged and bleeding, and a ration spills.",
+      "text": "A thorn catches a sleeve and a pack strap at once, and the wriggling that follows is worse than the cut. You come out bruised and short of supplies.",
       "hp": -6,
       "rations": -1
      }
@@ -479,7 +479,7 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "It costs a ration of time.",
+      "text": "The long way round eats your day and a ration with it, but the trail is clear.",
       "rations": -1
      }
     }
@@ -487,106 +487,106 @@
    "themes": "briar"
   },
   {
-   "id": "crystal_echo",
+   "id": "magic_crystal_echo",
    "title": "Crystal Echo",
-   "text": "Crystals ring softly, repeating whispers from somewhere far off.",
+   "text": "Crystals ring softly in the dark, and under the music you hear whispers: your own voices, played back from somewhere far off. The ringing rises and falls in slow waves, and the light in the crystals pulses in time with it.",
    "choices": [
     {
-     "label": "Listen closely",
+     "label": "Listen",
      "trait": "Solitary",
      "chance": 0.5,
      "success": {
-      "text": "The echoes describe paths ahead, and a shard drops free.",
+      "text": "You hold very still and listen until the whispers take shape. One voice repeats a direction, and a small sliver of crystal falls loose in your hand.",
       "reveal": 2,
       "essence": 1
      },
      "failure": {
-      "text": "The ringing gets into your heads and carries far.",
+      "text": "The whispers turn on you, repeating things you did not say. The ringing swells until the crystals themselves seem angry, and the forest hears it.",
       "threat": 10
      }
     },
     {
-     "label": "Break off a cluster",
+     "label": "Break cluster",
      "trait": "Brave",
      "chance": 0.6,
      "success": {
-      "text": "Good ore.",
+      "text": "A clean break and a glittering cluster of ore comes loose. The ringing stutters, then calms.",
       "ore": 2
      },
      "failure": {
-      "text": "It shatters into shards.",
+      "text": "The cluster shatters with a crack and the shards bite your hands. The echo screams back at you from every wall.",
       "hp": -10,
       "threat": 5
      }
     },
     {
-     "label": "Leave quietly",
+     "label": "Leave",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The whispers fade behind you."
+      "text": "You leave without disturbing a single stone. The whispers fade as you go."
      }
     }
    ],
    "themes": "crystal"
   },
   {
-   "id": "sunken_cache",
+   "id": "find_sunken_cache",
    "title": "Sunken Cache",
-   "text": "A strongbox sits under a foot of murky water.",
+   "text": "A strongbox sits under a foot of murky water, its iron bands green with age. Reeds lean over it and small bubbles rise from the mud around it. Whoever sank it did not want it found.",
    "choices": [
     {
-     "label": "Dive for it",
+     "label": "Dive",
      "trait": "Stout",
      "chance": 0.5,
      "success": {
-      "text": "Heavy with coin!",
+      "text": "You take a breath and plunge in. Cold mud and darkness, then iron under your fingers, and a heavy bag of coin comes up with you.",
       "gold": 50
      },
      "partial": {
-      "text": "You grab a handful before the cold drives you out.",
+      "text": "You get the lid open but half the coins slide away into the mud. You surface with what you could grab and a bruise on your knee.",
       "gold": 20,
       "hp": -5
      },
      "failure": {
-      "text": "The mud nearly swallows a diver.",
+      "text": "A hidden root catches your leg and drags you down. You come up gasping, soaked and sore, with nothing in your hands.",
       "hp": -15
      }
     },
     {
-     "label": "Fish it out with rope",
+     "label": "Use rope",
      "trait": "Careful",
      "chance": 0.6,
      "success": {
-      "text": "Slow, but it comes up.",
+      "text": "A careful loop, a patient tug, and the box slides out onto the bank. Inside, a small pile of old coin.",
       "gold": 30
      },
      "failure": {
-      "text": "The rope snaps. It's gone."
+      "text": "The rope slips and the box sinks back into the mud. Whatever was in it stays there."
      }
     },
     {
-     "label": "Leave it",
+     "label": "Leave",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The water keeps its secrets."
+      "text": "You leave the box where it lies. Some things are better left sunk."
      }
     }
    ],
    "themes": "marsh"
   },
   {
-   "id": "forest_shrine",
+   "id": "spirit_roadside_shrine",
    "title": "Roadside Shrine",
-   "text": "A moss-covered shrine to the forest's old spirits.",
+   "text": "A small moss-covered shrine stands beside the trail, carved with leaf and antler patterns, a handful of dried flowers and a candle stub at its foot. The air around it is thick and green and very, very quiet. Something old is paying attention.",
    "choices": [
     {
-     "label": "Offer a ration",
+     "label": "Offer ration",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "The air softens. The forest seems calmer.",
+      "text": "You leave a ration at the shrine's foot. The candle flickers once and the air turns gentle, and the forest seems to exhale around you.",
       "hp": 10,
       "threat": -20
      },
@@ -597,23 +597,23 @@
      "trait": "Kind",
      "chance": 0.5,
      "success": {
-      "text": "A warmth settles on the party.",
+      "text": "You kneel and speak a short, honest prayer. A soft warmth settles on your shoulders, and aches ease.",
       "hp": 15
      },
      "failure": {
-      "text": "Silence. Nothing answers."
+      "text": "You pray, but the words feel hollow and nothing answers. The silence stays silent."
      }
     },
     {
-     "label": "Loot the offerings",
+     "label": "Take offerings",
      "trait": "Brave",
      "chance": 0.5,
      "success": {
-      "text": "Old coins, quickly pocketed.",
+      "text": "You pocket the offerings, coins and small gems left by travellers long gone. The shrine does not object.",
       "gold": 45
      },
      "failure": {
-      "text": "The forest notices.",
+      "text": "You grab what you can and the shrine's silence turns hard. A cold wind rises and the trail ahead feels longer.",
       "gold": 15,
       "threat": 20
      }
@@ -622,30 +622,30 @@
    "themes": "ruin,keep,crystal"
   },
   {
-   "id": "lost_spirit",
-   "title": "The Lost Spirit",
-   "text": "A small glowing figure sits crying in the roots, unable to find its way home.",
+   "id": "spirit_lost",
+   "title": "Lost Spirit",
+   "text": "A small glowing figure sits crying in the roots, no taller than a child, light spilling through its fingers. It looks up with huge, wet eyes, and the sound it makes is more like wind than words. It is lost, and it knows you can see it.",
    "choices": [
     {
-     "label": "Guide it home",
+     "label": "Guide home",
      "trait": "Kind",
      "chance": 0.6,
      "success": {
-      "text": "It smiles and fades into the bark. You've made a friend.",
+      "text": "You hold out a hand and the spirit takes it. You walk it carefully through the dark to a hollow in an old tree, and it vanishes inside with a bright, happy chime. The forest feels warmer, and you will be remembered.",
       "threat": -15,
       "flag": "spirit_friend"
      },
      "failure": {
-      "text": "It panics and lashes out before vanishing.",
+      "text": "The spirit is frightened and you are clumsy. Its light flares and stings, and it darts away into the dark.",
       "hp": -10
      }
     },
     {
-     "label": "Ignore it",
+     "label": "Ignore",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "Its sobbing follows you down the trail.",
+      "text": "You walk past. Its crying follows you for a while, thin and small, and then it stops.",
       "threat": 5
      }
     }
@@ -655,25 +655,25 @@
   },
   {
    "id": "spirit_gift",
-   "title": "A Grateful Spirit",
-   "text": "The little spirit you helped peeks out of a hollow and beckons.",
+   "title": "Spirit's Gift",
+   "text": "The little spirit you helped peeks out of a hollow and beckons, shining gold-green in the dark. A tiny trail of petals leads away from the tree, and a warm, sweet smell hangs in the air.",
    "choices": [
     {
-     "label": "Follow it",
+     "label": "Follow",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "It shows you hidden paths and leaves a gift.",
+      "text": "You follow the petals to a hidden glade where glowing flowers bloom in the dark. The spirit presses a few bright crystals into your hands and a blessing into your bones.",
       "reveal": 2,
       "essence": 2
      }
     },
     {
-     "label": "Thank it and go",
+     "label": "Thank it",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "It chirps happily and the forest seems to ease around you.",
+      "text": "You thank the spirit and move on. It waves a small, bright hand and the forest seems to smile after you.",
       "threat": -10
      }
     }
@@ -682,38 +682,38 @@
    "weight": 30
   },
   {
-   "id": "smugglers_toll",
+   "id": "social_smugglers_toll",
    "title": "Smugglers' Toll",
-   "text": "Armed smugglers block the trail. \"Pay the toll or turn back.\"",
+   "text": "Armed smugglers block the trail, a rope across the path and crates stacked behind them. A lantern hangs from a post and a lean man with a scar leans on a crossbow. \"Pay the toll or turn back,\" he says. \"Thirty gold, and no questions.\"",
    "choices": [
     {
-     "label": "Pay 30 gold",
+     "label": "Pay 30g",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "They step aside, grinning."
+      "text": "You count out thirty gold. The rope drops and the smugglers wave you through with mocking courtesy."
      },
      "costGold": 30
     },
     {
-     "label": "Talk your way through",
+     "label": "Talk",
      "trait": "Gregarious",
      "chance": 0.55,
      "success": {
-      "text": "A good story and some flattery. They let you pass.",
+      "text": "A few words, a shared joke, a promise to forget the faces. The scarred man laughs and lets you pass for free.",
       "threat": -5
      },
      "failure": {
-      "text": "They don't like your story. Weapons out!",
+      "text": "The scarred man's smile goes out like a snuffed candle. Weapons come up on both sides and the trail closes behind you.",
       "ambush": true
      }
     },
     {
-     "label": "Fight them",
+     "label": "Fight",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "Steel it is.",
+      "text": "You draw steel. The smugglers are ready for it, and the fight begins before anyone can speak.",
       "ambush": true
      }
     }
@@ -722,29 +722,29 @@
    "minDepth": 2
   },
   {
-   "id": "cave_draft",
-   "title": "A Cold Draft",
-   "text": "Air flows out of a crack in the rock, smelling of open sky.",
+   "id": "hazard_cave_draft",
+   "title": "Cave Draft",
+   "text": "Cold air flows out of a crack in the rock, smelling of open sky and wet stone. It tugs gently at your cloaks, as if the cave were breathing. Somewhere in the dark, a long way off, you think you can hear water.",
    "choices": [
     {
-     "label": "Follow the draft",
+     "label": "Follow it",
      "trait": "Curious",
      "chance": 0.6,
      "success": {
-      "text": "It leads to a lookout over the trails ahead.",
+      "text": "You follow the draft through a tight winding passage until the walls open on a wider, quieter place. You come out knowing the way ahead a little better.",
       "reveal": 3
      },
      "failure": {
-      "text": "A dead end, and a long climb back.",
+      "text": "The draft leads to a dead end and a long, damp climb back. Hours pass and your supplies thin.",
       "rations": -1
      }
     },
     {
-     "label": "Seal it and rest (1 firewood)",
+     "label": "Seal (1 wood)",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "A warm, sheltered rest.",
+      "text": "You seal the crack with a bundle of firewood and make a snug, warm rest. The wind dies, and you sleep better than you have in days.",
       "hp": 15
      },
      "costFirewood": 1
@@ -753,20 +753,20 @@
    "themes": "cave"
   },
   {
-   "id": "downpour",
-   "title": "Sudden Downpour",
-   "text": "The sky opens. Rain hammers through the canopy.",
+   "id": "hazard_downpour",
+   "title": "Downpour",
+   "text": "The sky opens. Rain hammers through the canopy in silver sheets, and the trail turns to a river of mud under your boots. Thunder rolls over the tops of the trees, and the whole forest drums with it.",
    "choices": [
     {
-     "label": "Shelter and wait",
+     "label": "Shelter",
      "trait": "Frugal",
      "chance": 0.7,
      "success": {
-      "text": "You keep your supplies dry.",
+      "text": "You find a dry hollow and wait it out, telling stories and sharing bread. The rain stops as quickly as it began, and the world smells clean.",
       "threat": -3
      },
      "failure": {
-      "text": "Water gets into the packs and a ration spoils.",
+      "text": "The hollow leaks and the wait is miserable. Supplies get damp and tempers get short.",
       "rations": -1
      }
     },
@@ -775,11 +775,11 @@
      "trait": "Stout",
      "chance": 0.6,
      "success": {
-      "text": "The rain covers your tracks.",
+      "text": "You press on through the storm, heads down and shoulders hunched. The forest is empty of anything with sense, and you cover a good deal of ground.",
       "threat": -8
      },
      "failure": {
-      "text": "Chilled to the bone and slipping in the mud.",
+      "text": "The mud sucks at your boots and someone goes down hard. You push on, soaked and sore, with the storm still rolling.",
       "hp": -5,
       "threat": 5
      }
@@ -787,16 +787,16 @@
    ]
   },
   {
-   "id": "quiet_glade",
-   "title": "The Quiet Glade",
-   "text": "The birds fall silent. The lair is close, but here, for a moment, the forest holds its breath.",
+   "id": "camp_quiet_glade",
+   "title": "Quiet Glade",
+   "text": "The birds fall silent. The lair is close, but here, for a moment, the forest holds its breath. Sunlight falls in long golden shafts through a ring of silver trees, and soft grass cushions every step. It would be easy to forget what is waiting beyond.",
    "choices": [
     {
-     "label": "Rest here",
+     "label": "Rest",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "A short, deep rest before what comes next.",
+      "text": "You rest in the quiet and let the forest heal you. When you rise, your wounds are lighter and your nerves steadier.",
       "hp": 25,
       "threat": -10
      }
@@ -806,7 +806,7 @@
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "No time to waste."
+      "text": "You do not linger. The quiet is a gift, but the lair is waiting, and you will not waste it."
      }
     }
    ],
@@ -814,15 +814,15 @@
   },
   {
    "id": "threat_ambush",
-   "title": "The Forest Closes In",
-   "text": "Branches creak and shapes move between the trunks. Something has followed you.",
+   "title": "Ambush",
+   "text": "Branches creak and shapes move between the trunks. Something has followed you, and now it has stopped following. The forest has grown very still, and the shadows ahead are the wrong shape.",
    "choices": [
     {
      "label": "Fight",
      "trait": "",
      "chance": 1.0,
      "success": {
-      "text": "Weapons up!",
+      "text": "You draw steel and turn to face whatever comes. The shadows break into running figures and the fight begins.",
       "ambush": true
      }
     },
@@ -831,11 +831,11 @@
      "trait": "Careful",
      "chance": 0.5,
      "success": {
-      "text": "You slip away, leaving a ration behind.",
+      "text": "You break for a gap in the trees and the shapes lose you in the dark. You come out scratched and short of breath, with a ration lost along the way.",
       "rations": -1
      },
      "failure": {
-      "text": "Cornered while running!",
+      "text": "You try to run but the shapes know the woods better than you. They cut you off and the ambush closes in.",
       "hp": -10,
       "ambush": true
      }
@@ -843,6 +843,816 @@
    ],
    "weight": 0,
    "repeat": true
+  },
+  {
+   "id": "spirit_lantern_moths",
+   "title": "Lantern Moths",
+   "text": "A dead iron lantern hangs from a gnarled branch, swarmed by hundreds of pale moths. Their wings glow like tiny moons, and the whole thicket is lit in soft silver. They flutter in slow circles, as if they were waiting for someone.",
+   "choices": [
+    {
+     "label": "Follow",
+     "trait": "Curious",
+     "chance": 0.5,
+     "success": {
+      "text": "You follow the moths through the thicket until they open out onto a hidden hollow. They scatter like falling stars, and you note the path in your memory.",
+      "reveal": 2
+     },
+     "failure": {
+      "text": "The moths scatter in all directions and you wander in circles. By the time you find the trail again, a ration is gone.",
+      "rations": -1
+     }
+    },
+    {
+     "label": "Net some",
+     "trait": "Industrious",
+     "chance": 0.6,
+     "success": {
+      "text": "A quick net and a careful hand, and moth-dust shimmers in a jar. A little essence, delicate and strange.",
+      "essence": 1
+     },
+     "failure": {
+      "text": "The swarm clouds your eyes and a hundred tiny wings beat at your face. You stumble back with scratched cheeks.",
+      "hp": -4
+     }
+    },
+    {
+     "label": "Walk on",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave the moths to their lantern. The glow fades behind you."
+     }
+    }
+   ],
+   "time": "night"
+  },
+  {
+   "id": "hazard_rope_gorge",
+   "title": "Rope Gorge",
+   "text": "A rotting rope bridge sways over a gorge, planks missing like gap teeth. Below, white water crashes against black rock, and the mist rises cold and wet. The far side looks very, very far.",
+   "choices": [
+    {
+     "label": "Cross slowly",
+     "trait": "Careful",
+     "chance": 0.6,
+     "success": {
+      "text": "You cross one by one, testing each plank. The bridge groans but holds, and all of you make it over with a shared, shaky laugh.",
+      "threat": -3
+     },
+     "failure": {
+      "text": "A plank gives way under someone's boot. They catch the rope, bruised and shaken, but a pack plunges into the white water below.",
+      "hp": -10,
+      "rations": -1
+     }
+    },
+    {
+     "label": "Go round",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You choose the long way round and it takes a full ration to get there. The bridge sways behind you like a warning.",
+      "rations": -1
+     }
+    }
+   ],
+   "themes": "cave,keep"
+  },
+  {
+   "id": "find_ranger_cairn",
+   "title": "Ranger Cairn",
+   "text": "A neat cairn of stacked grey stones marks a ranger's cache, a hunting knife driven into the top. A faded green cloth is tied around it and flutters in the breeze. Whoever built it meant it to be found, by the right people.",
+   "choices": [
+    {
+     "label": "Open cache",
+     "trait": "Brave",
+     "chance": 0.7,
+     "success": {
+      "text": "You pull the stones aside. Dried food, a waxed map scrap and a tin of salve wait inside, kept for exactly this.",
+      "rations": 2,
+      "reveal": 1
+     },
+     "failure": {
+      "text": "A hidden snare snaps on someone's hand the moment the stones shift. Whoever built this cache did not trust strangers.",
+      "hp": -10
+     }
+    },
+    {
+     "label": "Offer 10g",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave a coin at the cairn's foot. The cloth flutters and the path ahead seems a little safer.",
+      "threat": -12
+     },
+     "costGold": 10
+    },
+    {
+     "label": "Pass by",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave the dead their things and walk on."
+     }
+    }
+   ]
+  },
+  {
+   "id": "hazard_fever_tree",
+   "title": "Fever Tree",
+   "text": "A single gnarled tree stands apart from the others, amber sap running down its bark in slow rivulets. Heat shimmers in the air around it, and flies swarm the trunk in a dull cloud. The smell is sweet and heavy, like honey on a hot day.",
+   "choices": [
+    {
+     "label": "Tap sap",
+     "trait": "Industrious",
+     "chance": 0.5,
+     "success": {
+      "text": "You tap the sap with a careful hand and catch it in a flask. Thick, golden and potent: a rough tonic, ready to drink.",
+      "tonics": 1
+     },
+     "failure": {
+      "text": "The fumes make your head spin and the sap burns where it spills. You stagger back with watering eyes and a bad feeling.",
+      "hp": -8,
+      "threat": 4
+     }
+    },
+    {
+     "label": "Burn (1 wood)",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You burn it down with a torch and a bundle of firewood. It goes up with a roar and a shower of sparks, and the forest feels cleaner.",
+      "threat": -8
+     },
+     "costFirewood": 1
+    },
+    {
+     "label": "Avoid",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You skirt the heat and walk on. The flies follow for a while, then lose interest."
+     }
+    }
+   ],
+   "themes": "briar,marsh"
+  },
+  {
+   "id": "find_old_battlefield",
+   "title": "Battlefield",
+   "text": "Rusted helmets poke from the leaf litter, and torn banners rot on leaning spears. A low mist hangs over the whole clearing, and the ground is lumpy with old graves. Nothing moves here, and nothing sings.",
+   "choices": [
+    {
+     "label": "Search dead",
+     "trait": "Frugal",
+     "chance": 0.55,
+     "success": {
+      "text": "You search with careful hands, and the dead give up a handful of coin and a good blade edge. No one stops you.",
+      "gold": 25,
+      "ore": 1
+     },
+     "failure": {
+      "text": "The ground shifts under your hand and something rises from the mist. The dead are not as dead as they look.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Pay respects",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You say a few quiet words over the nameless graves. The mist lifts a little and the air feels kinder.",
+      "threat": -10,
+      "hp": 5
+     }
+    },
+    {
+     "label": "Hurry past",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You hurry past, eyes forward, and leave the field behind."
+     }
+    }
+   ],
+   "themes": "ruin,keep",
+   "minDepth": 2
+  },
+  {
+   "id": "animal_hunters_blind",
+   "title": "Hunter's Blind",
+   "text": "A cunning blind of woven branches and bark overlooks a deer trail, and a short bow lies beside a leather quiver on a log. Everything here is clean and cared for, but nobody is home.",
+   "choices": [
+    {
+     "label": "Wait",
+     "trait": "Solitary",
+     "chance": 0.6,
+     "success": {
+      "text": "You settle in and wait. The forest holds its breath, and a fat hare wanders into range. A clean shot, and supper is secure.",
+      "rations": 2
+     },
+     "failure": {
+      "text": "Hours pass for nothing. The forest stays stubbornly empty and your supplies are lower for the wait.",
+      "rations": -1
+     }
+    },
+    {
+     "label": "Take arrows",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You take a handful of good arrows and move on. A trader will pay for them later.",
+      "gold": 12
+     }
+    }
+   ]
+  },
+  {
+   "id": "spirit_singing_spring",
+   "title": "Singing Spring",
+   "text": "A bubbling spring hums a tune from a mossy rock, ripples forming slow concentric rings of light. The water is clear and impossibly cold, and the song is almost familiar, a melody you have heard before in a dream.",
+   "choices": [
+    {
+     "label": "Drink",
+     "trait": "Gregarious",
+     "chance": 0.7,
+     "success": {
+      "text": "You drink, and strength returns to tired legs. The song softens to a warm hum and the forest seems a little easier to carry.",
+      "hp": 12,
+      "threat": -4
+     },
+     "failure": {
+      "text": "The water sours in your stomach and the tune turns sharp. You double over with a cramp and a curse.",
+      "hp": -6
+     }
+    },
+    {
+     "label": "Fill flasks",
+     "trait": "Frugal",
+     "chance": 0.8,
+     "success": {
+      "text": "Fresh, cold water fills your flasks, enough for the road ahead.",
+      "rations": 1
+     },
+     "failure": {
+      "text": "The spring runs thin and the flasks fill slowly. The song turns sharp and the forest feels watchful.",
+      "threat": 3
+     }
+    },
+    {
+     "label": "Leave",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave the spring to its song. The tune follows you for a while."
+     }
+    }
+   ]
+  },
+  {
+   "id": "hazard_thorn_maze",
+   "title": "Thorn Maze",
+   "text": "Briars have woven themselves into corridors and dead ends, black thorns as long as fingers glinting in the half-light. Pale gaps of sky show here and there, and somewhere ahead is a way through. Behind you, the path has already closed.",
+   "choices": [
+    {
+     "label": "Cut through",
+     "trait": "Stout",
+     "chance": 0.6,
+     "success": {
+      "text": "You hack a bloody, thorny path straight through. It is a quick way out, and the far side opens onto a wider view.",
+      "hp": -4,
+      "reveal": 2
+     },
+     "failure": {
+      "text": "The thorns bite deep and hold on. You tear free with a ragged cry and a long, ugly wound.",
+      "hp": -14
+     }
+    },
+    {
+     "label": "Trace walls",
+     "trait": "Careful",
+     "chance": 0.55,
+     "success": {
+      "text": "You trace the walls with a patient hand and find the exit without a scratch. The maze lets you go.",
+      "reveal": 1
+     },
+     "failure": {
+      "text": "You circle for an hour and come back where you began. Supplies thin and tempers fray.",
+      "rations": -1
+     }
+    }
+   ],
+   "themes": "briar"
+  },
+  {
+   "id": "spirit_whispering_well",
+   "title": "Whispering Well",
+   "text": "An old dry well stands half-swallowed by roots in a ruined clearing, its stones furred with moss. Faint pale wisps rise from the dark mouth like breath, and the whispers are almost words. They seem to be calling your name.",
+   "choices": [
+    {
+     "label": "Listen",
+     "trait": "Curious",
+     "chance": 0.5,
+     "success": {
+      "text": "You lean over the edge and listen until the whispers shape a place. You carry it in your mind, a secret the well has given you.",
+      "reveal": 3,
+      "flag": "well_heard"
+     },
+     "failure": {
+      "text": "The voice names you, and it knows your name. You back away shaking, with a cold sweat and a sense of being marked.",
+      "hp": -6,
+      "threat": 12
+     }
+    },
+    {
+     "label": "Drop 5g",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "A faint chime answers your coin, and the whispers soften. The air feels kinder.",
+      "threat": -6
+     },
+     "costGold": 5
+    },
+    {
+     "label": "Seal it",
+     "trait": "Brave",
+     "chance": 0.7,
+     "success": {
+      "text": "You heave a stone across the mouth and the whispers stop. The wood feels lighter, and you do not look back.",
+      "threat": -10
+     },
+     "failure": {
+      "text": "The stone slips and crushes a hand against the rim. The whispers hiss with laughter.",
+      "hp": -8
+     }
+    }
+   ],
+   "themes": "ruin,cave"
+  },
+  {
+   "id": "spirit_well_answer",
+   "title": "Well's Answer",
+   "text": "A small pale blue light hovers between distant trees, beckoning, just as the well promised. A glimmer of silver and ore shows near its base, and the air smells of wet stone and old coin. It could be exactly what you were told it would be.",
+   "choices": [
+    {
+     "label": "Follow",
+     "trait": "Brave",
+     "chance": 0.65,
+     "success": {
+      "text": "You follow the light to a hidden cache: silver, ore, a gift from whoever has been whispering. The light winks out as you take it.",
+      "gold": 30,
+      "ore": 2
+     },
+     "failure": {
+      "text": "The light leads you into a snare. Hooks and wire bite and shadows surge out of the dark.",
+      "hp": -12,
+      "ambush": true
+     }
+    },
+    {
+     "label": "Ignore",
+     "trait": "Careful",
+     "chance": 0.9,
+     "success": {
+      "text": "You walk past the light. It goes out, as if it never was."
+     },
+     "failure": {
+      "text": "You turn away, but the light drifts after you for a while, patient and pale.",
+      "threat": 4
+     }
+    }
+   ],
+   "needsFlag": "well_heard",
+   "weight": 30
+  },
+  {
+   "id": "social_lost_child",
+   "title": "Lost Child",
+   "text": "A small voice calls from a hollow log: a child, alone, holding a wooden sword. Only their eyes and the toy catch the light, and they are very still. \"Are you lost too?\" they ask.",
+   "choices": [
+    {
+     "label": "Escort",
+     "trait": "Kind",
+     "chance": 0.7,
+     "success": {
+      "text": "You carry them gently to their family, who weep and thank you and press supplies into your hands. The warmth of the little hearth stays with you.",
+      "rations": 2,
+      "hp": 8
+     },
+     "failure": {
+      "text": "The child's voice changes as you lift them. It was a lure, and the raiders were waiting in the brush.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Question",
+     "trait": "Careful",
+     "chance": 0.7,
+     "success": {
+      "text": "You ask careful questions and the story holds. The child is truly lost, and you leave them food and a safe direction.",
+      "rations": 1,
+      "threat": -6
+     },
+     "failure": {
+      "text": "The child bolts into the dark before you can finish a question. You are left holding the quiet.",
+      "threat": 5
+     }
+    },
+    {
+     "label": "Leave food",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave food and walk on. You can only do so much, and the guilt lingers a while.",
+      "threat": 2
+     },
+     "costRations": 1
+    }
+   ],
+   "maxDepth": 5
+  },
+  {
+   "id": "animal_carcass",
+   "title": "Carcass",
+   "text": "A huge beast lies dead beside the trail, still warm, claw marks scoring the nearby trunks. Steam rises from the body in the cold air and one enormous track leads away into the dark. Something killed it, and something is probably still close.",
+   "choices": [
+    {
+     "label": "Take meat",
+     "trait": "Brave",
+     "chance": 0.55,
+     "success": {
+      "text": "You carve the best meat in a hurry and wrap it for the road. A good haul, and a quick exit before the killer returns.",
+      "rations": 3,
+      "threat": 6
+     },
+     "failure": {
+      "text": "The killer returns for its meal. A great shape steps out of the mist, and you are standing in its kitchen.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Read tracks",
+     "trait": "Curious",
+     "chance": 0.6,
+     "success": {
+      "text": "You read the tracks and learn where it went. You choose a path that keeps well clear of it.",
+      "threat": -8,
+      "reveal": 1
+     },
+     "failure": {
+      "text": "You smell it before you see it. The tracks are fresher than you thought.",
+      "threat": 8
+     }
+    },
+    {
+     "label": "Back off",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You back away slowly, step by step, and leave the carcass to its owner."
+     }
+    }
+   ],
+   "minDepth": 2
+  },
+  {
+   "id": "spirit_mossy_idol",
+   "title": "Mossy Idol",
+   "text": "A small mossy stone idol grins from a tree root, dried flowers and stale bread laid before it in a ring. Faint wisps of incense curl in the air, though no fire burns. The grin is worn smooth, and very, very old.",
+   "choices": [
+    {
+     "label": "Offer ration",
+     "trait": "Kind",
+     "chance": 0.8,
+     "success": {
+      "text": "You leave a ration at its feet. A calm settles on the party, and the grin seems a little less cruel.",
+      "hp": 10,
+      "threat": -10
+     },
+     "failure": {
+      "text": "The idol is only stone and your ration is only bread. Nothing answers."
+     },
+     "costRations": 1
+    },
+    {
+     "label": "Pry eyes",
+     "trait": "Frugal",
+     "chance": 0.5,
+     "success": {
+      "text": "You pry out two dull gems and pocket them. The idol does not stop you, but the forest seems to lean in.",
+      "gold": 40,
+      "threat": 8
+     },
+     "failure": {
+      "text": "The gems come free and the ground trembles. Something old does not like what you have done.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Walk on",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You walk on. The grin follows you through the trees."
+     }
+    }
+   ],
+   "themes": "ruin,marsh"
+  },
+  {
+   "id": "camp_night_vigil",
+   "title": "Night Vigil",
+   "text": "The campfire gutters, and someone hears a footstep that is not one of yours. The forest is black and close, and in the dark beyond the firelight, two faint eyes glint and vanish.",
+   "choices": [
+    {
+     "label": "Keep watch",
+     "trait": "Night Owl",
+     "chance": 0.7,
+     "success": {
+      "text": "You keep watch with open eyes and a steady hand. Whatever prowls hears your silence and slinks away.",
+      "threat": -8
+     },
+     "failure": {
+      "text": "You nod off at your post and wake to a ruined camp. A ration has been dragged away into the dark.",
+      "rations": -1
+     }
+    },
+    {
+     "label": "Bank fire",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You bank the fire high and warm. Light and heat hold the dark back, and the party sleeps a little easier.",
+      "hp": 6,
+      "threat": -6
+     },
+     "costFirewood": 1
+    },
+    {
+     "label": "Sleep on",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You sleep on, uneasy. The footsteps circle for hours and stop at dawn.",
+      "threat": 5
+     }
+    }
+   ],
+   "time": "night"
+  },
+  {
+   "id": "social_ferryman",
+   "title": "Ferryman",
+   "text": "A swollen dark river runs fast and cold at dusk, and a flat wooden ferry is tied to a mossy dock. A cloaked figure holds a long pole, hood hiding the face, one hand extended for coin. They have not said a word.",
+   "choices": [
+    {
+     "label": "Pay 20g",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You pay the toll and the ferry glides out into the mist. The crossing is smooth and silent, and the far bank feels safer.",
+      "threat": -4
+     },
+     "costGold": 20
+    },
+    {
+     "label": "Haggle",
+     "trait": "Gregarious",
+     "chance": 0.5,
+     "success": {
+      "text": "You haggle and the ferryman holds up a single finger. A ration, then, and the ferry glides out.",
+      "rations": -1
+     },
+     "failure": {
+      "text": "The ferryman turns his back and poles away. Haggling was a mistake, and the river is wide.",
+      "threat": 3
+     }
+    },
+    {
+     "label": "Wade",
+     "trait": "Stout",
+     "chance": 0.5,
+     "success": {
+      "text": "You wade across in the cold and the dark. Soaked and shivering, you reach the far bank.",
+      "hp": -4
+     },
+     "failure": {
+      "text": "The current drags a pack off your shoulders and nearly drags you with it. You crawl out soaked and short.",
+      "hp": -10,
+      "rations": -1
+     }
+    }
+   ],
+   "themes": "marsh"
+  },
+  {
+   "id": "find_fallen_banner",
+   "title": "Fallen Banner",
+   "text": "A torn banner of a forgotten order, silver and green with a faded crest, hangs from a branch, wrapped around a small iron-banded chest. A shaft of light falls on it and leaves drift past. It is the only bright thing in the whole grey hollow.",
+   "choices": [
+    {
+     "label": "Unwrap",
+     "trait": "Careful",
+     "chance": 0.7,
+     "success": {
+      "text": "You unwrap the chest with careful hands. Inside, old coin and a small charm that hums faintly.",
+      "gold": 25,
+      "essence": 1
+     },
+     "failure": {
+      "text": "A needle in the lock catches a finger. The chest is empty but for dust.",
+      "hp": -8
+     }
+    },
+    {
+     "label": "Take banner",
+     "trait": "Brave",
+     "chance": 0.6,
+     "success": {
+      "text": "You take the banner and raise it like a standard. The party stands taller and the forest seems to salute.",
+      "hp": 6,
+      "threat": -4
+     },
+     "failure": {
+      "text": "The banner frays to threads in your hands and a sour mood settles on the party.",
+      "hp": -4,
+      "threat": 4
+     }
+    }
+   ],
+   "themes": "keep,ruin"
+  },
+  {
+   "id": "magic_crystal_chorus",
+   "title": "Crystal Chorus",
+   "text": "The trail runs between towering glowing blue and violet crystals, and faint rippling sound rings drift in the air between them. A thin chord vibrates in your teeth and floating shards turn slowly in the light.",
+   "choices": [
+    {
+     "label": "Tune",
+     "trait": "Curious",
+     "chance": 0.45,
+     "success": {
+      "text": "You tune the crystals with a careful touch. The chord clears and a hidden side path reveals itself.",
+      "reveal": 3
+     },
+     "failure": {
+      "text": "The chord shatters and stings. Shards fly and you stumble back with a ringing head.",
+      "hp": -10
+     }
+    },
+    {
+     "label": "Chip shard",
+     "trait": "Industrious",
+     "chance": 0.6,
+     "success": {
+      "text": "A glittering sliver of essence breaks off clean and warm. The chord dims and settles.",
+      "essence": 2
+     },
+     "failure": {
+      "text": "The shard cracks and cuts a palm. The crystals ring in protest.",
+      "hp": -6
+     }
+    },
+    {
+     "label": "Plug ears",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You plug your ears and walk on. The ringing follows you for a while."
+     }
+    }
+   ],
+   "themes": "crystal"
+  },
+  {
+   "id": "animal_silver_deer",
+   "title": "Silver Deer",
+   "text": "A tall silver deer stands in the misty treeline, its antlers glowing softly. It watches you without fear, and motes of light drift around it like slow snow. The forest has gone very still.",
+   "choices": [
+    {
+     "label": "Approach",
+     "trait": "Kind",
+     "chance": 0.55,
+     "success": {
+      "text": "You approach slowly and it lowers its head. A blessing settles on you like warm light, and the forest seems to bow.",
+      "hp": 15,
+      "threat": -15
+     },
+     "failure": {
+      "text": "It bolts at a snapped twig. A small omen sours the air.",
+      "threat": 6
+     }
+    },
+    {
+     "label": "Follow",
+     "trait": "Curious",
+     "chance": 0.6,
+     "success": {
+      "text": "You follow it through the thick of the wood. It leads you to a place with a long view.",
+      "reveal": 3
+     },
+     "failure": {
+      "text": "It vanishes into mist and you lose time and a ration.",
+      "rations": -1
+     }
+    },
+    {
+     "label": "Hold still",
+     "trait": "Careful",
+     "chance": 0.9,
+     "success": {
+      "text": "You hold very still. It studies you for a long moment and then leaves."
+     },
+     "failure": {
+      "text": "A twig snaps under your boot and it bolts. The forest feels a little colder.",
+      "threat": 3
+     }
+    }
+   ],
+   "minDepth": 3
+  },
+  {
+   "id": "warden_sign",
+   "title": "Warden's Sign",
+   "text": "A ring of trees with deep claw-gouged bark stands in a hushed clearing, and a heavy mist lies thick on the ground. The air is wrong, and the forest is watching. Something vast and dark is just barely visible between the distant trunks.",
+   "choices": [
+    {
+     "label": "Back away",
+     "trait": "Careful",
+     "chance": 0.65,
+     "success": {
+      "text": "You back away slowly. Nothing follows, and the feeling fades.",
+      "threat": -4
+     },
+     "failure": {
+      "text": "Something big moves with you. It is closer than you thought.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Mark trees",
+     "trait": "Curious",
+     "chance": 0.5,
+     "success": {
+      "text": "You mark the trees and learn where it patrols. A small, dangerous kind of knowledge.",
+      "reveal": 2,
+      "flag": "warden_seen"
+     },
+     "failure": {
+      "text": "A low growl answers your work. The forest has heard you.",
+      "threat": 10
+     }
+    },
+    {
+     "label": "Camp away",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You make camp elsewhere and lose half a day, but the dark feels farther away.",
+      "rations": -1,
+      "threat": -2
+     }
+    }
+   ],
+   "minDepth": 3,
+   "weight": 6
+  },
+  {
+   "id": "warden_trail",
+   "title": "Warden's Trail",
+   "text": "Fresh enormous gouges mark a path through the wood, flattened undergrowth and broken branches, and giant paw prints in soft earth. A faint trail of mist leads off into the dark. It is heading where you were.",
+   "choices": [
+    {
+     "label": "Reroute",
+     "trait": "Careful",
+     "chance": 0.7,
+     "success": {
+      "text": "You take another way and slip out of its path. The woods are quiet.",
+      "threat": -10
+     },
+     "failure": {
+      "text": "You walk right into it. It is bigger than you thought.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Ambush it",
+     "trait": "Brave",
+     "chance": 0.45,
+     "success": {
+      "text": "A glancing blow, a clean escape, and a trophy from its hide. The warden will remember you.",
+      "gold": 40,
+      "threat": 10
+     },
+     "failure": {
+      "text": "You spring the ambush and it springs right back. It is much bigger than you thought.",
+      "ambush": true
+     }
+    }
+   ],
+   "needsFlag": "warden_seen",
+   "minDepth": 3,
+   "weight": 30
   }
  ]
 }

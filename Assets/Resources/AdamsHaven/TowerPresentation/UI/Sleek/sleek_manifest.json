@@ -1,0 +1,1766 @@
+[
+  {
+    "sheet": "btn_primary_states",
+    "state": "normal",
+    "file": "sliced/btn_primary_states/btn_primary_states__normal.png",
+    "source_box": [
+      32,
+      278,
+      533,
+      414
+    ],
+    "canvas": [
+      518,
+      175
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      494,
+      126
+    ],
+    "pivot": [
+      259,
+      86
+    ],
+    "glow_margin": [
+      12,
+      24
+    ]
+  },
+  {
+    "sheet": "btn_primary_states",
+    "state": "pressed",
+    "file": "sliced/btn_primary_states/btn_primary_states__pressed.png",
+    "source_box": [
+      578,
+      281,
+      1076,
+      414
+    ],
+    "canvas": [
+      518,
+      175
+    ],
+    "scale_applied": 1.0061,
+    "body": [
+      494,
+      122
+    ],
+    "pivot": [
+      259,
+      86
+    ],
+    "glow_margin": [
+      12,
+      26
+    ]
+  },
+  {
+    "sheet": "btn_primary_states",
+    "state": "selected",
+    "file": "sliced/btn_primary_states/btn_primary_states__selected.png",
+    "source_box": [
+      1103,
+      260,
+      1624,
+      435
+    ],
+    "canvas": [
+      518,
+      175
+    ],
+    "scale_applied": 0.992,
+    "body": [
+      494,
+      127
+    ],
+    "pivot": [
+      259,
+      86
+    ],
+    "glow_margin": [
+      12,
+      24
+    ]
+  },
+  {
+    "sheet": "btn_primary_states",
+    "state": "disabled",
+    "file": "sliced/btn_primary_states/btn_primary_states__disabled.png",
+    "source_box": [
+      1657,
+      279,
+      2152,
+      414
+    ],
+    "canvas": [
+      518,
+      175
+    ],
+    "scale_applied": 1.0123,
+    "body": [
+      494,
+      128
+    ],
+    "pivot": [
+      259,
+      86
+    ],
+    "glow_margin": [
+      12,
+      23
+    ]
+  },
+  {
+    "sheet": "btn_secondary_states",
+    "state": "normal",
+    "file": "sliced/btn_secondary_states/btn_secondary_states__normal.png",
+    "source_box": [
+      31,
+      288,
+      532,
+      429
+    ],
+    "canvas": [
+      503,
+      146
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      480,
+      136
+    ],
+    "pivot": [
+      252,
+      70
+    ],
+    "glow_margin": [
+      11,
+      5
+    ]
+  },
+  {
+    "sheet": "btn_secondary_states",
+    "state": "pressed",
+    "file": "sliced/btn_secondary_states/btn_secondary_states__pressed.png",
+    "source_box": [
+      572,
+      288,
+      1070,
+      432
+    ],
+    "canvas": [
+      503,
+      146
+    ],
+    "scale_applied": 1.0063,
+    "body": [
+      480,
+      137
+    ],
+    "pivot": [
+      252,
+      70
+    ],
+    "glow_margin": [
+      11,
+      4
+    ]
+  },
+  {
+    "sheet": "btn_secondary_states",
+    "state": "selected",
+    "file": "sliced/btn_secondary_states/btn_secondary_states__selected.png",
+    "source_box": [
+      1104,
+      287,
+      1608,
+      430
+    ],
+    "canvas": [
+      503,
+      146
+    ],
+    "scale_applied": 0.9917,
+    "body": [
+      480,
+      135
+    ],
+    "pivot": [
+      252,
+      70
+    ],
+    "glow_margin": [
+      11,
+      5
+    ]
+  },
+  {
+    "sheet": "btn_secondary_states",
+    "state": "disabled",
+    "file": "sliced/btn_secondary_states/btn_secondary_states__disabled.png",
+    "source_box": [
+      1643,
+      287,
+      2145,
+      429
+    ],
+    "canvas": [
+      503,
+      146
+    ],
+    "scale_applied": 0.9979,
+    "body": [
+      480,
+      136
+    ],
+    "pivot": [
+      252,
+      70
+    ],
+    "glow_margin": [
+      11,
+      5
+    ]
+  },
+  {
+    "sheet": "btn_violet_states",
+    "state": "normal",
+    "file": "sliced/btn_violet_states/btn_violet_states__normal.png",
+    "source_box": [
+      24,
+      281,
+      532,
+      431
+    ],
+    "canvas": [
+      513,
+      166
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      486,
+      142
+    ],
+    "pivot": [
+      257,
+      84
+    ],
+    "glow_margin": [
+      13,
+      12
+    ]
+  },
+  {
+    "sheet": "btn_violet_states",
+    "state": "pressed",
+    "file": "sliced/btn_violet_states/btn_violet_states__pressed.png",
+    "source_box": [
+      564,
+      282,
+      1071,
+      432
+    ],
+    "canvas": [
+      513,
+      166
+    ],
+    "scale_applied": 1.0062,
+    "body": [
+      486,
+      143
+    ],
+    "pivot": [
+      257,
+      84
+    ],
+    "glow_margin": [
+      13,
+      11
+    ]
+  },
+  {
+    "sheet": "btn_violet_states",
+    "state": "selected",
+    "file": "sliced/btn_violet_states/btn_violet_states__selected.png",
+    "source_box": [
+      1101,
+      274,
+      1611,
+      438
+    ],
+    "canvas": [
+      513,
+      166
+    ],
+    "scale_applied": 1.0041,
+    "body": [
+      486,
+      143
+    ],
+    "pivot": [
+      257,
+      84
+    ],
+    "glow_margin": [
+      13,
+      11
+    ]
+  },
+  {
+    "sheet": "btn_violet_states",
+    "state": "disabled",
+    "file": "sliced/btn_violet_states/btn_violet_states__disabled.png",
+    "source_box": [
+      1641,
+      283,
+      2149,
+      431
+    ],
+    "canvas": [
+      513,
+      166
+    ],
+    "scale_applied": 1.0021,
+    "body": [
+      486,
+      142
+    ],
+    "pivot": [
+      257,
+      84
+    ],
+    "glow_margin": [
+      13,
+      12
+    ]
+  },
+  {
+    "sheet": "btn_dock_states",
+    "state": "normal",
+    "file": "sliced/btn_dock_states/btn_dock_states__normal.png",
+    "source_box": [
+      44,
+      127,
+      512,
+      559
+    ],
+    "canvas": [
+      505,
+      477
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      459,
+      427
+    ],
+    "pivot": [
+      254,
+      239
+    ],
+    "glow_margin": [
+      23,
+      25
+    ]
+  },
+  {
+    "sheet": "btn_dock_states",
+    "state": "pressed",
+    "file": "sliced/btn_dock_states/btn_dock_states__pressed.png",
+    "source_box": [
+      584,
+      127,
+      1049,
+      560
+    ],
+    "canvas": [
+      505,
+      477
+    ],
+    "scale_applied": 1.0022,
+    "body": [
+      459,
+      428
+    ],
+    "pivot": [
+      254,
+      239
+    ],
+    "glow_margin": [
+      23,
+      24
+    ]
+  },
+  {
+    "sheet": "btn_dock_states",
+    "state": "active",
+    "file": "sliced/btn_dock_states/btn_dock_states__active.png",
+    "source_box": [
+      1103,
+      103,
+      1609,
+      581
+    ],
+    "canvas": [
+      505,
+      477
+    ],
+    "scale_applied": 0.9957,
+    "body": [
+      459,
+      425
+    ],
+    "pivot": [
+      254,
+      239
+    ],
+    "glow_margin": [
+      23,
+      26
+    ]
+  },
+  {
+    "sheet": "btn_dock_states",
+    "state": "disabled",
+    "file": "sliced/btn_dock_states/btn_dock_states__disabled.png",
+    "source_box": [
+      1665,
+      127,
+      2131,
+      560
+    ],
+    "canvas": [
+      505,
+      477
+    ],
+    "scale_applied": 0.9978,
+    "body": [
+      459,
+      426
+    ],
+    "pivot": [
+      254,
+      239
+    ],
+    "glow_margin": [
+      23,
+      25
+    ]
+  },
+  {
+    "sheet": "btn_tab_states",
+    "state": "inactive",
+    "file": "sliced/btn_tab_states/btn_tab_states__inactive.png",
+    "source_box": [
+      27,
+      268,
+      555,
+      429
+    ],
+    "canvas": [
+      529,
+      172
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      503,
+      154
+    ],
+    "pivot": [
+      265,
+      85
+    ],
+    "glow_margin": [
+      13,
+      9
+    ]
+  },
+  {
+    "sheet": "btn_tab_states",
+    "state": "pressed",
+    "file": "sliced/btn_tab_states/btn_tab_states__pressed.png",
+    "source_box": [
+      559,
+      268,
+      1086,
+      428
+    ],
+    "canvas": [
+      529,
+      172
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      503,
+      155
+    ],
+    "pivot": [
+      265,
+      85
+    ],
+    "glow_margin": [
+      13,
+      8
+    ]
+  },
+  {
+    "sheet": "btn_tab_states",
+    "state": "active",
+    "file": "sliced/btn_tab_states/btn_tab_states__active.png",
+    "source_box": [
+      1088,
+      262,
+      1616,
+      434
+    ],
+    "canvas": [
+      529,
+      172
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      503,
+      154
+    ],
+    "pivot": [
+      265,
+      85
+    ],
+    "glow_margin": [
+      13,
+      9
+    ]
+  },
+  {
+    "sheet": "btn_tab_states",
+    "state": "disabled",
+    "file": "sliced/btn_tab_states/btn_tab_states__disabled.png",
+    "source_box": [
+      1619,
+      268,
+      2146,
+      426
+    ],
+    "canvas": [
+      529,
+      172
+    ],
+    "scale_applied": 1.002,
+    "body": [
+      503,
+      154
+    ],
+    "pivot": [
+      265,
+      85
+    ],
+    "glow_margin": [
+      13,
+      9
+    ]
+  },
+  {
+    "sheet": "btn_heart_states",
+    "state": "idle",
+    "file": "sliced/btn_heart_states/btn_heart_states__idle.png",
+    "source_box": [
+      66,
+      108,
+      488,
+      582
+    ],
+    "canvas": [
+      563,
+      611
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      415,
+      434
+    ],
+    "pivot": [
+      280,
+      304
+    ],
+    "glow_margin": [
+      74,
+      88
+    ]
+  },
+  {
+    "sheet": "btn_heart_states",
+    "state": "pressed",
+    "file": "sliced/btn_heart_states/btn_heart_states__pressed.png",
+    "source_box": [
+      616,
+      131,
+      1010,
+      566
+    ],
+    "canvas": [
+      563,
+      611
+    ],
+    "scale_applied": 1.0751,
+    "body": [
+      415,
+      427
+    ],
+    "pivot": [
+      280,
+      304
+    ],
+    "glow_margin": [
+      74,
+      92
+    ]
+  },
+  {
+    "sheet": "btn_heart_states",
+    "state": "ready",
+    "file": "sliced/btn_heart_states/btn_heart_states__ready.png",
+    "source_box": [
+      1080,
+      43,
+      1639,
+      650
+    ],
+    "canvas": [
+      563,
+      611
+    ],
+    "scale_applied": 1.0048,
+    "body": [
+      415,
+      426
+    ],
+    "pivot": [
+      280,
+      304
+    ],
+    "glow_margin": [
+      74,
+      92
+    ]
+  },
+  {
+    "sheet": "btn_heart_states",
+    "state": "disabled",
+    "file": "sliced/btn_heart_states/btn_heart_states__disabled.png",
+    "source_box": [
+      1687,
+      111,
+      2106,
+      582
+    ],
+    "canvas": [
+      563,
+      611
+    ],
+    "scale_applied": 1.0097,
+    "body": [
+      415,
+      436
+    ],
+    "pivot": [
+      280,
+      304
+    ],
+    "glow_margin": [
+      74,
+      87
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "normal",
+    "file": "sliced/btn_round_states/btn_round_states__normal.png",
+    "source_box": [
+      46,
+      101,
+      400,
+      444
+    ],
+    "canvas": [
+      363,
+      351
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      349,
+      338
+    ],
+    "pivot": [
+      181,
+      176
+    ],
+    "glow_margin": [
+      7,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "pressed",
+    "file": "sliced/btn_round_states/btn_round_states__pressed.png",
+    "source_box": [
+      488,
+      101,
+      844,
+      444
+    ],
+    "canvas": [
+      363,
+      351
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      349,
+      338
+    ],
+    "pivot": [
+      181,
+      176
+    ],
+    "glow_margin": [
+      7,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "active",
+    "file": "sliced/btn_round_states/btn_round_states__active.png",
+    "source_box": [
+      929,
+      98,
+      1291,
+      449
+    ],
+    "canvas": [
+      363,
+      351
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      349,
+      338
+    ],
+    "pivot": [
+      181,
+      176
+    ],
+    "glow_margin": [
+      7,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "disabled",
+    "file": "sliced/btn_round_states/btn_round_states__disabled.png",
+    "source_box": [
+      1375,
+      104,
+      1728,
+      446
+    ],
+    "canvas": [
+      363,
+      351
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      349,
+      338
+    ],
+    "pivot": [
+      181,
+      176
+    ],
+    "glow_margin": [
+      7,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "pip_alert",
+    "file": "sliced/btn_round_states/btn_round_states__pip_alert.png",
+    "source_box": [
+      148,
+      604,
+      301,
+      754
+    ],
+    "canvas": [
+      156,
+      155
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      114,
+      112
+    ],
+    "pivot": [
+      78,
+      77
+    ],
+    "glow_margin": [
+      21,
+      21
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "pip_ready",
+    "file": "sliced/btn_round_states/btn_round_states__pip_ready.png",
+    "source_box": [
+      591,
+      604,
+      742,
+      755
+    ],
+    "canvas": [
+      156,
+      155
+    ],
+    "scale_applied": 1.0088,
+    "body": [
+      114,
+      113
+    ],
+    "pivot": [
+      78,
+      77
+    ],
+    "glow_margin": [
+      21,
+      21
+    ]
+  },
+  {
+    "sheet": "btn_round_states",
+    "state": "pip_new",
+    "file": "sliced/btn_round_states/btn_round_states__pip_new.png",
+    "source_box": [
+      1031,
+      601,
+      1187,
+      756
+    ],
+    "canvas": [
+      156,
+      155
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      114,
+      114
+    ],
+    "pivot": [
+      78,
+      77
+    ],
+    "glow_margin": [
+      21,
+      20
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "collect_normal",
+    "file": "sliced/btn_fab_states/btn_fab_states__collect_normal.png",
+    "source_box": [
+      26,
+      236,
+      446,
+      349
+    ],
+    "canvas": [
+      422,
+      127
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      405,
+      107
+    ],
+    "pivot": [
+      211,
+      64
+    ],
+    "glow_margin": [
+      8,
+      10
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "collect_pressed",
+    "file": "sliced/btn_fab_states/btn_fab_states__collect_pressed.png",
+    "source_box": [
+      465,
+      236,
+      885,
+      349
+    ],
+    "canvas": [
+      422,
+      127
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      405,
+      107
+    ],
+    "pivot": [
+      211,
+      64
+    ],
+    "glow_margin": [
+      8,
+      10
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "collect_selected",
+    "file": "sliced/btn_fab_states/btn_fab_states__collect_selected.png",
+    "source_box": [
+      903,
+      228,
+      1324,
+      354
+    ],
+    "canvas": [
+      422,
+      127
+    ],
+    "scale_applied": 0.9975,
+    "body": [
+      405,
+      107
+    ],
+    "pivot": [
+      211,
+      64
+    ],
+    "glow_margin": [
+      8,
+      10
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "collect_disabled",
+    "file": "sliced/btn_fab_states/btn_fab_states__collect_disabled.png",
+    "source_box": [
+      1343,
+      236,
+      1764,
+      349
+    ],
+    "canvas": [
+      422,
+      127
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      405,
+      107
+    ],
+    "pivot": [
+      211,
+      64
+    ],
+    "glow_margin": [
+      8,
+      10
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "rush_normal",
+    "file": "sliced/btn_fab_states/btn_fab_states__rush_normal.png",
+    "source_box": [
+      26,
+      533,
+      446,
+      645
+    ],
+    "canvas": [
+      420,
+      119
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      404,
+      107
+    ],
+    "pivot": [
+      210,
+      59
+    ],
+    "glow_margin": [
+      8,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "rush_pressed",
+    "file": "sliced/btn_fab_states/btn_fab_states__rush_pressed.png",
+    "source_box": [
+      466,
+      533,
+      885,
+      645
+    ],
+    "canvas": [
+      420,
+      119
+    ],
+    "scale_applied": 0.9975,
+    "body": [
+      404,
+      107
+    ],
+    "pivot": [
+      210,
+      59
+    ],
+    "glow_margin": [
+      8,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "rush_selected",
+    "file": "sliced/btn_fab_states/btn_fab_states__rush_selected.png",
+    "source_box": [
+      904,
+      531,
+      1324,
+      649
+    ],
+    "canvas": [
+      420,
+      119
+    ],
+    "scale_applied": 0.9975,
+    "body": [
+      404,
+      107
+    ],
+    "pivot": [
+      210,
+      59
+    ],
+    "glow_margin": [
+      8,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_fab_states",
+    "state": "rush_disabled",
+    "file": "sliced/btn_fab_states/btn_fab_states__rush_disabled.png",
+    "source_box": [
+      1343,
+      533,
+      1763,
+      645
+    ],
+    "canvas": [
+      420,
+      119
+    ],
+    "scale_applied": 0.9975,
+    "body": [
+      404,
+      107
+    ],
+    "pivot": [
+      210,
+      59
+    ],
+    "glow_margin": [
+      8,
+      6
+    ]
+  },
+  {
+    "sheet": "btn_window_modes",
+    "state": "small",
+    "file": "sliced/btn_window_modes/btn_window_modes__small.png",
+    "source_box": [
+      169,
+      205,
+      513,
+      537
+    ],
+    "canvas": [
+      360,
+      346
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      337,
+      326
+    ],
+    "pivot": [
+      181,
+      173
+    ],
+    "glow_margin": [
+      11,
+      10
+    ]
+  },
+  {
+    "sheet": "btn_window_modes",
+    "state": "medium_selected",
+    "file": "sliced/btn_window_modes/btn_window_modes__medium_selected.png",
+    "source_box": [
+      621,
+      191,
+      992,
+      547
+    ],
+    "canvas": [
+      360,
+      346
+    ],
+    "scale_applied": 0.9684,
+    "body": [
+      337,
+      318
+    ],
+    "pivot": [
+      181,
+      173
+    ],
+    "glow_margin": [
+      11,
+      14
+    ]
+  },
+  {
+    "sheet": "btn_window_modes",
+    "state": "fullscreen",
+    "file": "sliced/btn_window_modes/btn_window_modes__fullscreen.png",
+    "source_box": [
+      1089,
+      204,
+      1447,
+      537
+    ],
+    "canvas": [
+      360,
+      346
+    ],
+    "scale_applied": 0.9574,
+    "body": [
+      337,
+      314
+    ],
+    "pivot": [
+      181,
+      173
+    ],
+    "glow_margin": [
+      11,
+      16
+    ]
+  },
+  {
+    "sheet": "btn_window_modes",
+    "state": "close",
+    "file": "sliced/btn_window_modes/btn_window_modes__close.png",
+    "source_box": [
+      1563,
+      205,
+      1916,
+      537
+    ],
+    "canvas": [
+      360,
+      346
+    ],
+    "scale_applied": 0.9656,
+    "body": [
+      337,
+      317
+    ],
+    "pivot": [
+      181,
+      173
+    ],
+    "glow_margin": [
+      11,
+      14
+    ]
+  },
+  {
+    "sheet": "icons_dock",
+    "state": "build",
+    "file": "sliced/icons_dock/icons_dock__build.png",
+    "source_box": [
+      64,
+      241,
+      358,
+      570
+    ],
+    "canvas": [
+      372,
+      369
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      288,
+      314
+    ],
+    "pivot": [
+      186,
+      184
+    ],
+    "glow_margin": [
+      42,
+      27
+    ]
+  },
+  {
+    "sheet": "icons_dock",
+    "state": "people",
+    "file": "sliced/icons_dock/icons_dock__people.png",
+    "source_box": [
+      427,
+      248,
+      799,
+      553
+    ],
+    "canvas": [
+      372,
+      369
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      365,
+      262
+    ],
+    "pivot": [
+      186,
+      184
+    ],
+    "glow_margin": [
+      3,
+      53
+    ]
+  },
+  {
+    "sheet": "icons_dock",
+    "state": "heart",
+    "file": "sliced/icons_dock/icons_dock__heart.png",
+    "source_box": [
+      890,
+      216,
+      1092,
+      585
+    ],
+    "canvas": [
+      372,
+      369
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      167,
+      313
+    ],
+    "pivot": [
+      186,
+      184
+    ],
+    "glow_margin": [
+      102,
+      28
+    ]
+  },
+  {
+    "sheet": "icons_dock",
+    "state": "map",
+    "file": "sliced/icons_dock/icons_dock__map.png",
+    "source_box": [
+      1213,
+      251,
+      1549,
+      556
+    ],
+    "canvas": [
+      372,
+      369
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      332,
+      267
+    ],
+    "pivot": [
+      186,
+      184
+    ],
+    "glow_margin": [
+      20,
+      51
+    ]
+  },
+  {
+    "sheet": "icons_dock",
+    "state": "battle",
+    "file": "sliced/icons_dock/icons_dock__battle.png",
+    "source_box": [
+      1623,
+      237,
+      1937,
+      567
+    ],
+    "canvas": [
+      372,
+      369
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      307,
+      319
+    ],
+    "pivot": [
+      186,
+      184
+    ],
+    "glow_margin": [
+      32,
+      25
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "pause",
+    "file": "sliced/icons_utility/icons_utility__pause.png",
+    "source_box": [
+      128,
+      110,
+      327,
+      346
+    ],
+    "canvas": [
+      292,
+      282
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      196,
+      231
+    ],
+    "pivot": [
+      146,
+      141
+    ],
+    "glow_margin": [
+      48,
+      25
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "speed_x1",
+    "file": "sliced/icons_utility/icons_utility__speed_x1.png",
+    "source_box": [
+      522,
+      118,
+      701,
+      341
+    ],
+    "canvas": [
+      292,
+      282
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      150,
+      205
+    ],
+    "pivot": [
+      146,
+      141
+    ],
+    "glow_margin": [
+      71,
+      38
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "speed_x2",
+    "file": "sliced/icons_utility/icons_utility__speed_x2.png",
+    "source_box": [
+      853,
+      117,
+      1145,
+      340
+    ],
+    "canvas": [
+      292,
+      282
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      266,
+      207
+    ],
+    "pivot": [
+      146,
+      141
+    ],
+    "glow_margin": [
+      13,
+      37
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "steward",
+    "file": "sliced/icons_utility/icons_utility__steward.png",
+    "source_box": [
+      1251,
+      79,
+      1513,
+      361
+    ],
+    "canvas": [
+      292,
+      282
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      219,
+      253
+    ],
+    "pivot": [
+      146,
+      141
+    ],
+    "glow_margin": [
+      36,
+      14
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "alerts",
+    "file": "sliced/icons_utility/icons_utility__alerts.png",
+    "source_box": [
+      1660,
+      89,
+      1891,
+      351
+    ],
+    "canvas": [
+      292,
+      282
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      219,
+      231
+    ],
+    "pivot": [
+      146,
+      141
+    ],
+    "glow_margin": [
+      36,
+      25
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "goals",
+    "file": "sliced/icons_utility/icons_utility__goals.png",
+    "source_box": [
+      96,
+      454,
+      349,
+      691
+    ],
+    "canvas": [
+      307,
+      248
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      236,
+      203
+    ],
+    "pivot": [
+      153,
+      124
+    ],
+    "glow_margin": [
+      35,
+      22
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "menu",
+    "file": "sliced/icons_utility/icons_utility__menu.png",
+    "source_box": [
+      454,
+      492,
+      761,
+      666
+    ],
+    "canvas": [
+      307,
+      248
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      282,
+      151
+    ],
+    "pivot": [
+      153,
+      124
+    ],
+    "glow_margin": [
+      12,
+      48
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "collect",
+    "file": "sliced/icons_utility/icons_utility__collect.png",
+    "source_box": [
+      857,
+      464,
+      1146,
+      684
+    ],
+    "canvas": [
+      307,
+      248
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      246,
+      211
+    ],
+    "pivot": [
+      153,
+      124
+    ],
+    "glow_margin": [
+      30,
+      18
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "rush",
+    "file": "sliced/icons_utility/icons_utility__rush.png",
+    "source_box": [
+      1276,
+      448,
+      1496,
+      696
+    ],
+    "canvas": [
+      307,
+      248
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      199,
+      245
+    ],
+    "pivot": [
+      153,
+      124
+    ],
+    "glow_margin": [
+      54,
+      1
+    ]
+  },
+  {
+    "sheet": "icons_utility",
+    "state": "drawer_arrow",
+    "file": "sliced/icons_utility/icons_utility__drawer_arrow.png",
+    "source_box": [
+      1639,
+      500,
+      1913,
+      669
+    ],
+    "canvas": [
+      307,
+      248
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      266,
+      149
+    ],
+    "pivot": [
+      153,
+      124
+    ],
+    "glow_margin": [
+      20,
+      49
+    ]
+  },
+  {
+    "sheet": "chip_resource_9slice",
+    "state": "chip",
+    "file": "sliced/chip_resource_9slice/chip_resource_9slice__chip.png",
+    "source_box": [
+      65,
+      144,
+      1916,
+      619
+    ],
+    "canvas": [
+      1852,
+      475
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      1779,
+      270
+    ],
+    "pivot": [
+      931,
+      239
+    ],
+    "glow_margin": [
+      36,
+      102
+    ]
+  },
+  {
+    "sheet": "panel_frame_9slice",
+    "state": "frame",
+    "file": "sliced/panel_frame_9slice/panel_frame_9slice__frame.png",
+    "source_box": [
+      29,
+      328,
+      1223,
+      918
+    ],
+    "canvas": [
+      1195,
+      590
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      1173,
+      580
+    ],
+    "pivot": [
+      603,
+      294
+    ],
+    "glow_margin": [
+      11,
+      5
+    ]
+  },
+  {
+    "sheet": "panel_header_9slice",
+    "state": "header",
+    "file": "sliced/panel_header_9slice/panel_header_9slice__header.png",
+    "source_box": [
+      17,
+      285,
+      1967,
+      484
+    ],
+    "canvas": [
+      1950,
+      199
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      1922,
+      186
+    ],
+    "pivot": [
+      975,
+      100
+    ],
+    "glow_margin": [
+      14,
+      6
+    ]
+  },
+  {
+    "sheet": "bar_progress",
+    "state": "frame",
+    "file": "sliced/bar_progress/bar_progress__frame.png",
+    "source_box": [
+      56,
+      253,
+      1721,
+      418
+    ],
+    "canvas": [
+      1665,
+      166
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      1636,
+      151
+    ],
+    "pivot": [
+      833,
+      81
+    ],
+    "glow_margin": [
+      14,
+      7
+    ]
+  },
+  {
+    "sheet": "bar_progress",
+    "state": "fill",
+    "file": "sliced/bar_progress/bar_progress__fill.png",
+    "source_box": [
+      56,
+      461,
+      1722,
+      621
+    ],
+    "canvas": [
+      1667,
+      161
+    ],
+    "scale_applied": 1.0,
+    "body": [
+      1635,
+      145
+    ],
+    "pivot": [
+      834,
+      80
+    ],
+    "glow_margin": [
+      16,
+      8
+    ]
+  }
+]

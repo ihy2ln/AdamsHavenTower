@@ -27,6 +27,12 @@ public static class TowerDungeonTiles
                 face = C(0x46506a), accent = C(0x6fe3ff), floor = "slate", wall = "crystals" };
             case "briar": return new Look { floorA = C(0x7a6444), floorB = C(0x8c7550), gap = C(0x4a3b28), wallA = C(0x1e2c1c), wallB = C(0x2c3f27),
                 face = C(0x4f6a3b), accent = C(0x9a3b3b), floor = "dirt", wall = "thorns" };
+            case "mine": return new Look { floorA = C(0x3b4455), floorB = C(0x485267), gap = C(0x1b2029), wallA = C(0x262c38), wallB = C(0x353d4d),
+                face = C(0x5d6a82), accent = C(0xe8a64a), floor = "slate", wall = "masonry" };
+            case "blight": return new Look { floorA = C(0x4a4658), floorB = C(0x5a5570), gap = C(0x201a2c), wallA = C(0x1f1a28), wallB = C(0x2e2640),
+                face = C(0x5a4a78), accent = C(0xa24bff), floor = "flag", wall = "thorns" };
+            case "heartwood": return new Look { floorA = C(0x6f7a6a), floorB = C(0x80907a), gap = C(0x2f3a2c), wallA = C(0x3a4a3a), wallB = C(0x4d6048),
+                face = C(0x9aa88a), accent = C(0xf0d070), floor = "flag", wall = "roots" };
             case "keep": return new Look { floorA = C(0x7b5a3a), floorB = C(0x8e6a45), gap = C(0x3e2a1b), wallA = C(0x3a3634), wallB = C(0x4d4845),
                 face = C(0x8a837b), accent = C(0x5b3d24), floor = "timber", wall = "masonry" };
             default: return new Look { floorA = C(0x6f7266), floorB = C(0x80847a), gap = C(0x3b3d37), wallA = C(0x34372f), wallB = C(0x454a3e),

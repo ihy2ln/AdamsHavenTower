@@ -1,0 +1,44 @@
+{
+  "generator": "Built-in image_gen",
+  "usage": "POI terrain, rendered continuously per room; Celestium paths and fog are runtime layers.",
+  "prompts": {
+    "cave": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, cave POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: rugged slate rock, pebbles and earth, subtle pale silverwood roots. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for cave_terrain.png.",
+    "ruin": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, ruin POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: ancient broken grey stone flagstones, scattered fine rubble, moss and pale silverwood root tendrils. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for ruin_terrain.png.",
+    "keep": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, keep POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: weathered timber planks and grey masonry, restrained silverwood grain, old fort floor. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for keep_terrain.png.",
+    "marsh": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, marsh POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: aged wet wooden boardwalk planks, moss, subtle blue-green water in narrow seams. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for marsh_terrain.png.",
+    "briar": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, briar POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: packed forest soil, woven pale silverwood roots, thorn tendrils and violet fallen leaves. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for briar_terrain.png.",
+    "crystal": "Use case stylized-concept. Production game terrain texture for Adams Haven Unity top-down dungeon, crystal POI in Silverbrook Forest. One square seamless tileable material swatch filling the ENTIRE canvas edge to edge: dark slate stone with translucent violet crystals and restrained teal mineral veins. Orthographic directly overhead flat view, painterly detailed fantasy game art, cool blue-silver ambient light. POI material dominates, silverwood accents secondary. Even lighting and scale, readable quiet center, small natural variation. NO room layout, no walls, no paths, no border, no perspective, no characters, no text, no UI, no grids, no labels. Celestium path glow will be drawn separately by the game; do not bake bright route lines into this texture. Save image for crystal_terrain.png."
+  },
+  "files": [
+    {
+      "theme": "cave",
+      "file": "cave_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-05722e97-e680-41db-9285-4604d98fc937.png"
+    },
+    {
+      "theme": "ruin",
+      "file": "ruin_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-c24f694e-a6f1-4b14-9af2-b744b149fa8a.png"
+    },
+    {
+      "theme": "keep",
+      "file": "keep_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-10cc8abd-acb4-48eb-9d31-39f0b1a7fd2b.png"
+    },
+    {
+      "theme": "marsh",
+      "file": "marsh_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-9c174f5b-e3ed-4b97-b1b1-3bbfc25fd780.png"
+    },
+    {
+      "theme": "briar",
+      "file": "briar_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-3ebf4f98-4ff4-449e-a7a0-44fcc8a2deae.png"
+    },
+    {
+      "theme": "crystal",
+      "file": "crystal_terrain.png",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f1cb-6b56-7af0-a616-3e676772b45f\\exec-801eecfa-207c-4a09-964d-8b228cb0bcc7.png"
+    }
+  ]
+}
