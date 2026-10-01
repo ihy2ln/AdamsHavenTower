@@ -378,6 +378,7 @@ namespace AdamsHaven.Tower
             var loot = RollLoot(RoomRng(r), scale, kind == "boss" ? "Boss spoils" : kind == "elite" ? "Elite spoils" : "Spoils");
             run.haul.Add(loot);
             run.battlesWon++;
+            RaiseThreat(ThreatBattle);
             AwardExpeditionXp(kind == "boss" ? 70 : kind == "elite" ? 35 : 15);
             Bump("expedition_win");
             CompleteRoom(r);
@@ -392,6 +393,7 @@ namespace AdamsHaven.Tower
             var node = RunLayout.Node(run.dungeonPoi);
             run.cleared.Add(node.id);
             run.dungeonPoi = "";
+            LowerThreat(ThreatPoiCleared);
             Note(node.name + " is cleared.");
             if (node.kind == "lair") ConquerRegion(run.region);
         }

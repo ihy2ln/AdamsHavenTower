@@ -552,9 +552,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 if (!R.NodeVisible(node.id) || !R.NodeVisible(link)) continue;
                 var other = layout.Node(link);
                 bool live = node.id == run.at || link == run.at;
-                bool walked = run.visited.Contains(node.id) && run.visited.Contains(link);
-                Line(map, OnMap(map, node.x, node.y), OnMap(map, other.x, other.y), live ? 5 : 3,
-                    live ? new Color(1f, 0.82f, 0.4f, 0.95f) : walked ? new Color(0.95f, 0.9f, 0.8f, 0.6f) : new Color(0.85f, 0.85f, 0.9f, 0.3f));
+                // Walked trails are road: a packed-earth band under a pale centre line.
+                bool road = R.OnRoad(node.id, link);
+                Vector2 a = OnMap(map, node.x, node.y), b = OnMap(map, other.x, other.y);
+                if (road) Line(map, a, b, 10, new Color(0.3f, 0.21f, 0.12f, 0.85f));
+                Line(map, a, b, live ? 5 : road ? 4 : 3,
+                    live ? new Color(1f, 0.82f, 0.4f, 0.95f) : road ? new Color(0.95f, 0.82f, 0.56f, 0.9f) : new Color(0.85f, 0.85f, 0.9f, 0.3f));
             }
         foreach (var node in layout.nodes)
         {
@@ -632,7 +635,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                     () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); Go(View.Dungeon); } },
                     Teal, 16, !run.cleared.Contains(node.id));
             y += 50;
-            TextAt(panel, "Travel", "Tap a trail-linked place to travel (1 ration).", 16, y, Side - 32, 20, 12, new Color(0.8f, 0.85f, 0.9f)); y += 24;
+            TextAt(panel, "Travel", "Tap a linked place to travel. New trail: 1 ration. Road: 1 ration every 2nd trip, less threat.", 16, y, Side - 32, 34, 12, new Color(0.8f, 0.85f, 0.9f)); y += 38;
         }
         else
         {
@@ -656,6 +659,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
         y += 6;
         TextAt(panel, "Provisions", "Rations " + run.rations + "   Tonics " + run.tonics + "   Firewood " + run.firewood, 16, y, Side - 32, 22, 13, Cream); y += 26;
+        // Threat meter: full threat makes the forest stir and swallow road.
+        Color threatColor = run.threat >= TowerRules.ThreatWarn ? Alert : run.threat >= 50 ? Gold : Moss;
+        TextAt(panel, "Threat title", "THREAT", 16, y, 66, 22, 13, threatColor);
+        At("Threat back", panel, 84, y + 7, Side - 148, 10, new Color(0.05f, 0.05f, 0.07f, 0.9f));
+        At("Threat", panel, 84, y + 7, (Side - 148) * run.threat / (float)TowerRules.ThreatMax, 10, threatColor);
+        TextAt(panel, "Threat value", run.threat + "%", Side - 58, y, 44, 22, 13, threatColor); y += 26;
         int gold = 0; foreach (var loot in run.haul) gold += loot.gold;
         int safe = 0; foreach (var loot in run.pocket) safe += loot.gold;
         TextAt(panel, "Haul", "Haul: " + run.haul.Count + " finds, " + gold + "g   Pocket " + run.pocket.Count + "/" + TowerRules.PocketSlots +

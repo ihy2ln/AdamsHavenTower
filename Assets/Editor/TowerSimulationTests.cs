@@ -126,8 +126,90 @@ public sealed class TowerSimulationTests
         Assert.IsNull(rules.ForestMove(camp.links[0]));
         Assert.AreEqual(5, rules.Run.rations);
         rules.Run.rations = 0;
-        Assert.IsNull(rules.ForestMove(layout.entrance));
+        Assert.IsNull(rules.ForestMove(layout.Node(camp.links[0]).links[0]), "a new trail");
         Assert.AreEqual(90, rules.Run.hp[0], "attrition without rations");
+    }
+
+    // BATTLE_MODE_GDD.md section 4: walked trails become road at half the ration cost.
+    [Test]
+    public void WalkedTrailsBecomeRoadAtHalfCost()
+    {
+        var rules = Expedition();
+        rules.HeroResident("kaela").trait = "Brave";
+        var layout = rules.RunLayout;
+        string camp = layout.entrance, a = layout.Node(camp).links[0], b = layout.Node(a).links[0];
+        Assert.IsNull(rules.ForestMove(a));
+        Assert.IsNull(rules.ForestMove(b));
+        Assert.AreEqual(4, rules.Run.rations, "two new trails");
+        Assert.IsTrue(rules.OnRoad(camp, a) && rules.OnRoad(b, a), "walked trails are road");
+        Assert.IsNull(rules.ForestMove(a));
+        Assert.AreEqual(4, rules.Run.rations, "first road trip is free");
+        Assert.IsNull(rules.ForestMove(b));
+        Assert.AreEqual(3, rules.Run.rations, "every second road trip costs");
+        Assert.AreEqual(2 * TowerRules.ThreatNewTrail + 2 * TowerRules.ThreatRoad, rules.Run.threat, "daylight threat");
+    }
+
+    [Test]
+    public void FogRevealGrowsWithScoutAndGuild()
+    {
+        var started = Expedition();
+        started.HeroResident("kaela").trait = "Brave";
+        started.Run.revealed.Clear();
+        // Reloading rebuilds the fog with the trait fixed, whatever the starter rolled.
+        var rules = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(started.State)));
+        var kaela = rules.HeroResident("kaela");
+        var layout = rules.RunLayout;
+        string a = layout.Node(layout.entrance).links[0], b = layout.Node(a).links[0];
+        Assert.AreEqual(1, rules.RevealRadius);
+        Assert.IsTrue(rules.NodeVisible(a));
+        Assert.IsFalse(rules.NodeVisible(b), "two hops away is fogged");
+        kaela.trait = "Curious";
+        Assert.AreEqual(2, rules.RevealRadius, "a curious scout sees further");
+        rules.State.clock = TowerRules.DaySeconds * 0.6f;
+        Assert.AreEqual(1, rules.RevealRadius, "the scout loses the edge at night");
+        rules.State.clock = 0;
+        Assert.IsNull(rules.ForestMove(a));
+        Assert.IsTrue(rules.NodeVisible(layout.Node(b).links[0]), "two hops from the party");
+        rules.State.rooms.Find(r => r.type == "guild_hall").level = 3;
+        Assert.AreEqual(3, rules.RevealRadius, "guild maps add a hop");
+    }
+
+    [Test]
+    public void FullThreatMakesTheForestSwallowLooseRoad()
+    {
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        string camp = layout.entrance, a = layout.Node(camp).links[0], b = layout.Node(a).links[0],
+            c = layout.Node(b).links[0], d = layout.Node(c).links[0];
+        foreach (var step in new[] { a, b, c, d }) Assert.IsNull(rules.ForestMove(step));
+        rules.Run.threat = TowerRules.ThreatMax - 1;
+        Assert.IsNull(rules.ForestMove(c));
+        Assert.AreEqual(TowerRules.ThreatAfterStir, rules.Run.threat);
+        Assert.IsTrue(rules.OnRoad(camp, a), "road from the camp holds");
+        Assert.IsTrue(rules.OnRoad(c, d) && rules.OnRoad(b, c), "road at the party holds");
+        Assert.IsFalse(rules.OnRoad(a, b), "loose road is swallowed");
+        Assert.IsTrue(rules.State.log.Exists(l => l.Contains("forest stirs")));
+        int threat = rules.Run.threat;
+        Assert.IsNull(rules.ForestMove(b));
+        Assert.IsNull(rules.ForestMove(a));
+        Assert.IsNull(rules.ForestMove(camp));
+        threat = rules.Run.threat;
+        Assert.IsNull(rules.CampRest());
+        Assert.AreEqual(System.Math.Max(0, threat - TowerRules.ThreatCampRest), rules.Run.threat, "rest calms the forest");
+    }
+
+    [Test]
+    public void OldSavesRebuildForestFog()
+    {
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        string a = layout.Node(layout.entrance).links[0];
+        Assert.IsNull(rules.ForestMove(a));
+        rules.Run.revealed.Clear();
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State)));
+        Assert.IsTrue(loaded.NodeVisible(a) && loaded.NodeVisible(layout.Node(a).links[0]), "fog is rebuilt from visited places");
+        Assert.AreEqual(rules.Run.threat, loaded.Run.threat, "threat survives a save");
+        Assert.IsTrue(loaded.OnRoad(layout.entrance, a), "roads survive a save");
     }
 
     [Test]

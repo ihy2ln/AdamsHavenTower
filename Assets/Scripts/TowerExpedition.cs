@@ -46,6 +46,10 @@ namespace AdamsHaven.Tower
         public int floor, px, py, prevX, prevY;
         public string fog = "";
         public List<int> roomsDone = new List<int>();
+        // Forest fog, roads and threat (TowerThreat.cs). Older saves load these empty; NormalizeExpeditions refills the fog.
+        public List<string> revealed = new List<string>();
+        public List<string> road = new List<string>();      // walked trails, TowerRules.RoadKey
+        public int threat, roadSteps;
     }
 
     public sealed partial class TowerRules
@@ -88,6 +92,7 @@ namespace AdamsHaven.Tower
             if (State.hasRun && TowerForestLayouts.Get(State.run.layout) == null) State.hasRun = false;
             if (State.hasRun && State.run.dungeonPoi.Length > 0 && TowerForestLayouts.Get(State.run.layout).Node(State.run.dungeonPoi) == null)
                 State.run.dungeonPoi = "";
+            if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
         }
 
         // ---------------------------------------------------------------- plan
@@ -144,6 +149,7 @@ namespace AdamsHaven.Tower
             State.run = run;
             State.hasRun = true;
             State.lastLayout = layout.id;
+            RevealFrom(layout.entrance);
             Note("Expedition set out for " + Region(region).name + " (" + layout.name + ").");
             return null;
         }
@@ -152,11 +158,8 @@ namespace AdamsHaven.Tower
 
         public bool NodeVisible(string nodeId)
         {
-            var run = Run; var layout = RunLayout;
-            if (run == null || layout == null) return false;
-            if (run.visited.Contains(nodeId)) return true;
-            foreach (var v in run.visited) if (layout.Linked(v, nodeId)) return true;
-            return false;
+            var run = Run;
+            return run != null && run.revealed.Contains(nodeId);
         }
 
         public string ForestMove(string nodeId)
@@ -166,14 +169,19 @@ namespace AdamsHaven.Tower
             if (run.dungeonPoi.Length > 0) return "Leave the dungeon first.";
             if (layout.Node(nodeId) == null) return "Unknown place.";
             if (!layout.Linked(run.at, nodeId)) return "No trail leads there from here.";
-            if (run.rations > 0) run.rations--;
-            else
-            {
-                for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - 10);
-                Note("No rations left: the party grows weak.");
-            }
+            string from = run.at;
             run.at = nodeId;
             if (!run.visited.Contains(nodeId)) run.visited.Add(nodeId);
+            RevealFrom(nodeId);
+            if (WalkTrail(from, nodeId))
+            {
+                if (run.rations > 0) run.rations--;
+                else
+                {
+                    for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - 10);
+                    Note("No rations left: the party grows weak.");
+                }
+            }
             return null;
         }
 
@@ -186,6 +194,7 @@ namespace AdamsHaven.Tower
             if (run.firewood <= 0) return "No firewood to make camp.";
             run.firewood--;
             HealParty(35, false);
+            LowerThreat(ThreatCampRest);
             Note("The party rested by the fire.");
             return null;
         }
