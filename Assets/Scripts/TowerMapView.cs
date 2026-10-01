@@ -51,9 +51,24 @@ namespace AdamsHaven.Tower
             var m = r.Overworld;
             if (m == null) return;
             string key = run.biome + ":" + run.gridSeed + ":" + run.shift;
-            if (key != mapKey || map == null) { Clear(); map = m; mapKey = key; Build(); }
+            if (key != mapKey || map == null)
+            {
+                // The same expedition's forest shifted: keep the last frame so the UI can crossfade into the new one.
+                if (map != null && rt != null && mapKey.StartsWith(run.biome + ":" + run.gridSeed + ":"))
+                {
+                    if (fadeFrom != null) { fadeFrom.Release(); Destroy(fadeFrom); }
+                    fadeFrom = new RenderTexture(rt.width, rt.height, 0, RenderTextureFormat.ARGB32);
+                    Graphics.Blit(rt, fadeFrom);
+                }
+                Clear(); map = m; mapKey = key; Build();
+            }
             Sync();
         }
+
+        private RenderTexture fadeFrom;
+
+        // The frame from before the forest shifted, once (the caller fades it out and releases it).
+        public RenderTexture TakeShiftFrame() { var f = fadeFrom; fadeFrom = null; return f; }
 
         public void SetActive(bool on) { if (root != null) root.gameObject.SetActive(on); }
 
@@ -71,6 +86,7 @@ namespace AdamsHaven.Tower
         {
             Clear();
             if (rt != null) { rt.Release(); Destroy(rt); }
+            if (fadeFrom != null) { fadeFrom.Release(); Destroy(fadeFrom); }
         }
 
         private void Clear()

@@ -7,7 +7,7 @@ namespace AdamsHaven.Tower
     // The grid is never saved: it is regenerated from biome + seed + shift, and a run stores only what changed.
     public enum TowerTerrain : byte { DenseForest, Forest, Clearing, Road, Water, Ford, Bridge, Rock, Hill, RuinGround, Blight, Marsh }
 
-    public sealed class TowerOverworldPoi
+    [System.Serializable] public sealed class TowerOverworldPoi
     {
         public string id = "", kind = "", name = "", theme = "";
         public int x, y;
@@ -15,7 +15,7 @@ namespace AdamsHaven.Tower
 
     public sealed class TowerOverworld
     {
-        public const int Version = 1, Width = 64, Height = 40;
+        public const int Version = 2, Width = 64, Height = 40;
         public const float Blocked = float.PositiveInfinity;
 
         public readonly int width, height;

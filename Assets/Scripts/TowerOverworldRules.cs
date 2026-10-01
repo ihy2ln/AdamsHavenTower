@@ -18,7 +18,7 @@ namespace AdamsHaven.Tower
     public sealed class TowerGridStep
     {
         public List<Vector2Int> walked = new List<Vector2Int>();
-        public bool halted;
+        public bool halted, shifted;
         public TowerOverworldPoi arrived;
         public string error;
     }
@@ -52,7 +52,7 @@ namespace AdamsHaven.Tower
                 string key = run.biome + ":" + run.gridSeed + ":" + run.shift + ":" + run.gridVersion;
                 if (key != overworldKey || overworldCache == null)
                 {
-                    overworldCache = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed + (uint)run.shift * 7919u);
+                    overworldCache = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors);
                     overworldLayout = LayoutFromOverworld(overworldCache, run.layout);
                     overworldKey = key;
                 }
@@ -100,6 +100,67 @@ namespace AdamsHaven.Tower
             run.gridFog = new string('0', map.width * map.height);
             run.gridRoad = new string('0', map.width * map.height);
             run.targetX = run.targetY = -1;
+            run.day = GameDay;
+        }
+
+        // ---------------------------------------------------------------- the forest shifts
+
+        public int GameDay { get { return Mathf.FloorToInt((6f + State.clock / DaySeconds * 24f) / 24f); } }
+
+        // The woods rearrange around the party. Full (threat filled): every unexplored place moves, the woods regrow
+        // and the fog closes in again away from what is known. Small (a new day): one unexplored place moves.
+        // The camp, explored and cleared places, and the party's own spot never move.
+        public bool ShiftForest(bool small)
+        {
+            var run = Run; var map = Overworld;
+            if (map == null) return false;
+            var keep = new List<TowerOverworldPoi>();
+            var loose = new List<TowerOverworldPoi>();
+            foreach (var p in map.pois)
+            {
+                bool fixedPlace = p.kind == "camp" || run.visited.Contains(p.id) || run.cleared.Contains(p.id) || p.id == run.at;
+                (fixedPlace ? keep : loose).Add(p);
+            }
+            if (loose.Count == 0) return false;
+            if (small)
+            {
+                // Move one place the party has not seen yet if there is one, else any unexplored place.
+                var pick = loose.Find(p => !CellSeen(p.x, p.y)) ?? loose[EventRng("dayshift").Next(loose.Count)];
+                foreach (var p in loose) if (p != pick) keep.Add(p);
+            }
+            run.anchors = new List<TowerOverworldPoi>();
+            foreach (var p in keep)
+                run.anchors.Add(new TowerOverworldPoi { id = p.id, kind = p.kind, name = p.name, theme = p.theme, x = p.x, y = p.y });
+            run.shift++;
+            run.targetX = run.targetY = -1;
+            var moved = Overworld;     // regenerated with the new shift
+            if (!small)
+            {
+                // The fog closes in again except around the party, the anchored places and well-worn road.
+                run.gridFog = new string('0', moved.cells.Length);
+                RevealCells(run.cx, run.cy, GridSightRadius);
+                foreach (var p in run.anchors) RevealCells(p.x, p.y, 2);
+                for (int y = 0; y < moved.height; y++)
+                    for (int x = 0; x < moved.width; x++)
+                        if (RoadStrength(x, y) >= RoadWalked) RevealCells(x, y, 1);
+            }
+            run.revealed.RemoveAll(id => moved.Poi(id) == null);
+            foreach (var p in moved.pois) if (CellSeen(p.x, p.y) && !run.revealed.Contains(p.id)) run.revealed.Add(p.id);
+            var here = moved.PoiAt(run.cx, run.cy);
+            run.at = here != null ? here.id : "";
+            Note(small ? "Overnight the trees have moved: one of the paths ahead is not where it was." :
+                "The forest shifts! Trees turn and close in; unexplored places are somewhere else now.");
+            return true;
+        }
+
+        // A new day while out in the wild nudges the forest once.
+        private void CheckDayRoll()
+        {
+            var run = Run;
+            int today = GameDay;
+            if (today <= run.day) return;
+            run.day = today;
+            ShiftForest(true);
         }
 
         // ---------------------------------------------------------------- cells
@@ -199,6 +260,9 @@ namespace AdamsHaven.Tower
             if (run.dungeonPoi.Length > 0) { step.error = "Leave the dungeon first."; return step; }
             step.error = EventBlock();
             if (step.error != null) return step;
+            CheckDayRoll();
+            map = Overworld;
+            int shiftBefore = run.shift;
             var preview = GridPreview(tx, ty);
             if (preview.error != null) { step.error = preview.error; return step; }
             run.targetX = tx; run.targetY = ty;
@@ -234,10 +298,18 @@ namespace AdamsHaven.Tower
                 if (raise > 0) { run.threatCarry -= raise; RaiseThreat(raise); }
                 // Something on the way, every few cells.
                 eventCells++; if (onRoad) eventRoad++;
-                if (eventCells >= EventCells || i == preview.path.Count - 1)
+                var lair = Overworld.Lair;
+                bool restDue = TraversalEvents && Near(lair, 9) && !Near(lair, 3) && !run.eventsSeen.Contains(TowerEvents.RestId);
+                if (eventCells >= EventCells || i == preview.path.Count - 1 || restDue)
                 {
                     RollGridEvent(eventRoad * 2 >= eventCells);
                     eventCells = eventRoad = 0;
+                }
+                if (run.shift != shiftBefore)
+                {
+                    // The forest moved under the party's feet: stop and look again (the target is kept).
+                    step.halted = step.shifted = true;
+                    break;
                 }
                 if (EventBlock() != null)
                 {
@@ -245,7 +317,7 @@ namespace AdamsHaven.Tower
                     break;
                 }
             }
-            var poi = map.PoiAt(run.cx, run.cy);
+            var poi = Overworld.PoiAt(run.cx, run.cy);
             run.at = poi != null ? poi.id : "";
             if (poi != null)
             {

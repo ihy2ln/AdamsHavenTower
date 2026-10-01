@@ -49,18 +49,22 @@ namespace AdamsHaven.Tower
             { "lair", new[] { "The Lair" } },
         };
 
-        public static TowerOverworld Generate(string biomeId, uint seed, int width = TowerOverworld.Width, int height = TowerOverworld.Height)
+        // shift > 0 is the forest rearranging mid-run: the ground (rivers, lakes, hills, rocks) stays, the woods regrow
+        // differently, and every place not in `anchors` moves. Anchors (camp, explored and cleared places) keep their spot.
+        public static TowerOverworld Generate(string biomeId, uint seed, int shift = 0, List<TowerOverworldPoi> anchors = null,
+            int width = TowerOverworld.Width, int height = TowerOverworld.Height)
         {
             var biome = BiomeFor(biomeId);
             var map = new TowerOverworld(width, height, biome.id, seed);
             var rng = new TowerRng(seed * 2654435761u + 7u);
             float ox = rng.Range(0, 1000), oy = rng.Range(0, 1000);
+            float fx = ox + shift * 37.3f, fy = oy + shift * 11.7f;     // the woods regrow on every shift
 
             // 1. Forest everywhere, deep where the noise is high; hills, rocks, ruin ground, blight and marsh in patches.
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
-                    float n = Fbm(ox + x * 0.09f, oy + y * 0.09f);
+                    float n = Fbm(fx + x * 0.09f, fy + y * 0.09f);
                     var t = n > biome.dense ? TowerTerrain.DenseForest : TowerTerrain.Forest;
                     if (Patch(ox + 300, oy, x, y, 0.11f, biome.hills)) t = TowerTerrain.Hill;
                     if (Patch(ox + 600, oy + 50, x, y, 0.08f, biome.ruins)) t = TowerTerrain.RuinGround;
@@ -87,38 +91,54 @@ namespace AdamsHaven.Tower
             // 3. Places: entrance at the bottom, camp close to it, the rest spread out, lair the farthest from camp.
             map.entranceX = width / 2 + rng.Next(width / 3) - width / 6;
             map.entranceY = height - 2;
-            var spots = new List<Vector2Int>();
             var camp = new Vector2Int(Mathf.Clamp(map.entranceX + rng.Next(9) - 4, 4, width - 5), height - 7);
-            spots.Add(camp);
-            for (int tries = 0; tries < 4000 && spots.Count < Kinds.Length + 2; tries++)
+            var prng = shift == 0 ? rng : new TowerRng(seed * 2654435761u + 7u + (uint)shift * 977u);
+            var fixedPois = anchors ?? new List<TowerOverworldPoi>();
+            var anchoredCamp = fixedPois.Find(p => p.kind == "camp");
+            if (anchoredCamp != null) camp = new Vector2Int(anchoredCamp.x, anchoredCamp.y);
+            var used = new HashSet<string>();
+            var taken = new List<Vector2Int> { camp };
+            foreach (var a in fixedPois)
             {
-                var p = new Vector2Int(3 + rng.Next(width - 6), 3 + rng.Next(height - 10));
+                map.pois.Add(new TowerOverworldPoi { id = a.id, kind = a.kind, name = a.name, theme = a.theme, x = a.x, y = a.y });
+                used.Add(a.name);
+                if (a.kind != "camp") taken.Add(new Vector2Int(a.x, a.y));
+            }
+            // Kinds still to place: the full set minus what the anchors already hold.
+            var kinds = new List<string>(Kinds);
+            bool needCamp = anchoredCamp == null, needLair = fixedPois.Find(p => p.kind == "lair") == null;
+            foreach (var a in fixedPois) kinds.Remove(a.kind);
+            int wanted = kinds.Count + (needLair ? 1 : 0);
+            var spots = new List<Vector2Int>();
+            for (int tries = 0; tries < 4000 && spots.Count < wanted; tries++)
+            {
+                var p = new Vector2Int(3 + prng.Next(width - 6), 3 + prng.Next(height - 10));
                 bool ok = map.Walkable(p.x, p.y);
+                foreach (var s in taken) if ((s - p).sqrMagnitude < 9 * 9) { ok = false; break; }
                 foreach (var s in spots) if ((s - p).sqrMagnitude < 9 * 9) { ok = false; break; }
                 if (ok) spots.Add(p);
             }
-            // Farthest from camp becomes the lair.
-            int lairAt = 1;
-            for (int i = 2; i < spots.Count; i++) if ((spots[i] - camp).sqrMagnitude > (spots[lairAt] - camp).sqrMagnitude) lairAt = i;
-            var order = new List<string> { "camp" };
-            var kinds = new List<string>(Kinds);
-            for (int i = 1; i < spots.Count; i++)
+            int lairAt = -1;
+            if (needLair && spots.Count > 0)
             {
-                if (i == lairAt) { order.Add("lair"); continue; }
-                if (kinds.Count == 0) { order.Add("combat"); continue; }
-                int k = rng.Next(kinds.Count);
-                order.Add(kinds[k]); kinds.RemoveAt(k);
+                lairAt = 0;
+                for (int i = 1; i < spots.Count; i++) if ((spots[i] - camp).sqrMagnitude > (spots[lairAt] - camp).sqrMagnitude) lairAt = i;
             }
-            var used = new HashSet<string>();
+            if (needCamp)
+                map.pois.Insert(0, new TowerOverworldPoi { id = "camp", kind = "camp", x = camp.x, y = camp.y,
+                    theme = biome.themes[prng.Next(biome.themes.Length)], name = PickName("camp", prng, used) });
             for (int i = 0; i < spots.Count; i++)
             {
-                string kind = order[i];
-                var poi = new TowerOverworldPoi { id = kind == "camp" ? "camp" : "p" + i, kind = kind, x = spots[i].x, y = spots[i].y,
-                    theme = biome.themes[rng.Next(biome.themes.Length)], name = PickName(kind, rng, used) };
-                map.pois.Add(poi);
-                // Every place sits in its own glade.
-                Glade(map, poi.x, poi.y, kind == "lair" || kind == "camp" ? 3 : 2, rng, ox, oy);
+                string kind;
+                if (i == lairAt) kind = "lair";
+                else if (kinds.Count == 0) kind = "combat";
+                else { int k = prng.Next(kinds.Count); kind = kinds[k]; kinds.RemoveAt(k); }
+                string id = shift == 0 ? "p" + (i + 1) : "s" + shift + "p" + (i + 1);
+                map.pois.Add(new TowerOverworldPoi { id = id, kind = kind, x = spots[i].x, y = spots[i].y,
+                    theme = biome.themes[prng.Next(biome.themes.Length)], name = PickName(kind, prng, used) });
             }
+            // Every place sits in its own glade.
+            foreach (var poi in map.pois) Glade(map, poi.x, poi.y, poi.kind == "lair" || poi.kind == "camp" ? 3 : 2, rng, ox, oy);
 
             // 4. The way in: a road from the map edge to the camp.
             Carve(map, new Vector2Int(map.entranceX, height - 1), camp, TowerTerrain.Road);

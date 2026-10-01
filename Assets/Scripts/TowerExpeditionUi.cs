@@ -62,6 +62,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private bool gridWalking;
     private int gridCenteredFor = -1;
     private GameObject gridBar;
+    private RawImage shiftFade;             // the old forest fading out after a shift
+    private RenderTexture shiftFrame;
+    private float shiftClock;
     private readonly List<string> planParty = new List<string>();
     private int planRations, planTonics, planFirewood;
     private bool lootOpen;
@@ -192,6 +195,18 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (toastTimer <= 0 && toast != null) toast.transform.parent.gameObject.SetActive(false);
         }
         if (view == View.Forest && (walking || fading || fadingIn)) UpdateWalk();
+        if (shiftFrame != null)
+        {
+            shiftClock += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(shiftClock / 1.6f);
+            if (shiftFade != null) shiftFade.color = new Color(1, 1, 1, 1 - t * t * (3 - 2 * t));
+            if (t >= 1 || shiftFade == null)
+            {
+                if (shiftFade != null) Destroy(shiftFade.gameObject);
+                shiftFade = null;
+                shiftFrame.Release(); Destroy(shiftFrame); shiftFrame = null;
+            }
+        }
         if (view == View.Dungeon && R != null && R.Run != null && R.Dungeon != null && board != null && viewport != null)
         {
             UpdateTravel();
@@ -709,6 +724,19 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         gridView.SetActive(true);
         if (gridCenteredFor != run.gridSeed + run.shift * 31) { gridCenteredFor = run.gridSeed + run.shift * 31; gridView.CenterOnParty(); }
         image.texture = gridView.Texture;
+        var frame = gridView.TakeShiftFrame();
+        if (frame != null)
+        {
+            // The forest moved: show the old trees and let them dissolve into the new arrangement.
+            if (shiftFrame != null) { shiftFrame.Release(); Destroy(shiftFrame); }
+            shiftFrame = frame; shiftClock = 0;
+            shiftFade = new GameObject("Forest shift", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+            shiftFade.transform.SetParent(content, false);
+            var fr = shiftFade.rectTransform;
+            fr.anchorMin = fr.anchorMax = fr.pivot = new Vector2(0, 1);
+            fr.anchoredPosition = rect.anchoredPosition; fr.sizeDelta = rect.sizeDelta;
+            shiftFade.texture = frame; shiftFade.raycastTarget = false;
+        }
         var input = image.gameObject.AddComponent<TowerMapInput>();
         input.Tapped = TapGrid;
         input.Dragged = d => { if (!gridWalking) gridView.Pan(d); };
@@ -782,7 +810,11 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
         int roadPct = preview.roadCells + preview.trailCells == 0 ? 0 : Mathf.RoundToInt(100f * preview.roadCells / (preview.roadCells + preview.trailCells));
         string cost = preview.rations.ToString("0.0") + " rations  •  +" + preview.threat + " threat  •  " + roadPct + "% on road";
-        TextAt(panel.transform, "Route cost", cost, tx, 54, textW, 18, 12, preview.rations > run.rations + 0.01f ? new Color(1f, 0.6f, 0.5f) : new Color(0.8f, 0.86f, 0.92f));
+        // Telegraph the shift: this walk would fill the threat meter.
+        bool shifts = run.threat + preview.threat >= TowerRules.ThreatMax;
+        if (shifts) cost += "  •  THE FOREST WILL SHIFT";
+        TextAt(panel.transform, "Route cost", cost, tx, 54, textW, 18, 12,
+            shifts || preview.rations > run.rations + 0.01f ? new Color(1f, 0.6f, 0.5f) : new Color(0.8f, 0.86f, 0.92f));
         ButtonAt(panel.transform, "Walk", "WALK", w - 186, 18, 146, 48, GridGo, Teal, 17);
     }
 
@@ -822,7 +854,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         {
             gridWalking = false;
             Act(null);
-            if (R.Run != null && step.arrived != null && !step.halted && R.EventBlock() == null) Say("Arrived: " + step.arrived.name + ".");
+            if (R.Run == null) return;
+            if (step.shifted) Say("The forest shifts! Unexplored places have moved.");
+            else if (step.arrived != null && !step.halted && R.EventBlock() == null) Say("Arrived: " + step.arrived.name + ".");
         });
     }
 

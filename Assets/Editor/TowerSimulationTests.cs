@@ -193,10 +193,11 @@ public sealed class TowerSimulationTests
         run.gridFog = new string('1', map.cells.Length);
         var target = map.Lair;
         TowerRules.TraversalEvents = true;
-        run.threat = TowerRules.ThreatMax - 1;           // the first stretch fills the meter: the forest stirs and ambushes
+        // Nearing the lair always offers a rest first, which stops the walk.
         var step = rules.GridMove(target.x, target.y);
         Assert.IsNull(step.error);
-        Assert.IsTrue(step.halted, "stopped short by the ambush");
+        Assert.IsTrue(step.halted, "stopped short by the event");
+        Assert.AreEqual(TowerEvents.RestId, run.eventId);
         Assert.IsNotNull(rules.EventBlock());
         Assert.IsTrue(rules.GridHasTarget, "the target is remembered");
         // The halt survives a save.
@@ -210,6 +211,83 @@ public sealed class TowerSimulationTests
         Assert.IsNull(rest.error);
         Assert.AreEqual(target.id, run.at);
         Assert.IsFalse(rules.GridHasTarget);
+    }
+
+    private static string PoiKey(TowerOverworldPoi p) { return p.id + "@" + p.x + "," + p.y + ":" + p.kind; }
+
+    [Test]
+    public void FullThreatShiftsTheForestButKeepsWhatIsKnown()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run;
+        run.gridFog = new string('1', rules.Overworld.cells.Length);
+        var first = NearestOther(rules);
+        rules.GridMove(first.x, first.y);
+        Assert.AreEqual(first.id, run.at);
+        var before = rules.Overworld;
+        var lair = before.Lair;
+        run.threat = TowerRules.ThreatMax - 1;
+        var step = rules.GridMove(before.Camp.x, before.Camp.y);
+        Assert.IsTrue(step.shifted && step.halted, "the walk stops when the forest moves");
+        Assert.AreEqual(1, run.shift);
+        Assert.IsFalse(rules.GridHasTarget, "the old plan is dropped");
+        var after = rules.Overworld;
+        Assert.AreNotSame(before, after);
+        // Camp and the explored place stay exactly where they were.
+        Assert.AreEqual(PoiKey(before.Camp), PoiKey(after.Camp));
+        Assert.AreEqual(PoiKey(first), PoiKey(after.Poi(first.id)));
+        // The unexplored places moved, and every place is still reachable.
+        int stayed = 0;
+        foreach (var p in before.pois) if (p.kind != "camp" && p.id != first.id && after.pois.Exists(q => PoiKey(q) == PoiKey(p))) stayed++;
+        Assert.AreEqual(0, stayed, "unexplored places moved");
+        Assert.AreEqual(1, after.pois.FindAll(p => p.kind == "lair").Count);
+        Assert.AreEqual(before.pois.Count, after.pois.Count);
+        foreach (var p in after.pois)
+            Assert.IsNotNull(after.FindPath(new Vector2Int(after.Camp.x, after.Camp.y), new Vector2Int(p.x, p.y)), "reachable " + p.id);
+        Assert.IsFalse(rules.CellSeen(after.Lair.x, after.Lair.y), "fog closed in again");
+        Assert.IsTrue(rules.CellSeen(run.cx, run.cy));
+        // Same shift, same forest.
+        var copy = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors);
+        Assert.AreEqual(after.Hash(), copy.Hash());
+    }
+
+    [Test]
+    public void ANewDayMovesOneUnexploredPlace()
+    {
+        var rules = GridExpedition();
+        var run = rules.Run;
+        run.gridFog = new string('1', rules.Overworld.cells.Length);
+        var before = rules.Overworld;
+        var keys = before.pois.ConvertAll(PoiKey);
+        rules.State.clock += TowerRules.DaySeconds;
+        var target = NearestOther(rules);
+        rules.GridMove(target.x, target.y);
+        Assert.AreEqual(1, run.shift, "the day rolled over");
+        var after = rules.Overworld;
+        int moved = 0;
+        foreach (var p in after.pois) if (!keys.Contains(PoiKey(p))) moved++;
+        Assert.AreEqual(1, moved, "exactly one place moved");
+        Assert.IsTrue(rules.CellSeen(after.Camp.x, after.Camp.y), "a small shift leaves the fog alone");
+    }
+
+    [Test]
+    public void OverworldArtLandsWhereTheMapLooksForIt()
+    {
+        TowerOverworldArtImporter.Kind kind;
+        Assert.AreEqual("ground/ground_meadow", TowerOverworldArtImporter.Target("ground_meadow", out kind));
+        Assert.AreEqual(TowerOverworldArtImporter.Kind.Tile, kind);
+        Assert.AreEqual("ground/water_deep", TowerOverworldArtImporter.Target("water_deep", out kind));
+        Assert.AreEqual("stamps/canopy_oak/canopy_oak_3", TowerOverworldArtImporter.Target("canopy_oak_sheet__3", out kind));
+        Assert.AreEqual("stamps/canopy_dead/canopy_dead_2", TowerOverworldArtImporter.Target("canopy_deadwood_sheet__2", out kind));
+        Assert.AreEqual("stamps/reed/reed_5", TowerOverworldArtImporter.Target("undergrowth_sheet__5", out kind));
+        Assert.AreEqual("stamps/bush/bush_1", TowerOverworldArtImporter.Target("undergrowth_sheet__1", out kind));
+        Assert.AreEqual("stamps/rock/rock_8", TowerOverworldArtImporter.Target("rocks_sheet__8", out kind));
+        Assert.AreEqual("props/poi_camp", TowerOverworldArtImporter.Target("poi_camp", out kind));
+        Assert.AreEqual("fx/tell_lair", TowerOverworldArtImporter.Target("tells_sheet__3", out kind));
+        Assert.AreEqual("fx/cloud_tile", TowerOverworldArtImporter.Target("cloud_tile", out kind));
+        Assert.IsNull(TowerOverworldArtImporter.Target("ow_style_anchor", out kind));
+        // Every ground layer the shader blends has a file name the importer recognises.
+        foreach (var g in TowerMapArt.Grounds) Assert.AreEqual("ground/" + g, TowerOverworldArtImporter.Target(g, out kind));
     }
 
     [Test]

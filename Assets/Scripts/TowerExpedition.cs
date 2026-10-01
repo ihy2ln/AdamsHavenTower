@@ -62,8 +62,9 @@ namespace AdamsHaven.Tower
         // Layered grid map (TowerOverworldRules.cs). "" = a painted-plate run from before the grid map.
         // The grid is regenerated from biome + gridSeed + shift; only the party cell, fog and worn road are saved.
         public string mapKind = "", biome = "", gridFog = "", gridRoad = "";
-        public int gridVersion, gridSeed, shift, cx, cy, targetX = -1, targetY = -1;
+        public int gridVersion, gridSeed, shift, cx, cy, targetX = -1, targetY = -1, day;
         public float travelCarry, threatCarry;
+        public List<TowerOverworldPoi> anchors = new List<TowerOverworldPoi>();   // places that stay put when the forest shifts
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).

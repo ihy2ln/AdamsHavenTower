@@ -114,10 +114,12 @@ namespace AdamsHaven.Tower
             var run = Run; var layout = RunLayout;
             if (GridRun)
             {
+                // Full threat on the grid: loose trail grows over, then the forest shifts, then it attacks.
                 int worn = GridStir();
                 run.threat = ThreatAfterStir;
+                if (worn > 0) Note("Undergrowth creeps back over the loose trails.");
+                ShiftForest(false);
                 if (TraversalEvents && TowerEvents.Get(TowerEvents.AmbushId) != null && !AmbushPending) StartEvent(TowerEvents.AmbushId);
-                Note(worn == 0 ? "The forest stirs, but your roads hold." : "The forest stirs: undergrowth creeps back over the trails.");
                 return;
             }
             var candidates = new List<string>();
