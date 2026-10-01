@@ -229,6 +229,7 @@ namespace AdamsHaven.Tower
             TickPower();
             TickSocial(dt, live);
             if (State.steward) TickSteward(dt);
+            if (State.heartWaiting.Count > 0) ReleaseHeartWaiting();
             PlanJobs();
             TickTravel(dt);
             TickWork(dt, live);

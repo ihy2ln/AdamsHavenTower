@@ -2205,6 +2205,40 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
+    public void SummonsWithNoFreeBedWaitInsideTheHeartUntilOneOpens()
+    {
+        var rules = Started();
+        rules.State.sigils = 20 * TowerRules.TenPullCost;
+        for (int i = 0; i < 20; i++) Assert.IsNull(rules.Summon(10));
+        Assert.LessOrEqual(rules.BiologicalPopulation(), rules.PopulationCap(), "summons never overfill housing");
+        Assert.Greater(rules.State.heartWaiting.Count, 0, "the overflow waits in the Heart");
+        foreach (var unit in rules.State.heartWaiting)
+            Assert.IsFalse(rules.State.residents.Contains(unit));
+        var seen = new System.Collections.Generic.HashSet<string>();
+        foreach (var unit in rules.State.residents.Concat(rules.State.heartWaiting))
+            if (unit.origin == "hero") Assert.IsTrue(seen.Add(unit.unitId), "duplicates fuse even while waiting: " + unit.unitId);
+
+        int waiting = rules.State.heartWaiting.Count, people = rules.BiologicalPopulation();
+        rules.AddRoom("house", 1, TowerRules.CoreX - 3);
+        rules.Advance(1, true);
+        Assert.Less(rules.State.heartWaiting.Count, waiting, "a new house draws units out of the Heart");
+        Assert.Greater(rules.BiologicalPopulation(), people);
+        Assert.LessOrEqual(rules.BiologicalPopulation(), rules.PopulationCap());
+        foreach (var r in rules.State.residents.FindAll(r => r.origin != "body" && r.homeRoom == 0))
+            Assert.IsFalse(rules.State.heartWaiting.Contains(r));
+    }
+
+    [Test]
+    public void HeroesWaitingInTheHeartCarryIntoALegacyRun()
+    {
+        var rules = Started();
+        var hero = new TowerResident { id = 999, name = "Waiting Hero", unitId = "test_waiting_hero", origin = "hero", rank = 7 };
+        rules.State.heartWaiting.Add(hero);
+        var next = TowerRules.LegacyRun(rules.State);
+        Assert.IsTrue(next.legacyHeroes.Exists(h => h.unitId == "test_waiting_hero"));
+    }
+
+    [Test]
     public void GoldReadsAsACompactNumberFromOneThousand()
     {
         Assert.AreEqual("999", TowerRules.Compact(999));

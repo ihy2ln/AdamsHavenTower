@@ -140,6 +140,7 @@ namespace AdamsHaven.Tower
         public int legacyPoints;                // rogue-lite meta score earned by every fallen run (TowerRules.LegacyEarned)
         public int legacyRank;                  // 0..10, from legacyPoints: the stacking start bonus of this run
         public List<TowerResident> legacyHeroes = new List<TowerResident>();   // heroes carried over from a fallen run
+        public List<TowerResident> heartWaiting = new List<TowerResident>();   // summons with no free bed, held in the Heart
         public int summonPity;                  // pulls since the last SSR
         public bool freeSummonUsed;
         public List<TowerFloor> floors = new List<TowerFloor>();
@@ -283,6 +284,7 @@ namespace AdamsHaven.Tower
             NormalizeExpeditions();
             if (State.memorial == null) State.memorial = new List<TowerMemorial>();            if (State.randomState == 0) State.randomState = 77101;
             if (State.legacyHeroes == null) State.legacyHeroes = new List<TowerResident>();
+            if (State.heartWaiting == null) State.heartWaiting = new List<TowerResident>();
             if (string.IsNullOrEmpty(State.heartStage)) State.heartStage = "stable";
             foreach (var resident in State.residents)
             {
@@ -421,12 +423,19 @@ namespace AdamsHaven.Tower
 
         public TowerResident AddResident(string unitId, string name, string origin, int level)
         {
+            var resident = NewResident(unitId, name, origin, level);
+            State.residents.Add(resident);
+            return resident;
+        }
+
+        // A resident not yet placed anywhere (summons decide between the Tower and the Heart's waiting list).
+        private TowerResident NewResident(string unitId, string name, string origin, int level)
+        {
             var resident = new TowerResident { id = State.nextResidentId++, unitId = unitId,
                 name = name, origin = origin, level = level };
             if (origin == "body") resident.charge = 2160;
             resident.schedule = "flexible";
             if (origin != "body") resident.trait = Traits[(resident.id * 7 + 3) % Traits.Length];
-            State.residents.Add(resident);
             return resident;
         }
 

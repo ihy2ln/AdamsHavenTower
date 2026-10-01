@@ -10,6 +10,7 @@ namespace AdamsHaven.Tower
         public string name, unitId, kind;   // kind: "hero" or "resident"
         public int rank;                    // 1 (F) to 9 (SSR)
         public bool fused;                  // a duplicate hero that raised the one already in the Tower
+        public bool waiting;                // no free bed: the unit waits inside the Heart
     }
 
     // The Celestium Heart's own systems (TOWER_MODE_GDD section 8): rank upgrades, warning stages,
@@ -140,6 +141,7 @@ namespace AdamsHaven.Tower
             var seen = new HashSet<string>();
             var heroes = new List<TowerResident>(fallen.residents);
             if (fallen.legacyHeroes != null) heroes.AddRange(fallen.legacyHeroes);
+            if (fallen.heartWaiting != null) heroes.AddRange(fallen.heartWaiting);
             foreach (var hero in heroes)
             {
                 if (hero.origin != "hero" || string.IsNullOrEmpty(hero.unitId) || seen.Contains(hero.unitId)) continue;
@@ -257,7 +259,7 @@ namespace AdamsHaven.Tower
             if (pool.Count > 0) unit = pool[PickIndex(pool.Count)];
             int pick = PickIndex(SummonHeroIds.Length);
             string unitId = unit != null ? unit.id : SummonHeroIds[pick], name = unit != null ? unit.name : SummonHeroNames[pick];
-            var owned = State.residents.Find(r => r.origin == "hero" && r.unitId == unitId);
+            var owned = Owned(r => r.origin == "hero" && r.unitId == unitId);
             if (owned != null)
             {
                 // Duplicates fuse: a higher pull lifts the hero to that rank, otherwise the hero gains a level.
@@ -265,11 +267,11 @@ namespace AdamsHaven.Tower
                 else owned.level++;
                 return new TowerSummon { name = name, unitId = unitId, kind = "hero", rank = rank, fused = true };
             }
-            var hero = AddResident(unitId, name, "hero", 1);
+            var hero = NewResident(unitId, name, "hero", 1);
             hero.rank = rank;
             if (unit != null) TowerRoster.ApplyStats(hero, unit);
             else RaiseStats(hero, rank - 1);
-            return new TowerSummon { name = name, unitId = unitId, kind = "hero", rank = rank };
+            return new TowerSummon { name = name, unitId = unitId, kind = "hero", rank = rank, waiting = !Admit(hero) };
         }
 
         // Residents are the named roster residents (each has a fixed rank); one not owned yet is preferred, and a
@@ -279,26 +281,58 @@ namespace AdamsHaven.Tower
             var pool = TowerRoster.OfRank(rank, false);
             if (pool.Count > 0)
             {
-                var fresh = pool.FindAll(u => !State.residents.Exists(r => r.unitId == u.id));
+                var fresh = pool.FindAll(u => Owned(r => r.unitId == u.id) == null);
                 bool duplicate = fresh.Count == 0;
                 var unit = duplicate ? pool[PickIndex(pool.Count)] : fresh[PickIndex(fresh.Count)];
                 if (duplicate)
                 {
-                    var owned = State.residents.Find(r => r.unitId == unit.id);
+                    var owned = Owned(r => r.unitId == unit.id);
                     if (owned != null) owned.level++;
                     return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank, fused = true };
                 }
-                var named = AddResident(unit.id, unit.name, "villager", 1);
+                var named = NewResident(unit.id, unit.name, "villager", 1);
                 named.rank = rank;
                 TowerRoster.ApplyStats(named, unit);
-                return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank };
+                return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank, waiting = !Admit(named) };
             }
             string[] trades = { "Miner", "Builder", "Cook", "Scout", "Herald", "Scholar", "Trader" };
             string name = trades[(int)(Random01() * trades.Length) % trades.Length] + " " + State.nextResidentId;
-            var resident = AddResident("", name, "villager", 1);
+            var resident = NewResident("", name, "villager", 1);
             resident.rank = rank;
             RaiseStats(resident, Mathf.CeilToInt(rank / 2f));
-            return new TowerSummon { name = name, kind = "resident", rank = rank };
+            return new TowerSummon { name = name, kind = "resident", rank = rank, waiting = !Admit(resident) };
+        }
+
+        // ---------------------------------------------------------------- waiting inside the Heart
+
+        // A unit the player owns, in the Tower or waiting inside the Heart.
+        private TowerResident Owned(Predicate<TowerResident> match)
+        { return State.residents.Find(match) ?? State.heartWaiting.Find(match); }
+
+        // A summoned unit moves into a free bed; with none, it waits inside the Heart (outside the population count).
+        private bool Admit(TowerResident resident)
+        {
+            var home = BiologicalPopulation() < PopulationCap() ? AvailableHome() : null;
+            if (home == null) { State.heartWaiting.Add(resident); return false; }
+            resident.homeRoom = resident.currentRoom = home.uid;
+            State.residents.Add(resident);
+            return true;
+        }
+
+        // Called every tick while someone waits: each free bed draws the next unit out of the Heart, oldest first.
+        private void ReleaseHeartWaiting()
+        {
+            while (State.heartWaiting.Count > 0 && BiologicalPopulation() < PopulationCap())
+            {
+                var home = AvailableHome();
+                if (home == null) return;
+                var resident = State.heartWaiting[0];
+                State.heartWaiting.RemoveAt(0);
+                resident.homeRoom = resident.currentRoom = home.uid;
+                State.residents.Add(resident);
+                Note(resident.name + " stepped out of the Heart into a free bed.");
+                Emit("recruit", home.uid, resident.id, resident.name);
+            }
         }
 
         // Each step adds one point to a stat, cycling from a random start so ranks read in the stat block.

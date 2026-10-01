@@ -104,7 +104,8 @@ public sealed partial class TowerHud
 
         // Summon
         sigilText.text = "SIGILS " + state.sigils + "     SSR PITY " + state.summonPity + " / " + TowerRules.HardPity +
-            "     NEXT SSR CHANCE " + rules.SsrChance().ToString("0.#") + "%";
+            "     NEXT SSR CHANCE " + rules.SsrChance().ToString("0.#") + "%" +
+            (state.heartWaiting.Count > 0 ? "     WAITING IN HEART " + state.heartWaiting.Count : "");
         pityFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(state.summonPity / (float)TowerRules.HardPity), 1);
         string rates = "RATES  ";
         for (int i = 0; i < TowerRules.SummonRates.Length; i++)
@@ -126,8 +127,8 @@ public sealed partial class TowerHud
             var lines = new List<string>();
             foreach (var pull in pulls)
                 lines.Add(RankTag(pull.rank) + "   " + pull.name + "   <color=#b7c7d6>" +
-                    (pull.kind == "hero" ? (pull.fused ? "hero  •  duplicate fused" : "hero  •  joins the Tower") :
-                        "resident  •  joins the Tower") + "</color>");
+                    (pull.kind == "hero" ? "hero  •  " : "resident  •  ") + (pull.fused ? "duplicate fused" :
+                        pull.waiting ? "waits in the Heart (no free bed)" : "joins the Tower") + "</color>");
             summonResults.text = string.Join(pulls.Count > 5 ? "\n" : "\n\n", lines.ToArray());
         }
 
