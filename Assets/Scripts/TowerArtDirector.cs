@@ -210,7 +210,7 @@ public sealed class TowerArtDirector : MonoBehaviour
             {
                 var def = TowerCatalog.Get(work.type);
                 if (def == null) continue;
-                left = X(work.x); width = def.width * Cell;
+                left = X(work.x); width = TowerTiers.Bays(work.type, 1) * Cell;
                 Rect crop;
                 string grade = "F";
                 string path = RoomArt(work.type, grade, out crop);

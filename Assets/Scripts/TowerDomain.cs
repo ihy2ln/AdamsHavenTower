@@ -63,6 +63,7 @@ namespace AdamsHaven.Tower
         public int might = 3, sight = 3, grit = 3, charm = 3, wit = 3, grace = 3, luck = 3;
         public string trait = "";
         public string duty = "";   // what this worker does in their job room: production, repair or haul
+        public int rank;           // summon rank 1 (F) to 9 (SSR); 0 for villagers who walked in through the Gate
         public string schedule = "";
         public float breakSeconds, moodLow;
         public string breakKind = "";
@@ -132,7 +133,12 @@ namespace AdamsHaven.Tower
         public float food = 60, water = 60, firewood = 60;
         public int heartRank = 1;
         public float heartHp = 1200;
+        public string heartStage = "stable";   // stable, strained or critical (GDD 8.5 warning stages)
         public bool defeated;
+        public int runs;                        // how many times a fallen Heart restarted this slot
+        public List<TowerResident> legacyHeroes = new List<TowerResident>();   // heroes carried over from a fallen run
+        public int summonPity;                  // pulls since the last SSR
+        public bool freeSummonUsed;
         public List<TowerFloor> floors = new List<TowerFloor>();
         public List<TowerRoom> rooms = new List<TowerRoom>();
         public List<TowerResident> residents = new List<TowerResident>();
@@ -175,26 +181,27 @@ namespace AdamsHaven.Tower
 
     public static class TowerCatalog
     {
-        // Values follow Shelter.ROOMS and WorldDefs.TOWER_W in the Godot source.
+        // Values follow Shelter.ROOMS in the Godot source. Width is the most bays a building
+        // reaches (TOWER_MODE_GDD 5.2): 1 for single-bay buildings, 3 for every other one.
         public static readonly TowerRoomDef[] All = {
             new TowerRoomDef("gate", "Celestium Gate", "gate", 1, 0, "might"),
             new TowerRoomDef("heart", "Celestium Heart", "heart", 1, 0, "grit"),
             new TowerRoomDef("house", "The Shack", "living", 1, 40, "charm"),
-            new TowerRoomDef("cottage", "Cottage", "living", 2, 90, "charm"),
-            new TowerRoomDef("nursery", "Hearth Nursery", "living", 2, 150, "charm"),
+            new TowerRoomDef("cottage", "Cottage", "living", 3, 90, "charm"),
+            new TowerRoomDef("nursery", "Hearth Nursery", "living", 3, 150, "charm"),
             new TowerRoomDef("terrace_row", "Terrace Row", "living", 3, 220, "charm"),
             new TowerRoomDef("manor", "Ashgrove Manor", "living", 3, 420, "charm"),
-            new TowerRoomDef("kitchen", "Kitchen", "produce", 2, 100, "grace", "food"),
-            new TowerRoomDef("farmstead", "Farmstead", "produce", 2, 140, "grace", "food", true),
+            new TowerRoomDef("kitchen", "Kitchen", "produce", 3, 100, "grace", "food"),
+            new TowerRoomDef("farmstead", "Farmstead", "produce", 3, 140, "grace", "food", true),
             new TowerRoomDef("well", "Stone Well", "produce", 1, 80, "sight", "water"),
             new TowerRoomDef("lumber_mill", "Lumber Mill", "produce", 3, 120, "might", "firewood"),
             new TowerRoomDef("quarry", "Stone Quarry", "produce", 3, 180, "grit", "celestium", false, true),
-            new TowerRoomDef("barn", "Barn", "storage", 1, 150, "grit"),
+            new TowerRoomDef("barn", "Barn", "storage", 3, 150, "grit"),
             new TowerRoomDef("silo", "Grain Silo", "storage", 1, 110, "grit"),
             new TowerRoomDef("warehouse", "Warehouse", "storage", 3, 260, "grit"),
             new TowerRoomDef("frosted_mug", "The Frosted Mug", "medic", 3, 260, "wit", "tonics"),
-            new TowerRoomDef("guild_hall", "Silverbrook Adventure Guild", "herald", 4, 320, "charm"),
-            new TowerRoomDef("forge", "The Forge", "train", 2, 240, "might"),
+            new TowerRoomDef("guild_hall", "Silverbrook Adventure Guild", "herald", 3, 320, "charm"),
+            new TowerRoomDef("forge", "The Forge", "train", 3, 240, "might"),
             new TowerRoomDef("deck_hall", "Deck Hall", "train", 3, 260, "wit"),
             new TowerRoomDef("market", "Argent Market", "trade", 3, 220, "luck", "gold")
         };
@@ -206,14 +213,25 @@ namespace AdamsHaven.Tower
         }
     }
 
-    // Barns climb nine tiers (F to SSR) and widen from one bay to three; every other room stops at level 3.
+    // Every building climbs nine ranks (F to SSR) in place (TOWER_MODE_GDD 5.1-5.2). Level 1 is F.
+    // Multi-bay buildings are one bay at F-D, two at C-B and three at A-SSR; single-bay ones never widen.
     public static class TowerTiers
     {
-        public static readonly string[] BarnNames = { "F", "E", "D", "C", "B", "A", "S", "SS", "SSR" };
-        public static int MaxLevel(string type) { return type == "barn" ? BarnNames.Length : 3; }
-        public static int BarnBays(int level) { return level <= 3 ? 1 : (level <= 5 ? 2 : 3); }
-        public static string BarnTier(int level)
-        { return BarnNames[Math.Max(0, Math.Min(BarnNames.Length - 1, level - 1))]; }
+        public static readonly string[] Names = { "F", "E", "D", "C", "B", "A", "S", "SS", "SSR" };
+        public static readonly string[] BarnNames = Names;
+        public const int MaxRank = 9;
+        public static int MaxLevel(string type) { return MaxRank; }
+        public static bool SingleBay(string type)
+        { return type == "gate" || type == "heart" || type == "house" || type == "well" || type == "silo"; }
+        public static int Bays(string type, int level)
+        { return SingleBay(type) ? 1 : level <= 3 ? 1 : (level <= 5 ? 2 : 3); }
+        public static int BarnBays(int level) { return Bays("barn", level); }
+        public static string Tier(int level) { return Names[Math.Max(0, Math.Min(Names.Length - 1, level - 1))]; }
+        public static string BarnTier(int level) { return Tier(level); }
+
+        // GDD 8.4: the Heart's rank caps the rank of every building (F Heart: D buildings ... SS Heart: SSR).
+        private static readonly int[] Caps = { 3, 4, 5, 6, 6, 7, 8, 9, 9 };
+        public static int BuildingCap(int heartRank) { return Caps[Math.Max(0, Math.Min(Caps.Length - 1, heartRank - 1))]; }
     }
 
     public sealed partial class TowerRules
@@ -256,28 +274,27 @@ namespace AdamsHaven.Tower
             if (State.works == null) State.works = new List<TowerWork>();
             NormalizeExpeditions();
             if (State.memorial == null) State.memorial = new List<TowerMemorial>();            if (State.randomState == 0) State.randomState = 77101;
+            if (State.legacyHeroes == null) State.legacyHeroes = new List<TowerResident>();
+            if (string.IsNullOrEmpty(State.heartStage)) State.heartStage = "stable";
             foreach (var resident in State.residents)
             {
+                if (resident.origin == "hero" && resident.rank == 0) resident.rank = 3;   // founding heroes count as D
                 if (string.IsNullOrEmpty(resident.schedule)) resident.schedule = "flexible";
                 if (string.IsNullOrEmpty(resident.trait) && resident.origin != "body")
                     resident.trait = Traits[(resident.id * 7 + 3) % Traits.Length];
             }
-            if (State.introPhase == "complete")
-            {
-                // The Heart sits in the middle now: every founded floor also holds its east side.
-                foreach (var floor in State.floors) if (floor.east < 1) floor.east = 1;
-                RefillGoals();
-            }
+            // The Heart shaft and the Gate are the Tower's right edge (TOWER_MODE_GDD 4): every building
+            // stands west of the shaft, and only the ground floor reaches one cell east, for the Gate.
+            MoveEastRoomsWest();
+            foreach (var floor in State.floors) floor.east = floor.number == 0 && State.introPhase != "dormant" ? 1 : 0;
+            if (State.introPhase == "complete") RefillGoals();
+            State.heartRank = Mathf.Clamp(State.heartRank, 1, TowerTiers.MaxRank);
             foreach (var room in State.rooms)
             {
-                if (room.type != "barn") continue;
-                // Older saves kept every barn two cells wide; the tiered barn is one bay until level 4.
-                int bays = TowerTiers.BarnBays(room.level);
-                if (room.width > bays)
-                {
-                    if (room.x + room.width <= CoreX) room.x += room.width - bays;   // west wing: free the outer (left) cells
-                    room.width = bays;
-                }
+                // Older saves placed rooms at their full catalogue width; a room is now only as wide as
+                // its rank's bays. The rightmost bay stays put and the extra cells on its left are freed.
+                int bays = TowerTiers.Bays(room.type, room.level);
+                if (room.width > bays) { room.x += room.width - bays; room.width = bays; }
             }
             string[] bodyVariants = { "normal", "short", "tall", "muscle", "hourglass" };
             int bodyIndex = 0;
@@ -296,6 +313,38 @@ namespace AdamsHaven.Tower
             }
         }
 
+        // Older saves built an east wing. Each of those rooms moves to the nearest free west cells on its
+        // floor (founding more of the west wing if needed); unfinished east construction is refunded.
+        private void MoveEastRoomsWest()
+        {
+            for (int i = State.works.Count - 1; i >= 0; i--)
+            {
+                var work = State.works[i];
+                if (work.kind == "wing" && work.side > 0) { State.works.RemoveAt(i); continue; }
+                if (work.kind != "room" || work.x <= CoreX) continue;
+                var def = TowerCatalog.Get(work.type);
+                State.works.RemoveAt(i);
+                if (def != null) State.gold += def.cost;
+            }
+            foreach (var room in State.rooms)
+            {
+                if (room.x <= CoreX || room.type == "gate" || room.type == "heart") continue;
+                var floor = Floor(room.floor);
+                int x = -1;
+                for (int start = CoreX - room.width; start >= MinBuildX && x < 0; start--)
+                {
+                    bool free = true;
+                    for (int cx = start; cx < start + room.width && free; cx++)
+                        free = State.rooms.Find(r => r != room && r.floor == room.floor && cx >= r.x && cx < r.x + r.width) == null;
+                    if (free) x = start;
+                }
+                if (x < 0 || floor == null) continue;   // no room left on this floor: it stays until the player moves it
+                room.x = x;
+                room.flip = false;
+                floor.west = Mathf.Max(floor.west, CoreX - x);
+            }
+        }
+
         public TowerFloor Floor(int number) { return State.floors.Find(f => f.number == number); }
         public TowerRoom Room(int uid) { return State.rooms.Find(r => r.uid == uid); }
         public TowerResident Resident(int id) { return State.residents.Find(r => r.id == id); }
@@ -307,7 +356,7 @@ namespace AdamsHaven.Tower
             var def = TowerCatalog.Get(type);
             if (def == null) return null;
             var room = new TowerRoom { uid = State.nextRoomUid++, type = type, floor = floor,
-                x = x, width = def.width, level = level };
+                x = x, width = TowerTiers.Bays(type, level), level = level };
             State.rooms.Add(room);
             return room;
         }
@@ -339,7 +388,7 @@ namespace AdamsHaven.Tower
             if (unitId != "kaela" && unitId != "ghislaine" && unitId != "elara")
                 return "Choose Kaela, Ghislaine, or Elara.";
             AddResident(unitId, unitId == "kaela" ? "Kaela" :
-                (unitId == "ghislaine" ? "Ghislaine" : "Elara"), "hero", 1);
+                (unitId == "ghislaine" ? "Ghislaine" : "Elara"), "hero", 1).rank = 3;
             TowerRoom shack = State.rooms.Find(r => r.type == "house" && r.floor == 0);
             if (shack != null)
             {
@@ -348,6 +397,7 @@ namespace AdamsHaven.Tower
             }
             State.introPhase = "complete";
             State.tutorialStep = 0;
+            ReturnLegacyHeroes();
             RefillGoals();
             foreach (string id in new[] { "kitchen", "well", "lumber_mill", "market", "nursery", "guild_hall" })
                 if (!State.blueprints.Contains(id)) State.blueprints.Add(id);
@@ -435,19 +485,21 @@ namespace AdamsHaven.Tower
             if (def == null || type == "heart" || type == "gate") return "Unknown room.";
             if (!State.blueprints.Contains(type)) return "The Heart has not learned that blueprint.";
             if (floor < FloorMin || floor > FloorMax) return "Floor out of range.";
-            bool westSide = x + def.width <= CoreX, eastSide = x > CoreX;
-            if (!westSide && !eastSide) return "Rooms cannot cover the Heart shaft.";
-            if (x < MinBuildX || x + def.width - 1 > MaxBuildX) return "Rooms stay within the ten-cell wings.";
+            int footprint = TowerTiers.Bays(type, 1);
+            bool westSide = x + footprint <= CoreX, eastSide = x > CoreX;
+            if (eastSide) return "The Heart and the Gate are the Tower's right edge. Build to the west.";
+            if (!westSide) return "Rooms cannot cover the Heart shaft.";
+            if (x < MinBuildX || x + footprint - 1 > MaxBuildX) return "Rooms stay within the ten-cell wings.";
             var f = Floor(floor);
             if (f == null) return "Open this floor first.";
             if (westSide && x < CoreX - f.west) return "Expand the Celestium foundation west first.";
-            if (eastSide && x + def.width - 1 > CoreX + f.east) return "Expand the Celestium foundation east first.";
+            if (eastSide && x + footprint - 1 > CoreX + f.east) return "Expand the Celestium foundation east first.";
             if (def.groundOnly && floor != 0) return "This room needs the ground floor.";
             if (def.undergroundOnly && floor >= 0) return "This room belongs underground.";
-            for (int cx = x; cx < x + def.width; cx++)
+            for (int cx = x; cx < x + footprint; cx++)
                 if (RoomAt(floor, cx) != null || WorkRoomAt(floor, cx) != null) return "Another room occupies that space.";
-            if (westSide && x + def.width != CoreX && RoomAt(floor, x + def.width) == null &&
-                WorkRoomAt(floor, x + def.width) == null)
+            if (westSide && x + footprint != CoreX && RoomAt(floor, x + footprint) == null &&
+                WorkRoomAt(floor, x + footprint) == null)
                 return "Build contiguously outward from the Heart shaft.";
             if (eastSide && x != CoreX + 1 && RoomAt(floor, x - 1) == null && WorkRoomAt(floor, x - 1) == null)
                 return "Build contiguously outward from the Heart shaft.";
@@ -502,7 +554,7 @@ namespace AdamsHaven.Tower
                 Note("Started building floor " + number + " (" + Clock(seconds) + ").");
                 return null;
             }
-            State.floors.Add(new TowerFloor { number = number, east = 1 });
+            State.floors.Add(new TowerFloor { number = number });
             Note("Opened floor " + number + ".");
             return null;
         }
@@ -546,7 +598,7 @@ namespace AdamsHaven.Tower
         {
             var floor = Floor(number);
             if (floor == null) return "Open this floor first.";
-            if (side >= 0) side = 1;
+            if (side >= 0) return "The Tower grows west only: the Heart and the Gate stand at its right edge.";
             if (WingWork(number, side) != null) return "That foundation is already being extended.";
             if (WingCellsOf(number, side) >= WingCells + (side > 0 && number == 0 ? 1 : 0))
                 return side < 0 ? "The west wing is fully founded." : "The east wing is fully founded.";
@@ -583,7 +635,8 @@ namespace AdamsHaven.Tower
             return null;
         }
 
-        public int Capacity(TowerRoom room) { return room.width * room.level * 2; }
+        // Two places per bay, plus one more for every rank above F (GDD 5.3; counts are a first pass).
+        public int Capacity(TowerRoom room) { return room.width * 2 + room.level - 1; }
 
         public int PopulationCap()
         {
@@ -676,7 +729,7 @@ namespace AdamsHaven.Tower
         {
             float cap = 120;
             foreach (var room in State.rooms)
-                if (TowerCatalog.Get(room.type).kind == "storage") cap += 60 * room.width * room.level;
+                if (TowerCatalog.Get(room.type).kind == "storage") cap += 60 * OutputBays(room) * room.level;
             return cap;
         }
 
@@ -684,10 +737,23 @@ namespace AdamsHaven.Tower
         {
             var def = TowerCatalog.Get(room.type);
             if (def == null) return 0;
-            float mult = room.level == 1 ? 1 : (room.level == 2 ? 1.5f : 2f);
+            float mult = 1 + 0.5f * (room.level - 1);
             return def.produces == "celestium" ? room.level :
                 (def.produces == "firewood" ? 5 :
-                    def.produces == "water" ? 6 : def.produces == "gold" ? 6 : 4) * room.width * mult;
+                    def.produces == "water" ? 6 : def.produces == "gold" ? 6 : 4) * OutputBays(room) * mult;
+        }
+
+        // First-pass balance for GDD 5.2: rooms now open as one bay, but output and storage start from
+        // the old fixed widths so a rank F room is no weaker than before. Extra bays only add beyond that.
+        private static int OutputBays(TowerRoom room)
+        {
+            switch (room.type)
+            {
+                case "kitchen": case "farmstead": return Mathf.Max(2, room.width);
+                case "lumber_mill": case "quarry": case "warehouse": case "frosted_mug": case "market":
+                    return Mathf.Max(3, room.width);
+                default: return room.width;
+            }
         }
 
         public string Collect(int roomUid)
@@ -723,65 +789,69 @@ namespace AdamsHaven.Tower
 
         public int MaxLevel(TowerRoom room) { return TowerTiers.MaxLevel(room.type); }
 
-        public string LevelLabel(TowerRoom room)
+        // The highest building rank the Heart currently allows.
+        public int RankCap() { return TowerTiers.BuildingCap(State.heartRank); }
+
+        public string LevelLabel(TowerRoom room) { return "Rank " + TowerTiers.Tier(room.level); }
+
+        // GDD 5.2: the rightmost bay is fixed and every new bay is added on its left. When that cell is
+        // taken, unfounded or across the shaft, the upgrade waits until the player clears it.
+        // Barns from older saves that already grew to the right (flip) keep growing that way.
+        public string BayGrowth(TowerRoom room, int newWidth, out int newX)
         {
-            return room.type == "barn" ? "Tier " + TowerTiers.BarnTier(room.level) + " (Lv " + room.level + ")" :
-                "Level " + room.level;
+            int grow = newWidth - room.width;
+            newX = room.flip ? room.x : room.x - grow;
+            int from = room.flip ? room.x + room.width : room.x - grow;
+            bool westSide = room.x + room.width <= CoreX;
+            for (int cx = from; cx < from + grow; cx++)
+            {
+                bool free = cx >= MinBuildX && cx <= MaxBuildX && IsFounded(room.floor, cx) &&
+                    (westSide ? cx < CoreX : cx > CoreX) && !(room.floor == 0 && cx == GateX) &&
+                    RoomAt(room.floor, cx) == null && WorkRoomAt(room.floor, cx) == null;
+                if (!free)
+                    return TowerCatalog.Get(room.type).displayName + " needs the cell " +
+                        (room.flip ? "to its right" : "to its left") + " free and founded to grow to rank " +
+                        TowerTiers.Tier(room.level + 1) + " (" + newWidth + " bays).";
+            }
+            return null;
         }
 
-        // A barn that gains a bay grows outward from the tower, or inward when that side is blocked.
-        // Single-bay barns are free to pick a side; wider barns keep the side they already grew toward.
-        private string BarnGrowth(TowerRoom room, int newWidth, out int newX, out bool newFlip)
+        public int UpgradeGoldCost(TowerRoom room)
         {
-            newX = room.x; newFlip = room.flip;
-            int grow = newWidth - room.width;
-            var f = Floor(room.floor);
-            bool westSide = room.x + room.width <= CoreX;
-            bool left = true, right = true;
-            if (room.width > 1) { left = !room.flip; right = room.flip; }
-            bool preferRight = room.width > 1 ? room.flip : !westSide;
-            for (int pass = 0; pass < 2; pass++)
-            {
-                bool toRight = pass == 0 ? preferRight : !preferRight;
-                if (toRight ? !right : !left) continue;
-                int from = toRight ? room.x + room.width : room.x - grow;
-                bool free = f != null;
-                for (int cx = from; free && cx < from + grow; cx++)
-                {
-                    if (cx < MinBuildX || cx > MaxBuildX || cx == CoreX || cx == GateX && room.floor == 0) free = false;
-                    else if (RoomAt(room.floor, cx) != null || WorkRoomAt(room.floor, cx) != null) free = false;
-                    else if (westSide ? (cx > CoreX - 1 || cx < CoreX - f.west) : (cx <= CoreX || cx > CoreX + f.east))
-                        free = false;
-                }
-                if (!free) continue;
-                newX = toRight ? room.x : room.x - grow; newFlip = toRight;
-                return null;
-            }
-            return "The barn needs " + grow + " free, founded cell" + (grow > 1 ? "s" : "") + " beside it to grow.";
+            int newWidth = TowerTiers.Bays(room.type, room.level + 1);
+            return (room.level == 1 ? 200 : 600 * (room.level - 1)) * newWidth;
         }
+
+        public int UpgradeMaterialCost(TowerRoom room)
+        { return room.level * TowerTiers.Bays(room.type, room.level + 1) * 2; }
 
         public string UpgradeRoom(int roomUid)
         {
             var room = Room(roomUid);
             if (room == null || room.type == "heart" || room.type == "gate" || room.level >= MaxLevel(room))
                 return "That room cannot be upgraded.";
-            int newWidth = room.type == "barn" ? TowerTiers.BarnBays(room.level + 1) : room.width;
-            int newX = room.x; bool newFlip = room.flip;
+            if (room.level >= RankCap())
+            {
+                int needed = State.heartRank;
+                while (needed < TowerTiers.MaxRank && TowerTiers.BuildingCap(needed) <= room.level) needed++;
+                return "Raise the Celestium Heart to rank " + TowerTiers.Tier(needed) + " to upgrade past rank " +
+                    TowerTiers.Tier(room.level) + ".";
+            }
+            int newWidth = TowerTiers.Bays(room.type, room.level + 1);
+            int newX = room.x;
             if (newWidth > room.width)
             {
-                string blocked = BarnGrowth(room, newWidth, out newX, out newFlip);
+                string blocked = BayGrowth(room, newWidth, out newX);
                 if (blocked != null) return blocked;
             }
-            int cost = room.type == "barn" ?
-                (room.level == 1 ? 200 : 600 * (room.level - 1)) * newWidth :
-                (room.level == 1 ? 200 : 600) * room.width;
+            int cost = UpgradeGoldCost(room);
             if (State.gold < cost) return "Not enough gold.";
-            int material = room.level * newWidth * 2;
+            int material = UpgradeMaterialCost(room);
             if (State.wood < material || State.stone < material)
                 return "Upgrades need wood and stone.";
             State.gold -= cost; State.wood -= material; State.stone -= material; room.level++;
-            room.x = newX; room.width = newWidth; room.flip = newFlip;
-            Note("Upgraded " + room.type + " to level " + room.level + ".");
+            room.x = newX; room.width = newWidth;
+            Note("Upgraded " + TowerCatalog.Get(room.type).displayName + " to rank " + TowerTiers.Tier(room.level) + ".");
             Bump("upgrade");
             Emit("upgrade", room.uid, 0, room.level.ToString());
             return null;

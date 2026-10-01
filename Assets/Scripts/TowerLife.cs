@@ -264,7 +264,7 @@ namespace AdamsHaven.Tower
         }
 
         private float heartMaxHp()
-        { return State.heartRank == 1 ? 1200 : State.heartRank == 2 ? 1800 : 2600; }
+        { return HeartMaxHp(State.heartRank); }
 
         public float MoodTarget(TowerResident resident)
         {

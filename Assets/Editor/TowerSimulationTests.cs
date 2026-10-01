@@ -523,8 +523,8 @@ public sealed class TowerSimulationTests
     {
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("kitchen", 0, 19));
-        var room = rules.RoomAt(0, 19);
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
+        var room = rules.RoomAt(0, 20);
         Assert.IsNotNull(room);
         Assert.IsNull(rules.Assign(rules.State.residents[0].id, room.uid));
         rules.Advance(10, true);
@@ -568,7 +568,7 @@ public sealed class TowerSimulationTests
         var rules = Started();
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("nursery", 0, 19));
+        Assert.IsNull(rules.Build("nursery", 0, 20));
         var other = rules.AddResident("", "Rowan", "villager", 1);
         Assert.IsNull(rules.Assign(other.id, rules.RoomAt(0, 21).uid));
         Assert.IsNull(rules.PairFamily(rules.State.residents[0].id, other.id));
@@ -576,7 +576,7 @@ public sealed class TowerSimulationTests
         var child = rules.State.residents.Find(r => r.ageStage == 1);
         Assert.IsNotNull(child);
         Assert.AreEqual("nursery", rules.Room(child.homeRoom).type);
-        Assert.IsNotNull(rules.Assign(child.id, rules.RoomAt(0, 19).uid));
+        Assert.IsNotNull(rules.Assign(child.id, rules.RoomAt(0, 20).uid));
         rules.Advance(2 * TowerRules.DaySeconds, false);
         Assert.AreEqual(0, child.ageStage);
     }
@@ -645,7 +645,7 @@ public sealed class TowerSimulationTests
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
         int wood = rules.State.wood, stone = rules.State.stone;
-        Assert.IsNull(rules.Build("kitchen", 0, 19));
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
         Assert.AreEqual(wood - rules.BuildWoodCost("kitchen"), rules.State.wood);
         Assert.AreEqual(stone - rules.BuildStoneCost("kitchen"), rules.State.stone);
     }
@@ -680,8 +680,8 @@ public sealed class TowerSimulationTests
         var rules = Started();
         var kitchen = Kitchen(rules);
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("well", 0, 18));
-        var well = rules.RoomAt(0, 18);
+        Assert.IsNull(rules.Build("well", 0, 19));
+        var well = rules.RoomAt(0, 19);
         rules.State.pendingVisitors = 1;
         Assert.IsNull(rules.RecruitVisitor());
         var newcomer = rules.State.residents[1];
@@ -973,68 +973,58 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
-    public void EastWingBuildsOutwardFromTheGate()
+    public void HeartAndGateAreTheRightEdgeOfTheTower()
     {
         var rules = Started();
         rules.State.celestium = 200; rules.State.gold = 3000; rules.State.wood = 100; rules.State.stone = 100;
-        Assert.IsNotNull(rules.CanBuild("kitchen", 0, 24)); // not founded yet
-        Assert.IsNull(rules.ExpandFloor(0, 1));
-        Assert.IsNull(rules.ExpandFloor(0, 1));
-        Assert.AreEqual(3, rules.Floor(0).east);
-        Assert.IsNotNull(rules.CanBuild("kitchen", 0, 25)); // must touch the Gate first
-        Assert.IsNull(rules.Build("kitchen", 0, 24));
-        Assert.AreEqual("kitchen", rules.RoomAt(0, 25).type);
+        Assert.IsNotNull(rules.ExpandFloor(0, 1), "nothing is founded east of the Gate");
+        Assert.AreEqual(1, rules.Floor(0).east, "only the Gate's cell");
+        Assert.IsNotNull(rules.CanBuild("kitchen", 0, 24));
         Assert.IsNotNull(rules.CanBuild("well", 0, 23));   // the Gate's cell
         Assert.IsNotNull(rules.CanBuild("well", 0, TowerRules.CoreX)); // never on the shaft
-        Assert.IsNotNull(rules.CanBuild("cottage", 0, TowerRules.CoreX - 1)); // straddles the shaft
+        Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
+        Assert.IsNull(rules.OpenFloor(1));
+        Assert.AreEqual(0, rules.Floor(1).east, "upper floors end at the shaft");
+        Assert.IsNotNull(rules.CanBuild("house", 1, TowerRules.CoreX + 1));
+        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX - 1));
     }
 
     [Test]
-    public void UpperFloorsFoundBothSidesAndBuildFromTheShaft()
+    public void OldEastWingRoomsMoveWest()
     {
         var rules = Started();
-        rules.State.celestium = 200; rules.State.gold = 3000; rules.State.wood = 100; rules.State.stone = 100;
-        Assert.IsNull(rules.OpenFloor(1));
-        var floor = rules.Floor(1);
-        Assert.AreEqual(1, floor.west);
-        Assert.AreEqual(1, floor.east);
-        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX + 1));
-        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX - 1));
-        Assert.IsNull(rules.ExpandFloor(1, 1));
-        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX + 2));
+        rules.State.floors[0].east = 3;
+        var kitchen = rules.AddRoom("kitchen", 0, 24);
+        var state = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State));
+        var loaded = new TowerRules(state);
+        var moved = loaded.Room(kitchen.uid);
+        Assert.Less(moved.x + moved.width, TowerRules.CoreX + 1, "now west of the shaft");
+        Assert.AreEqual(TowerRules.CoreX - 2, moved.x, "next to the Shack");
+        Assert.AreEqual(1, loaded.Floor(0).east);
+        Assert.IsTrue(loaded.IsFounded(0, moved.x));
     }
 
     [Test]
-    public void EastExpansionRespectsTheWingCapAndUndergroundExcavation()
+    public void WestExpansionRespectsTheWingCapAndUndergroundExcavation()
     {
         var rules = Started();
         rules.State.celestium = 5000;
-        for (int i = 0; i < 10; i++) Assert.IsNull(rules.ExpandFloor(0, 1));
-        Assert.AreEqual(TowerRules.WingCells + 1, rules.Floor(0).east);
-        Assert.IsNotNull(rules.ExpandFloor(0, 1));
+        for (int i = 0; i < TowerRules.WingCells - 1; i++) Assert.IsNull(rules.ExpandFloor(0));
+        Assert.AreEqual(TowerRules.WingCells, rules.Floor(0).west);
+        Assert.IsNotNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.OpenFloor(-1));
-        Assert.IsNotNull(rules.ExpandFloor(-1, 1));
-        Assert.IsNull(rules.Excavate(-1, rules.NextExpansionX(-1, 1)));
-        Assert.IsNull(rules.ExpandFloor(-1, 1));
+        Assert.IsNotNull(rules.ExpandFloor(-1), "dig the cell out first");
+        Assert.IsNull(rules.Excavate(-1, rules.NextExpansionX(-1, -1)));
+        Assert.IsNull(rules.ExpandFloor(-1));
     }
 
     [Test]
-    public void OlderSavesGainAnEastSideOnEveryFloor()
-    {
-        var rules = new TowerRules(TowerMilestones.Create(3));
-        var state = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State));
-        foreach (var floor in state.floors) floor.east = 0;
-        new TowerRules(state);
-        foreach (var floor in state.floors) Assert.GreaterOrEqual(floor.east, 1);
-    }
-
-    [Test]
-    public void PopulatedCheckpointsHaveRoomsOnBothSidesOfTheHeart()
+    public void PopulatedCheckpointsBuildOnlyWestOfTheHeart()
     {
         var rules = new TowerRules(TowerMilestones.Create(4));
-        bool west = rules.State.rooms.Exists(r => r.floor == 0 && r.x + r.width <= TowerRules.CoreX && r.type != "heart");
-        bool east = rules.State.rooms.Exists(r => r.floor == 0 && r.x > TowerRules.GateX);
-        Assert.IsTrue(west && east);
+        Assert.IsTrue(rules.State.rooms.Exists(r => r.floor == 0 && r.x + r.width <= TowerRules.CoreX && r.type != "heart"));
+        Assert.IsFalse(rules.State.rooms.Exists(r => r.x > TowerRules.CoreX && r.type != "gate"));
         foreach (var a in rules.State.rooms)
             foreach (var b in rules.State.rooms)
                 if (a != b && a.floor == b.floor)
@@ -1075,13 +1065,13 @@ public sealed class TowerSimulationTests
             Assert.IsNull(rules.Build("house", 0, TowerRules.CoreX - 1));
             Assert.IsNull(rules.ChooseStarter(hero));
             var person = rules.State.residents[0];
-            // 1 BUILD: expand the foundation twice (either side), pick the Kitchen, tap a lot.
-            Assert.IsNull(rules.ExpandFloor(0, 1));
-            Assert.IsNull(rules.ExpandFloor(0, 1));
-            Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX + 2), hero + " east kitchen");
+            // 1 BUILD: expand the foundation westward, pick the Kitchen, tap a lot.
+            Assert.IsNull(rules.ExpandFloor(0));
+            Assert.IsNull(rules.ExpandFloor(0));
+            Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2), hero + " kitchen");
             Assert.AreEqual(1, rules.State.tutorialStep);
             // 2 MATCH
-            var kitchen = rules.RoomAt(0, TowerRules.CoreX + 2);
+            var kitchen = rules.RoomAt(0, TowerRules.CoreX - 2);
             Assert.Greater(rules.AssignmentImpact(person, kitchen), 0f);
             Assert.IsNull(rules.Assign(person.id, kitchen.uid));
             Assert.AreEqual(2, rules.State.tutorialStep);
@@ -1159,10 +1149,10 @@ public sealed class TowerSimulationTests
         StringAssert.Contains("WATER", advice);
         StringAssert.Contains("Well", advice);
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 4));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         rules.State.water = 3;
         StringAssert.Contains("Staff", rules.NeedsAdvice()); // built, but nobody works it
-        var well = rules.RoomAt(0, TowerRules.CoreX - 4);
+        var well = rules.RoomAt(0, TowerRules.CoreX - 3);
         var second = rules.AddResident("", "Rowan", "villager", 1);
         second.sight = 8;
         second.homeRoom = rules.State.residents[0].homeRoom;
@@ -1181,18 +1171,18 @@ public sealed class TowerSimulationTests
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 3));
-        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 4));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         rules.State.gold += 2000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
-        for (int i = 0; i < 5; i++) Assert.IsNull(rules.ExpandFloor(0, 1));
-        Assert.IsNull(rules.Build("lumber_mill", 0, TowerRules.CoreX + 2));
-        Assert.IsNull(rules.Build("nursery", 0, TowerRules.CoreX + 5));
+        for (int i = 0; i < 2; i++) Assert.IsNull(rules.ExpandFloor(0));
+        Assert.IsNull(rules.Build("lumber_mill", 0, TowerRules.CoreX - 4));
+        Assert.IsNull(rules.Build("nursery", 0, TowerRules.CoreX - 5));
         rules.State.pendingVisitors = 2;
         for (int i = 0; i < 2; i++) Assert.IsNull(rules.RecruitVisitor());
         var residents = rules.State.residents;
-        Assert.IsNull(rules.Assign(residents[0].id, rules.RoomAt(0, TowerRules.CoreX - 3).uid));
-        Assert.IsNull(rules.Assign(residents[1].id, rules.RoomAt(0, TowerRules.CoreX - 4).uid));
-        Assert.IsNull(rules.Assign(residents[2].id, rules.RoomAt(0, TowerRules.CoreX + 2).uid));
+        Assert.IsNull(rules.Assign(residents[0].id, rules.RoomAt(0, TowerRules.CoreX - 2).uid));
+        Assert.IsNull(rules.Assign(residents[1].id, rules.RoomAt(0, TowerRules.CoreX - 3).uid));
+        Assert.IsNull(rules.Assign(residents[2].id, rules.RoomAt(0, TowerRules.CoreX - 4).uid));
         Assert.IsNull(rules.UnlockHauling());
         float minFood = 9999, minWater = 9999, minFire = 9999;
         for (int second = 0; second < 3600; second++)
@@ -1239,14 +1229,14 @@ public sealed class TowerSimulationTests
         var rules = Quiet(Started());
         rules.State.gold += 5000; rules.State.wood += 100; rules.State.stone += 100; rules.State.celestium += 100;
         for (int i = 0; i < 6; i++) Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 3));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
         rules.State.blueprints.Add("silo");
-        Assert.IsNull(rules.Build("silo", 0, TowerRules.CoreX - 4));
-        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 5));
+        Assert.IsNull(rules.Build("silo", 0, TowerRules.CoreX - 3));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 4));
         rules.State.firewood = 0;
         rules.Advance(1, true);
         var near = rules.RoomAt(0, TowerRules.CoreX - 1);
-        var far = rules.RoomAt(0, TowerRules.CoreX - 5);
+        var far = rules.RoomAt(0, TowerRules.CoreX - 4);
         Assert.IsFalse(rules.IsPowered(far), "with no mill, the far room is dark");
         Assert.Greater(rules.DarkRoomCount, 0);
         rules.State.firewood = 50;
@@ -1345,13 +1335,13 @@ public sealed class TowerSimulationTests
         var rules = Quiet(Started());
         rules.State.gold += 3000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
         for (int i = 0; i < 3; i++) Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 3));
-        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 4));
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         var worker = rules.State.residents[0];
-        Assert.IsNull(rules.Assign(worker.id, rules.RoomAt(0, TowerRules.CoreX - 3).uid));
+        Assert.IsNull(rules.Assign(worker.id, rules.RoomAt(0, TowerRules.CoreX - 2).uid));
         rules.State.water = 2; rules.State.food = 100; rules.State.firewood = 100;
         rules.Advance(25, true);
-        Assert.AreEqual(rules.RoomAt(0, TowerRules.CoreX - 4).uid, worker.jobRoom, "moved onto the Well");
+        Assert.AreEqual(rules.RoomAt(0, TowerRules.CoreX - 3).uid, worker.jobRoom, "moved onto the Well");
         Assert.IsNull(rules.SetSteward(false));
         Assert.IsFalse(rules.State.steward);
     }
@@ -1402,6 +1392,7 @@ public sealed class TowerSimulationTests
     public void BarnClimbsNineTiersAndWidensToThreeBays()
     {
         var rules = BarnLot();
+        rules.State.heartRank = 9;
         Assert.IsNull(rules.Build("barn", 0, 20));
         var barn = rules.RoomAt(0, 20);
         Assert.AreEqual(1, barn.width);
@@ -1420,21 +1411,110 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
-    public void BarnGrowsInwardWhenOutwardIsBlockedAndStopsWhenBoxedIn()
+    public void UpgradeWaitsWhenTheCellOnTheLeftIsTaken()
+    {
+        var rules = BarnLot();
+        rules.State.heartRank = 9;
+        Assert.IsNull(rules.Build("barn", 0, 20));
+        Assert.IsNull(rules.Build("cottage", 0, 19));      // the cell the barn's second bay needs
+        var barn = rules.RoomAt(0, 20);
+        for (int i = 0; i < 2; i++) Assert.IsNull(rules.UpgradeRoom(barn.uid));
+        StringAssert.Contains("to its left", rules.UpgradeRoom(barn.uid), "rank C needs cell 19");
+        Assert.AreEqual(1, barn.width);
+        Assert.AreEqual(3, barn.level);
+        rules.Demolish(rules.RoomAt(0, 19).uid);
+        Assert.IsNull(rules.UpgradeRoom(barn.uid));
+        Assert.AreEqual(2, barn.width);
+        Assert.AreEqual(19, barn.x, "the right bay stays fixed and the new bay joins on the left");
+    }
+
+    [Test]
+    public void HeartRankCapsBuildingRank()
     {
         var rules = BarnLot();
         Assert.IsNull(rules.Build("barn", 0, 20));
-        Assert.IsNull(rules.Build("cottage", 0, 18));      // cells 18-19: outward of the barn
         var barn = rules.RoomAt(0, 20);
         for (int i = 0; i < 2; i++) Assert.IsNull(rules.UpgradeRoom(barn.uid));
-        Assert.IsNotNull(rules.UpgradeRoom(barn.uid), "cell 19 is a cottage and cell 21 is the shack: no room to grow");
-        Assert.AreEqual(1, barn.width);
-        Assert.AreEqual(3, barn.level);
-        rules.Demolish(rules.RoomAt(0, 21).uid);
+        StringAssert.Contains("rank E", rules.UpgradeRoom(barn.uid), "an F Heart stops buildings at D");
+        Assert.IsNull(rules.UpgradeHeart());
+        Assert.AreEqual(2, rules.State.heartRank);
         Assert.IsNull(rules.UpgradeRoom(barn.uid));
-        Assert.AreEqual(2, barn.width);
-        Assert.IsTrue(barn.flip, "growing toward the tower flips the bay order");
-        Assert.AreEqual(20, barn.x);
+        Assert.AreEqual("C", TowerTiers.Tier(barn.level));
+    }
+
+    [Test]
+    public void EveryMultiBayBuildingTopsOutAtThreeCells()
+    {
+        foreach (var def in TowerCatalog.All)
+        {
+            Assert.AreEqual(TowerTiers.SingleBay(def.id) ? 1 : 3, TowerTiers.Bays(def.id, 9), def.id);
+            Assert.AreEqual(1, TowerTiers.Bays(def.id, 1), def.id + " opens as one bay");
+            Assert.LessOrEqual(def.width, 3, def.id);
+        }
+    }
+
+    [Test]
+    public void FallenHeartStartsALegacyRunThatKeepsHeroesAndSigils()
+    {
+        var rules = Started();
+        rules.State.sigils = 17;
+        rules.State.residents[0].rank = 7;
+        rules.State.heartHp = 0;
+        rules.Advance(1, true);
+        Assert.IsTrue(rules.State.defeated);
+        var next = new TowerRules(TowerRules.LegacyRun(rules.State));
+        Assert.AreEqual(17, next.State.sigils);
+        Assert.AreEqual(1, next.State.runs);
+        Assert.AreEqual(0, next.State.residents.Count, "the tower resets");
+        Assert.AreEqual(1, next.State.legacyHeroes.Count);
+        Assert.IsNull(next.AwakenHeart());
+        Assert.IsNull(next.PlaceIntroGate());
+        Assert.IsNull(next.Build("house", 0, 21));
+        Assert.IsNull(next.ChooseStarter("kaela"));
+        Assert.AreEqual(1, next.State.residents.Count, "kaela fuses with her returning self");
+        Assert.AreEqual(7, next.State.residents[0].rank);
+        Assert.AreEqual(0, next.State.legacyHeroes.Count);
+    }
+
+    [Test]
+    public void HeartWarnsAsItWeakens()
+    {
+        var rules = Quiet(Started());
+        rules.State.heartHp = TowerRules.HeartMaxHp(1) * 0.5f;
+        rules.Advance(1, true);
+        Assert.AreEqual("strained", rules.State.heartStage);
+        rules.State.heartHp = TowerRules.HeartMaxHp(1) * 0.1f;
+        rules.Advance(1, true);
+        Assert.AreEqual("critical", rules.State.heartStage);
+        StringAssert.Contains("CRITICAL", rules.State.log[rules.State.log.Count - 1]);
+    }
+
+    [Test]
+    public void SummonsSpendSigilsAndHardPityGivesAnSsr()
+    {
+        var rules = Started();
+        rules.State.sigils = 0;
+        Assert.IsTrue(rules.FreeSummonReady);
+        Assert.IsNull(rules.Summon(1));
+        Assert.AreEqual("hero", rules.LastSummon[0].kind);
+        Assert.GreaterOrEqual(rules.LastSummon[0].rank, 5, "the tutorial summon is B or better");
+        Assert.IsNotNull(rules.Summon(1), "no Sigils left");
+        rules.State.sigils = 10;
+        rules.State.summonPity = TowerRules.HardPity - 1;
+        Assert.IsNull(rules.Summon(10));
+        Assert.AreEqual(0, rules.State.sigils);
+        Assert.AreEqual(10, rules.LastSummon.Count);
+        Assert.AreEqual(9, rules.LastSummon[0].rank, "pull 60 is a guaranteed SSR");
+    }
+
+    [Test]
+    public void DuplicateHeroesFuseInsteadOfJoiningTwice()
+    {
+        var rules = Started();
+        rules.State.sigils = 400;
+        for (int i = 0; i < 30; i++) Assert.IsNull(rules.Summon(10));
+        foreach (string id in TowerRules.SummonHeroIds)
+            Assert.LessOrEqual(rules.State.residents.FindAll(r => r.origin == "hero" && r.unitId == id).Count, 1, id);
     }
 
     [Test]

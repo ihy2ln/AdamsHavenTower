@@ -843,12 +843,11 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     {
         if (rules == null || !rules.State.defeated) return;
         Save();
-        var state = TowerMilestones.Create(1);
-        state.slot = slot;
-        rules = new TowerRules(state);
+        // GDD 8.5: the tower resets; heroes, Sigils and summon pity carry into the new run.
+        rules = new TowerRules(TowerRules.LegacyRun(rules.State));
         selectedRoom = selectedResident = pendingWalkResident = 0;
         buildType = "house";
-        message = "A new Celestium Heart awaits in slot " + slot + ".";
+        message = "A new Celestium Heart awaits in slot " + slot + ". Your heroes will return once the Tower is founded.";
         Save();
         FocusOnFloor(0);
     }
@@ -928,7 +927,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             int start = x;
             string error = rules.CanBuild(buildType, number, start);
             var blueprint = TowerCatalog.Get(buildType);
-            for (int offset = 1; error != null && blueprint != null && offset < blueprint.width; offset++)
+            for (int offset = 1; error != null && blueprint != null && offset < TowerTiers.Bays(buildType, 1); offset++)
             {
                 int candidate = x - offset;
                 if (rules.CanBuild(buildType, number, candidate) != null) continue;

@@ -39,8 +39,10 @@ namespace AdamsHaven.Tower
             state.introPhase = "complete";
             state.tutorialStep = 7;
             rules.AddRoom("gate", 0, TowerRules.GateX);
-            state.heartRank = index < 2 ? 1 : index < 5 ? 2 : 3;
-            state.heartHp = state.heartRank == 1 ? 1200 : state.heartRank == 2 ? 1800 : 2600;
+            // Checkpoints climb the GDD 8.4 ladder: building ranks never exceed what the Heart allows.
+            state.heartRank = new[] { 1, 1, 2, 2, 3, 4, 6, 7, 8, 9 }[index];
+            state.heartHp = TowerRules.HeartMaxHp(state.heartRank);
+            int rank = Mathf.Min(TowerTiers.BuildingCap(state.heartRank), new[] { 1, 1, 1, 2, 3, 4, 5, 6, 7, 8 }[index]);
             state.blueprints.Clear();
             foreach (var def in TowerCatalog.All)
                 if (def.kind != "heart" && def.kind != "gate" && (index >= 3 ||
@@ -59,10 +61,11 @@ namespace AdamsHaven.Tower
             for (int floor = -Down[index]; floor <= Up[index]; floor++)
             {
                 state.floors.Add(new TowerFloor { number = floor, west = TowerRules.WingCells,
-                    east = Mathf.Abs(floor) <= 4 ? TowerRules.WingCells : 1,
+                    east = floor == 0 ? 1 : 0,
                     landing = index >= 5 && floor % 4 == 0 ? "freight_lift" :
                         (index >= 2 ? "stairs" : "energy") });
-                string[] rooms = floor == 0 ? new[] { "house", "cottage", "kitchen", "well", "lumber_mill" } :
+                // Producers go first so wide high-rank rooms never crowd the mill or kitchen out of the wing.
+                string[] rooms = floor == 0 ? new[] { "lumber_mill", "kitchen", "well", "house", "cottage" } :
                     floor == 1 ? new[] { "terrace_row", "market", "well", "cottage", "house" } :
                     floor > 0 ? (floor % 2 == 0 ?
                         new[] { "manor", "deck_hall", "forge", floor % 4 == 2 ? "nursery" : "cottage" } :
@@ -72,31 +75,29 @@ namespace AdamsHaven.Tower
                 int used = 0;
                 foreach (string type in rooms)
                 {
-                    int width = TowerCatalog.Get(type).width;
+                    int width = TowerTiers.Bays(type, rank);
                     if (used + width > TowerRules.WingCells) continue;
                     int x = TowerRules.CoreX - used - width;
                     used += width;
-                    var room = rules.AddRoom(type, floor, x,
-                        index < 3 ? 1 : index < 6 ? 2 : 3);
+                    var room = rules.AddRoom(type, floor, x, rank);
                     room.condition = 92 + (room.uid * 7) % 9;
                 }
-                if (Mathf.Abs(floor) > 4) continue;
-                // The east wing mirrors the west with a different mix, so the Heart reads as the centre.
+                // A second mix fills the rest of the west wing (the Heart and Gate are the right edge).
                 string[] east = floor == 0 ? new[] { "cottage", "lumber_mill", "farmstead", "barn" } :
                     floor > 0 ? (floor % 2 == 0 ? new[] { "cottage", "kitchen", "well", "cottage" } :
                         new[] { "terrace_row", "well", "market", "cottage" }) :
                     (floor % 2 == 0 ? new[] { "warehouse", "quarry", "barn", "silo" } :
                         new[] { "cottage", "quarry", "warehouse", "well" });
-                int usedEast = floor == 0 ? 1 : 0; // the Gate holds the first ground cell
                 foreach (string type in east)
                 {
                     var eastDef = TowerCatalog.Get(type);
                     if (eastDef.groundOnly && floor != 0) continue;
                     if (eastDef.undergroundOnly && floor >= 0) continue;
-                    if (usedEast + eastDef.width > TowerRules.WingCells) continue;
-                    int x = TowerRules.CoreX + 1 + usedEast;
-                    usedEast += eastDef.width;
-                    var room = rules.AddRoom(type, floor, x, index < 3 ? 1 : index < 6 ? 2 : 3);
+                    int eastWidth = TowerTiers.Bays(type, rank);
+                    if (used + eastWidth > TowerRules.WingCells) continue;
+                    int x = TowerRules.CoreX - used - eastWidth;
+                    used += eastWidth;
+                    var room = rules.AddRoom(type, floor, x, rank);
                     room.condition = 90 + (room.uid * 5) % 10;
                 }
             }

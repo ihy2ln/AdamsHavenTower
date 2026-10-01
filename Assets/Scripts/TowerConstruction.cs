@@ -44,7 +44,7 @@ namespace AdamsHaven.Tower
             {
                 if (work.kind != "room" || work.floor != floor) continue;
                 var def = TowerCatalog.Get(work.type);
-                if (def != null && x >= work.x && x < work.x + def.width) return work;
+                if (def != null && x >= work.x && x < work.x + TowerTiers.Bays(work.type, 1)) return work;
             }
             return null;
         }
@@ -104,7 +104,7 @@ namespace AdamsHaven.Tower
             else if (work.kind == "floor")
             {
                 if (Floor(work.floor) != null) return;
-                State.floors.Add(new TowerFloor { number = work.floor, east = 1 });
+                State.floors.Add(new TowerFloor { number = work.floor });
                 Note("Floor " + work.floor + " is open.");
             }
         }

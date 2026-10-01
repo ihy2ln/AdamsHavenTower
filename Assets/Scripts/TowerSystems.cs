@@ -235,6 +235,7 @@ namespace AdamsHaven.Tower
             TickRooms(dt);
             TickVisitors(dt);
             if (live) { TickIncidents(dt); TickEvents(dt); }
+            CheckHeartStage();
             if (State.heartHp <= 0) { State.heartHp = 0; State.defeated = true; }
         }
     }
