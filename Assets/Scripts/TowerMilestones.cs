@@ -6,7 +6,13 @@ namespace AdamsHaven.Tower
     public static class TowerMilestones
     {
         // Bump when checkpoint generation changes; older unplayed checkpoint files are rebuilt.
-        public const int Version = 2;
+        public const int Version = 3;
+        // Testing aid: every checkpoint (slots 2-10) gets a Barn, Silo and Warehouse at each rank F to SSR on extra
+        // floors above the tower, full stocks (at the cap those storage rooms create) and full resident, room and Heart
+        // conditions. These checkpoints are also pinned (TowerState.pinned), so they are never rebuilt or reset by the
+        // generator once saved. Set to false to get the original progression-shaped checkpoints back: unpin or delete
+        // the slot files, then bump Version.
+        public const bool MaxedForTesting = true;
         public static readonly int[] Days = { 1, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
         public static readonly string[] Labels = {
             "Founding Day", "First Hearths", "Working Tower", "Established Haven",
@@ -27,6 +33,7 @@ namespace AdamsHaven.Tower
             var rules = TowerRules.New(slot);
             TowerState state = rules.State;
             state.generator = Version;
+            state.pinned = MaxedForTesting && index >= 1;   // maxed test checkpoints stay exactly as saved
             state.day = Days[index];
             state.label = Labels[index];
             state.clock = (Days[index] - 1) * TowerRules.DaySeconds;
@@ -170,14 +177,65 @@ namespace AdamsHaven.Tower
                     rules.Assign(guards[i].id, gate.uid);
                 rules.StaffForSurvival(20);
             }
-            float fill = Mathf.Min(1, 0.55f + index * 0.05f);
+            if (MaxedForTesting) AddStorageRanks(rules, Up[index]);
+            float fill = MaxedForTesting ? 1f : Mathf.Min(1, 0.55f + index * 0.05f);
             state.food = state.water = state.firewood = rules.StockCap() * fill;
             state.eventCooldown = 180 + index * 15;
             state.tonics = Mathf.Min(30, 2 + index * 3);
+            if (MaxedForTesting) MaxEverything(rules);
             state.log.Clear();
             rules.Note(state.label + " — a safe day " + state.day + " Tower checkpoint.");
             state.savedUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             return state;
+        }
+
+        // One Barn, Silo and Warehouse at every rank F to SSR, west of the Heart, on new floors above `topFloor`.
+        // Added after staffing so no resident is assigned to a storage room. Placement ignores the Heart rank cap.
+        private static void AddStorageRanks(TowerRules rules, int topFloor)
+        {
+            var state = rules.State;
+            string[] types = { "barn", "silo", "warehouse" };
+            int floor = topFloor + 1, cursor = TowerRules.CoreX - 1;
+            TowerFloor current = null;
+            for (int level = 1; level <= TowerTiers.MaxRank; level++)
+                foreach (string type in types)
+                {
+                    int width = TowerTiers.Bays(type, level);
+                    if (current == null || cursor - width + 1 < TowerRules.MinBuildX)
+                    {
+                        if (current != null) floor++;
+                        current = rules.Floor(floor);
+                        if (current == null)
+                        {
+                            current = new TowerFloor { number = floor, west = TowerRules.WingCells, east = 0, landing = "stairs" };
+                            state.floors.Add(current);
+                        }
+                        current.west = Mathf.Max(current.west, TowerRules.WingCells);
+                        cursor = TowerRules.CoreX - 1;
+                    }
+                    var room = rules.AddRoom(type, floor, cursor - width + 1, level);
+                    room.condition = 100;
+                    cursor -= width;
+                }
+        }
+
+        // Everything at its best: stock at the cap, residents, rooms and the Heart at full health, no danger.
+        private static void MaxEverything(TowerRules rules)
+        {
+            var state = rules.State;
+            float cap = rules.StockCap();
+            state.food = state.water = state.firewood = cap;
+            state.wood = state.stone = state.ore = state.essence = Mathf.RoundToInt(cap);
+            state.gold = 999999; state.celestium = 9999; state.sigils = 9999; state.tonics = 99;
+            state.heartHp = TowerRules.HeartMaxHp(state.heartRank); state.heartStage = "stable";
+            state.threat = 5; state.incidents.Clear();
+            foreach (var room in state.rooms) room.condition = 100;
+            foreach (var resident in state.residents)
+            {
+                resident.hp = TowerRules.MaxHp(resident); resident.happiness = 100;
+                resident.hunger = resident.thirst = resident.rest = 100;
+                resident.injury = 0; resident.illness = 0; resident.downed = false;
+            }
         }
 
         private static bool AssignFirst(TowerRules rules, int residentId,
@@ -216,7 +274,7 @@ namespace AdamsHaven.Tower
                 if (existing == null) { TowerSaveFiles.Save(Create(slot)); continue; }
                 // Slot 1 is the player's own Tower. Slots 2-10 are developer checkpoints: rebuild
                 // ones made by an older generator, keeping the old file beside the new one.
-                if (slot == 1 || existing.generator >= Version) continue;
+                if (slot == 1 || existing.pinned || existing.generator >= Version) continue;
                 string path = TowerSaveFiles.PathFor(slot);
                 System.IO.File.Copy(path, path + ".gen" + existing.generator + ".bak", true);
                 TowerSaveFiles.Save(Create(slot));

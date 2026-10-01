@@ -92,6 +92,7 @@ namespace AdamsHaven.Tower
         public float marchSeconds;   // raiders: time spent in this room without being fought
         public int fromRoom;         // raiders: the room they just left, so they push onward
         public int stolen;           // raiders: gold carried off, returned if they are beaten
+        public float lootCarry;      // raiders: fraction of a gold coin not yet taken, so theft does not depend on frame rate
     }
 
     // RimWorld-style opinion of one resident for another; symmetric, kept once per pair.
@@ -155,6 +156,7 @@ namespace AdamsHaven.Tower
         public List<TowerBond> bonds = new List<TowerBond>();
         public List<TowerMemorial> memorial = new List<TowerMemorial>();
         public int generator;        // TowerMilestones.Version that built a checkpoint slot
+        public bool pinned;          // true = a fixed save: TowerMilestones never rebuilds it, whatever the generator version
         public bool steward = true;  // re-staffs food, water and firewood before they run out
         public float stewardTimer;
         public List<TowerWork> works = new List<TowerWork>();   // rooms, wings and floors still under construction
@@ -886,6 +888,13 @@ namespace AdamsHaven.Tower
                 remaining -= dt;
             }
             State.day = Mathf.Max(State.day, 1 + Mathf.FloorToInt(State.clock / DaySeconds));
+        }
+
+        // Game seconds to simulate for one rendered frame. The frame hitch cap applies to the real time, not to the
+        // speed-multiplied time, so 4x and 8x stay proportional on a slow frame rate. Speed 0 (paused) gives 0.
+        public static float FrameSeconds(float deltaTime, float speed)
+        {
+            return Mathf.Min(Mathf.Max(0f, deltaTime), 0.25f) * Mathf.Max(0f, speed);
         }
 
         public void CatchUp(long awaySeconds)

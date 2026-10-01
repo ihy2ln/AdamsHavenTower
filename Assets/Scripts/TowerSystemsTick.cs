@@ -462,12 +462,21 @@ namespace AdamsHaven.Tower
                     // Undefended raiders loot, and in the Heart's own chamber they wound it.
                     if (room.type == "heart")
                         State.heartHp = Mathf.Max(0, State.heartHp - 1.4f * incident.severity * dt);
-                    int take = Mathf.Min(State.gold, Mathf.RoundToInt(0.6f * incident.severity * dt + 0.4f));
+                    // Carry the fraction so the loot rate is the same at any frame rate or game speed.
+                    incident.lootCarry += 0.6f * incident.severity * dt;
+                    int take = Mathf.Min(State.gold, Mathf.FloorToInt(incident.lootCarry));
+                    incident.lootCarry -= take;
                     State.gold -= take; incident.stolen += take;
                     if (MarchRaiders(incident, room, dt)) continue;
                 }
-                if (incident.kind == "pests" && defenders == 0)
-                    State.heartHp = Mathf.Max(0, State.heartHp - 0.08f * incident.severity * dt);
+                // GDD 9.4: only breaches (raiders in the Heart's chamber, above) and a fire left burning on the Heart's
+                // floor hurt the Heart. Pests never do.
+                if (incident.kind == "fire" && defenders == 0)
+                {
+                    var heartRoom = State.rooms.Find(r => r.type == "heart");
+                    if (heartRoom != null && heartRoom.floor == room.floor)
+                        State.heartHp = Mathf.Max(0, State.heartHp - 0.5f * incident.severity * dt);
+                }
                 foreach (var resident in State.residents)
                 {
                     if (resident.currentRoom != room.uid || resident.ageStage == 1 || resident.downed) continue;

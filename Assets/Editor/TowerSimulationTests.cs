@@ -1120,6 +1120,104 @@ public sealed class TowerSimulationTests
         Assert.AreEqual(stoppedAt, rules.State.clock);
     }
 
+    private static TowerRules NeedsScenario()
+    {
+        var rules = Started();
+        var s = rules.State;
+        s.food = s.water = s.firewood = 100; s.eventCooldown = 99999; s.steward = false;
+        var kitchen = rules.AddRoom("kitchen", 0, 19, 1);
+        rules.AddRoom("well", 0, 18, 1);
+        rules.AddRoom("lumber_mill", 0, 15, 1);
+        rules.Assign(s.residents[0].id, kitchen.uid);
+        return rules;
+    }
+
+    [Test]
+    public void PausedTimeChangesNothing()
+    {
+        var rules = NeedsScenario();
+        var res = rules.State.residents[0];
+        float clock = rules.State.clock, food = rules.State.food, hunger = res.hunger, rest = res.rest, happy = res.happiness;
+        for (int i = 0; i < 3600; i++) rules.Advance(TowerRules.FrameSeconds(1f / 60f, 0f), true);
+        Assert.AreEqual(clock, rules.State.clock);
+        Assert.AreEqual(food, rules.State.food);
+        Assert.AreEqual(hunger, res.hunger);
+        Assert.AreEqual(rest, res.rest);
+        Assert.AreEqual(happy, res.happiness);
+    }
+
+    [Test]
+    public void GameSpeedKeepsStatsProportionalAtAnyFrameRate()
+    {
+        var baseline = NeedsScenario();
+        baseline.Advance(120f, true);
+        var b = baseline.State.residents[0];
+        foreach (float speed in new[] { 1f, 2f, 4f, 8f })
+            foreach (float fps in new[] { 60f, 30f, 20f, 12f })
+            {
+                var rules = NeedsScenario();
+                float dt = 1f / fps;
+                int frames = Mathf.RoundToInt(120f / speed * fps);   // 120 game seconds of real play at this speed
+                for (int i = 0; i < frames; i++) rules.Advance(TowerRules.FrameSeconds(dt, speed), true);
+                string label = speed + "x at " + fps + " fps";
+                var r = rules.State.residents[0];
+                Assert.AreEqual(120f, rules.State.clock, 0.6f, label + ": game clock");
+                Assert.AreEqual(b.hunger, r.hunger, 0.8f, label + ": hunger");
+                Assert.AreEqual(b.thirst, r.thirst, 0.8f, label + ": thirst");
+                Assert.AreEqual(b.rest, r.rest, 0.8f, label + ": rest");
+                Assert.AreEqual(baseline.State.water, rules.State.water, 0.5f, label + ": water");
+                Assert.AreEqual(baseline.State.firewood, rules.State.firewood, 0.6f, label + ": firewood");
+            }
+    }
+
+    [Test]
+    public void RaiderLootDoesNotDependOnFrameRate()
+    {
+        float[] stolen = new float[3];
+        for (int run = 0; run < 3; run++)
+        {
+            var rules = Started();
+            rules.State.gold = 1000; rules.State.eventCooldown = 99999; rules.State.steward = false;
+            rules.State.residents[0].priorityDefense = 0;
+            Assert.IsNull(rules.StartIncident("raiders", rules.RoomAt(0, 21).uid));
+            if (run == 0) rules.Advance(30f, true);
+            else if (run == 1) for (int i = 0; i < 1800; i++) rules.Advance(1f / 60f, true);
+            else for (int i = 0; i < 450; i++) rules.Advance(TowerRules.FrameSeconds(1f / 60f, 4f), true);
+            stolen[run] = 1000 - rules.State.gold;
+        }
+        Assert.Greater(stolen[1], 10f, "raiders steal at 60 fps instead of rounding every tick to nothing");
+        Assert.AreEqual(stolen[0], stolen[1], 2f, "one big step vs 60 fps");
+        Assert.AreEqual(stolen[0], stolen[2], 2f, "one big step vs 4x speed");
+    }
+
+    [Test]
+    public void PestsNeverHurtTheHeart()
+    {
+        var rules = Started();
+        var home = rules.RoomAt(0, 21);
+        rules.State.residents[0].priorityDefense = 0;
+        rules.State.eventCooldown = 99999;
+        float before = rules.State.heartHp;
+        Assert.IsNull(rules.StartIncident("pests", home.uid));
+        rules.Advance(60, true);
+        Assert.AreEqual(before, rules.State.heartHp, 0.001f, "undefended pests must leave the Heart alone");
+    }
+
+    [Test]
+    public void FireLeftBurningOnTheHeartsFloorScorchesTheHeart()
+    {
+        var rules = Started();
+        var heart = rules.State.rooms.Find(r => r.type == "heart");
+        var home = rules.RoomAt(0, 21);
+        Assert.AreEqual(heart.floor, home.floor, "the starter home shares the Heart's floor");
+        foreach (var resident in rules.State.residents) resident.priorityFire = 0;
+        rules.State.eventCooldown = 99999;
+        float before = rules.State.heartHp;
+        Assert.IsNull(rules.StartIncident("fire", home.uid));
+        rules.Advance(20, true);
+        Assert.Less(rules.State.heartHp, before, "an unattended fire on the Heart's floor wounds it");
+    }
+
     [Test]
     public void OfflineTimeNeverCreatesThreatsOrDownsResidents()
     {

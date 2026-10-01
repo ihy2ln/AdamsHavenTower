@@ -90,7 +90,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (battleMode != null || expedition != null) return;
         HandleCameraInput();
         SettleZoom();
-        rules.Advance(Mathf.Min(Time.deltaTime * speed, 0.25f), true);
+        rules.Advance(TowerRules.FrameSeconds(Time.deltaTime, speed), true);
         saveTimer += Time.deltaTime;
         if (saveTimer >= 20) { saveTimer = 0; Save(); }
         sceneTimer += Time.deltaTime;

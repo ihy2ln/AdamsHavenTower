@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tower UI Mockup</title>
+<style>
+:root{
+  --bg:#0c1016; --panel:#151b24; --panel2:#1c2430; --line:#2c3748; --text:#e6ebf2; --muted:#93a0b3;
+  --timber:#3a2c20; --timber2:#4a392a; --slate:#242c38; --moon:#8fb4ff; --violet:#9b7bff;
+  --gold:#f2c14e; --cel:#59b8ff; --sigil:#b07cff; --food:#f08a4b; --water:#4fa8ff; --fire:#ff6a3d; --good:#6fd28b; --bad:#ff5d5d;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:14px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;min-height:100vh}
+header{padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;border-bottom:1px solid var(--line);background:#10151c}
+h1{font-size:15px;margin:0 8px 0 0;font-weight:700;letter-spacing:.02em}
+.group{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.group label{color:var(--muted);font-size:12px;margin-right:4px}
+button.opt{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font:inherit;font-size:13px;cursor:pointer;min-height:36px}
+button.opt[aria-pressed="true"]{background:#27406b;border-color:var(--moon)}
+button.opt:focus-visible,button:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden}
+#stage{position:relative}
+.device{position:absolute;left:0;top:0;transform-origin:top left;border:3px solid #05070a;border-radius:26px;overflow:hidden;background:#0a0e14;box-shadow:0 0 0 2px #2a3444,0 12px 40px #000a}
+.device.portrait{width:360px;height:740px}
+.device.landscape{width:740px;height:360px}
+.screen{position:absolute;inset:0;background:linear-gradient(#10182a 0,#1c2a42 30%,#2a3b4f 55%,#233021 70%,#2b2118 100%)}
+.stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 12%,#fff8,transparent),radial-gradient(1px 1px at 70% 8%,#fff6,transparent),radial-gradient(1px 1px at 45% 20%,#fff5,transparent),radial-gradient(1px 1px at 85% 25%,#fff7,transparent)}
+.topbar{position:absolute;left:0;right:0;top:0;height:44px;display:flex;gap:4px;align-items:center;padding:6px 8px;background:linear-gradient(#0a0e14f0,#0a0e14b0);border-bottom:1px solid #fff1}
+.chip{display:flex;align-items:center;gap:4px;background:#0b1018cc;border:1px solid var(--line);border-radius:14px;padding:3px 7px 3px 3px;font-size:11px;font-weight:600;white-space:nowrap}
+.ico{width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;font-size:10px;font-weight:800;color:#10151c}
+.drawer-btn{margin-left:auto;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;width:30px;height:28px;cursor:pointer}
+.drawer{position:absolute;left:8px;right:8px;top:48px;background:#0d131cf2;border:1px solid var(--line);border-radius:12px;padding:8px;display:none;gap:6px;flex-wrap:wrap;z-index:6}
+.drawer.open{display:flex}
+.cluster{position:absolute;right:8px;top:48px;display:flex;gap:5px;z-index:3}
+.cbtn{width:30px;height:30px;border-radius:50%;background:#0b1018cc;border:1px solid var(--line);color:var(--text);font-size:11px;font-weight:700;cursor:pointer;position:relative}
+.cbtn .dot{position:absolute;right:-2px;top:-2px;width:9px;height:9px;border-radius:50%;background:var(--bad)}
+.tower{position:absolute;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 0 0}
+.floors{display:flex;flex-direction:column;gap:3px;width:100%}
+.floor{display:flex;gap:3px;height:var(--fh,44px);align-items:stretch}
+.flabel{width:24px;font-size:10px;color:var(--muted);display:grid;place-items:center}
+.room{flex:1;background:linear-gradient(var(--timber2),var(--timber));border:1px solid #0006;border-radius:4px;position:relative;font-size:10px;display:flex;align-items:flex-end;padding:2px 4px;color:#f1e6d8;cursor:pointer}
+.room.empty{background:#0004;border:1px dashed #fff2;color:#fff4}
+.room .rk{position:absolute;right:3px;top:2px;font-weight:800;color:var(--gold);font-size:9px}
+.heart{width:26px;background:linear-gradient(#38227a,#6a46ff 50%,#38227a);border-radius:4px;display:grid;place-items:center;box-shadow:0 0 14px #7b5cff;font-size:9px;font-weight:800;writing-mode:vertical-rl}
+.bubble{position:absolute;left:50%;top:-10px;transform:translateX(-50%);background:var(--gold);color:#10151c;border-radius:10px;font-size:9px;font-weight:800;padding:1px 6px;animation:bob 1.6s ease-in-out infinite}
+.inc{position:absolute;right:3px;bottom:3px;background:var(--bad);color:#fff;border-radius:50%;width:15px;height:15px;font-size:10px;font-weight:800;display:grid;place-items:center;animation:pulse 1.2s infinite}
+@keyframes bob{50%{transform:translate(-50%,-3px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 5px #ff5d5d33}}
+@media (prefers-reduced-motion:reduce){.bubble,.inc{animation:none}}
+.minimap{position:absolute;width:12px;background:#0b1018cc;border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column-reverse;gap:2px;padding:2px}
+.minimap i{flex:1;background:#fff2;border-radius:2px}.minimap i.r{background:var(--bad)}.minimap i.g{background:var(--gold)}.minimap i.v{background:var(--moon)}
+.fabs{position:absolute;display:flex;gap:6px;z-index:3}
+.fab{background:linear-gradient(#3a63b8,#27406b);border:1px solid var(--moon);border-radius:18px;color:#fff;font-weight:700;font-size:12px;padding:8px 12px;min-height:36px;cursor:pointer}
+.fab.alt{background:linear-gradient(#5b3aa8,#3a2377);border-color:var(--violet)}
+.dock{position:absolute;display:flex;gap:4px;padding:6px;background:linear-gradient(#0b1018,#0e1520);border:1px solid var(--line);z-index:4}
+.portrait .dock{left:0;right:0;bottom:0;height:62px;border-width:1px 0 0;align-items:center}
+.landscape .dock{top:44px;bottom:0;right:0;width:62px;flex-direction:column;border-width:0 0 0 1px;align-items:center}
+.dbtn{flex:1;background:#fff0;border:0;color:var(--text);font-size:10px;font-weight:700;cursor:pointer;border-radius:10px;display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;min-height:48px;min-width:48px}
+.dbtn .di{width:24px;height:24px;border-radius:7px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-size:11px}
+.dbtn.on .di{border-color:var(--moon);background:#27406b}
+.dbtn.heartbtn{flex:1.3}
+.dbtn.heartbtn .di{width:40px;height:40px;border-radius:50%;background:radial-gradient(#9b7bff,#3a2377);border-color:var(--violet);box-shadow:0 0 14px #7b5cffaa;font-size:14px}
+.portrait .dbtn.heartbtn{margin-top:-14px}
+.dim{position:absolute;inset:0;background:#0008;z-index:5}
+.panel{position:absolute;z-index:7;background:linear-gradient(#18202c,#121923);border:1px solid #3a4a62;color:var(--text);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px #000a}
+.panel header{padding:6px 8px;gap:6px;border:0;border-bottom:1px solid var(--line);background:#0e141c;min-height:40px}
+.panel header b{font-size:13px}
+.winmodes{margin-left:auto;display:flex;gap:3px}
+.wm{width:28px;height:26px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);font-size:10px;font-weight:800;cursor:pointer}
+.wm.on{background:#27406b;color:#fff;border-color:var(--moon)}
+.pbody{flex:1;overflow:auto;padding:8px;font-size:12px;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{background:#27406b;border:1px solid var(--moon);color:#fff;border-radius:10px;padding:7px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;min-height:34px}
+.btn.sec{background:var(--panel2);border-color:var(--line)}.btn.v{background:#47298f;border-color:var(--violet)}
+.muted{color:var(--muted)}.tag{font-size:10px;font-weight:800;border-radius:6px;padding:1px 6px;background:#0007;border:1px solid var(--line)}
+.bar{height:8px;border-radius:5px;background:#0007;overflow:hidden;border:1px solid var(--line)}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--moon))}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+.tile{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px;text-align:center;font-size:11px}
+.tile .art{height:34px;border-radius:6px;background:linear-gradient(135deg,#3a2c20,#5b4630);margin-bottom:4px}
+.tile.locked{opacity:.55}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}.tabs .btn{padding:5px 8px;min-height:30px;font-size:11px}
+.hero-orb{height:96px;border-radius:50%;aspect-ratio:1;margin:0 auto;background:radial-gradient(circle,#c8b2ff,#6a46ff 45%,#1b1040 75%);box-shadow:0 0 30px #7b5cffaa;display:grid;place-items:center;font-weight:800}
+.tree{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.node{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 2px;text-align:center;font-size:9px;min-height:36px}
+.node.done{border-color:var(--good)}.node.act{border-color:var(--violet);box-shadow:0 0 8px #7b5cff}.node.lock{opacity:.5}
+.map{position:relative;height:130px;border-radius:10px;background:linear-gradient(135deg,#1d3322,#2a4631);border:1px solid var(--line)}
+.pin{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#10151c;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #0008}
+.pin.lock{background:#666}
+.hide-pop .x-med,.hide-pop .x-full{display:none}.hide-med .x-full{display:none}
+.note{padding:10px 16px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:#10151c}
+@media (max-width:520px){header{padding:8px 12px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Tower UI mockup</h1>
+  <div class="group" role="group" aria-label="Orientation"><label>Orientation</label>
+    <button class="opt" data-o="portrait" aria-pressed="true">Portrait</button>
+    <button class="opt" data-o="landscape" aria-pressed="false">Landscape</button></div>
+  <div class="group" role="group" aria-label="Window mode"><label>Window</label>
+    <button class="opt" data-m="pop" aria-pressed="false">Pop-out</button>
+    <button class="opt" data-m="med" aria-pressed="true">Medium</button>
+    <button class="opt" data-m="full" aria-pressed="false">Full</button></div>
+  <div class="group" role="group" aria-label="Screen"><label>Screen</label>
+    <button class="opt" data-s="tower" aria-pressed="true">Tower</button>
+    <button class="opt" data-s="room" aria-pressed="false">Room card</button>
+    <button class="opt" data-s="build" aria-pressed="false">Build</button>
+    <button class="opt" data-s="summon" aria-pressed="false">Heart: Summon</button>
+    <button class="opt" data-s="research" aria-pressed="false">Heart: Research</button>
+    <button class="opt" data-s="people" aria-pressed="false">People</button>
+    <button class="opt" data-s="hero" aria-pressed="false">Hero</button>
+    <button class="opt" data-s="expedition" aria-pressed="false">Expedition</button></div>
+</header>
+<main><div id="stage"></div></main>
+<div class="note">Layout mockup only: art, numbers and copy are placeholders from TOWER_MODE_GDD.md section 12. Tap the drawer arrow, the panel's S / M / F icons, and the dock buttons.</div>
+<script>
+(function(){
+var st={o:"portrait",m:"med",s:"tower",drawer:false};
+var stage=document.getElementById("stage");
+var RES=[["Gold","G","#f2c14e","12.4k"],["Celestium","C","#59b8ff","86"],["Sigils","S","#b07cff","245"],["Food","F","#f08a4b","310"],["Water","W","#4fa8ff","280"]];
+var DRAWER=[["Firewood","Fw","#e0a060","140"],["Tonics","T","#ff6fd0","6"],["People","P","#9bd68a","22/32"],["Threat","!","#ff7b5c","Tense"],["Happy","H","#ffe27a","68%"]];
+function chip(r){return '<span class="chip"><span class="ico" style="background:'+r[2]+'">'+r[1]+'</span>'+r[3]+'</span>';}
+function floors(){
+  var rows=[["+3",[["Cottage C","w2",1,"",""],["Barn B","w2","","",""]]],["+2",[["House D","w2","","",""],["Market B","w2","","",""]]],
+    ["+1",[["Nursery E","w2","","",""],["Kitchen C","w2","1","",""]]],["0",[["Shack D","w1","","",""],["Gate","w1","","",""]]],
+    ["-1",[["Quarry E","w2","","",""],["Well D","w1","","!",""]]]];
+  var h="";
+  rows.forEach(function(r){
+    h+='<div class="floor"><span class="flabel">'+r[0]+'</span>';
+    var L=r[1][0],R=r[1][1];
+    h+='<div class="room '+L[1]+'">'+L[0]+(L[2]?'<span class="bubble">+12</span>':'')+'<span class="rk"></span></div>';
+    h+='<div class="heart">HEART</div>';
+    h+='<div class="room '+R[1]+'">'+R[0]+(R[2]?'<span class="bubble">+12</span>':'')+(R[3]?'<span class="inc">!</span>':'')+'</div></div>';
+  });
+  return h;
+}
+function body(){
+  var s=st.s,m=st.m;
+  var common='';
+  var T={
+  room:['Kitchen  C','<div class="card"><div class="row"><b>Food +12 / cycle</b><span class="muted">62%</span></div><div class="bar"><i style="width:62%"></i></div></div><div class="row"><button class="btn">Collect</button><button class="btn sec">Rush 78%</button><button class="btn v">Upgrade to B</button></div><div class="x-med card"><b>Workers (2/4)</b><div class="muted">Grit match +17% - adjacency +12% (Kitchen + Well)</div><div class="row"><span class="tag">Wren Kettle</span><span class="tag">Rook Emberwick</span><span class="tag">+ add</span></div></div><div class="x-med muted">Upgrade: 1,060 gold - needs Heart D - claims the cell on the left</div><div class="x-full card"><b>Rank preview</b><div class="grid"><div class="tile">F</div><div class="tile">E</div><div class="tile">D</div><div class="tile">C</div><div class="tile">B</div><div class="tile">A</div><div class="tile">S</div><div class="tile">SS</div><div class="tile">SSR</div></div></div><div class="x-full card"><b>Per-worker breakdown and stat history</b><div class="muted">Wren: +14% (Grit 14) - Rook: +3% (Charm)</div></div><div class="row x-med"><button class="btn sec">Move</button><button class="btn sec">Demolish</button></div>'],
+  build:['Build','<div class="tabs"><button class="btn">Living</button><button class="btn sec">Produce</button><button class="btn sec">Storage</button><button class="btn sec">Service</button><button class="btn sec">Core</button></div><div class="row x-med"><button class="btn sec">Floors</button><button class="btn sec">Dig down</button></div><div class="grid"><div class="tile"><div class="art"></div>Shack<br><span class="muted">100g</span></div><div class="tile"><div class="art"></div>Kitchen<br><span class="muted">250g</span></div><div class="tile"><div class="art"></div>Well<br><span class="muted">150g</span></div><div class="tile"><div class="art"></div>Mill<br><span class="muted">400g</span></div><div class="tile locked"><div class="art"></div>Quarry<br><span class="muted">needs CON-4</span></div><div class="tile locked"><div class="art"></div>Forge<br><span class="muted">needs Heart C</span></div></div><div class="x-full card muted">Placement mode: drag the ghost onto the tower; valid cells glow, blocked cells show why.</div>'],
+  summon:['Heart - Summon','<div class="tabs"><button class="btn">Summon</button><button class="btn sec x-med">Research</button><button class="btn sec x-med">Upgrade</button><button class="btn sec x-med">Status</button></div><div class="tabs x-med"><button class="btn v">Standard</button><button class="btn sec">Featured</button><button class="btn sec">Pick-Your-Hero</button><button class="btn sec">Resident</button></div><div class="hero-orb x-med">HEART</div><div><div class="row"><span class="muted">Pity</span><b>38 / 60</b></div><div class="bar"><i style="width:63%"></i></div></div><div class="row"><button class="btn v">x1 - 10 Sigils</button><button class="btn v">x10 - 100 Sigils</button></div><div class="x-full row"><button class="btn sec">Rates</button><span class="muted">Skip animation: on</span></div>'],
+  research:['Heart - Research','<div class="tabs"><button class="btn sec">Summon</button><button class="btn">Research</button><button class="btn sec x-med">Upgrade</button><button class="btn sec x-med">Status</button></div><div class="tree"><div class="node done">CON 1<br>done</div><div class="node done">SET 1</div><div class="node act">PRO 1<br>7:20</div><div class="node">DEF 1</div><div class="node">EXP 1</div><div class="node">CON 2</div><div class="node lock">SET 2</div><div class="node lock">PRO 2</div><div class="node lock">DEF 2</div><div class="node lock">EXP 2</div></div><div class="x-med card"><b>Crop rotation</b> <span class="tag">T1</span><div class="muted">+5% Food. 10 Celestium, 10 min.</div><div class="row"><button class="btn">Rush</button></div></div><div class="x-full muted">Pan and zoom the five-branch tree; tap a node for a pop-out detail card.</div>'],
+  people:['People','<div class="tabs"><button class="btn">Heroes</button><button class="btn sec">Villagers</button><button class="btn sec">All</button></div><div class="row x-med"><span class="tag">rank</span><span class="tag">element</span><span class="tag">role</span><span class="tag">sort v</span></div><div class="grid"><div class="tile"><div class="art"></div>Kestrel<br><span class="muted">B Fire</span></div><div class="tile"><div class="art"></div>Sable<br><span class="muted">B Wind</span></div><div class="tile"><div class="art"></div>Wren<br><span class="muted">F Cook</span></div><div class="tile"><div class="art"></div>Tobias<br><span class="muted">F Farm</span></div><div class="tile"><div class="art"></div>Mina<br><span class="muted">away 0:42</span></div><div class="tile"><div class="art"></div>Gorm<br><span class="muted">injured</span></div></div><div class="x-full muted">Drag a card onto a room or its worker slot to assign.</div>'],
+  hero:['Kestrel - B - Fire Striker','<div class="row"><div class="tile" style="width:96px"><div class="art" style="height:110px"></div>full art</div><div style="flex:1"><div class="row"><span class="tag">Might 24</span><span class="tag">Grace 22</span><span class="tag">Wit 20</span></div><div class="row"><b>Stars</b> **---</div><div class="row"><button class="btn v">Fuse</button><button class="btn sec">Ascend</button></div></div></div><div class="x-med card"><b>Abilities</b><div class="muted">Passive First Draw - Ember Cross - Heat Surge - Blade Rush - Fallen Gate (ultimate)</div></div><div class="x-full card"><b>Outfit</b> <div class="row"><span class="tag">battle</span><span class="tag">casual</span><span class="tag">work</span></div><b>Weapon</b> Twin Cinder Blades</div>'],
+  expedition:['Expeditions','<div class="map"><span class="pin" style="left:12%;top:60%">1</span><span class="pin" style="left:30%;top:30%">2</span><span class="pin" style="left:48%;top:66%">3</span><span class="pin lock" style="left:62%;top:25%">4</span><span class="pin lock" style="left:82%;top:55%">5</span></div><div class="card"><b>Rootside Camp</b> <span class="muted">danger 110 - 1 h</span><div class="row"><span class="tag">hero</span><span class="tag">hero</span><span class="tag">hero</span><span class="tag x-med">Predicted: Success</span></div></div><div class="row"><button class="btn">Auto send</button><button class="btn v">Play run</button></div><div class="x-full muted">Active parties and results appear here. Parties 1 / 2.</div>']
+  };
+  return T[s];
+}
+function panelStyle(){
+  var o=st.o,m=st.m,s=st.s;
+  var w=o==="portrait"?360:740,h=o==="portrait"?740:360;
+  var dockPortrait=62,dockLand=62;
+  if(m==="full") return "left:0;top:0;right:0;bottom:0;border-radius:0";
+  if(o==="portrait"){
+    if(m==="med") return "left:0;right:0;bottom:"+dockPortrait+"px;height:52%;border-radius:16px 16px 0 0";
+    return "left:50px;right:50px;top:230px;height:230px;border-radius:14px";
+  }
+  if(m==="med") return "right:"+dockLand+"px;top:44px;bottom:0;width:52%;border-radius:16px 0 0 0";
+  return "left:230px;top:70px;width:230px;height:190px;border-radius:14px";
+}
+function render(){
+  var o=st.o;
+  var dev=document.createElement("div");
+  dev.className="device "+o;
+  var landscape=o==="landscape";
+  var tw=landscape?'left:22px;right:68px;top:84px;bottom:6px;--fh:46px':'left:22px;right:6px;top:84px;bottom:74px;--fh:104px';
+  var mm=landscape?'left:6px;top:84px;bottom:6px':'right:6px;top:84px;bottom:74px';
+  var fabs=landscape?'right:74px;bottom:10px':'left:0;right:0;bottom:70px;justify-content:center';
+  var dockHtml='<div class="dock"><button class="dbtn"><span class="di">B</span>BUILD</button><button class="dbtn"><span class="di">P</span>PEOPLE</button><button class="dbtn heartbtn"><span class="di">H</span>HEART</button><button class="dbtn"><span class="di">M</span>MAP</button><button class="dbtn"><span class="di">X</span>BATTLE</button></div>';
+  var html='<div class="screen"><div class="stars"></div>'+
+   '<div class="topbar" style="'+(landscape?'right:62px':'')+'">'+RES.map(chip).join("")+'<button class="drawer-btn" id="dr" aria-label="Resource drawer" aria-expanded="'+st.drawer+'">'+(st.drawer?"^":"v")+'</button></div>'+
+   '<div class="drawer'+(st.drawer?' open':'')+'" style="'+(landscape?'right:70px':'')+'">'+DRAWER.map(chip).join("")+'</div>'+
+   '<div class="cluster" style="'+(landscape?'right:70px':'')+'"><button class="cbtn" aria-label="Speed">1x</button><button class="cbtn" aria-label="Steward">St</button><button class="cbtn" aria-label="Alerts">!<span class="dot"></span></button><button class="cbtn" aria-label="Goals">G</button><button class="cbtn" aria-label="Menu">=</button></div>'+
+   '<div class="tower" style="'+tw+'"><div class="floors">'+floors()+'</div></div>'+
+   '<div class="minimap" style="'+mm+'"><i></i><i class="g"></i><i></i><i class="v"></i><i class="r"></i><i></i></div>'+
+   '<div class="fabs" style="'+fabs+'"><button class="fab">Collect all</button><button class="fab alt">Rush</button></div>'+
+   dockHtml;
+  if(st.s!=="tower"){
+    var b=body();
+    var cls="hide-"+(st.m==="pop"?"pop":st.m==="med"?"med":"none");
+    if(st.m!=="full") html+='<div class="dim" style="'+(st.m==="pop"?'background:#0003':'')+'"></div>';
+    html+='<section class="panel '+cls+'" style="'+panelStyle()+'" aria-label="'+b[0]+'"><header><b>'+b[0]+'</b><span class="winmodes">'+
+      ['pop|S','med|M','full|F'].map(function(x){var p=x.split("|");return '<button class="wm'+(st.m===p[0]?' on':'')+'" data-wm="'+p[0]+'" aria-label="'+p[0]+' window">'+p[1]+'</button>';}).join("")+
+      '<button class="wm" data-close="1" aria-label="Close">x</button></span></header><div class="pbody">'+b[1]+'</div></section>';
+  }
+  html+='</div>';
+  dev.innerHTML=html;
+  stage.innerHTML="";stage.appendChild(dev);
+  fit();
+  var dr=dev.querySelector("#dr");if(dr)dr.onclick=function(){st.drawer=!st.drawer;render();};
+  dev.querySelectorAll("[data-wm]").forEach(function(el){el.onclick=function(){st.m=el.dataset.wm;sync();render();};});
+  var cl=dev.querySelector("[data-close]");if(cl)cl.onclick=function(){st.s="tower";sync();render();};
+}
+function fit(){
+  var dev=stage.firstChild;if(!dev)return;
+  var w=st.o==="portrait"?366:746,h=st.o==="portrait"?746:366;
+  var main=document.querySelector("main");
+  var sc=Math.min(1.25,(main.clientWidth-8)/w,(main.clientHeight-8)/h);
+  dev.style.transform="scale("+sc+")";
+  stage.style.width=(w*sc)+"px";stage.style.height=(h*sc)+"px";
+}
+function sync(){
+  document.querySelectorAll("button.opt").forEach(function(b){
+    var k=b.dataset.o?"o":b.dataset.m?"m":"s";
+    b.setAttribute("aria-pressed",String(st[k]===(b.dataset.o||b.dataset.m||b.dataset.s)));
+  });
+}
+document.querySelectorAll("button.opt").forEach(function(b){b.onclick=function(){
+  if(b.dataset.o)st.o=b.dataset.o;if(b.dataset.m)st.m=b.dataset.m;if(b.dataset.s){st.s=b.dataset.s;
+    if((st.s==="summon"||st.s==="research"||st.s==="hero"||st.s==="expedition")&&st.m==="pop")st.m="med";}
+  sync();render();};});
+window.addEventListener("resize",fit);
+render();
+})();
+</script>
+</body>
+</html>
