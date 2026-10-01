@@ -6,8 +6,9 @@ using UnityEngine;
 public sealed class TowerSimulationTests
 {
     // Most scenarios lay out a tower in one go; the construction tests switch timing back on.
-    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; }
-    [TearDown] public void TimedBuilds() { TowerRules.InstantConstruction = false; }
+    // Traversal events stay off unless a test is about them, so forest walks are predictable.
+    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; }
+    [TearDown] public void TimedBuilds() { TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; }
 
     private static TowerRules Expedition()
     {
@@ -210,6 +211,151 @@ public sealed class TowerSimulationTests
         Assert.IsTrue(loaded.NodeVisible(a) && loaded.NodeVisible(layout.Node(a).links[0]), "fog is rebuilt from visited places");
         Assert.AreEqual(rules.Run.threat, loaded.Run.threat, "threat survives a save");
         Assert.IsTrue(loaded.OnRoad(layout.entrance, a), "roads survive a save");
+    }
+
+    // ---- Traversal events (BATTLE_MODE_GDD.md section 5, roadmap P2) -------------------------------
+
+    // Answers whatever the forest throws at the party: first affordable choice, ambushes are won.
+    private static void SettleEvents(TowerRules rules)
+    {
+        for (int guard = 0; guard < 10 && rules.Run != null; guard++)
+        {
+            if (rules.AmbushPending) { Assert.IsNull(rules.ResolveAmbush(true, null)); continue; }
+            var def = rules.PendingEvent;
+            if (def == null) break;
+            int pick = def.choices.FindIndex(c => rules.ChoiceBlocked(c) == null);
+            Assert.GreaterOrEqual(pick, 0, def.id + " has no affordable choice");
+            Assert.IsNull(rules.ResolveEvent(pick));
+        }
+        if (rules.Run != null) rules.DismissEventResult();
+    }
+
+    [Test]
+    public void TraversalEventsAreWellFormed()
+    {
+        TowerEvents.ClearCache();
+        var all = TowerEvents.All;
+        Assert.GreaterOrEqual(all.FindAll(e => e.weight > 0).Count, 20, "launch budget: 20 rolled events");
+        Assert.IsNotNull(TowerEvents.Get(TowerEvents.AmbushId));
+        Assert.IsNotNull(TowerEvents.Get(TowerEvents.RestId));
+        var themes = new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep" };
+        foreach (var e in all)
+        {
+            Assert.IsNotEmpty(e.title, e.id); Assert.IsNotEmpty(e.text, e.id);
+            Assert.Contains(e.time, new[] { "any", "day", "night" }, e.id);
+            foreach (var t in e.themes.Split(',')) if (t.Length > 0) Assert.Contains(t.Trim(), themes, e.id);
+            int outcomes = 0;
+            foreach (var c in e.choices)
+            {
+                Assert.IsNotEmpty(c.label, e.id);
+                Assert.IsFalse(c.success.Empty, e.id + " / " + c.label + " needs a success outcome");
+                if (c.trait.Length > 0) Assert.Contains(c.trait, TowerRules.Traits, e.id + " trait");
+                if (c.chance < 1f) Assert.IsFalse(c.failure.Empty && c.partial.Empty, e.id + " / " + c.label + " can fail");
+                outcomes += 1 + (c.partial.Empty ? 0 : 1) + (c.failure.Empty ? 0 : 1);
+            }
+            Assert.GreaterOrEqual(outcomes, 2, e.id + " needs 2+ outcomes");
+        }
+    }
+
+    [Test]
+    public void TraversalEventsFireAndAreSeeded()
+    {
+        TowerRules.TraversalEvents = true;
+        var first = Expedition();
+        var second = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(first.State)));
+        foreach (var rules in new[] { first, second })
+        {
+            var layout = rules.RunLayout;
+            // Walk the shortest trail toward the lair; the place next to it always offers the quiet glade.
+            var lair = layout.nodes.Find(x => x.kind == "lair");
+            var prev = new System.Collections.Generic.Dictionary<string, string> { { layout.entrance, null } };
+            var queue = new System.Collections.Generic.Queue<string>(); queue.Enqueue(layout.entrance);
+            while (queue.Count > 0)
+            {
+                string cur = queue.Dequeue();
+                foreach (var x in layout.nodes)
+                    if (x.kind != "lair" && !prev.ContainsKey(x.id) && layout.Linked(cur, x.id)) { prev[x.id] = cur; queue.Enqueue(x.id); }
+            }
+            string last = layout.nodes.Find(x => prev.ContainsKey(x.id) && layout.Linked(x.id, lair.id)).id;
+            var path = new System.Collections.Generic.List<string>();
+            for (string x = last; x != layout.entrance; x = prev[x]) path.Insert(0, x);
+            foreach (string at in path)
+            {
+                Assert.IsNull(rules.ForestMove(at));
+                if (rules.PendingEvent != null || rules.AmbushPending)
+                {
+                    Assert.IsNotNull(rules.ForestMove(layout.entrance), "events block travel until answered");
+                    SettleEvents(rules);
+                }
+            }
+            Assert.Contains(TowerEvents.RestId, rules.Run.eventsSeen, "a rest is offered before the lair");
+        }
+        CollectionAssert.AreEqual(first.Run.eventsSeen, second.Run.eventsSeen, "same seed, same events");
+        CollectionAssert.AreEqual(first.Run.hp, second.Run.hp);
+    }
+
+    [Test]
+    public void EventChoicesPayCostsAndTraitsImproveOdds()
+    {
+        var rules = Expedition();
+        rules.HeroResident("kaela").trait = "Brave";
+        var run = rules.Run;
+        run.eventId = "hermit_herbalist";
+        var def = rules.PendingEvent;
+        var help = def.choices[0]; var barter = def.choices[1];
+        Assert.AreEqual(0.7f, rules.ChoiceChance(help), 0.001f);
+        rules.HeroResident("kaela").trait = "Kind";
+        Assert.AreEqual(1f, rules.ChoiceChance(help), 0.001f, "a Kind hero helps");
+        Assert.IsNotNull(rules.ChoiceBlocked(barter), "no gold in the haul");
+        Assert.IsNotNull(rules.ResolveEvent(1));
+        run.haul.Add(new TowerLoot { name = "coins", gold = 30 });
+        int tonics = run.tonics;
+        Assert.IsNull(rules.ResolveEvent(1));
+        Assert.AreEqual(tonics + 1, run.tonics);
+        Assert.AreEqual(5, run.haul[0].gold, "25 gold paid from the haul");
+        Assert.IsNull(rules.PendingEvent);
+        Assert.IsNotEmpty(run.eventResult);
+        Assert.IsNull(rules.DismissEventResult());
+        Assert.IsEmpty(run.eventResult);
+    }
+
+    [Test]
+    public void AmbushOutcomesMustBeFought()
+    {
+        var rules = Expedition();
+        var run = rules.Run;
+        run.eventId = TowerEvents.AmbushId;
+        Assert.IsNull(rules.ResolveEvent(0), "fight");
+        Assert.IsTrue(rules.AmbushPending);
+        var layout = rules.RunLayout;
+        Assert.IsNotNull(rules.ForestMove(layout.Node(layout.entrance).links[0]), "no travel mid-ambush");
+        Assert.IsNotNull(rules.CampRest(), "no rest mid-ambush");
+        int haul = run.haul.Count, won = run.battlesWon;
+        Assert.IsNull(rules.ResolveAmbush(true, null));
+        Assert.IsFalse(rules.AmbushPending);
+        Assert.AreEqual(haul + 1, run.haul.Count, "ambush spoils");
+        Assert.AreEqual(won + 1, run.battlesWon);
+        run.eventId = TowerEvents.AmbushId;
+        Assert.IsNull(rules.ResolveEvent(0));
+        var dead = new System.Collections.Generic.List<int>();
+        foreach (var unused in run.party) dead.Add(0);
+        Assert.IsNull(rules.ResolveAmbush(false, dead));
+        Assert.IsNull(rules.Run, "a wiped party ends the expedition");
+    }
+
+    [Test]
+    public void FullThreatBringsAnAmbushCard()
+    {
+        TowerRules.TraversalEvents = true;
+        var rules = Expedition();
+        var layout = rules.RunLayout;
+        string a = layout.Node(layout.entrance).links[0];
+        Assert.IsNull(rules.ForestMove(a));
+        SettleEvents(rules);
+        rules.Run.threat = TowerRules.ThreatMax - 1;
+        Assert.IsNull(rules.ForestMove(layout.entrance));
+        Assert.AreEqual(TowerEvents.AmbushId, rules.Run.eventId, "full threat: the forest closes in");
+        Assert.AreEqual(TowerRules.ThreatAfterStir, rules.Run.threat);
     }
 
     [Test]

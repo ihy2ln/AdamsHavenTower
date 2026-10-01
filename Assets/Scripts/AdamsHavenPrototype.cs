@@ -823,12 +823,13 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     public void SaveExpedition() { Save(); }
 
     // A dungeon fight: the expedition UI hands over the screen and gets the party back afterwards.
-    public void LaunchExpeditionBattle(int depth, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool> done)
+    public void LaunchExpeditionBattle(int depth, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool> done,
+        string returnLabel = "BACK TO THE DUNGEON")
     {
         if (battleMode != null) return;
         Save();
         battleMode = gameObject.AddComponent<BattleMode>();
-        battleMode.ReturnLabel = "BACK TO THE DUNGEON";
+        battleMode.ReturnLabel = returnLabel;
         battleMode.Begin(depth, field, reserve, (won, gold) =>
         {
             if (battleMode != null) Destroy(battleMode);

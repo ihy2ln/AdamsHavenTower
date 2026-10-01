@@ -603,6 +603,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             () => { tower.CloseExpedition(null); });
         BuildRunPanel(false);
         if (lootOpen) BuildLoot();
+        else BuildEventCard();
     }
 
     private void TapNode(string id)
@@ -1104,8 +1105,27 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void Fight()
     {
-        var run = R.Run; var d = R.Dungeon;
-        var room = d.rooms[R.PendingRoom];
+        var room = R.Dungeon.rooms[R.PendingRoom];
+        FightWithParty(R.BattleDepth(room.kind), "BACK TO THE DUNGEON", (won, hp) =>
+        {
+            Act(R.ResolveBattle(won, hp));
+            if (R.Run != null && won) Say("Victory! The spoils are added to your haul.");
+        });
+    }
+
+    private void FightAmbush()
+    {
+        FightWithParty(R.AmbushDepth, "BACK TO THE FOREST", (won, hp) =>
+        {
+            Act(R.ResolveAmbush(won, hp));
+            if (R.Run != null && R.State.log.Count > 0) Say(R.State.log[R.State.log.Count - 1]);
+        });
+    }
+
+    // Builds the living party (Tower gear applied) and hands the screen to BattleMode; done gets HP percents back.
+    private void FightWithParty(int depth, string returnLabel, Action<bool, List<int>> done)
+    {
+        var run = R.Run;
         var units = BattleCatalog.Party(run.party);
         var alive = new List<BattleUnit>();
         for (int i = 0; i < run.party.Count; i++)
@@ -1121,7 +1141,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var field = alive.GetRange(0, Mathf.Min(3, alive.Count));
         var reserve = alive.Count > 3 ? alive.GetRange(3, Mathf.Min(3, alive.Count - 3)) : new List<BattleUnit>();
         canvas.gameObject.SetActive(false);
-        tower.LaunchExpeditionBattle(R.BattleDepth(room.kind), field, reserve, won =>
+        tower.LaunchExpeditionBattle(depth, field, reserve, won =>
         {
             canvas.gameObject.SetActive(true);
             var hp = new List<int>(run.hp);
@@ -1130,9 +1150,75 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 var unit = alive.Find(u => u.Id == run.party[i]);
                 if (unit != null) hp[i] = unit.Hp <= 0 ? 0 : Mathf.Clamp(Mathf.CeilToInt(100f * unit.Hp / unit.MaxHp), 1, 100);
             }
-            Act(R.ResolveBattle(won, hp));
-            if (R.Run != null && won) Say("Victory! The spoils are added to your haul.");
-        });
+            done(won, hp);
+        }, returnLabel);
+    }
+
+    // ---------------------------------------------------------------- traversal events
+
+    // Event card (choices with check odds), then its result, or an ambush that must be fought.
+    private void BuildEventCard()
+    {
+        var run = R.Run; var def = R.PendingEvent;
+        bool ambush = R.AmbushPending;
+        if (def == null && !ambush && string.IsNullOrEmpty(run.eventResult)) return;
+        float width = root.rect.width, height = root.rect.height;
+        var shade = Stretch("Event shade", content, new Color(0, 0, 0, 0.55f));
+        int choices = ambush || def == null ? 1 : def.choices.Count;
+        float pw = Mathf.Min(760, width - Side - 60), ph = Mathf.Min(height - Top - 20, 230 + choices * 56);
+        float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
+        var panel = PanelAt("Event", shade.transform, px, py, pw, ph).transform;
+
+        // The first fighter still standing speaks for the party.
+        string speaker = run.party[0];
+        for (int i = 0; i < run.party.Count; i++) if (run.hp[i] > 0) { speaker = run.party[i]; break; }
+        var chibi = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + speaker);
+        float tx = 20;
+        if (chibi != null)
+        {
+            var pic = new GameObject("Speaker", typeof(RectTransform), typeof(RawImage));
+            pic.transform.SetParent(panel, false);
+            var pr = pic.GetComponent<RectTransform>();
+            pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0, 1);
+            float ah = 150, aw = ah * chibi.width / chibi.height;
+            pr.anchoredPosition = new Vector2(16, -16); pr.sizeDelta = new Vector2(aw, ah);
+            pic.GetComponent<RawImage>().texture = chibi; pic.GetComponent<RawImage>().raycastTarget = false;
+            TextAt(panel, "Speaker name", FighterName(speaker), 16, 168, aw, 20, 12, Gold, TextAnchor.MiddleCenter);
+            tx = aw + 32;
+        }
+        float tw = pw - tx - 20, by = ph - 20 - choices * 56;
+        if (ambush)
+        {
+            TextAt(panel, "Title", "AMBUSH!", tx, 18, tw, 34, 24, Alert);
+            TextAt(panel, "Text", (string.IsNullOrEmpty(run.eventResult) ? "" : run.eventResult + "\n\n") +
+                "Enemies burst from the undergrowth. There is no slipping away now.", tx, 58, tw, by - 66, 16, Cream);
+            ButtonAt(panel, "Fight", "FIGHT  (danger " + R.AmbushDepth + ")", tx, by, tw, 48, FightAmbush, Alert, 18);
+        }
+        else if (def == null)
+        {
+            TextAt(panel, "Title", "WHAT HAPPENED", tx, 18, tw, 34, 22, Gold);
+            TextAt(panel, "Text", run.eventResult, tx, 58, tw, by - 66, 16, Cream);
+            ButtonAt(panel, "Continue", "CONTINUE", tx, by, tw, 48, () => Act(R.DismissEventResult()), Teal, 17);
+        }
+        else
+        {
+            TextAt(panel, "Title", def.title.ToUpperInvariant(), tx, 18, tw, 34, 22, Gold);
+            TextAt(panel, "Text", def.text, tx, 58, tw, by - 66, 16, Cream);
+            for (int i = 0; i < def.choices.Count; i++)
+            {
+                int index = i;
+                var choice = def.choices[i];
+                string odds = "";
+                if (choice.chance < 1f)
+                {
+                    odds = "  •  " + Mathf.RoundToInt(R.ChoiceChance(choice) * 100) + "%";
+                    if (choice.trait.Length > 0) odds += R.PartyHasTrait(choice.trait) ? "  (" + choice.trait + " helps)" : "  (" + choice.trait + " would help)";
+                }
+                string blocked = R.ChoiceBlocked(choice);
+                ButtonAt(panel, "Choice " + i, choice.label.ToUpperInvariant() + odds, tx, by + i * 56, tw, 48,
+                    () => Act(R.ResolveEvent(index)), i == def.choices.Count - 1 && choice.chance >= 1f ? Alert : Teal, 15, blocked == null);
+            }
+        }
     }
 
     private void ShowEnd()

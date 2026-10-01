@@ -108,6 +108,22 @@ Example events:
 
 Target content budget for Campaign launch: 40 events (20 universal, 20 depth or biome specific), each with 2+ outcomes. Event data lives in JSON so content grows without code.
 
+**Implemented (P2, `TowerEvents.cs` + `Resources/AdamsHaven/Events/traversal.json`):**
+
+| Rule | Value |
+| --- | --- |
+| Roll | After each forest step: 35% on a new trail, 10% on road, plus up to 25% at full threat. Never two steps in a row. None at the camp or the lair. |
+| Selection | Weighted pick filtered by depth (`minDepth`/`maxDepth`), node theme, day/night, road, `needsFlag`, and not seen this run (unless `repeat`). Seeded by run seed + step count. |
+| Check | Each choice has a base `chance`; a hero with the named `trait` in the party adds `traitBonus` (default +30%). Roll under chance = success, within 20% above = partial (if defined), else failure. Odds and the helping trait are shown on the button. |
+| Costs | `costRations`, `costFirewood`, `costTonics`, `costGold` (paid from the haul); unaffordable choices are disabled. |
+| Consequences | rations, firewood, tonics, HP % to the living party, gold/ore/essence into the haul, threat up/down, reveal N fogged places, flag for later events, ambush battle. |
+| Rest before the boss | The first time the party reaches a place next to the lair, **The Quiet Glade** offers a rest (HP +25, threat -10). |
+| Full threat | Besides swallowing road, the forest sends **The Forest Closes In**: fight, or try to flee (Careful helps). |
+| Ambush | Fought on the forest map with the normal battle; win = spoils, XP, threat -10; lose = flee and drop a ration; wipe ends the run. |
+| Content | 20 rolled events + 2 scripted (`quiet_glade`, `threat_ambush`). All 10 colony traits are used by at least one check. |
+
+Not yet: companion banter and bond ranks, mood/stat checks, Stress and injury consequences, per-event art plates (the card shows the speaking hero's portrait).
+
 ## 6. POIs: D&D-style dungeons
 
 POI kinds (already present in layouts): **combat, elite, lair (boss), treasure, merchant, shrine, mystery, landmark, camp**.
@@ -197,7 +213,8 @@ Evolve, do not replace.
 | Feature | Exists | Work needed |
 | --- | --- | --- |
 | Region map, run state, rations, camp rest, tonics | `TowerExpedition.cs` (`TowerRun`, `StartExpedition`, `ForestMove`, `CampRest`, `EndExpedition`) | Add mode choice, shift, depth beyond Gate |
-| Fog reveal, roads, threat meter | `TowerThreat.cs` (P1 done) | Ambush on full threat (needs P2 event battles), lantern item |
+| Fog reveal, roads, threat meter | `TowerThreat.cs` (P1 done) | Lantern item |
+| Traversal events, checks, ambushes | `TowerEvents.cs`, `Events/traversal.json` (P2 done) | Banter, mood/stat checks, Stress consequences, 20 more events |
 | 15 premade forest layouts | `TowerForestLayouts.cs` | Group into depth pools; add Atlas provider |
 | POI dungeon grid, fog, routes, room resolution | `TowerDungeon.cs` | New room kinds (skill check, story, key); relics hook |
 | Guild gating | `TowerGuild.cs` | Depth gating |
@@ -224,7 +241,7 @@ Testing: add simulation tests in the `TowerSimulationTests` style (seeded runs, 
 | Phase | Deliverable |
 | --- | --- |
 | P1 | **Done 2026-09-30.** Fog reveal and road drawing on existing Campaign maps; threat meter; mid-run save/resume (state already saved after every action and on app pause/quit; new fields persist). |
-| P2 | Event director plus 20 events; trait checks; consequences. |
+| P2 | **Done 2026-09-30.** Event director plus 20 events; trait checks; consequences; full-threat ambush; rest before the lair. |
 | P3 | Run deckbuilding, relics, carry-over Stress; new dungeon room kinds. |
 | P4 | Shift triggers and Silverwood depth pools; depth gating. |
 | P5 | Unknown (Atlas) mode generator and reward loop. |

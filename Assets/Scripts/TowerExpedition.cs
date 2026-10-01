@@ -50,6 +50,12 @@ namespace AdamsHaven.Tower
         public List<string> revealed = new List<string>();
         public List<string> road = new List<string>();      // walked trails, TowerRules.RoadKey
         public int threat, roadSteps;
+        // Traversal events (TowerEvents.cs): the open event card, its last result, what was seen and remembered.
+        public string eventId = "", eventResult = "";
+        public List<string> eventsSeen = new List<string>();
+        public List<string> flags = new List<string>();
+        public int steps, ambushDepth;                     // ambushDepth > 0: a fight waits on the forest map
+        public bool lastStepEvent;
     }
 
     public sealed partial class TowerRules
@@ -93,6 +99,7 @@ namespace AdamsHaven.Tower
             if (State.hasRun && State.run.dungeonPoi.Length > 0 && TowerForestLayouts.Get(State.run.layout).Node(State.run.dungeonPoi) == null)
                 State.run.dungeonPoi = "";
             if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
+            if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
         }
 
         // ---------------------------------------------------------------- plan
@@ -169,7 +176,10 @@ namespace AdamsHaven.Tower
             if (run.dungeonPoi.Length > 0) return "Leave the dungeon first.";
             if (layout.Node(nodeId) == null) return "Unknown place.";
             if (!layout.Linked(run.at, nodeId)) return "No trail leads there from here.";
+            string block = EventBlock();
+            if (block != null) return block;
             string from = run.at;
+            bool road = OnRoad(from, nodeId);
             run.at = nodeId;
             if (!run.visited.Contains(nodeId)) run.visited.Add(nodeId);
             RevealFrom(nodeId);
@@ -182,6 +192,7 @@ namespace AdamsHaven.Tower
                     Note("No rations left: the party grows weak.");
                 }
             }
+            RollTraversalEvent(nodeId, road);
             return null;
         }
 
@@ -191,6 +202,7 @@ namespace AdamsHaven.Tower
             if (run == null) return "No expedition.";
             var node = RunLayout.Node(run.at);
             if (node == null || node.kind != "camp") return "Rest at a camp.";
+            if (EventBlock() != null) return EventBlock();
             if (run.firewood <= 0) return "No firewood to make camp.";
             run.firewood--;
             HealParty(35, false);

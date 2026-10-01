@@ -119,6 +119,8 @@ namespace AdamsHaven.Tower
                 lost++;
             }
             run.threat = ThreatAfterStir;
+            // Full threat also brings the forest down on the party (P2 events): fight or flee.
+            if (TraversalEvents && TowerEvents.Get(TowerEvents.AmbushId) != null && !AmbushPending) StartEvent(TowerEvents.AmbushId);
             Note(lost == 0 ? "The forest stirs, but your roads hold." :
                 "The forest stirs: " + lost + (lost == 1 ? " stretch" : " stretches") + " of road vanish under the trees.");
         }

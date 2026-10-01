@@ -203,6 +203,7 @@ namespace AdamsHaven.Tower
             var run = Run;
             if (run == null) return "No expedition.";
             if (run.dungeonPoi.Length > 0) return "Already inside.";
+            if (EventBlock() != null) return EventBlock();
             var node = RunLayout.Node(run.at);
             if (node == null || node.kind == "camp") return "Nothing to explore here. Rest or move on.";
             if (run.cleared.Contains(node.id)) return node.name + " is already cleared.";
