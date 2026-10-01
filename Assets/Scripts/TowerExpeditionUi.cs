@@ -131,7 +131,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         view = next;
         lootOpen = false;
-        if (gridView != null) gridView.SetActive(next == View.Forest);
+        if (gridView != null) gridView.SetActive(next == View.Forest || (next == View.Region && TowerRules.GridMaps));
         Rebuild();
     }
 
@@ -195,6 +195,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (toastTimer <= 0 && toast != null) toast.transform.parent.gameObject.SetActive(false);
         }
         if (view == View.Forest && (walking || fading || fadingIn)) UpdateWalk();
+        if (view == View.Region && atlasLabels.Count > 0) PlaceAtlasLabels();
         if (shiftFrame != null)
         {
             shiftClock += Time.unscaledDeltaTime;
@@ -437,6 +438,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void BuildRegion()
     {
+        if (TowerRules.GridMaps) { BuildAtlas(); return; }
         var run = R.Run;
         float width = root.rect.width, height = root.rect.height;
         var map = MapFrame(Resources.Load<Texture2D>(Root + "Maps/region"), 0, Top, width - Side - 24, height - Top, Color.white);
@@ -468,7 +470,14 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 unlocked ? Cream : new Color(0.75f, 0.75f, 0.78f));
         }
         TopBar("SILVERBROOK FOREST  •  GUILD EXPEDITIONS", "BACK TO TOWER", () => tower.CloseExpedition(null));
+        BuildRegionPanel();
+    }
 
+    // Right-hand panel of the region screen (old region map and Atlas alike).
+    private void BuildRegionPanel()
+    {
+        var run = R.Run;
+        float width = root.rect.width;
         var panel = PanelAt("Region panel", content, width - Side - 12, Top + 12, Side, 330);
         var region0 = TowerRules.Region(selectedRegion);
         if (region0 == null)
@@ -487,7 +496,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" : isUnlocked ? "Open to explore" : "Locked: conquer " +
             string.Join(" and ", Array.ConvertAll(region0.requires, n => TowerRules.Region(n).name))), 18, 96, Side - 36, 60, 15,
             isUnlocked ? Cream : new Color(1f, 0.7f, 0.6f));
-        TextAt(panel.transform, "Rule", TowerRules.SilverwoodDepth(region0.id) > 0 ?
+        TextAt(panel.transform, "Rule", TowerRules.GridMaps ? "Every expedition finds this forest rearranged. Clear its lair to conquer the region and open the way beyond." :
+            TowerRules.SilverwoodDepth(region0.id) > 0 ?
             "Choose one of this depth's three maps. Clear its lair to conquer the region." :
             "Each run the forest shifts into one of 15 maps. Clear its lair to conquer the region.",
             18, 160, Side - 36, 60, 13, new Color(0.8f, 0.85f, 0.9f));
@@ -495,6 +505,82 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             ButtonAt(panel.transform, "Resume", "RESUME EXPEDITION", 18, 250, Side - 36, 50, Resume, Teal, 17);
         else
             ButtonAt(panel.transform, "Plan", "PLAN EXPEDITION", 18, 250, Side - 36, 50, OpenPlan, Teal, 17, isUnlocked);
+    }
+
+    // ---------------------------------------------------------------- Atlas (layered region map)
+
+    private readonly List<KeyValuePair<Text, Vector2Int>> atlasLabels = new List<KeyValuePair<Text, Vector2Int>>();
+    private RectTransform atlasImage;
+
+    private void BuildAtlas()
+    {
+        float width = root.rect.width, height = root.rect.height, areaW = width - Side - 24, areaH = height - Top;
+        var image = new GameObject("Atlas view", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+        image.transform.SetParent(content, false);
+        var rect = image.rectTransform;
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(0, -Top); rect.sizeDelta = new Vector2(areaW, areaH);
+        atlasImage = rect;
+        if (gridView == null) gridView = gameObject.AddComponent<TowerMapView>();
+        float scale = canvas.scaleFactor;
+        gridView.Resize(Mathf.RoundToInt(areaW * scale), Mathf.RoundToInt(areaH * scale));
+        bool fresh = gridView.Family != "atlas";
+        var source = new TowerAtlasSource(R);
+        gridView.Bind(source);
+        gridView.SetActive(true);
+        if (fresh) gridView.ShowAll();
+        gridCenteredFor = -1;           // the run map recentres on the party when it comes back
+        image.texture = gridView.Texture;
+        var input = image.gameObject.AddComponent<TowerMapInput>();
+        input.Tapped = TapAtlas;
+        input.Dragged = d => gridView.Pan(d);
+        input.Zoomed = (f, at) => gridView.ZoomBy(f, at);
+        var selected = TowerAtlas.Map.Poi(selectedRegion);
+        if (selected != null) gridView.ShowPreview(new List<Vector2Int> { new Vector2Int(selected.x, selected.y), new Vector2Int(selected.x, selected.y) });
+        else gridView.ClearPreview();
+        // Names float over the places the guild knows of.
+        atlasLabels.Clear();
+        foreach (var p in TowerAtlas.Map.pois)
+        {
+            bool seen = source.Seen(p.x, p.y);
+            if (!seen && !source.Known(p)) continue;
+            var region = TowerRules.Region(p.id);
+            bool open = region == null || R.RegionUnlocked(p.id);
+            string name = p.name.ToUpperInvariant() + (region != null && R.RegionConquered(p.id) ? "  (CONQUERED)" : open ? "" : "  (LOCKED)");
+            var label = TextAt(rect, "Atlas label " + p.id, name, 0, 0, 220, 22, p.id == selectedRegion ? 15 : 13,
+                p.id == selectedRegion ? Gold : open ? Cream : new Color(0.7f, 0.74f, 0.8f), TextAnchor.MiddleCenter);
+            label.fontStyle = FontStyle.Bold;
+            label.rectTransform.pivot = new Vector2(0.5f, 1);
+            label.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(1.5f, -1.5f);
+            atlasLabels.Add(new KeyValuePair<Text, Vector2Int>(label, new Vector2Int(p.x, p.y)));
+        }
+        PlaceAtlasLabels();
+        TopBar("THE SILVERWOOD ATLAS  •  GUILD EXPEDITIONS", "BACK TO TOWER", () => tower.CloseExpedition(null));
+        BuildRegionPanel();
+    }
+
+    private void PlaceAtlasLabels()
+    {
+        if (atlasImage == null || gridView == null) return;
+        float w = atlasImage.rect.width, h = atlasImage.rect.height;
+        foreach (var pair in atlasLabels)
+        {
+            if (pair.Key == null) continue;
+            var vp = gridView.CellToViewport(pair.Value.x, pair.Value.y);
+            pair.Key.rectTransform.anchoredPosition = new Vector2(vp.x * w, -(1 - vp.y) * h - 10);
+            pair.Key.enabled = vp.x > -0.05f && vp.x < 1.05f && vp.y > -0.05f && vp.y < 1.05f;
+        }
+    }
+
+    private void TapAtlas(Vector2 viewport)
+    {
+        var cell = gridView.CellAt(viewport);
+        var poi = TowerAtlas.RegionNear(cell.x, cell.y, 3);
+        if (poi == null || poi.id == TowerAtlas.HomeId) { selectedRegion = ""; Rebuild(); return; }
+        var source = new TowerAtlasSource(R);
+        if (!source.Seen(poi.x, poi.y) && !source.Known(poi)) { Say("Unknown lands. Conquer the regions before them to find the way."); return; }
+        selectedRegion = poi.id;
+        Rebuild();
     }
 
     private void Label(RectTransform parent, Vector2 at, string text, int size, Color color)
@@ -563,7 +649,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void OpenPlan()
     {
         selectedLayout = "";
-        if (TowerRules.SilverwoodDepth(selectedRegion) > 0) Go(View.Map);
+        if (TowerRules.SilverwoodDepth(selectedRegion) > 0 && !TowerRules.GridMaps) Go(View.Map);
         else OpenParty();
     }
 
@@ -720,7 +806,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         if (gridView == null) gridView = gameObject.AddComponent<TowerMapView>();
         float scale = canvas.scaleFactor;
         gridView.Resize(Mathf.RoundToInt(areaW * scale), Mathf.RoundToInt(areaH * scale));
-        gridView.Bind(R);
+        gridView.Bind(new TowerRunMapSource(R));
         gridView.SetActive(true);
         if (gridCenteredFor != run.gridSeed + run.shift * 31) { gridCenteredFor = run.gridSeed + run.shift * 31; gridView.CenterOnParty(); }
         image.texture = gridView.Texture;

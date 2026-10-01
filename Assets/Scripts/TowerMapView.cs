@@ -14,7 +14,7 @@ namespace AdamsHaven.Tower
         private const int Px = 4;                   // mask pixels per cell
         private const float WalkSpeed = 4.2f, FollowGap = 0.95f;
 
-        private TowerRules rules;
+        private ITowerMapSource source;
         private TowerOverworld map;
         private string mapKey = "";
         private Transform root;
@@ -44,26 +44,28 @@ namespace AdamsHaven.Tower
 
         // ---------------------------------------------------------------- setup
 
-        public void Bind(TowerRules r)
+        public void Bind(ITowerMapSource src)
         {
-            rules = r;
-            var run = r.Run;
-            var m = r.Overworld;
+            source = src;
+            var m = src.Map;
             if (m == null) return;
-            string key = run.biome + ":" + run.gridSeed + ":" + run.shift;
+            string key = src.Key;
             if (key != mapKey || map == null)
             {
-                // The same expedition's forest shifted: keep the last frame so the UI can crossfade into the new one.
-                if (map != null && rt != null && mapKey.StartsWith(run.biome + ":" + run.gridSeed + ":"))
+                // The same forest rearranged: keep the last frame so the UI can crossfade into the new one.
+                if (map != null && rt != null && family == src.Family)
                 {
                     if (fadeFrom != null) { fadeFrom.Release(); Destroy(fadeFrom); }
                     fadeFrom = new RenderTexture(rt.width, rt.height, 0, RenderTextureFormat.ARGB32);
                     Graphics.Blit(rt, fadeFrom);
                 }
-                Clear(); map = m; mapKey = key; Build();
+                Clear(); map = m; mapKey = key; family = src.Family; Build();
             }
             Sync();
         }
+
+        private string family = "";
+        public string Family { get { return family; } }
 
         private RenderTexture fadeFrom;
 
@@ -290,7 +292,7 @@ namespace AdamsHaven.Tower
                         var ids = famTex[fam];
                         float shade = t == TowerTerrain.DenseForest ? rng.Range(0.78f, 0.92f) : rng.Range(0.9f, 1.05f);
                         var foot = Cell(x, y) + new Vector2(rng.Range(-0.4f, 0.4f), rng.Range(-0.4f, 0.4f));
-                        rows[y].Add(new Stamp { tex = ids[rng.Next(ids.Count)], foot = foot, w = size * rng.Range(0.85f, 1.2f),
+                        rows[y].Add(new Stamp { tex = ids[rng.Next(ids.Count)], foot = foot, w = size * source.StampScale * rng.Range(0.85f, 1.2f),
                             tint = new Color(shade, shade, shade * rng.Range(0.97f, 1.03f), 1), fade = fade, cuttable = fam != "rock" });
                     }
                 }
@@ -332,9 +334,9 @@ namespace AdamsHaven.Tower
         {
             foreach (var p in map.pois)
             {
-                var tex = TowerMapArt.Prop(p.kind);
+                float width;
+                var tex = source.Prop(p, out width);
                 if (tex == null) continue;
-                float width = p.kind == "camp" || p.kind == "lair" ? 2.6f : 2.2f;
                 var sr = SpriteAt("Place " + p.id, SpriteOf(tex, 0.08f), Cell(p.x, p.y) + new Vector2(0, -0.25f), width / (tex.width / 100f), Order(p.y) + 1);
                 props[p.id] = sr;
                 var tell = SpriteAt("Tell " + p.id, Glow, Cell(p.x, p.y), 2.6f, 900);
@@ -345,17 +347,16 @@ namespace AdamsHaven.Tower
 
         private void BuildParty()
         {
-            var run = rules.Run;
             int shown = 0;
-            for (int i = 0; i < run.party.Count && shown < 3; i++)
+            foreach (var id in source.PartyIds)
             {
-                var tex = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + run.party[i]);
+                var tex = Resources.Load<Texture2D>("AdamsHaven/Chibi/" + id);
                 if (tex == null) continue;
                 var shadow = SpriteAt("Party shadow", Dot, Vector2.zero, 0.9f, 0);
                 shadow.color = new Color(0, 0, 0, 0.35f);
                 shadow.transform.localScale = new Vector3(0.9f, 0.32f, 1);
                 float h = shown == 0 ? 1.55f : 1.3f;
-                var fig = SpriteAt("Party " + run.party[i], SpriteOf(tex, 0.02f), Vector2.zero, h / (tex.height / 100f), 0);
+                var fig = SpriteAt("Party " + id, SpriteOf(tex, 0.02f), Vector2.zero, h / (tex.height / 100f), 0);
                 figures.Add(fig); shadows.Add(shadow);
                 shown++;
             }
@@ -432,34 +433,29 @@ namespace AdamsHaven.Tower
         public void Sync()
         {
             if (map == null) return;
-            var run = rules.Run;
             int n = map.cells.Length;
             if (seenCells == null || seenCells.Length != n) { seenCells = new float[n]; roadCells = new float[n]; }
-            for (int i = 0; i < n; i++)
-            {
-                seenCells[i] = run.gridFog.Length == n && run.gridFog[i] != '0' ? 1 : 0;
-                roadCells[i] = RoadValue(run.gridRoad.Length == n ? run.gridRoad[i] - '0' : 0);
-            }
+            for (int y = 0; y < map.height; y++)
+                for (int x = 0; x < map.width; x++)
+                {
+                    int i = map.Index(x, y);
+                    seenCells[i] = source.Seen(x, y) ? 1 : 0;
+                    roadCells[i] = source.Road(x, y);
+                }
             UploadMask(seenTex, seenCells, 3);
             UploadMask(roadTex, roadCells, 1);
             foreach (var p in map.pois)
             {
-                bool seen = rules.CellSeen(p.x, p.y);
+                bool seen = source.Seen(p.x, p.y);
                 if (props.ContainsKey(p.id))
                 {
                     props[p.id].gameObject.SetActive(seen);
-                    props[p.id].color = run.cleared.Contains(p.id) ? new Color(0.72f, 0.8f, 0.72f) : Color.white;
+                    props[p.id].color = source.Cleared(p) ? new Color(0.78f, 0.86f, 0.78f) : Color.white;
                 }
                 // Places learned of but not yet seen glow through the fog.
-                if (tells.ContainsKey(p.id)) tells[p.id].gameObject.SetActive(!seen && rules.NodeVisible(p.id));
+                if (tells.ContainsKey(p.id)) tells[p.id].gameObject.SetActive(!seen && source.Known(p));
             }
-            if (!Walking) PlaceParty(Cell(run.cx, run.cy), run.cy, Vector2.right, 0, false);
-        }
-
-        private static float RoadValue(int strength)
-        {
-            if (strength <= 0) return 0;
-            return strength >= TowerRules.RoadWalked ? 0.55f + 0.45f * (strength - TowerRules.RoadWalked) / (TowerRules.RoadMax - TowerRules.RoadWalked) : 0.25f * strength / TowerRules.RoadWalked;
+            if (!Walking) { var at = source.Party; PlaceParty(Cell(at.x, at.y), at.y, Vector2.right, 0, false); }
         }
 
         private void PlaceParty(Vector2 lead, int row, Vector2 dir, float lead01, bool moving)
@@ -579,7 +575,7 @@ namespace AdamsHaven.Tower
                     var c = walkCells[walkCellsDone];
                     RevealLocal(c.x, c.y);
                     int i = map.Index(c.x, c.y);
-                    roadCells[i] = Mathf.Max(roadCells[i], RoadValue(rules.RoadStrength(c.x, c.y)));
+                    roadCells[i] = Mathf.Max(roadCells[i], source.Road(c.x, c.y));
                     changed = true;
                 }
                 if (changed) { UploadMask(seenTex, seenCells, 3); UploadMask(roadTex, roadCells, 1); }
@@ -603,7 +599,7 @@ namespace AdamsHaven.Tower
             int r = 5;
             for (int y = cy - r - 2; y <= cy + r + 2; y++)
                 for (int x = cx - r - 2; x <= cx + r + 2; x++)
-                    if (map.Inside(x, y) && rules.CellSeen(x, y) && (x - cx) * (x - cx) + (y - cy) * (y - cy) <= (r + 2) * (r + 2))
+                    if (map.Inside(x, y) && source.Seen(x, y) && (x - cx) * (x - cx) + (y - cy) * (y - cy) <= (r + 2) * (r + 2))
                         seenCells[map.Index(x, y)] = 1;
             foreach (var p in map.pois)
                 if (props.ContainsKey(p.id) && seenCells[map.Index(p.x, p.y)] > 0) props[p.id].gameObject.SetActive(true);
@@ -614,9 +610,18 @@ namespace AdamsHaven.Tower
         public void CenterOnParty()
         {
             if (map == null) return;
-            var run = rules.Run;
-            var c = Cell(run.cx, run.cy);
+            var at = source.Party;
+            var c = Cell(at.x, at.y);
             cam.transform.localPosition = new Vector3(c.x, c.y + 1, -10);
+            Clamp();
+        }
+
+        // Zoom out to show the whole map (the Atlas).
+        public void ShowAll()
+        {
+            if (map == null) return;
+            cam.orthographicSize = Mathf.Min(map.height * 0.5f + 0.5f, Mathf.Max(6f, map.height * 0.62f));
+            cam.transform.localPosition = new Vector3(map.width / 2f, map.height / 2f, -10);
             Clamp();
         }
 

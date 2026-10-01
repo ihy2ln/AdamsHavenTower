@@ -271,6 +271,34 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
+    public void AtlasHoldsEveryRegionWithinReach()
+    {
+        var map = TowerAtlas.Map;
+        var home = map.Poi(TowerAtlas.HomeId);
+        Assert.IsNotNull(home);
+        var cells = new System.Collections.Generic.HashSet<Vector2Int>();
+        foreach (var r in TowerRules.Regions)
+        {
+            var p = map.Poi(r.id);
+            Assert.IsNotNull(p, r.id + " is on the Atlas");
+            Assert.IsTrue(map.Walkable(p.x, p.y), r.id + " stands on open ground");
+            Assert.IsTrue(cells.Add(new Vector2Int(p.x, p.y)), r.id + " has its own spot");
+            Assert.IsNotNull(map.FindPath(new Vector2Int(home.x, home.y), new Vector2Int(p.x, p.y)), "home to " + r.id);
+        }
+        // A new guild knows only the first region; its neighbours are rumours, the deep wood is unknown.
+        var rules = Started();
+        var source = new TowerAtlasSource(rules);
+        Assert.IsTrue(source.Seen(home.x, home.y));
+        var edge = map.Poi("silverbrook_edge");
+        Assert.IsTrue(source.Seen(edge.x, edge.y));
+        Assert.IsTrue(source.Known(map.Poi("rootside_camp")), "the next regions glow through the fog");
+        var deep = map.Poi("silverwood_d5");
+        Assert.IsFalse(source.Seen(deep.x, deep.y));
+        Assert.IsFalse(source.Known(deep));
+        Assert.Greater(source.Road(edge.x, edge.y), 0f, "a trail leads from home to the first region");
+    }
+
+    [Test]
     public void OverworldArtLandsWhereTheMapLooksForIt()
     {
         TowerOverworldArtImporter.Kind kind;

@@ -150,6 +150,46 @@ namespace AdamsHaven.Tower
             return map;
         }
 
+        // Just the ground and woods of a biome (no water or places), for maps laid out by hand such as the Atlas.
+        public static TowerOverworld GenerateBase(string biomeId, uint seed, int width, int height)
+        {
+            var biome = BiomeFor(biomeId);
+            var map = new TowerOverworld(width, height, biome.id, seed);
+            var rng = new TowerRng(seed * 2654435761u + 7u);
+            float ox = rng.Range(0, 1000), oy = rng.Range(0, 1000);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    float n = Fbm(ox + x * 0.12f, oy + y * 0.12f);
+                    var t = n > biome.dense ? TowerTerrain.DenseForest : TowerTerrain.Forest;
+                    if (Patch(ox + 300, oy, x, y, 0.14f, 0.06f)) t = TowerTerrain.Hill;
+                    if (Patch(ox + 1500, oy + 70, x, y, 0.2f, 0.04f)) t = TowerTerrain.Rock;
+                    map.Set(x, y, t);
+                }
+            return map;
+        }
+
+        // A soft blob of one terrain (glade = water becomes a ford instead of being painted over).
+        public static void Paint(TowerOverworld map, int cx, int cy, int radius, TowerTerrain terrain, bool glade)
+        {
+            for (int y = cy - radius - 1; y <= cy + radius + 1; y++)
+                for (int x = cx - radius - 1; x <= cx + radius + 1; x++)
+                {
+                    if (!map.Inside(x, y)) continue;
+                    float d = Mathf.Sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) + (Mathf.PerlinNoise(x * 0.5f + 7, y * 0.5f + 3) - 0.5f) * 1.2f;
+                    if (d > radius + 0.5f) continue;
+                    var t = map.At(x, y);
+                    if (t == TowerTerrain.Road) continue;
+                    if (t == TowerTerrain.Water) { if (glade) map.Set(x, y, TowerTerrain.Ford); continue; }
+                    map.Set(x, y, terrain);
+                }
+        }
+
+        public static void EnsureReachable(TowerOverworld map, Vector2Int a, Vector2Int b)
+        {
+            if (map.FindPath(a, b) == null) Connect(map, a, b);
+        }
+
         private static string PickName(string kind, TowerRng rng, HashSet<string> used)
         {
             var list = Names[kind];

@@ -68,6 +68,12 @@ namespace AdamsHaven.Tower
             return Resources.Load<Texture2D>("AdamsHaven/Expedition/Props/" + stand);
         }
 
+        // Atlas stamps (atlas_tower_town, atlas_silverwood_gate, atlas_banner_conquered), else a place prop stand-in.
+        public static Texture2D AtlasProp(string name, string fallbackKind)
+        {
+            return Resources.Load<Texture2D>(Root + "atlas/" + name) ?? Prop(fallbackKind);
+        }
+
         // ---------------------------------------------------------------- procedural placeholders
 
         private static readonly Color[][] GroundColors =
