@@ -1191,6 +1191,94 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
+    public void RosterHasThirtySixHeroesAndTwentyFourResidents()
+    {
+        Assert.IsTrue(TowerRoster.Available, "tower_roster.json loads");
+        int heroes = 0, residents = 0;
+        var ids = new System.Collections.Generic.HashSet<string>();
+        foreach (var unit in TowerRoster.All)
+        {
+            Assert.IsTrue(ids.Add(unit.id), "unique id " + unit.id);
+            Assert.GreaterOrEqual(unit.age, 21, unit.name + " must be 21+");
+            foreach (int v in new[] { unit.stats.might, unit.stats.sight, unit.stats.grit, unit.stats.charm, unit.stats.wit, unit.stats.grace, unit.stats.luck })
+            { Assert.GreaterOrEqual(TowerRoster.GameStat(v), 1); Assert.LessOrEqual(TowerRoster.GameStat(v), 10); }
+            if (unit.IsHero) heroes++; else residents++;
+        }
+        Assert.AreEqual(36, heroes);
+        Assert.AreEqual(24, residents);
+        for (int rank = 1; rank <= 9; rank++)
+        {
+            Assert.AreEqual(4, TowerRoster.OfRank(rank, true).Count, "four heroes at rank " + rank);
+            Assert.GreaterOrEqual(TowerRoster.OfRank(rank, false).Count, 1, "a resident at rank " + rank);
+        }
+    }
+
+    [Test]
+    public void SummonsDrawNamedUnitsOfTheRolledRankFromTheRoster()
+    {
+        var rules = Started();
+        rules.State.sigils = 5000;
+        int pulls = 0;
+        for (int round = 0; round < 40; round++)
+        {
+            Assert.IsNull(rules.Summon(10));
+            foreach (var pull in rules.LastSummon)
+            {
+                pulls++;
+                var unit = TowerRoster.Unit(pull.unitId);
+                Assert.IsNotNull(unit, "summoned " + pull.name + " is a roster unit");
+                Assert.AreEqual(pull.rank, unit.rank, pull.name + " rank");
+                Assert.AreEqual(pull.kind == "hero", unit.IsHero, pull.name + " kind");
+                Assert.AreEqual(unit.name, pull.name);
+            }
+        }
+        Assert.AreEqual(400, pulls);
+        foreach (var resident in rules.State.residents)
+            if (TowerRoster.Unit(resident.unitId) != null)
+                Assert.AreEqual(TowerRoster.Unit(resident.unitId).rank, resident.rank, resident.name);
+    }
+
+    [Test]
+    public void EachFallenHeartRaisesALegacyBonusForTheNextRun()
+    {
+        var rules = Started();
+        rules.State.day = 40; rules.State.heartRank = 3;             // 10 + 12 = 22 points -> rank 2
+        rules.State.heartHp = 0;
+        rules.Advance(1, true);
+        Assert.IsTrue(rules.State.defeated);
+        Assert.AreEqual(22, TowerRules.LegacyEarned(rules.State));
+        var next = TowerRules.LegacyRun(rules.State);
+        Assert.AreEqual(22, next.legacyPoints);
+        Assert.AreEqual(2, next.legacyRank);
+        Assert.AreEqual(120 + 160, next.gold, "start gold + 80 per rank");
+        Assert.AreEqual(8, next.celestium);
+        Assert.AreEqual(2 + 2, next.tonics);
+        Assert.AreEqual(60 + 50, next.food, 0.01f);
+        Assert.AreEqual(1, next.sigils, "Sigils carry over unchanged");
+        Assert.AreEqual(1200, next.heartHp, "a new Heart is as fragile as ever: the run starts hard");
+
+        // A second, longer run stacks on the first.
+        next.day = 80; next.heartRank = 5; next.runs = 1;            // 20 + 20 = 40 more points -> 62 -> rank 3
+        var third = TowerRules.LegacyRun(next);
+        Assert.AreEqual(62, third.legacyPoints);
+        Assert.AreEqual(3, third.legacyRank);
+        Assert.AreEqual(120 + 240, third.gold, "a higher rank starts richer");
+    }
+
+    [Test]
+    public void LegacyRankIsCappedAndGrowsWithPoints()
+    {
+        Assert.AreEqual(0, TowerRules.LegacyRankFor(0));
+        Assert.AreEqual(1, TowerRules.LegacyRankFor(4));
+        Assert.AreEqual(2, TowerRules.LegacyRankFor(16));
+        Assert.AreEqual(TowerRules.LegacyMaxRank, TowerRules.LegacyRankFor(100000));
+        for (int rank = 1; rank <= TowerRules.LegacyMaxRank; rank++)
+            Assert.Greater(TowerRules.LegacyBonusFor(rank).gold, TowerRules.LegacyBonusFor(rank - 1).gold);
+        var fallen = new TowerState { day = 10, heartRank = 1, legacyPoints = 0 };
+        StringAssert.Contains("Legacy rank", TowerRules.LegacyPreview(fallen));
+    }
+
+    [Test]
     public void PestsNeverHurtTheHeart()
     {
         var rules = Started();

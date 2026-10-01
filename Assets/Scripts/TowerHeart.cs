@@ -70,12 +70,60 @@ namespace AdamsHaven.Tower
 
         // ---------------------------------------------------------------- hard fail and legacy (8.5)
 
-        // A fallen Heart ends the run. Heroes, Sigils and the summon pity carry over; the tower resets.
+        // ---- Legacy: the rogue-lite meta layer. Every fallen run earns points; points raise a Legacy rank (0 to 10) that
+        // gives the next run a stacking start bonus. A run always starts from nothing (hard), but each fall makes the next
+        // start a little easier, so the game gets kinder as the player's history grows.
+        public const int LegacyMaxRank = 10;
+
+        public struct LegacyBonus { public int gold, supplies, tonics, celestium; }
+
+        // Points for one run: how long it lasted, how far the Heart rose, how many lived in the Tower, goals finished.
+        public static int LegacyEarned(TowerState run)
+        {
+            return run.day / 4 + run.heartRank * 4 + run.residents.Count / 3 + run.goalsClaimed;
+        }
+
+        public static int LegacyRankFor(int points) { return Mathf.Min(LegacyMaxRank, Mathf.FloorToInt(Mathf.Sqrt(Mathf.Max(0, points) / 4f))); }
+        public static int LegacyPointsForRank(int rank) { return 4 * rank * rank; }
+
+        public static LegacyBonus LegacyBonusFor(int rank)
+        {
+            rank = Mathf.Clamp(rank, 0, LegacyMaxRank);
+            return new LegacyBonus { gold = 80 * rank, supplies = 25 * rank, tonics = rank, celestium = 4 * rank };
+        }
+
+        public static string LegacyBonusText(int rank)
+        {
+            var b = LegacyBonusFor(rank);
+            return rank <= 0 ? "no bonus yet" : "+" + b.gold + " gold, +" + b.supplies + " food, water and firewood, +" +
+                b.tonics + " Tonics, +" + b.celestium + " Celestium";
+        }
+
+        // What the defeat screen shows: points earned, the rank the next run starts with, and what it grants.
+        public static string LegacyPreview(TowerState fallen)
+        {
+            int earned = LegacyEarned(fallen), total = fallen.legacyPoints + earned, rank = LegacyRankFor(total);
+            string next = rank >= LegacyMaxRank ? "Legacy is at its highest rank." :
+                "Next rank at " + LegacyPointsForRank(rank + 1) + " points.";
+            return "This run earned " + earned + " Legacy points (" + total + " in all).\nThe next run starts at Legacy rank " + rank +
+                ": " + LegacyBonusText(rank) + ". " + next;
+        }
+
+        // A fallen Heart ends the run. Heroes, Sigils and the summon pity carry over; the tower resets, and the Legacy
+        // rank earned so far gives the new run its start bonus.
         public static TowerState LegacyRun(TowerState fallen)
         {
             var state = TowerMilestones.Create(1);
             state.slot = fallen.slot;
             state.runs = fallen.runs + 1;
+            state.legacyPoints = fallen.legacyPoints + LegacyEarned(fallen);
+            state.legacyRank = LegacyRankFor(state.legacyPoints);
+            var bonus = LegacyBonusFor(state.legacyRank);
+            state.gold += bonus.gold; state.celestium += bonus.celestium; state.tonics += bonus.tonics;
+            const float StartCap = 120f;   // the stock cap before any storage is built
+            state.food = Mathf.Min(StartCap, state.food + bonus.supplies);
+            state.water = Mathf.Min(StartCap, state.water + bonus.supplies);
+            state.firewood = Mathf.Min(StartCap, state.firewood + bonus.supplies);
             state.sigils = fallen.sigils;
             state.summonPity = fallen.summonPity;
             state.freeSummonUsed = fallen.freeSummonUsed;
@@ -184,10 +232,17 @@ namespace AdamsHaven.Tower
             return 8;
         }
 
+        private int PickIndex(int count) { return Mathf.Min(count - 1, (int)(Random01() * count)); }
+
+        // Heroes come from the character roster (TowerRoster): the four heroes of the rolled rank. Without roster data
+        // the original seven heroes are used.
         private TowerSummon SummonHero(int rank)
         {
-            int pick = Mathf.Min(SummonHeroIds.Length - 1, (int)(Random01() * SummonHeroIds.Length));
-            string unitId = SummonHeroIds[pick], name = SummonHeroNames[pick];
+            RosterUnit unit = null;
+            var pool = TowerRoster.OfRank(rank, true);
+            if (pool.Count > 0) unit = pool[PickIndex(pool.Count)];
+            int pick = PickIndex(SummonHeroIds.Length);
+            string unitId = unit != null ? unit.id : SummonHeroIds[pick], name = unit != null ? unit.name : SummonHeroNames[pick];
             var owned = State.residents.Find(r => r.origin == "hero" && r.unitId == unitId);
             if (owned != null)
             {
@@ -198,12 +253,32 @@ namespace AdamsHaven.Tower
             }
             var hero = AddResident(unitId, name, "hero", 1);
             hero.rank = rank;
-            RaiseStats(hero, rank - 1);
+            if (unit != null) TowerRoster.ApplyStats(hero, unit);
+            else RaiseStats(hero, rank - 1);
             return new TowerSummon { name = name, unitId = unitId, kind = "hero", rank = rank };
         }
 
+        // Residents are the named roster residents (each has a fixed rank); one not owned yet is preferred, and a
+        // duplicate levels the one already in the Tower. Without roster data a generic tradesperson arrives.
         private TowerSummon SummonResident(int rank)
         {
+            var pool = TowerRoster.OfRank(rank, false);
+            if (pool.Count > 0)
+            {
+                var fresh = pool.FindAll(u => !State.residents.Exists(r => r.unitId == u.id));
+                bool duplicate = fresh.Count == 0;
+                var unit = duplicate ? pool[PickIndex(pool.Count)] : fresh[PickIndex(fresh.Count)];
+                if (duplicate)
+                {
+                    var owned = State.residents.Find(r => r.unitId == unit.id);
+                    if (owned != null) owned.level++;
+                    return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank, fused = true };
+                }
+                var named = AddResident(unit.id, unit.name, "villager", 1);
+                named.rank = rank;
+                TowerRoster.ApplyStats(named, unit);
+                return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank };
+            }
             string[] trades = { "Miner", "Builder", "Cook", "Scout", "Herald", "Scholar", "Trader" };
             string name = trades[(int)(Random01() * trades.Length) % trades.Length] + " " + State.nextResidentId;
             var resident = AddResident("", name, "villager", 1);

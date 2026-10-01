@@ -403,7 +403,7 @@ public sealed partial class TowerHud
             "\n" + rules.BiologicalPopulation() + " / " + rules.PopulationCap() +
             "\n" + state.regionsConquered.Count + " / " + TowerRules.Regions.Length + " conquered" +
             "\n" + state.sigils + "\n" + state.celestium + "\n" + state.gold;
-        menuRun.text = "Run " + (state.runs + 1) + "   ·   Steward " + (state.steward ? "on" : "off") +
+        menuRun.text = "Run " + (state.runs + 1) + "   ·   Legacy " + state.legacyRank + "   ·   Steward " + (state.steward ? "on" : "off") +
             "\nHold a dock or top button for shortcuts.";
         if (menuSteward != null) menuSteward.GetComponent<Image>().color = state.steward ? Gold : Teal;
     }

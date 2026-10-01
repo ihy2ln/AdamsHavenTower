@@ -137,6 +137,8 @@ namespace AdamsHaven.Tower
         public string heartStage = "stable";   // stable, strained or critical (GDD 8.5 warning stages)
         public bool defeated;
         public int runs;                        // how many times a fallen Heart restarted this slot
+        public int legacyPoints;                // rogue-lite meta score earned by every fallen run (TowerRules.LegacyEarned)
+        public int legacyRank;                  // 0..10, from legacyPoints: the stacking start bonus of this run
         public List<TowerResident> legacyHeroes = new List<TowerResident>();   // heroes carried over from a fallen run
         public int summonPity;                  // pulls since the last SSR
         public bool freeSummonUsed;

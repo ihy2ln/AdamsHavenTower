@@ -386,6 +386,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 Texture2D chibi = string.IsNullOrEmpty(resident.unitId) ?
                     Art(resident.ageStage == 1 ? "Chibi/child_generic_v1" :
                         "Chibi/villager_generic_v1") : Art("Chibi/" + resident.unitId);
+                // Roster units whose chibi art is not made yet stand in as a generic villager.
+                if (chibi == null && TowerRoster.Unit(resident.unitId) != null)
+                    chibi = Art("Chibi/villager_generic_v1");
                 if (chibi != null)
                 {
                     var sprite = Picture(resident.name, chibi, position,
@@ -847,7 +850,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         rules = new TowerRules(TowerRules.LegacyRun(rules.State));
         selectedRoom = selectedResident = pendingWalkResident = 0;
         buildType = "house";
-        message = "A new Celestium Heart awaits in slot " + slot + ". Your heroes will return once the Tower is founded.";
+        message = "A new Celestium Heart awaits in slot " + slot + ". Legacy rank " + rules.State.legacyRank + ": " +
+            TowerRules.LegacyBonusText(rules.State.legacyRank) + ". Your heroes will return once the Tower is founded.";
         Save();
         FocusOnFloor(0);
     }

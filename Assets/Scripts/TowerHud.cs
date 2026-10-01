@@ -70,6 +70,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private Button collect, rush, upgrade, assign, exploreSupplies, exploreRelics, explorePatrol, recall;
     private Button craftTool, craftWeapon, familyPair, tutorialAction, scheduleButton;
     private Image tutorialPanel, saveOverlay, defeatOverlay, advicePanel;
+    private Text defeatDetail;
     private Text tutorialTitle;
     private readonly Button[] heroButtons = new Button[3];
     private int rosterPage, buildPage, familyFirstId;
@@ -762,15 +763,15 @@ public sealed partial class TowerHud : MonoBehaviour
         defeatOverlay = Rect("Heart defeat", safeRoot, Vector2.zero, Vector2.one,
             Vector2.zero, Vector2.zero, new Color(0.025f, 0.025f, 0.045f, 0.94f));
         var card = Rect("Defeat card", defeatOverlay.transform,
-            new Vector2(0.25f, 0.31f), new Vector2(0.75f, 0.69f), Vector2.zero, Vector2.zero, Panel);
+            new Vector2(0.22f, 0.26f), new Vector2(0.78f, 0.74f), Vector2.zero, Vector2.zero, Panel);
         TowerUiSkin.ApplyPanel(card, Glass, true);
         TextAt(card.transform, "Defeat title", "THE CELESTIUM HEART HAS FALLEN", 20, 23,
             600, 54, 28, Gold, TextAnchor.MiddleCenter);
-        TextAt(card.transform, "Defeat detail", "This run has ended. Begin a new run: your heroes and Sigils carry over, the tower starts again.",
-            32, 95, 575, 65, 17, Cream, TextAnchor.MiddleCenter);
-        ButtonAt(card.transform, "Choose checkpoint", "LOAD CHECKPOINT", 32, 182, 260, 58,
+        defeatDetail = TextAt(card.transform, "Defeat detail", "This run has ended. Begin a new run: your heroes and Sigils carry over, the tower starts again.",
+            32, 85, 575, 130, 16, Cream, TextAnchor.MiddleCenter);
+        ButtonAt(card.transform, "Choose checkpoint", "LOAD CHECKPOINT", 32, 232, 260, 58,
             () => { saveOverlay.gameObject.SetActive(true); defeatOverlay.gameObject.SetActive(false); }, Teal, 17);
-        ButtonAt(card.transform, "Restart current slot", "NEW RUN (KEEP HEROES)", 313, 182, 280, 58,
+        ButtonAt(card.transform, "Restart current slot", "NEW RUN (LEGACY BONUS)", 313, 232, 280, 58,
             () => tower.RestartCurrentSlot(), Alert, 17);
         defeatOverlay.gameObject.SetActive(false);
     }
@@ -905,6 +906,9 @@ public sealed partial class TowerHud : MonoBehaviour
         if (tower == null || tower.Rules == null) return;
         var state = tower.Rules.State;
         defeatOverlay.gameObject.SetActive(state.defeated && !saveOverlay.gameObject.activeSelf);
+        if (state.defeated && defeatDetail != null)
+            defeatDetail.text = "This run has ended. Your heroes, Sigils and summon pity carry over; the tower starts again.\n" +
+                TowerRules.LegacyPreview(state);
         RefreshTop(state);
         RefreshToast();
         RefreshResidents(); RefreshRoom(); RefreshTutorial(); RefreshAdvice(state);
@@ -1100,7 +1104,7 @@ public sealed partial class TowerHud : MonoBehaviour
         }
         else
         {
-            residentDetail.text = selected.name + "  Lv " + selected.level +
+            residentDetail.text = selected.name + TowerRoster.Tag(selected) + "  Lv " + selected.level +
                 (selected.ageStage == 0 ? " (" + selected.xp + "/" + TowerRules.XpToNext(selected) + " xp)" : "") +
                 "   HP " + Mathf.CeilToInt(selected.hp) + "/" + Mathf.CeilToInt(TowerRules.MaxHp(selected)) +
                 "   Mood " + Mathf.CeilToInt(selected.happiness) + " " + tower.Rules.MoodLabel(selected) +

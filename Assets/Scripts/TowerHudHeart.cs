@@ -152,7 +152,7 @@ public sealed partial class TowerHud
             "     STAGE  <color=" + stageColor + ">" + stage.ToUpperInvariant() + "</color>" +
             "\nThreat " + Mathf.RoundToInt(state.threat) + "  (" + rules.ThreatLabel() + ")" +
             "\nIncidents now: " + state.incidents.Count +
-            "\nRun " + (state.runs + 1) + (returning > 0 ? "   •   " + returning + " heroes will return when the Tower is founded" : "") +
+            "\nRun " + (state.runs + 1) + "   •   Legacy rank " + state.legacyRank + (returning > 0 ?"   •   " + returning + " heroes will return when the Tower is founded" : "") +
             "\n\nIf the Heart falls, this run ends. Heroes, Sigils and summon pity carry into the next run; " +
             "the tower itself starts over. Keep guards at the Gate, Tonics in stock and fight incidents early.";
     }

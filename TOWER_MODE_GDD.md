@@ -375,7 +375,13 @@ Heart rank sets: maximum floors above and below ground, maximum building rank, r
 ### 8.5 Status
 Heart HP, ward status, recent incidents. Heart damage sources are only breaches and unattended fires on its floor (section 9.4, 9.6).
 
-**Heart destroyed = hard fail, the run ends.** Legacy carry-over: **heroes, research and Sigils persist; the tower resets** and the player starts a new run at Silverbrook Edge. To keep this fair on mobile, the Heart has **warning stages** (stable, strained, critical), a prominent alert at each stage, and prevention tools (**Tonics, wards, guards, defence heroes**). Exact carry-over rules for Gold, Celestium and building ranks **[TBD]**.
+**Heart destroyed = hard fail, the run ends.** Legacy carry-over: **heroes, research and Sigils persist; the tower resets** and the player starts a new run at Silverbrook Edge. To keep this fair on mobile, the Heart has **warning stages** (stable, strained, critical), a prominent alert at each stage, and prevention tools (**Tonics, wards, guards, defence heroes**). There is **no rescue or recovery system**: when the Heart falls, the run is over.
+
+**Rogue-lite Legacy (implemented).** A new run always starts hard, from nothing, but each fallen run makes the next start easier, so the game gets kinder over time:
+- **Points earned per run** = days survived / 4 + 4 x Heart rank reached + residents / 3 + goals claimed.
+- **Legacy rank** = floor(sqrt(total points / 4)), 0 to 10. Points accumulate across every run in the save.
+- **Start bonus per rank:** +80 Gold, +25 food, water and firewood (up to the starting stock cap), +1 Tonic, +4 Celestium. Sigils and summon pity carry over unchanged; Heart HP is never boosted.
+- The defeat screen shows points earned, the next run's Legacy rank, and what it grants. The Heart status and the menu show the current Legacy rank. Bonus values are draft **[TBD]**; further perks (for example a free first upgrade) can attach to higher ranks.
 
 ---
 
