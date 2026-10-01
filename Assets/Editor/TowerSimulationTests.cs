@@ -9,7 +9,11 @@ public sealed class TowerSimulationTests
     // Traversal events stay off unless a test is about them, so forest walks are predictable.
     // Plate-map runs unless a test asks for the grid map (the game UI switches GridMaps on, and statics outlive Play mode).
     [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
-    [TearDown] public void TimedBuilds() { TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; }
+    [TearDown] public void TimedBuilds()
+    {
+        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true;
+        TowerRules.Today = () => System.DateTime.Now.Date;
+    }
 
     private static TowerRules Expedition()
     {
@@ -2039,7 +2043,7 @@ public sealed class TowerSimulationTests
         Assert.AreEqual("hero", rules.LastSummon[0].kind);
         Assert.GreaterOrEqual(rules.LastSummon[0].rank, 5, "the tutorial summon is B or better");
         Assert.IsNotNull(rules.Summon(1), "no Sigils left");
-        rules.State.sigils = 10;
+        rules.State.sigils = TowerRules.TenPullCost;
         rules.State.summonPity = TowerRules.HardPity - 1;
         Assert.IsNull(rules.Summon(10));
         Assert.AreEqual(0, rules.State.sigils);
@@ -2051,10 +2055,153 @@ public sealed class TowerSimulationTests
     public void DuplicateHeroesFuseInsteadOfJoiningTwice()
     {
         var rules = Started();
-        rules.State.sigils = 400;
+        rules.State.sigils = 30 * TowerRules.TenPullCost;
         for (int i = 0; i < 30; i++) Assert.IsNull(rules.Summon(10));
         foreach (string id in TowerRules.SummonHeroIds)
             Assert.LessOrEqual(rules.State.residents.FindAll(r => r.origin == "hero" && r.unitId == id).Count, 1, id);
+    }
+
+    // ---------------------------------------------------------------- Sigil income (TowerSigils.cs)
+
+    private static void Push(TowerRules rules, string counter, int amount)
+    {
+        var entry = rules.State.counters.Find(c => c.key == counter);
+        if (entry == null) rules.State.counters.Add(new TowerCounter { key = counter, value = amount });
+        else entry.value += amount;
+    }
+
+    private static System.DateTime Day(int day) { return new System.DateTime(2026, 10, day); }
+
+    [Test]
+    public void SummonsCostTenSigilsAndEveryTenPullHoldsABOrBetter()
+    {
+        var rules = Started();
+        Assert.IsNull(rules.Summon(1), "the free summon");
+        rules.State.sigils = TowerRules.PullCost - 1;
+        Assert.IsNotNull(rules.Summon(1));
+        rules.State.sigils = TowerRules.PullCost;
+        Assert.IsNull(rules.Summon(1));
+        Assert.AreEqual(0, rules.State.sigils);
+        rules.State.sigils = 50 * TowerRules.TenPullCost;
+        for (int pull = 0; pull < 50; pull++)
+        {
+            Assert.IsNull(rules.Summon(10));
+            int best = 0;
+            foreach (var s in rules.LastSummon) best = Mathf.Max(best, s.rank);
+            Assert.GreaterOrEqual(best, TowerRules.TenPullFloor, "10-pull " + pull);
+        }
+        Assert.AreEqual(0, rules.State.sigils);
+        float total = 0;
+        foreach (float rate in TowerRules.SummonRates) total += rate;
+        Assert.AreEqual(100f, total, 0.01f, "the rates screen adds up");
+    }
+
+    [Test]
+    public void GoalsPaySigils()
+    {
+        var rules = Started();
+        rules.State.sigils = 0;
+        var def = TowerRules.GoalDef(rules.State.goals[0].id);
+        Push(rules, def.counter, def.target);
+        Assert.IsNull(rules.ClaimGoal(0));
+        Assert.AreEqual(def.sigils, rules.State.sigils);
+        foreach (var goal in TowerRules.GoalPool)
+        {
+            Assert.That(goal.sigils, Is.InRange(2, 4), goal.id);
+            StringAssert.Contains(goal.sigils + " Sigils", goal.Reward);
+        }
+    }
+
+    [Test]
+    public void DailyBoardIsDealtOncePerCalendarDayAndPaysSixteen()
+    {
+        TowerRules.Today = () => Day(1);
+        var rules = Started();
+        rules.State.sigils = 0;
+        var board = rules.State.daily;
+        Assert.AreEqual(1 + TowerRules.DailyPicked, board.Count);
+        Assert.AreEqual("checkin", board[0].id);
+        Assert.IsTrue(rules.DailyComplete(board[0]), "visiting is enough");
+        Assert.LessOrEqual(board.FindAll(t => TowerRules.DailyDef(t.id).counter == "collect").Count, 1);
+        Assert.IsFalse(board.Exists(t => t.id == "expedition"), "no Guild, no expedition task");
+
+        var again = Started();
+        for (int i = 0; i < board.Count; i++) Assert.AreEqual(board[i].id, again.State.daily[i].id, "same date, same board");
+
+        rules.Advance(30, true);
+        Assert.AreEqual(1 + TowerRules.DailyPicked, rules.State.daily.Count, "the board is not re-dealt the same day");
+        foreach (var task in board) Push(rules, TowerRules.DailyDef(task.id).counter, 20);
+        for (int i = 0; i < board.Count; i++) Assert.IsNull(rules.ClaimDaily(i));
+        Assert.AreEqual(4 * TowerRules.DailyTaskSigils + TowerRules.DailyBonusSigils, rules.State.sigils);
+        Assert.IsTrue(rules.State.dailyBonusClaimed);
+        Assert.IsNotNull(rules.ClaimDaily(0), "claimed once");
+
+        TowerRules.Today = () => Day(2);
+        rules.Advance(1, true);
+        Assert.AreEqual("2026-10-02", rules.State.dailyDate);
+        Assert.IsFalse(rules.State.dailyBonusClaimed);
+        Assert.IsFalse(rules.State.daily.Exists(t => t.claimed));
+        Assert.IsTrue(rules.State.daily.TrueForAll(t => t.id == "checkin" || !rules.DailyComplete(t)),
+            "yesterday's progress does not count");
+    }
+
+    [Test]
+    public void AFallenHeartDoesNotDealASecondDailyBoard()
+    {
+        TowerRules.Today = () => Day(1);
+        var rules = Started();
+        Assert.IsNull(rules.ClaimDaily(0));
+        var next = new TowerRules(TowerRules.LegacyRun(rules.State));
+        Assert.IsNull(next.AwakenHeart());
+        Assert.IsNull(next.PlaceIntroGate());
+        Assert.IsNull(next.Build("house", 0, 21));
+        Assert.IsNull(next.ChooseStarter("kaela"));
+        Assert.AreEqual("2026-10-01", next.State.dailyDate);
+        Assert.IsTrue(next.State.daily[0].claimed);
+        Assert.IsNotNull(next.ClaimDaily(0));
+    }
+
+    [Test]
+    public void HeartRankUpsPaySigils()
+    {
+        var rules = Started();
+        rules.State.sigils = 0;
+        rules.State.celestium = 99999; rules.State.gold = 999999;
+        Assert.IsNull(rules.UpgradeHeart());
+        Assert.AreEqual(TowerRules.HeartRankUpSigils(2), rules.State.sigils);
+        int total = 0;
+        for (int rank = 2; rank <= TowerTiers.MaxRank; rank++) total += TowerRules.HeartRankUpSigils(rank);
+        Assert.AreEqual(250, total);
+    }
+
+    [Test]
+    public void ExpeditionReturnsPaySigilsTwiceADayAndConquestsOnce()
+    {
+        TowerRules.Today = () => Day(1);
+        var rules = Expedition();
+        rules.State.sigils = 0;
+        Assert.IsNull(rules.EndExpedition(false));
+        Assert.AreEqual(0, rules.State.sigils, "a walk without a fight pays nothing");
+        var party = new System.Collections.Generic.List<string> { "kaela", "ghislaine", "elara" };
+        int paid = Mathf.RoundToInt(2 + 1.5f * TowerRules.Region("silverbrook_edge").reward);
+        for (int trip = 0; trip < 3; trip++)
+        {
+            Assert.IsNull(rules.StartExpedition("silverbrook_edge", party, 2, 0, 0));
+            rules.State.run.battlesWon = 1;
+            Assert.IsNull(rules.EndExpedition(false));
+        }
+        Assert.AreEqual(2 * paid, rules.State.sigils, "only the first two returns of the day pay");
+        Assert.IsNull(rules.StartExpedition("silverbrook_edge", party, 2, 0, 0));
+        rules.State.run.battlesWon = 1;
+        TowerRules.Today = () => Day(2);
+        Assert.IsNull(rules.EndExpedition(true));
+        Assert.AreEqual(2 * paid, rules.State.sigils, "a wiped party pays nothing");
+
+        var conquer = typeof(TowerRules).GetMethod("ConquerRegion",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        conquer.Invoke(rules, new object[] { "silverbrook_edge" });
+        conquer.Invoke(rules, new object[] { "silverbrook_edge" });
+        Assert.AreEqual(2 * paid + TowerRules.ConquestSigils, rules.State.sigils);
     }
 
     [Test]

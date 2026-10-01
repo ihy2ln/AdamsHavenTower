@@ -62,6 +62,13 @@ public sealed partial class TowerHud : MonoBehaviour
     private Button recruit, autoHaul, stewardButton, autoAssignButton;
     private readonly Text[] goalTexts = new Text[TowerRules.ActiveGoals];
     private readonly Button[] goalClaims = new Button[TowerRules.ActiveGoals];
+    // Goals popup tabs: the rolling goals or today's daily board (TowerSigils.cs).
+    private const int DailyRows = 1 + TowerRules.DailyPicked;
+    private string tasksTab = "goals";
+    private Button tabGoals, tabDaily;
+    private Text dailyBonusText;
+    private readonly Text[] dailyTexts = new Text[DailyRows];
+    private readonly Button[] dailyClaims = new Button[DailyRows];
 
     // resident and room panels
     private Text residentDetail, roomDetail, roomAdvice, rosterPageText, priorityHint, moodText, adviceText;
@@ -330,7 +337,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private FlyItem[] TaskItems()
     {
         return new[] {
-            new FlyItem("CLAIM ALL GOALS", ClaimAll),
+            new FlyItem("CLAIM ALL GOALS AND DAILIES", ClaimAll),
             new FlyItem("RECRUIT AT GATE", () => tower.Apply(tower.Rules.RecruitVisitor())),
             new FlyItem("UNLOCK AUTO-HAUL", () => tower.Apply(tower.Rules.UnlockHauling())),
             new FlyItem("AUTO-ASSIGN IDLE", () => tower.Apply(tower.Rules.AutoAssignIdle())),
@@ -350,6 +357,9 @@ public sealed partial class TowerHud : MonoBehaviour
     {
         for (int i = tower.Rules.State.goals.Count - 1; i >= 0; i--)
             if (tower.Rules.GoalComplete(tower.Rules.State.goals[i])) tower.Apply(tower.Rules.ClaimGoal(i));
+        for (int i = 0; i < tower.Rules.State.daily.Count; i++)
+            if (!tower.Rules.State.daily[i].claimed && tower.Rules.DailyComplete(tower.Rules.State.daily[i]))
+                tower.Apply(tower.Rules.ClaimDaily(i));
     }
 
     private void TogglePeople()
@@ -534,7 +544,9 @@ public sealed partial class TowerHud : MonoBehaviour
     private void BuildTasksPopup()
     {
         popupTasks = MakePopup("Tasks popup", 580, 428, false);
-        TextAt(popupTasks.transform, "Tasks title", "GOALS", 16, 10, 300, 28, 18, Gold);
+        tabGoals = ButtonAt(popupTasks.transform, "Tab goals", "GOALS", 14, 6, 126, 30, () => tasksTab = "goals", Gold, 14);
+        tabDaily = ButtonAt(popupTasks.transform, "Tab daily", "DAILY", 146, 6, 126, 30, () => tasksTab = "daily", Teal, 14);
+        dailyBonusText = TextAt(popupTasks.transform, "Daily bonus", "", 284, 10, 244, 26, 13, Cream);
         CloseButton(popupTasks.transform, 538, 10, CloseAllPopups);
         Divider(popupTasks.transform, 12, 40, 556);
         for (int i = 0; i < goalTexts.Length; i++)
@@ -543,6 +555,13 @@ public sealed partial class TowerHud : MonoBehaviour
             goalTexts[i] = TextAt(popupTasks.transform, "Goal " + i, "", 16, 56 + i * 56, 420, 48, 14, Cream);
             goalClaims[i] = ButtonAt(popupTasks.transform, "Claim goal " + i, "CLAIM", 452, 58 + i * 56,
                 112, 40, () => tower.Apply(tower.Rules.ClaimGoal(index)), Teal, 14);
+        }
+        for (int i = 0; i < dailyTexts.Length; i++)
+        {
+            int index = i;
+            dailyTexts[i] = TextAt(popupTasks.transform, "Daily " + i, "", 16, 50 + i * 42, 420, 38, 14, Cream);
+            dailyClaims[i] = ButtonAt(popupTasks.transform, "Claim daily " + i, "CLAIM", 452, 52 + i * 42,
+                112, 34, () => tower.Apply(tower.Rules.ClaimDaily(index)), Teal, 14);
         }
         TextAt(popupTasks.transform, "Events title", "TOWER EVENTS", 16, 226, 300, 26, 16, Gold);
         incidentText = TextAt(popupTasks.transform, "Incident list", "", 16, 252, 548, 58, 14, Cream);
@@ -985,6 +1004,7 @@ public sealed partial class TowerHud : MonoBehaviour
         int claimable = 0;
         if (state.introPhase == "complete")
             foreach (var goal in state.goals) if (tower.Rules.GoalComplete(goal)) claimable++;
+        claimable += tower.Rules.DailyClaimable();
         bool danger = state.incidents.Count > 0;
         SetBadge(goalsButton, claimable);
         goalsButton.GetComponent<Image>().color = claimable > 0 ? Gold : Teal;
@@ -1035,10 +1055,32 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void RefreshTasks(TowerState state)
     {
-        int claimable = 0;
+        int claimable = 0, dailyReady = tower.Rules.DailyClaimable();
+        bool daily = tasksTab == "daily";
+        tabGoals.GetComponent<Image>().color = daily ? Teal : Gold;
+        tabDaily.GetComponent<Image>().color = daily ? Gold : Teal;
+        LabelOf(tabDaily).text = dailyReady > 0 ? "DAILY  (" + dailyReady + ")" : "DAILY";
+        dailyBonusText.gameObject.SetActive(daily);
+        dailyBonusText.text = state.dailyBonusClaimed ? "BOARD CLEAR  +" + TowerRules.DailyBonusSigils + " paid" :
+            "CLEAR ALL: +" + TowerRules.DailyBonusSigils + " SIGILS";
+        for (int i = 0; i < dailyTexts.Length; i++)
+        {
+            bool has = daily && state.introPhase == "complete" && i < state.daily.Count;
+            dailyTexts[i].gameObject.SetActive(has);
+            dailyClaims[i].gameObject.SetActive(has);
+            if (!has) continue;
+            var task = state.daily[i];
+            var def = TowerRules.DailyDef(task.id);
+            bool done = tower.Rules.DailyComplete(task);
+            dailyTexts[i].text = def.title + "\n" + (task.claimed ? "Claimed" : tower.Rules.DailyProgress(task) + " / " +
+                Mathf.Max(1, def.target)) + "     Reward: " + TowerRules.DailyTaskSigils + " Sigils";
+            dailyClaims[i].interactable = done && !task.claimed;
+            dailyClaims[i].GetComponent<Image>().color = done && !task.claimed ? Gold : Teal;
+            LabelOf(dailyClaims[i]).text = task.claimed ? "DONE" : "CLAIM";
+        }
         for (int i = 0; i < goalTexts.Length; i++)
         {
-            bool has = state.introPhase == "complete" && i < state.goals.Count;
+            bool has = !daily && state.introPhase == "complete" && i < state.goals.Count;
             goalTexts[i].gameObject.SetActive(has);
             goalClaims[i].gameObject.SetActive(has);
             if (!has) continue;

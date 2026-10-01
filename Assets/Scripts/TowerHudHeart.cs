@@ -30,7 +30,7 @@ public sealed partial class TowerHud
     {
         var rules = tower == null ? null : tower.Rules;
         if (rules == null || rules.State.introPhase != "complete") return false;
-        return rules.FreeSummonReady || rules.State.sigils >= 1 ||
+        return rules.FreeSummonReady || rules.State.sigils >= TowerRules.PullCost ||
             rules.State.heartRank < TowerTiers.MaxRank && rules.State.celestium >= rules.HeartUpgradeCelestium() &&
             rules.State.gold >= rules.HeartUpgradeGold();
     }
@@ -81,7 +81,7 @@ public sealed partial class TowerHud
     private void OpenHeart()
     {
         if (tower.Rules.State.introPhase != "complete") { tower.Apply("Found the Tower first."); return; }
-        heartTab = tower.Rules.FreeSummonReady || tower.Rules.State.sigils > 0 ? "summon" : heartTab;
+        heartTab = tower.Rules.FreeSummonReady || tower.Rules.State.sigils >= TowerRules.PullCost ? "summon" : heartTab;
         TogglePopup(popupHeart);
     }
 
@@ -110,17 +110,17 @@ public sealed partial class TowerHud
         for (int i = 0; i < TowerRules.SummonRates.Length; i++)
             rates += RankTag(i + 1) + " " + TowerRules.SummonRates[i].ToString("0.#") + "%   ";
         ratesText.text = rates + "\nSoft pity from pull " + TowerRules.SoftPityFrom + ", SSR guaranteed by pull " +
-            TowerRules.HardPity + ". " + Mathf.RoundToInt(TowerRules.HeroShare * 100) +
+            TowerRules.HardPity + ". Every 10-pull holds a B or better. " + Mathf.RoundToInt(TowerRules.HeroShare * 100) +
             "% heroes, the rest residents. Duplicate heroes fuse to raise rank or level.";
         bool free = rules.FreeSummonReady;
-        LabelOf(summonOne).text = free ? "FREE SUMMON  (B or better)" : "SUMMON ×1   1 SIGIL";
+        LabelOf(summonOne).text = free ? "FREE SUMMON  (B or better)" : "SUMMON ×1   " + TowerRules.PullCost + " SIGILS";
         LabelOf(summonTen).text = "SUMMON ×10   " + TowerRules.TenPullCost + " SIGILS";
-        summonOne.interactable = free || state.sigils >= 1;
+        summonOne.interactable = free || state.sigils >= TowerRules.PullCost;
         summonTen.interactable = state.sigils >= TowerRules.TenPullCost;
         summonOne.GetComponent<Image>().color = free ? Gold : Teal;
         var pulls = rules.LastSummon;
         if (pulls == null || pulls.Count == 0)
-            summonResults.text = "The Heart hums, waiting. Sigils come from goals, expeditions and Heart milestones.";
+            summonResults.text = "The Heart hums, waiting. Sigils come from goals, the daily board, expeditions and Heart rank-ups.";
         else
         {
             var lines = new List<string>();

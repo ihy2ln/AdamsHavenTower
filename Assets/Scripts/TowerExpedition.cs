@@ -323,7 +323,7 @@ namespace AdamsHaven.Tower
         {
             var run = Run;
             if (run == null) return "No expedition.";
-            int banked = 0;
+            int banked = 0, sigils = 0;
             foreach (var loot in run.pocket) { Bank(loot); banked += loot.gold; }
             if (!wiped)
             {
@@ -332,6 +332,7 @@ namespace AdamsHaven.Tower
                 State.water += run.rations * RationWater;
                 State.tonics += run.tonics;
                 State.firewood += run.firewood * FirewoodBundle;
+                sigils = PayExpeditionSigils(run);
             }
             // Heroes come home carrying their wounds.
             for (int i = 0; i < run.party.Count; i++)
@@ -342,13 +343,15 @@ namespace AdamsHaven.Tower
             State.hasRun = false;
             Bump("expedition");
             Note(wiped ? "The expedition party fell. Only the Safe Pocket came home." :
-                "The expedition returned: " + banked + " gold banked.");
+                "The expedition returned: " + banked + " gold banked" + (sigils > 0 ? ", +" + sigils + " Sigils." : "."));
             return null;
         }
 
         private void ConquerRegion(string id)
         {
-            if (!State.regionsConquered.Contains(id)) State.regionsConquered.Add(id);
+            if (State.regionsConquered.Contains(id)) return;
+            State.regionsConquered.Add(id);
+            State.sigils += ConquestSigils;
             foreach (var region in Regions)
             {
                 if (State.regionsUnlocked.Contains(region.id)) continue;
@@ -356,7 +359,7 @@ namespace AdamsHaven.Tower
                 foreach (var need in region.requires) if (!State.regionsConquered.Contains(need)) open = false;
                 if (open) { State.regionsUnlocked.Add(region.id); Note(region.name + " can now be explored."); }
             }
-            Note(Region(id).name + " is conquered.");
+            Note(Region(id).name + " is conquered. +" + ConquestSigils + " Sigils.");
         }
 
         // Experience always survives: it is granted to the heroes the moment a fight is won.

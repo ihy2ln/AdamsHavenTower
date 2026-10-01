@@ -39,7 +39,7 @@ namespace AdamsHaven.Tower
             state.clock = (Days[index] - 1) * TowerRules.DaySeconds;
             state.gold = Gold[index];
             state.celestium = new[] { 0, 12, 35, 80, 130, 220, 400, 900, 2200, 5000 }[index];
-            state.sigils = new[] { 1, 2, 4, 8, 12, 16, 24, 40, 80, 120 }[index];
+            state.sigils = new[] { 10, 20, 40, 80, 120, 160, 240, 400, 800, 1200 }[index];   // 10 per pull
             state.wood = state.stone = state.ore = state.essence = index * index * 60;
             if (index == 0) return state; // Slot 1 starts before touching the Heart.
 

@@ -314,7 +314,11 @@ The Heart is tapped to open a **full-screen hub** with four tabs.
 - **Pity:** soft pity ramps SSR odds from about pull 50; **hard pity guarantees SSR at 60**.
 - **Featured and Pick-Your-Hero:** 50% of SSR/SS pulls are the featured or chosen hero; after a miss, the next SSR/SS is guaranteed to be it.
 - **Resident banner:** SSR about 1%, guaranteed A or better every 20 pulls.
-- **Income target:** about 45 free Sigils per day (goals, daily board, expeditions, research), so an active player sees roughly one SSR every 2 to 3 weeks and 5 to 6 SSR by day 80.
+- **Income (built, `TowerSigils.cs`):** about **30 free Sigils per real day**, so an active player reaches hard pity (600 Sigils) about every 20 days and sees about 4 SSR by day 80 (plus lucky natural SSRs).
+  - Goals: 2 to 4 Sigils each (about 8 a day).
+  - Daily board: dealt each local calendar day; "Visit the Tower" plus 3 tasks picked by date (harvests, rush, build, level up, expedition once a Guild exists), 3 Sigils each, +4 for clearing the board (16 a day). Unclaimed tasks expire at midnight; a fallen Heart keeps the same day's board.
+  - Expeditions: a return that won a fight pays 2 + 1.5 x region reward (4 at Brook Edge, about 10 in the deep Silverwood), first 2 returns per day only; wiped parties pay nothing. First conquest of a region: +10.
+  - Heart rank-ups: 10, 15, 20, 25, 30, 40, 50, 60 Sigils for ranks E to SSR (250 in all).
 - **Duplicates** fuse into the existing hero as stars (6.7), so no pull is dead.
 - **Tutorial summon** is free and guaranteed B or better (default Kestrel, **[TBD]**).
 - **Premium cinematic:** charge-up, per-rank reveal F to SSR with escalating VFX/SFX, skip button, 10-pull summary.

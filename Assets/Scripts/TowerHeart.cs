@@ -38,8 +38,10 @@ namespace AdamsHaven.Tower
             State.celestium -= celestium; State.gold -= gold;
             State.heartRank++;
             State.heartHp = HeartMaxHp(State.heartRank);
+            int sigils = HeartRankUpSigils(State.heartRank);
+            State.sigils += sigils;
             Note("The Celestium Heart rose to rank " + TowerTiers.Tier(State.heartRank) + ". Buildings may now reach rank " +
-                TowerTiers.Tier(RankCap()) + ".");
+                TowerTiers.Tier(RankCap()) + ". +" + sigils + " Sigils.");
             Bump("heart");
             Emit("heart", 0, 0, State.heartRank.ToString());
             return null;
@@ -127,6 +129,13 @@ namespace AdamsHaven.Tower
             state.sigils = fallen.sigils;
             state.summonPity = fallen.summonPity;
             state.freeSummonUsed = fallen.freeSummonUsed;
+            // Today's daily board carries over too, so a fall cannot deal a second one. Counters restart at zero.
+            state.dailyDate = fallen.dailyDate;
+            state.dailyBonusClaimed = fallen.dailyBonusClaimed;
+            state.dailyExpeditionSigils = fallen.dailyExpeditionSigils;
+            state.daily = new List<TowerDaily>();
+            if (fallen.daily != null)
+                foreach (var task in fallen.daily) state.daily.Add(new TowerDaily { id = task.id, claimed = task.claimed });
             state.legacyHeroes = new List<TowerResident>();
             var seen = new HashSet<string>();
             var heroes = new List<TowerResident>(fallen.residents);
@@ -172,9 +181,10 @@ namespace AdamsHaven.Tower
 
         public static readonly string[] SummonHeroIds = { "kaela", "ghislaine", "elara", "helda", "daisy", "clarity", "amara" };
         public static readonly string[] SummonHeroNames = { "Kaela", "Ghislaine", "Elara", "Helda", "Daisy", "Clarity", "Amara" };
-        // Percent chance of each rank F..SSR (draft rates from 8.1; the rates screen shows these).
-        public static readonly float[] SummonRates = { 13.5f, 15f, 18f, 18f, 14f, 10f, 7f, 3f, 1.5f };
-        public const int SoftPityFrom = 50, HardPity = 60, TenPullCost = 10;
+        // Percent chance of each rank F..SSR (standard rates from 8.1; the rates screen shows these).
+        public static readonly float[] SummonRates = { 26.5f, 22f, 17f, 12f, 8f, 6f, 4.5f, 2.5f, 1.5f };
+        public const int SoftPityFrom = 50, HardPity = 60, PullCost = 10, TenPullCost = 100;
+        public const int TenPullFloor = 5;   // a 10-pull always holds at least one B or better
         public const float HeroShare = 0.6f;
 
         public List<TowerSummon> LastSummon { get; private set; }
@@ -194,24 +204,28 @@ namespace AdamsHaven.Tower
             if (State.introPhase != "complete") return "The Heart must be awake and the Tower founded first.";
             if (count != 1 && count != 10) return "Summon one or ten.";
             bool free = count == 1 && FreeSummonReady;
-            int cost = free ? 0 : count == 10 ? TenPullCost : 1;
+            int cost = free ? 0 : count == 10 ? TenPullCost : PullCost;
             if (State.sigils < cost) return "Summoning needs " + cost + " Sigil" + (cost > 1 ? "s" : "") + ".";
             State.sigils -= cost;
             LastSummon = new List<TowerSummon>();
+            var ranks = new int[count];
+            int best = 0;
+            for (int i = 0; i < count; i++) { ranks[i] = RollRank(); best = Mathf.Max(best, ranks[i]); }
+            // The tutorial summon is a guaranteed hero of rank B or better, and so is the floor of a 10-pull.
+            if (free) ranks[0] = Mathf.Max(TenPullFloor, ranks[0]);
+            if (count == 10 && best < TenPullFloor) ranks[count - 1] = TenPullFloor;
             for (int i = 0; i < count; i++)
             {
-                // The tutorial summon is a guaranteed hero of rank B or better.
-                int rank = free ? Mathf.Max(5, RollRank()) : RollRank();
                 bool hero = free || Random01() < HeroShare;
-                LastSummon.Add(hero ? SummonHero(rank) : SummonResident(rank));
+                LastSummon.Add(hero ? SummonHero(ranks[i]) : SummonResident(ranks[i]));
             }
             if (free) State.freeSummonUsed = true;
             Bump("summon");
-            var best = LastSummon[0];
-            foreach (var pull in LastSummon) if (pull.rank > best.rank) best = pull;
-            Note((count == 10 ? "Ten summons" : "A summon") + " answered the Heart; best: " + best.name +
-                " (" + TowerTiers.Tier(best.rank) + ").");
-            Emit("summon", Room0("heart"), 0, TowerTiers.Tier(best.rank));
+            var top = LastSummon[0];
+            foreach (var pull in LastSummon) if (pull.rank > top.rank) top = pull;
+            Note((count == 10 ? "Ten summons" : "A summon") + " answered the Heart; best: " + top.name +
+                " (" + TowerTiers.Tier(top.rank) + ").");
+            Emit("summon", Room0("heart"), 0, TowerTiers.Tier(top.rank));
             return null;
         }
 

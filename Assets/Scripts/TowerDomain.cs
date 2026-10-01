@@ -154,6 +154,10 @@ namespace AdamsHaven.Tower
         public int goalsClaimed;
         public List<TowerGoal> goals = new List<TowerGoal>();
         public List<string> notifiedGoals = new List<string>();
+        public string dailyDate = "";          // local calendar day of the daily board (TowerSigils.cs), yyyy-MM-dd
+        public List<TowerDaily> daily = new List<TowerDaily>();
+        public bool dailyBonusClaimed;
+        public int dailyExpeditionSigils;       // expedition returns that paid Sigils today
         public List<TowerCounter> counters = new List<TowerCounter>();
         public List<TowerBond> bonds = new List<TowerBond>();
         public List<TowerMemorial> memorial = new List<TowerMemorial>();
@@ -291,7 +295,7 @@ namespace AdamsHaven.Tower
             // stands west of the shaft, and only the ground floor reaches one cell east, for the Gate.
             MoveEastRoomsWest();
             foreach (var floor in State.floors) floor.east = floor.number == 0 && State.introPhase != "dormant" ? 1 : 0;
-            if (State.introPhase == "complete") RefillGoals();
+            if (State.introPhase == "complete") { RefillGoals(); RefreshDaily(); }
             State.heartRank = Mathf.Clamp(State.heartRank, 1, TowerTiers.MaxRank);
             foreach (var room in State.rooms)
             {
@@ -403,6 +407,7 @@ namespace AdamsHaven.Tower
             State.tutorialStep = 0;
             ReturnLegacyHeroes();
             RefillGoals();
+            RefreshDaily();
             foreach (string id in new[] { "kitchen", "well", "lumber_mill", "market", "nursery", "guild_hall" })
                 if (!State.blueprints.Contains(id)) State.blueprints.Add(id);
             // Tower-only progression needs a foundation and income path without battle rewards.
@@ -882,6 +887,7 @@ namespace AdamsHaven.Tower
         public void Advance(float seconds, bool live)
         {
             if (State.introPhase != "complete" || State.defeated) return;
+            RefreshDaily();
             float remaining = Mathf.Max(0, seconds);
             while (remaining > 0 && !State.defeated)
             {

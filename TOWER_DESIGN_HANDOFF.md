@@ -26,8 +26,8 @@ Tower Mode is a Fallout Shelter-style tower town in Unity (`S:\AI\Game\Unity AHC
 
 ## 3. Open work, in priority order
 
-1. **Sigil sources.** None exist in code. GDD target about 45 per day (goals 2 to 5 each, daily board about 20, expeditions about 15 per day, Heart milestones). The gacha cannot be fed without this.
-2. **Summon economy decision.** Code: 1 Sigil per pull, rates F..SSR 13.5/15/18/18/14/10/7/3/1.5. GDD: 10 per pull, rates 26.5/22/17/12/8/6/4.5/2.5/1.5, soft pity 50, hard pity 60 (pity already matches). Pick one and align code or GDD.
+1. ~~Sigil sources~~ **Done 2026-10-01** (`TowerSigils.cs`, GDD 8.1): about 30 per real day from goals, a daily board, expeditions and Heart rank-ups. Daily board lives in a DAILY tab of the Goals popup.
+2. ~~Summon economy~~ **Done 2026-10-01**: GDD adopted (10 per pull, 100 per 10-pull, GDD rates, 10-pull floor B, pity 50/60). Checkpoint save Sigils scaled x10 (pinned slots keep their old values).
 3. **Heart pacing.** Costs are far too low (three quarries finish all Heart upgrades in about 11 days). Needs the research tree first, then a second measurement pass. Starting idea in the balance report: Heart Celestium costs x 4, quarry output halved from rank C.
 4. **Research tree** (40 nodes in GDD 8.2.1). Only per-building blueprint research exists in code.
 5. **Banners:** Featured, Pick-Your-Hero (2x cost), Resident. Not built.

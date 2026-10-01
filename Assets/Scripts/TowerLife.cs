@@ -27,12 +27,12 @@ namespace AdamsHaven.Tower
     public sealed class TowerGoalDef
     {
         public readonly string id, title, counter;
-        public readonly int target, gold, celestium, tonics;
+        public readonly int target, gold, celestium, tonics, sigils;
         public TowerGoalDef(string id, string title, string counter, int target,
-            int gold, int celestium = 0, int tonics = 0)
+            int gold, int celestium = 0, int tonics = 0, int sigils = 0)
         {
             this.id = id; this.title = title; this.counter = counter; this.target = target;
-            this.gold = gold; this.celestium = celestium; this.tonics = tonics;
+            this.gold = gold; this.celestium = celestium; this.tonics = tonics; this.sigils = sigils;
         }
         public string Reward
         {
@@ -41,7 +41,8 @@ namespace AdamsHaven.Tower
                 string text = "";
                 if (gold > 0) text += gold + "g ";
                 if (celestium > 0) text += celestium + "C ";
-                if (tonics > 0) text += tonics + " tonics";
+                if (tonics > 0) text += tonics + " tonics ";
+                if (sigils > 0) text += sigils + " Sigils";
                 return text.Trim();
             }
         }
@@ -56,16 +57,17 @@ namespace AdamsHaven.Tower
         };
 
         public static readonly TowerGoalDef[] GoalPool = {
-            new TowerGoalDef("harvest", "Collect 5 harvests", "collect", 5, 90),
-            new TowerGoalDef("builder", "Build 3 rooms", "build", 3, 140, 2),
-            new TowerGoalDef("firefighter", "Resolve 2 incidents", "resolved", 2, 60, 4),
-            new TowerGoalDef("welcome", "Welcome 2 wanderers", "recruit", 2, 80, 0, 2),
-            new TowerGoalDef("rushing", "Rush 3 rooms successfully", "rush_ok", 3, 70),
-            new TowerGoalDef("training", "Finish 3 training sessions", "trained", 3, 100, 3),
-            new TowerGoalDef("rescuer", "Rescue or heal 2 residents", "healed", 2, 50, 0, 3),
-            new TowerGoalDef("explorer", "Return 2 expeditions", "expedition", 2, 120, 2),
-            new TowerGoalDef("upgrader", "Upgrade a room", "upgrade", 1, 160),
-            new TowerGoalDef("family", "Welcome a family child", "child", 1, 90, 5)
+            // Each goal also pays 2 to 4 Sigils (TowerSigils.cs income plan).
+            new TowerGoalDef("harvest", "Collect 5 harvests", "collect", 5, 90, 0, 0, 2),
+            new TowerGoalDef("builder", "Build 3 rooms", "build", 3, 140, 2, 0, 3),
+            new TowerGoalDef("firefighter", "Resolve 2 incidents", "resolved", 2, 60, 4, 0, 3),
+            new TowerGoalDef("welcome", "Welcome 2 wanderers", "recruit", 2, 80, 0, 2, 2),
+            new TowerGoalDef("rushing", "Rush 3 rooms successfully", "rush_ok", 3, 70, 0, 0, 2),
+            new TowerGoalDef("training", "Finish 3 training sessions", "trained", 3, 100, 3, 0, 3),
+            new TowerGoalDef("rescuer", "Rescue or heal 2 residents", "healed", 2, 50, 0, 3, 2),
+            new TowerGoalDef("explorer", "Return 2 expeditions", "expedition", 2, 120, 2, 0, 4),
+            new TowerGoalDef("upgrader", "Upgrade a room", "upgrade", 1, 160, 0, 0, 3),
+            new TowerGoalDef("family", "Welcome a family child", "child", 1, 90, 5, 0, 4)
         };
 
         public const int ActiveGoals = 3;
@@ -141,6 +143,7 @@ namespace AdamsHaven.Tower
             State.gold += def.gold;
             State.celestium += def.celestium;
             State.tonics = Mathf.Min(30, State.tonics + def.tonics);
+            State.sigils += def.sigils;
             goal.claimed = true;
             State.notifiedGoals.Remove(goal.id);
             State.goalsClaimed++;
