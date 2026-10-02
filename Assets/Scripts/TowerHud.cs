@@ -833,6 +833,9 @@ public sealed partial class TowerHud : MonoBehaviour
         string id = available[number];
         if (!tower.Rules.State.blueprints.Contains(id))
         {
+            // Locked buildings open the Construction node that unlocks them.
+            var node = TowerRules.UnlockNode(id);
+            if (node != null) { OpenResearch(node.id); return; }
             string result = tower.Rules.ResearchBlueprint(id);
             tower.Apply(result);
             if (result != null) return;
@@ -1111,7 +1114,7 @@ public sealed partial class TowerHud : MonoBehaviour
         }
         incidentText.text = (incidents.Length == 0 ? "The Tower is safe." : incidents.TrimEnd('\n')) +
             "\nThreat " + tower.Rules.ThreatLabel() + "  •  next event " + Mathf.CeilToInt(state.eventCooldown) +
-            "s  •  Gate guards " + tower.Rules.GuardCount() + "/2" +
+            "s  •  Gate guards " + tower.Rules.GuardCount() + "/" + GateSlots() +
             (tower.Rules.DarkRoomCount > 0 ? "  •  " + tower.Rules.DarkRoomCount + " rooms dark" : "") + lost;
         recruit.interactable = state.pendingVisitors > 0;
         LabelOf(recruit).text = "RECRUIT AT GATE (" + state.pendingVisitors + ")";
@@ -1329,9 +1332,10 @@ public sealed partial class TowerHud : MonoBehaviour
             buildLabels[i].text = known ? def.displayName.ToUpperInvariant() + "  " +
                 tower.Rules.BuildCost(id) + "g  " + tower.Rules.BuildWoodCost(id) + "w " +
                 tower.Rules.BuildStoneCost(id) + "s" :
-                "STUDY " + def.displayName.ToUpperInvariant() + "  " +
-                tower.Rules.BlueprintGoldCost(id) + "g " +
-                tower.Rules.BlueprintCelestiumCost(id) + "C";
+                (TowerRules.UnlockNode(id) != null ? "RESEARCH " + TowerRules.UnlockNode(id).id + "  " +
+                    def.displayName.ToUpperInvariant() :
+                    "STUDY " + def.displayName.ToUpperInvariant() + "  " + tower.Rules.BlueprintGoldCost(id) + "g " +
+                    tower.Rules.BlueprintCelestiumCost(id) + "C");
             buildButtons[i].GetComponent<Image>().color = tower.Placing && tower.BuildType == id && known ? Gold : Teal;
         }
     }

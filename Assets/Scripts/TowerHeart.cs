@@ -39,8 +39,7 @@ namespace AdamsHaven.Tower
             State.celestium -= celestium; State.gold -= gold;
             State.heartRank++;
             State.heartHp = HeartMaxHp(State.heartRank);
-            int sigils = HeartRankUpSigils(State.heartRank);
-            State.sigils += sigils;
+            int sigils = GrantSigils(HeartRankUpSigils(State.heartRank));
             Note("The Celestium Heart rose to rank " + TowerTiers.Tier(State.heartRank) + ". Buildings may now reach rank " +
                 TowerTiers.Tier(RankCap()) + ". +" + sigils + " Sigils.");
             Bump("heart");
@@ -53,7 +52,8 @@ namespace AdamsHaven.Tower
         public string HeartStage()
         {
             float share = State.heartHp / HeartMaxHp(State.heartRank);
-            return share > 0.6f ? "stable" : share > 0.25f ? "strained" : "critical";
+            bool wards = Researched("DEF-5");   // Wardstones: the warnings come later
+            return share > (wards ? 0.5f : 0.6f) ? "stable" : share > (wards ? 0.2f : 0.25f) ? "strained" : "critical";
         }
 
         private void CheckHeartStage()
@@ -130,6 +130,18 @@ namespace AdamsHaven.Tower
             state.sigils = fallen.sigils;
             state.summonPity = fallen.summonPity;
             state.freeSummonUsed = fallen.freeSummonUsed;
+            // Research persists across runs (GDD 8.5), including a study still in progress.
+            state.research = new List<string>(fallen.research ?? new List<string>());
+            state.researching = fallen.researching ?? "";
+            state.researchEndsUnix = fallen.researchEndsUnix;
+            state.researchVersion = fallen.researchVersion;
+            state.sigilCarry = fallen.sigilCarry;
+            foreach (string id in state.research)
+            {
+                var node = ResearchDef(id);
+                if (node != null && node.unlocks != null)
+                    foreach (string type in node.unlocks) if (!state.blueprints.Contains(type)) state.blueprints.Add(type);
+            }
             // Today's daily board carries over too, so a fall cannot deal a second one. Counters restart at zero.
             state.dailyDate = fallen.dailyDate;
             state.dailyBonusClaimed = fallen.dailyBonusClaimed;
@@ -198,7 +210,7 @@ namespace AdamsHaven.Tower
         {
             int next = State.summonPity + 1;
             if (next >= HardPity) return 100f;
-            return SummonRates[8] + Mathf.Max(0, next - SoftPityFrom + 1) * 6f;
+            return SummonRates[8] + SsrRateBonus() + Mathf.Max(0, next - SoftPityStart() + 1) * 6f;
         }
 
         public string Summon(int count)
@@ -265,6 +277,7 @@ namespace AdamsHaven.Tower
                 // Duplicates fuse: a higher pull lifts the hero to that rank, otherwise the hero gains a level.
                 if (rank > owned.rank) { RaiseStats(owned, rank - owned.rank); owned.rank = rank; }
                 else owned.level++;
+                if (Researched("EXP-7")) owned.level++;   // Fusion boon
                 return new TowerSummon { name = name, unitId = unitId, kind = "hero", rank = rank, fused = true };
             }
             var hero = NewResident(unitId, name, "hero", 1);
@@ -287,7 +300,7 @@ namespace AdamsHaven.Tower
                 if (duplicate)
                 {
                     var owned = Owned(r => r.unitId == unit.id);
-                    if (owned != null) owned.level++;
+                    if (owned != null) owned.level += Researched("EXP-7") ? 2 : 1;
                     return new TowerSummon { name = unit.name, unitId = unit.id, kind = "resident", rank = rank, fused = true };
                 }
                 var named = NewResident(unit.id, unit.name, "villager", 1);

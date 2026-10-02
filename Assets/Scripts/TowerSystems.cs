@@ -209,7 +209,7 @@ namespace AdamsHaven.Tower
             if (kind != "fire" && kind != "pests" && kind != "raiders" && kind != "illness" &&
                 kind != "cave_in") return "Unknown incident.";
             if (State.incidents.Exists(i => i.roomUid == roomUid)) return "That room is already in danger.";
-            float hp = kind == "raiders" ? 100 : kind == "pests" ? 65 : kind == "cave_in" ? 70 : 45;
+            float hp = kind == "raiders" ? 100 : kind == "pests" ? 65 * (Researched("DEF-2") ? 0.8f : 1f) : kind == "cave_in" ? 70 : 45;
             State.incidents.Add(new TowerIncident { roomUid = roomUid, kind = kind, hp = hp,
                 severity = 1 + Mathf.Min(2, State.residents.Count / 20f) });
             if (State.tutorialStep == 5) State.tutorialStep = 6;
@@ -237,6 +237,10 @@ namespace AdamsHaven.Tower
             TickRooms(dt);
             TickVisitors(dt);
             if (live) { TickIncidents(dt); TickEvents(dt); }
+            // DEF-8 Celestial aegis: a calm Heart chamber slowly mends the Heart.
+            if (Researched("DEF-8") && State.heartHp > 0 && State.heartHp < HeartMaxHp(State.heartRank) &&
+                !State.incidents.Exists(i => i.roomUid == Room0("heart")))
+                State.heartHp = Mathf.Min(HeartMaxHp(State.heartRank), State.heartHp + 0.5f * dt);
             CheckHeartStage();
             if (State.heartHp <= 0) { State.heartHp = 0; State.defeated = true; }
         }

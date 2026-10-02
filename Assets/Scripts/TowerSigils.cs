@@ -122,7 +122,7 @@ namespace AdamsHaven.Tower
             int sigils = DailyTaskSigils;
             bool all = State.daily.TrueForAll(t => t.claimed);
             if (all && !State.dailyBonusClaimed) { State.dailyBonusClaimed = true; sigils += DailyBonusSigils; }
-            State.sigils += sigils;
+            sigils = GrantSigils(sigils);
             Note("Daily task done: " + DailyDef(task.id).title + ". +" + sigils + " Sigils" +
                 (all ? " (the whole board is clear)." : "."));
             Emit("reward", 0, 0, sigils + " Sigils");
@@ -146,8 +146,7 @@ namespace AdamsHaven.Tower
             int sigils = ExpeditionReturnSigils(run);
             if (sigils <= 0) return 0;
             State.dailyExpeditionSigils++;
-            State.sigils += sigils;
-            return sigils;
+            return GrantSigils(sigils);
         }
     }
 }

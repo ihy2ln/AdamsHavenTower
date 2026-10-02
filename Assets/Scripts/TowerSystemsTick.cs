@@ -113,7 +113,8 @@ namespace AdamsHaven.Tower
                     if (resident.hp <= 0) resident.downed = true;
                 }
                 else if (!resident.downed && resident.hp < MaxHp(resident) && resident.injury < 15)
-                    resident.hp = Mathf.Min(MaxHp(resident), resident.hp + 0.025f * dt);
+                    resident.hp = Mathf.Min(MaxHp(resident), resident.hp + 0.025f * dt *
+                        (resident.origin == "hero" && Researched("SET-7") ? 1.5f : 1f));   // Hero housing
                 TickRecovery(resident, dt, live, shortage);
             }
         }
@@ -143,7 +144,7 @@ namespace AdamsHaven.Tower
                     resident.homeRoom == 0 || partner.homeRoom == 0 || BiologicalPopulation() >= PopulationCap())
                     continue;
                 resident.familySeconds += dt;
-                if (resident.familySeconds < DaySeconds) continue;
+                if (resident.familySeconds < DaySeconds * (Researched("SET-5") ? 0.75f : 1f)) continue;
                 TowerRoom home = null;
                 foreach (var candidate in State.rooms)
                     if (candidate.type == "nursery")
@@ -391,7 +392,7 @@ namespace AdamsHaven.Tower
                 }
                 else if (resident.currentTask == "care")
                 {
-                    float quality = State.tonics > 0 ? 1f : 0.45f;
+                    float quality = (State.tonics > 0 ? 1f : 0.45f) * CareBonus();
                     TowerResident patient = null;
                     foreach (var other in State.residents)
                         if (other.id != resident.id &&
@@ -439,7 +440,7 @@ namespace AdamsHaven.Tower
                 if (rate <= 0) continue;
                 if (def.kind == "train")
                 {
-                    room.progress += rate * dt / 240f;
+                    room.progress += rate * CycleSpeed() * dt / 240f;
                     if (room.progress >= 1)
                     {
                         room.progress = 0;
@@ -457,7 +458,7 @@ namespace AdamsHaven.Tower
                 }
                 else if (!string.IsNullOrEmpty(def.produces) && !room.ready)
                 {
-                    room.progress += rate * dt / 90f;
+                    room.progress += rate * CycleSpeed() * dt / 90f;
                     if (room.progress >= 1) { room.progress = 1; room.ready = true; }
                 }
                 room.condition = Mathf.Max(0, room.condition - 0.0006f * dt);
@@ -485,7 +486,8 @@ namespace AdamsHaven.Tower
                 foreach (var resident in State.residents)
                 {
                     if (resident.currentRoom != room.uid || resident.downed || resident.ageStage != 0) continue;
-                    float brave = HasTrait(resident, "Brave") ? 1.2f : 1f;
+                    float brave = (HasTrait(resident, "Brave") ? 1.2f : 1f) *
+                        (resident.origin == "hero" && Researched("DEF-7") ? 1.25f : 1f);   // Hero bulwark
                     if (incident.kind == "fire" && resident.currentTask == "fire")
                     { response += (0.45f + resident.sight * 0.16f + resident.tool * 0.2f) * brave; defenders++; }
                     else if (incident.kind == "illness" && resident.currentTask == "care" && State.tonics > 0)
@@ -515,12 +517,14 @@ namespace AdamsHaven.Tower
                 }
                 if (room.type != "heart" && room.type != "gate")
                     room.condition = Mathf.Max(0, room.condition -
-                        (incident.kind == "cave_in" ? 0.03f : 0.015f) * incident.severity * dt);
+                        (incident.kind == "cave_in" ? 0.03f : 0.015f) * incident.severity * dt *
+                        (incident.kind == "fire" ? FireDamageScale() : 1f));
                 if (incident.kind == "raiders" && defenders == 0)
                 {
                     // Undefended raiders loot, and in the Heart's own chamber they wound it.
                     if (room.type == "heart")
-                        State.heartHp = Mathf.Max(0, State.heartHp - 1.4f * incident.severity * dt);
+                        State.heartHp = Mathf.Max(0, State.heartHp - 1.4f * incident.severity * dt *
+                            (Researched("DEF-8") ? 0.7f : 1f));   // Celestial aegis
                     // Carry the fraction so the loot rate is the same at any frame rate or game speed.
                     incident.lootCarry += 0.6f * incident.severity * dt;
                     int take = Mathf.Min(State.gold, Mathf.FloorToInt(incident.lootCarry));
@@ -534,7 +538,7 @@ namespace AdamsHaven.Tower
                 {
                     var heartRoom = State.rooms.Find(r => r.type == "heart");
                     if (heartRoom != null && heartRoom.floor == room.floor)
-                        State.heartHp = Mathf.Max(0, State.heartHp - 0.5f * incident.severity * dt);
+                        State.heartHp = Mathf.Max(0, State.heartHp - 0.5f * incident.severity * dt * FireDamageScale());
                 }
                 foreach (var resident in State.residents)
                 {

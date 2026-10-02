@@ -143,7 +143,7 @@ namespace AdamsHaven.Tower
             State.gold += def.gold;
             State.celestium += def.celestium;
             State.tonics = Mathf.Min(30, State.tonics + def.tonics);
-            State.sigils += def.sigils;
+            GrantSigils(def.sigils);
             goal.claimed = true;
             State.notifiedGoals.Remove(goal.id);
             State.goalsClaimed++;
@@ -224,6 +224,8 @@ namespace AdamsHaven.Tower
             if (resident.rest < 20) list.Add(new TowerThought("Exhausted", -14));
             else if (resident.rest < 35) list.Add(new TowerThought("Tired", -8));
             else if (resident.rest > 80) list.Add(new TowerThought("Well rested", 4));
+            if (Researched("SET-1")) list.Add(new TowerThought("Shared meals", 3));
+            if (Researched("SET-2")) list.Add(new TowerThought("Cozy lighting", 3));
             if (State.firewood <= 0) list.Add(new TowerThought("Cold hearth", -12));
             else list.Add(new TowerThought("Warm hearth", 3));
 
@@ -445,8 +447,8 @@ namespace AdamsHaven.Tower
             if (State.pendingVisitors > 0 && BiologicalPopulation() >= PopulationCap())
                 return "A wanderer waits at the Gate. " + (State.blueprints.Contains("cottage") ?
                     "Build a Cottage for a free bed." : State.blueprints.Contains("nursery") ?
-                    "Build a Hearth Nursery, or study the Cottage, for a free bed." :
-                    "Study the Cottage blueprint and build it for a free bed.");
+                    "Build a Hearth Nursery, or research CON-2 for the Cottage, for a free bed." :
+                    "Research CON-2 at the Heart, then build a Cottage for a free bed.");
             foreach (var resident in State.residents)
                 if (resident.ageStage == 0 && resident.origin != "body" && resident.jobRoom == 0 &&
                     !resident.exploring && !resident.away)

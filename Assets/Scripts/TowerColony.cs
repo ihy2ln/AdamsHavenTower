@@ -21,7 +21,7 @@ namespace AdamsHaven.Tower
         public void GiveXp(TowerResident resident, int amount)
         {
             if (resident == null || resident.ageStage != 0 || amount <= 0) return;
-            resident.xp += amount;
+            resident.xp += Mathf.RoundToInt(amount * XpBonus());
             while (resident.level < LevelCap && resident.xp >= XpToNext(resident))
             {
                 resident.xp -= XpToNext(resident);
@@ -542,6 +542,8 @@ namespace AdamsHaven.Tower
             if (State.stewardTimer < (empty ? 5f : 20f)) return;
             State.stewardTimer = 0;
             StewardPass();
+            if (Researched("SET-8") && State.residents.Exists(r => r.jobRoom == 0 && r.ageStage == 0 && !r.downed &&
+                !r.exploring && !r.away && r.origin != "body")) AutoAssignIdle();   // Steward Mk II
         }
 
         public int StaffForSurvival(int maxMoves)

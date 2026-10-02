@@ -346,13 +346,15 @@ The Heart is tapped to open a **full-screen hub** with four tabs.
 | # | Construction (CON) | Settlement (SET) | Production (PRO) | Defence and Medicine (DEF) | Exploration and Summoning (EXP) |
 | --- | --- | --- | --- | --- | --- |
 | 1 (T1) | Farmstead + House | Shared meals (+satisfaction) | Crop rotation (+5% Food) | Watchfires (fire damage -15%) | Guild charts (opens regions 2-3) |
-| 2 (T1) | Argent Market + Cottage | Cozy lighting (+satisfaction) | Sharper tools (+3% yield, all rooms) | Pest bait (pests -20%) | Second party slot (the third comes from Guild rank A) |
+| 2 (T1) | Argent Market + Cottage | Cozy lighting (+satisfaction) | Sharper tools (+3% yield, all rooms) | Pest bait (pests -20%) | Pack mules (+20% expedition gold) |
 | 3 (T2) | Barn + Grain Silo + Frosted Mug | Better beds (+10% housing) | Seasoned timber (+5% Firewood) | Gate guard post (3rd guard) | Sigil focus (+10% Sigil drops) |
 | 4 (T2) | Stone Quarry + Warehouse | Apprenticeships (+XP) | Deep wells (+5% Water) | Field medicine (faster healing) | Regions 4-5 |
 | 5 (T3) | The Forge + Deck Hall | Nursery births | Pack storage (+15% caps) | Wardstones (Heart warning stage delay) | Earlier soft pity (about pull 45) |
 | 6 (T3) | Hearth Nursery + Terrace Row + Ashgrove Manor | Festival (satisfaction event) | Trade ledgers (+8% Gold) | Tonic still (+Tonic output) | Regions 6-7 |
 | 7 (T4) | Celestium fittings (unlocks SSR upgrades) | Hero housing (heroes recover faster) | Cycle shortening (-8% cycle time) | Hero bulwark (defence heroes stronger) | Fusion boon (cheaper fusion) |
 | 8 (T5) | Master builders (-10% upgrade Gold) | Steward Mk II (smarter auto-assign) | Celestium sieve (+Celestium from Quarry) | Celestial aegis (monster damage -30%, Heart regeneration) | Region 8 (Silverwood Gate) + SSR odds +0.5% |
+
+Built (2026-10-01, `TowerResearch.cs`, Heart hub RESEARCH tab): all 40 nodes with real-time timers, Tonic rush (1 per 30 min left), branch order and the Heart research tier. Construction nodes replace the old per-building blueprint purchases. Regions 2-8 need their EXP node as well as the conquest. Small first versions where the full system does not exist yet: Wardstones move the warning stages to 50% / 20%, Celestial aegis heals the Heart 0.5 HP/s while its chamber is calm, Steward Mk II auto-places idle residents, Fusion boon gives duplicates one extra level, Festival runs every second game day, Better beds is +10% per home rounded up. EXP-2 was "second party slot"; the game runs one expedition at a time, so it is Pack mules until parallel parties exist. Older saves are migrated to the nodes matching what they own.
 
 Note: the tutorial (2.1) only uses starting buildings, so it never depends on a Construction unlock. The Construction chain is paced to keep new buildings arriving in step with the Heart table.
 

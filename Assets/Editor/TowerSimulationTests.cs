@@ -13,6 +13,7 @@ public sealed class TowerSimulationTests
     {
         TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true;
         TowerRules.Today = () => System.DateTime.Now.Date;
+        TowerRules.NowUnix = () => System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 
     private static TowerRules Expedition()
@@ -783,6 +784,8 @@ public sealed class TowerSimulationTests
             else Assert.IsNull(rules.ResolveBattle(true, null));
         }
         Assert.IsTrue(rules.RegionConquered("silverbrook_edge"));
+        Assert.IsFalse(rules.RegionUnlocked("rootside_camp"), "conquest alone is not enough: EXP-1 maps the region");
+        Learn(rules, "EXP-1");
         Assert.IsTrue(rules.RegionUnlocked("rootside_camp"));
         Assert.IsTrue(rules.RegionUnlocked("shallow_ford"));
         Assert.IsFalse(rules.RegionUnlocked("old_bridge"));
@@ -924,6 +927,7 @@ public sealed class TowerSimulationTests
     public void FamilyChildLivesAndMatures()
     {
         var rules = Started();
+        Learn(rules, "CON-6");
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.Build("nursery", 0, 20));
@@ -996,10 +1000,10 @@ public sealed class TowerSimulationTests
     {
         var rules = Started();
         Assert.IsFalse(rules.State.blueprints.Contains("quarry"));
-        int researchGold = rules.State.gold;
-        Assert.IsNull(rules.ResearchBlueprint("quarry"));
-        Assert.IsTrue(rules.State.blueprints.Contains("quarry"));
-        Assert.Less(rules.State.gold, researchGold);
+        StringAssert.Contains("CON-4", rules.ResearchBlueprint("quarry"), "buildings unlock through research now");
+        int celestium = rules.State.celestium;
+        Assert.IsNull(rules.StartResearch("CON-1"));
+        Assert.Less(rules.State.celestium, celestium);
         Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.ExpandFloor(0));
         int wood = rules.State.wood, stone = rules.State.stone;
@@ -1654,7 +1658,11 @@ public sealed class TowerSimulationTests
                 if (TowerCatalog.Get(id).produces == produces) known = true;
             Assert.IsTrue(known, "no known blueprint makes " + stock);
         }
-        Assert.IsTrue(rules.State.blueprints.Contains("market")); // gold path
+        // Gold path: the Argent Market is two tier-1 studies away, and founding grants enough Celestium for both.
+        Assert.IsFalse(rules.State.blueprints.Contains("market"));
+        Assert.AreEqual("CON-2", TowerRules.UnlockNode("market").id);
+        Assert.GreaterOrEqual(rules.State.celestium,
+            TowerRules.ResearchCelestium(TowerRules.ResearchDef("CON-1")) + TowerRules.ResearchCelestium(TowerRules.ResearchDef("CON-2")));
     }
 
     [Test]
@@ -1718,6 +1726,7 @@ public sealed class TowerSimulationTests
         Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
         Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         rules.State.gold += 2000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
+        Learn(rules, "CON-6");   // the Hearth Nursery
         for (int i = 0; i < 2; i++) Assert.IsNull(rules.ExpandFloor(0));
         Assert.IsNull(rules.Build("lumber_mill", 0, TowerRules.CoreX - 4));
         Assert.IsNull(rules.Build("nursery", 0, TowerRules.CoreX - 5));
@@ -1936,6 +1945,7 @@ public sealed class TowerSimulationTests
     public void BarnClimbsNineTiersAndWidensToThreeBays()
     {
         var rules = BarnLot();
+        Learn(rules, "CON-7");   // SSR upgrades need Celestium fittings
         rules.State.heartRank = 9;
         Assert.IsNull(rules.Build("barn", 0, 20));
         var barn = rules.RoomAt(0, 20);
@@ -2202,6 +2212,183 @@ public sealed class TowerSimulationTests
         conquer.Invoke(rules, new object[] { "silverbrook_edge" });
         conquer.Invoke(rules, new object[] { "silverbrook_edge" });
         Assert.AreEqual(2 * paid + TowerRules.ConquestSigils, rules.State.sigils);
+    }
+
+    // ---------------------------------------------------------------- research (TowerResearch.cs)
+
+    private static long fakeNow = 1_800_000_000;
+
+    // Studies a node and every predecessor in its branch at once, leaving the tower's stocks and Heart rank as they were.
+    private static void Learn(TowerRules rules, string id)
+    {
+        var s = rules.State;
+        int celestium = s.celestium, gold = s.gold, tonics = s.tonics, rank = s.heartRank;
+        var def = TowerRules.ResearchDef(id);
+        s.heartRank = TowerTiers.MaxRank;
+        for (int i = 1; i <= def.index; i++)
+        {
+            string need = def.branch + "-" + i;
+            if (rules.Researched(need)) continue;
+            s.celestium = 99999; s.gold = 999999; s.tonics = 99;
+            Assert.IsNull(rules.StartResearch(need), need);
+            Assert.IsNull(rules.RushResearch(), need);
+            Assert.IsTrue(rules.Researched(need), need);
+        }
+        s.celestium = celestium; s.gold = gold; s.tonics = tonics; s.heartRank = rank;
+    }
+
+    [Test]
+    public void ResearchRunsOnTheRealClockAndUnlocksBuildings()
+    {
+        TowerRules.NowUnix = () => fakeNow;
+        var rules = Started();
+        Assert.IsFalse(rules.State.blueprints.Contains("farmstead"));
+        Assert.IsNotNull(rules.Build("farmstead", 0, 20), "locked until CON-1");
+        int celestium = rules.State.celestium;
+        Assert.IsNull(rules.StartResearch("CON-1"));
+        Assert.AreEqual(celestium - 10, rules.State.celestium);
+        Assert.IsNotNull(rules.StartResearch("SET-1"), "one study at a time");
+        rules.Advance(600, true);   // game time does not move the real-time timer
+        Assert.IsFalse(rules.Researched("CON-1"));
+        TowerRules.NowUnix = () => fakeNow + 599;
+        rules.Advance(0.1f, true);
+        Assert.IsFalse(rules.Researched("CON-1"));
+        Assert.Greater(rules.ResearchProgress(), 0.99f);
+        TowerRules.NowUnix = () => fakeNow + 600;
+        rules.Advance(0.1f, true);
+        Assert.IsTrue(rules.Researched("CON-1"));
+        Assert.IsFalse(rules.Researching);
+        Assert.IsTrue(rules.State.blueprints.Contains("farmstead"));
+    }
+
+    [Test]
+    public void ResearchNeedsTheBranchBeforeItAndAHighEnoughHeart()
+    {
+        var rules = Started();
+        rules.State.celestium = 9999; rules.State.gold = 99999;
+        StringAssert.Contains("first", rules.CanResearch("CON-2"));
+        Learn(rules, "CON-2");
+        StringAssert.Contains("rank D", rules.CanResearch("CON-3"), "tier 2 needs Heart D");
+        rules.State.heartRank = 3;
+        Assert.IsNull(rules.CanResearch("CON-3"));
+        rules.State.celestium = 0;
+        StringAssert.Contains("Celestium", rules.CanResearch("CON-3"));
+        foreach (var def in TowerRules.ResearchTree)
+            Assert.AreEqual(def.index <= 2 ? 1 : def.index <= 4 ? 2 : def.index <= 6 ? 3 : def.index == 7 ? 4 : 5, def.Tier, def.id);
+        Assert.AreEqual(40, TowerRules.ResearchTree.Length);
+    }
+
+    [Test]
+    public void RushingResearchCostsATonicPerHalfHourLeft()
+    {
+        TowerRules.NowUnix = () => fakeNow;
+        var rules = Started();
+        Learn(rules, "CON-2");
+        rules.State.heartRank = 3; rules.State.celestium = 999;
+        Assert.IsNull(rules.StartResearch("CON-3"));   // one hour
+        Assert.AreEqual(2, rules.RushTonicCost());
+        rules.State.tonics = 1;
+        Assert.IsNotNull(rules.RushResearch());
+        rules.State.tonics = 2;
+        Assert.IsNull(rules.RushResearch());
+        Assert.AreEqual(0, rules.State.tonics);
+        Assert.IsTrue(rules.Researched("CON-3"));
+        Assert.IsTrue(rules.State.blueprints.Contains("frosted_mug"));
+    }
+
+    [Test]
+    public void ResearchEffectsReachTheirSystems()
+    {
+        var rules = Started();
+        var shack = rules.RoomAt(0, 21);
+        var gate = rules.State.rooms.Find(r => r.type == "gate");
+        int beds = rules.Capacity(shack), guards = rules.Capacity(gate);
+        Learn(rules, "SET-3");
+        Assert.Greater(rules.Capacity(shack), beds, "Better beds");
+        Learn(rules, "DEF-3");
+        Assert.AreEqual(guards + 1, rules.Capacity(gate), "a third guard");
+        var kitchen = Kitchen(rules);
+        float food = rules.CollectAmount(kitchen);
+        Learn(rules, "PRO-2");
+        Assert.AreEqual(food * 1.08f, rules.CollectAmount(kitchen), 0.001f, "crop rotation + sharper tools");
+        float cap = rules.StockCap();
+        Learn(rules, "PRO-5");
+        Assert.AreEqual(cap * 1.15f, rules.StockCap(), 0.01f);
+        Assert.AreEqual(50, rules.SoftPityStart());
+        Learn(rules, "EXP-5");
+        Assert.AreEqual(45, rules.SoftPityStart());
+        rules.State.heartHp = TowerRules.HeartMaxHp(1) * 0.55f;
+        Assert.AreEqual("strained", rules.HeartStage());
+        Learn(rules, "DEF-5");
+        Assert.AreEqual("stable", rules.HeartStage(), "Wardstones delay the warning");
+        var room = rules.AddRoom("barn", 0, 19, 8);
+        int full = rules.UpgradeGoldCost(room);
+        rules.State.heartRank = 9; rules.State.gold = 999999; rules.State.wood = rules.State.stone = 9999;
+        StringAssert.Contains("CON-7", rules.UpgradeRoom(room.uid));
+        Learn(rules, "CON-8");
+        Assert.AreEqual(Mathf.RoundToInt(full * 0.9f), rules.UpgradeGoldCost(room));
+    }
+
+    [Test]
+    public void SigilFocusAddsTenPercentAndCarriesTheFraction()
+    {
+        TowerRules.Today = () => Day(1);
+        var rules = Started();
+        Learn(rules, "EXP-3");
+        rules.State.sigils = 0;
+        Assert.IsNull(rules.ClaimDaily(0));
+        Assert.AreEqual(3, rules.State.sigils);
+        Assert.AreEqual(0.3f, rules.State.sigilCarry, 0.001f);
+    }
+
+    [Test]
+    public void RegionsNeedTheirMapResearchAsWellAsConquest()
+    {
+        var rules = Expedition();
+        rules.State.regionsUnlocked.Add("rootside_camp");
+        Assert.IsFalse(rules.RegionUnlocked("rootside_camp"));
+        Learn(rules, "EXP-1");
+        Assert.IsTrue(rules.RegionUnlocked("rootside_camp"));
+        Assert.AreEqual("EXP-8", TowerRules.RegionResearchNode("silverwood_gate"));
+    }
+
+    [Test]
+    public void OlderSavesKeepWhatTheyOwnAsResearch()
+    {
+        var state = TowerMilestones.Create(1);
+        var founded = new TowerRules(state);
+        Assert.IsNull(founded.AwakenHeart());
+        Assert.IsNull(founded.PlaceIntroGate());
+        Assert.IsNull(founded.Build("house", 0, 21));
+        Assert.IsNull(founded.ChooseStarter("kaela"));
+        state.researchVersion = 0;
+        state.research.Clear();
+        state.blueprints.Add("quarry");
+        state.regionsUnlocked.Add("moon_shrine");
+        var loaded = new TowerRules(state);
+        foreach (string id in new[] { "CON-1", "CON-2", "CON-3", "CON-4", "EXP-1", "EXP-2", "EXP-3", "EXP-4" })
+            Assert.IsTrue(loaded.Researched(id), id);
+        Assert.IsFalse(loaded.Researched("CON-5"));
+        Assert.IsTrue(state.blueprints.Contains("warehouse"), "CON-4 brings its whole unlock");
+    }
+
+    [Test]
+    public void ResearchCarriesIntoALegacyRun()
+    {
+        var rules = Started();
+        Learn(rules, "PRO-2");
+        var next = TowerRules.LegacyRun(rules.State);
+        CollectionAssert.Contains(next.research, "PRO-1");
+        CollectionAssert.Contains(next.research, "PRO-2");
+    }
+
+    [Test]
+    public void CheckpointsKnowTheResearchTheirHeartCouldReach()
+    {
+        var state = TowerMilestones.Create(10);
+        var rules = new TowerRules(state);
+        Assert.AreEqual(40, state.research.Count, "an SSR Heart reaches tier 5");
+        Assert.IsTrue(rules.RegionUnlocked("silverbrook_edge"));
     }
 
     [Test]

@@ -30,7 +30,7 @@ public sealed partial class TowerHud
     {
         var rules = tower == null ? null : tower.Rules;
         if (rules == null || rules.State.introPhase != "complete") return false;
-        return rules.FreeSummonReady || rules.State.sigils >= TowerRules.PullCost ||
+        return rules.FreeSummonReady || rules.State.sigils >= TowerRules.PullCost || ResearchAvailable() ||
             rules.State.heartRank < TowerTiers.MaxRank && rules.State.celestium >= rules.HeartUpgradeCelestium() &&
             rules.State.gold >= rules.HeartUpgradeGold();
     }
@@ -43,10 +43,11 @@ public sealed partial class TowerHud
             new Vector2(720, 450), Glass);
         TowerUiSkin.ApplyPanel(popupHeart, Glass, true);
         var t = popupHeart.transform;
-        TextAt(t, "Heart title", "CELESTIUM HEART", 16, 10, 260, 30, 19, Gold);
-        tabSummon = ButtonAt(t, "Tab summon", "SUMMON", 280, 10, 130, 34, () => { heartTab = "summon"; Refresh(); }, Teal, 14);
-        tabUpgrade = ButtonAt(t, "Tab upgrade", "UPGRADE", 416, 10, 130, 34, () => { heartTab = "upgrade"; Refresh(); }, Teal, 14);
-        tabStatus = ButtonAt(t, "Tab status", "STATUS", 552, 10, 120, 34, () => { heartTab = "status"; Refresh(); }, Teal, 14);
+        TextAt(t, "Heart title", "HEART", 16, 10, 120, 30, 19, Gold);
+        tabSummon = ButtonAt(t, "Tab summon", "SUMMON", 150, 10, 120, 34, () => { heartTab = "summon"; Refresh(); }, Teal, 14);
+        tabResearch = ButtonAt(t, "Tab research", "RESEARCH", 276, 10, 120, 34, () => { heartTab = "research"; Refresh(); }, Teal, 14);
+        tabUpgrade = ButtonAt(t, "Tab upgrade", "UPGRADE", 402, 10, 120, 34, () => { heartTab = "upgrade"; Refresh(); }, Teal, 14);
+        tabStatus = ButtonAt(t, "Tab status", "STATUS", 528, 10, 120, 34, () => { heartTab = "status"; Refresh(); }, Teal, 14);
         CloseButton(t, 680, 12, CloseAllPopups);
         Divider(t, 12, 50, 696);
 
@@ -75,6 +76,7 @@ public sealed partial class TowerHud
         heartStatusTab = Rect("Status tab", t, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -58), Color.clear);
         heartStatusTab.raycastTarget = false;
         heartStatusText = TextAt(heartStatusTab.transform, "Status", "", 16, 10, 688, 360, 15, Cream, TextAnchor.UpperLeft);
+        BuildResearchTab(t);
         popupHeart.gameObject.SetActive(false);
     }
 
@@ -98,6 +100,10 @@ public sealed partial class TowerHud
         heartSummonTab.gameObject.SetActive(heartTab == "summon");
         heartUpgradeTab.gameObject.SetActive(heartTab == "upgrade");
         heartStatusTab.gameObject.SetActive(heartTab == "status");
+        heartResearchTab.gameObject.SetActive(heartTab == "research");
+        tabResearch.GetComponent<Image>().color = heartTab == "research" ? Gold : Teal;
+        LabelOf(tabResearch).text = rules.Researching ? "RESEARCH " + Mathf.FloorToInt(rules.ResearchProgress() * 100) + "%" : "RESEARCH";
+        if (heartTab == "research") RefreshResearch(state);
         tabSummon.GetComponent<Image>().color = heartTab == "summon" ? Gold : Teal;
         tabUpgrade.GetComponent<Image>().color = heartTab == "upgrade" ? Gold : Teal;
         tabStatus.GetComponent<Image>().color = heartTab == "status" ? Gold : Teal;
@@ -110,7 +116,7 @@ public sealed partial class TowerHud
         string rates = "RATES  ";
         for (int i = 0; i < TowerRules.SummonRates.Length; i++)
             rates += RankTag(i + 1) + " " + TowerRules.SummonRates[i].ToString("0.#") + "%   ";
-        ratesText.text = rates + "\nSoft pity from pull " + TowerRules.SoftPityFrom + ", SSR guaranteed by pull " +
+        ratesText.text = rates + "\nSoft pity from pull " + rules.SoftPityStart() + ", SSR guaranteed by pull " +
             TowerRules.HardPity + ". Every 10-pull holds a B or better. " + Mathf.RoundToInt(TowerRules.HeroShare * 100) +
             "% heroes, the rest residents. Duplicate heroes fuse to raise rank or level.";
         bool free = rules.FreeSummonReady;
@@ -154,7 +160,7 @@ public sealed partial class TowerHud
             "\nThreat " + Mathf.RoundToInt(state.threat) + "  (" + rules.ThreatLabel() + ")" +
             "\nIncidents now: " + state.incidents.Count +
             "\nRun " + (state.runs + 1) + "   •   Legacy rank " + state.legacyRank + (returning > 0 ?"   •   " + returning + " heroes will return when the Tower is founded" : "") +
-            "\n\nIf the Heart falls, this run ends. Heroes, Sigils and summon pity carry into the next run; " +
+            "\n\nIf the Heart falls, this run ends. Heroes, research, Sigils and summon pity carry into the next run; " +
             "the tower itself starts over. Keep guards at the Gate, Tonics in stock and fight incidents early.";
     }
 

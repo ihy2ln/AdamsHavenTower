@@ -148,6 +148,11 @@ namespace AdamsHaven.Tower
         public List<TowerResident> residents = new List<TowerResident>();
         public List<TowerIncident> incidents = new List<TowerIncident>();
         public List<string> blueprints = new List<string>();
+        public List<string> research = new List<string>();     // finished research nodes (TowerResearch.cs), e.g. "CON-3"
+        public string researching = "";                         // the node under study, "" when idle
+        public long researchEndsUnix;                           // wall-clock end of the current study
+        public int researchVersion;                             // TowerRules.ResearchVersion that migrated this save
+        public float sigilCarry;                                // Sigil focus fractions waiting for the next grant
         public List<string> policies = new List<string>();
         public List<string> excavatedCells = new List<string>();
         public List<string> log = new List<string>();
@@ -297,6 +302,8 @@ namespace AdamsHaven.Tower
             // stands west of the shaft, and only the ground floor reaches one cell east, for the Gate.
             MoveEastRoomsWest();
             foreach (var floor in State.floors) floor.east = floor.number == 0 && State.introPhase != "dormant" ? 1 : 0;
+            if (State.researching == null) State.researching = "";
+            MigrateResearch();
             if (State.introPhase == "complete") { RefillGoals(); RefreshDaily(); }
             State.heartRank = Mathf.Clamp(State.heartRank, 1, TowerTiers.MaxRank);
             foreach (var room in State.rooms)
@@ -430,8 +437,9 @@ namespace AdamsHaven.Tower
             ReturnLegacyHeroes();
             RefillGoals();
             RefreshDaily();
-            foreach (string id in new[] { "kitchen", "well", "lumber_mill", "market", "nursery", "guild_hall" })
+            foreach (string id in StartingBlueprints)
                 if (!State.blueprints.Contains(id)) State.blueprints.Add(id);
+            State.researchVersion = ResearchVersion;   // a new tower unlocks the rest through research
             // Tower-only progression needs a foundation and income path without battle rewards.
             State.celestium += 45;
             State.gold += 650;
@@ -498,6 +506,9 @@ namespace AdamsHaven.Tower
             if (def == null || type == "heart" || type == "gate") return "Unknown blueprint.";
             if (State.introPhase != "complete") return "Finish founding the Tower first.";
             if (State.blueprints.Contains(type)) return "Blueprint already known.";
+            // Buildings now unlock through the Construction research branch (GDD 8.2).
+            var node = UnlockNode(type);
+            if (node != null) return "Research " + node.id + " " + node.name + " at the Heart to unlock the " + def.displayName + ".";
             if (State.gold < BlueprintGoldCost(type) ||
                 State.celestium < BlueprintCelestiumCost(type))
                 return "Research needs " + BlueprintGoldCost(type) + " gold and " +
@@ -674,7 +685,14 @@ namespace AdamsHaven.Tower
         }
 
         // Two places per bay, plus one more for every rank above F (GDD 5.3; counts are a first pass).
-        public int Capacity(TowerRoom room) { return room.width * 2 + room.level - 1; }
+        public int Capacity(TowerRoom room)
+        {
+            int places = room.width * 2 + room.level - 1;
+            var def = TowerCatalog.Get(room.type);
+            if (def != null && def.kind == "living" && Researched("SET-3")) places = Mathf.CeilToInt(places * 1.1f);   // Better beds
+            if (room.type == "gate" && Researched("DEF-3")) places++;                                                    // third guard
+            return places;
+        }
 
         public int PopulationCap()
         {
@@ -768,14 +786,14 @@ namespace AdamsHaven.Tower
             float cap = 120;
             foreach (var room in State.rooms)
                 if (TowerCatalog.Get(room.type).kind == "storage") cap += 60 * OutputBays(room) * room.level;
-            return cap;
+            return cap * StockCapBonus();
         }
 
         public float CollectAmount(TowerRoom room)
         {
             var def = TowerCatalog.Get(room.type);
             if (def == null) return 0;
-            float mult = 1 + 0.5f * (room.level - 1);
+            float mult = (1 + 0.5f * (room.level - 1)) * YieldBonus(def.produces);
             return def.produces == "celestium" ? room.level :
                 (def.produces == "firewood" ? 5 :
                     def.produces == "water" ? 6 : def.produces == "gold" ? 6 : 4) * OutputBays(room) * mult;
@@ -805,9 +823,9 @@ namespace AdamsHaven.Tower
                 case "food": State.food = Mathf.Min(StockCap(), State.food + amount); break;
                 case "water": State.water = Mathf.Min(StockCap(), State.water + amount); break;
                 case "firewood": State.firewood = Mathf.Min(StockCap(), State.firewood + amount); break;
-                case "celestium": State.celestium += Mathf.RoundToInt(amount); break;
+                case "celestium": State.celestium += Mathf.RoundToInt(amount) + (Researched("PRO-8") ? 1 : 0); break;
                 case "gold": State.gold += Mathf.RoundToInt(amount); break;
-                case "tonics": State.tonics = Mathf.Min(30, State.tonics + Mathf.RoundToInt(amount / 3)); break;
+                case "tonics": State.tonics = Mathf.Min(30, State.tonics + Mathf.RoundToInt(amount / 3) + (Researched("DEF-6") ? 1 : 0)); break;
                 default: return "This room has nothing to collect.";
             }
             room.ready = false; room.progress = 0;
@@ -857,7 +875,8 @@ namespace AdamsHaven.Tower
         public int UpgradeGoldCost(TowerRoom room)
         {
             int newWidth = TowerTiers.Bays(room.type, room.level + 1);
-            return (room.level == 1 ? 200 : 600 * (room.level - 1)) * newWidth;
+            int cost = (room.level == 1 ? 200 : 600 * (room.level - 1)) * newWidth;
+            return Researched("CON-8") ? Mathf.RoundToInt(cost * 0.9f) : cost;
         }
 
         public int UpgradeMaterialCost(TowerRoom room)
@@ -875,6 +894,8 @@ namespace AdamsHaven.Tower
                 return "Raise the Celestium Heart to rank " + TowerTiers.Tier(needed) + " to upgrade past rank " +
                     TowerTiers.Tier(room.level) + ".";
             }
+            if (room.level + 1 >= TowerTiers.MaxRank && !Researched("CON-7"))
+                return "Research CON-7 Celestium fittings at the Heart to upgrade to rank SSR.";
             int newWidth = TowerTiers.Bays(room.type, room.level + 1);
             int newX = room.x;
             if (newWidth > room.width)
@@ -917,6 +938,8 @@ namespace AdamsHaven.Tower
         {
             if (State.introPhase != "complete" || State.defeated) return;
             RefreshDaily();
+            TickResearch();
+            int dayBefore = State.day;
             float remaining = Mathf.Max(0, seconds);
             while (remaining > 0 && !State.defeated)
             {
@@ -925,6 +948,13 @@ namespace AdamsHaven.Tower
                 remaining -= dt;
             }
             State.day = Mathf.Max(State.day, 1 + Mathf.FloorToInt(State.clock / DaySeconds));
+            // SET-6 Festival: every second day opens with a harvest festival.
+            if (State.day != dayBefore && State.day % 2 == 0 && Researched("SET-6") && State.festivalSeconds <= 0)
+            {
+                State.festivalSeconds = 90;
+                Note("Day " + State.day + " opens with a harvest festival.");
+                Emit("festival", 0, 0, "");
+            }
         }
 
         // Game seconds to simulate for one rendered frame. The frame hitch cap applies to the real time, not to the

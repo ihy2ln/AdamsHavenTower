@@ -117,7 +117,8 @@ namespace AdamsHaven.Tower
         public TowerForestLayout RunLayout
         { get { return !State.hasRun ? null : State.run.mapKind == GridKind ? GridLayout : TowerForestLayouts.Get(State.run.layout); } }
 
-        public bool RegionUnlocked(string id) { return State.regionsUnlocked.Contains(id); }
+        // A region opens by conquering its neighbours and, for regions 2-8, studying its map at the Heart (EXP branch).
+        public bool RegionUnlocked(string id) { return State.regionsUnlocked.Contains(id) && RegionResearched(id); }
         public bool RegionConquered(string id) { return State.regionsConquered.Contains(id); }
 
         private void NormalizeExpeditions()
@@ -150,6 +151,9 @@ namespace AdamsHaven.Tower
             if (error != null) return error;
             if (State.hasRun) return "An expedition is already under way.";
             if (Region(region) == null) return "Unknown region.";
+            if (State.regionsUnlocked.Contains(region) && !RegionResearched(region))
+                return "Research " + RegionResearchNode(region) + " " + ResearchDef(RegionResearchNode(region)).name +
+                    " at the Heart to open this region.";
             if (!RegionUnlocked(region)) return "Conquer the neighbouring regions first.";
             if (party == null || party.Count == 0) return "Pick at least one fighter.";
             if (party.Count > 6) return "At most six fighters.";
@@ -328,6 +332,8 @@ namespace AdamsHaven.Tower
             if (!wiped)
             {
                 foreach (var loot in run.haul) { Bank(loot); banked += loot.gold; }
+                if (Researched("EXP-2") && banked > 0)   // Pack mules
+                { int extra = Mathf.RoundToInt(banked * 0.2f); State.gold += extra; banked += extra; }
                 State.food += run.rations * RationFood;
                 State.water += run.rations * RationWater;
                 State.tonics += run.tonics;
@@ -351,7 +357,7 @@ namespace AdamsHaven.Tower
         {
             if (State.regionsConquered.Contains(id)) return;
             State.regionsConquered.Add(id);
-            State.sigils += ConquestSigils;
+            int sigils = GrantSigils(ConquestSigils);
             foreach (var region in Regions)
             {
                 if (State.regionsUnlocked.Contains(region.id)) continue;
@@ -359,7 +365,7 @@ namespace AdamsHaven.Tower
                 foreach (var need in region.requires) if (!State.regionsConquered.Contains(need)) open = false;
                 if (open) { State.regionsUnlocked.Add(region.id); Note(region.name + " can now be explored."); }
             }
-            Note(Region(id).name + " is conquered. +" + ConquestSigils + " Sigils.");
+            Note(Region(id).name + " is conquered. +" + sigils + " Sigils.");
         }
 
         // Experience always survives: it is granted to the heroes the moment a fight is won.

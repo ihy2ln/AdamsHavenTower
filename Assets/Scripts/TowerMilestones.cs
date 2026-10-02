@@ -55,6 +55,7 @@ namespace AdamsHaven.Tower
                 if (def.kind != "heart" && def.kind != "gate" && (index >= 3 ||
                     def.id == "house" || def.id == "kitchen" || def.id == "well" ||
                     def.id == "lumber_mill" || def.id == "barn" || def.id == "nursery")) state.blueprints.Add(def.id);
+            rules.GrantResearchUpToTier(TowerRules.ResearchTierFor(state.heartRank));
             if (index >= 2)
             {
                 state.policies.Add("priority_presets"); state.policies.Add("auto_repairs");
