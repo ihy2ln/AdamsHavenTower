@@ -519,4 +519,7 @@ public sealed class BattleEncounter
     public int Depth = 1;
     // JD grows with the party he leads: extra health (and half as much extra defence) as a fraction, e.g. 0.4 = +40%.
     public float SummonerVigor;
+    // The run's card upgrades (card id -> level) and relic effects; null for a plain fight.
+    public Dictionary<string, int> CardLevels;
+    public BattleRunModifiers Modifiers;
 }

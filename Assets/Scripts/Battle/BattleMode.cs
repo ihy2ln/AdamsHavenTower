@@ -172,9 +172,16 @@ public sealed partial class BattleMode : MonoBehaviour
             jd.MaxHp = jd.Hp = Mathf.RoundToInt(jd.MaxHp * (1f + Encounter.SummonerVigor));
             jd.Defense *= 1f + Encounter.SummonerVigor * .5f; jd.Resistance *= 1f + Encounter.SummonerVigor * .5f;
         }
+        List<BattleCard> deck = BattleCatalog.Deck(party);
+        int level;
+        // Upgraded cards keep their level for the run and show it as + marks on the card name.
+        if (Encounter != null && Encounter.CardLevels != null)
+            foreach (BattleCard card in deck)
+                if (Encounter.CardLevels.TryGetValue(card.Id, out level) && level > 1) { card.Level = level; card.Name += new string('+', level - 1); }
         battle = new BattleState(Seed != 0 ? Seed : Environment.TickCount, field, reserve,
-            Encounter != null ? Encounter.Enemies : BattleCatalog.Encounter(floor), BattleCatalog.Deck(party),
-            jd, Encounter != null ? Encounter.Commander : BattleCatalog.EnemyCommander(floor));
+            Encounter != null ? Encounter.Enemies : BattleCatalog.Encounter(floor), deck,
+            jd, Encounter != null ? Encounter.Commander : BattleCatalog.EnemyCommander(floor),
+            null, Encounter != null ? Encounter.Modifiers : null);
         background = BackgroundFor(Encounter);
         reward = Mathf.Abs(floor) >= 8 ? 300 : Mathf.Abs(floor) >= 3 ? 160 : 80;
         moteSeed = new float[48 * 4];

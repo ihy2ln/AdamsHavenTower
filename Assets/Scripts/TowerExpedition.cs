@@ -69,6 +69,12 @@ namespace AdamsHaven.Tower
         public List<string> roomsCleared = new List<string>();
         // Time spent out in the wild, in Tower clock seconds on top of State.clock (the Tower is paused meanwhile).
         public float clock;
+        // Run rewards (TowerRunRewards.cs): the pick waiting after a win, relics and card upgrades for this run only,
+        // and each fighter's stress carried from fight to fight (parallel to party).
+        public List<string> rewardOffer = new List<string>();
+        public List<string> relics = new List<string>();
+        public List<TowerCardLevel> cardLevels = new List<TowerCardLevel>();
+        public List<int> stress = new List<int>();
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).
@@ -151,6 +157,7 @@ namespace AdamsHaven.Tower
             if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
             if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();
+            if (State.hasRun) NormalizeRewards(State.run);
             MarkPartyAway();
         }
 
@@ -226,7 +233,7 @@ namespace AdamsHaven.Tower
             var layout = TowerForestLayouts.Get(ids[pick]);
             var run = new TowerRun { region = region, layout = layout.id, seed = State.randomState, rations = rations,
                 tonics = tonics, firewood = firewood, at = layout.entrance };
-            foreach (var id in party) { run.party.Add(id); run.hp.Add(100); }
+            foreach (var id in party) { run.party.Add(id); run.hp.Add(100); run.stress.Add(0); }
             run.visited.Add(layout.entrance);
             State.run = run;
             State.hasRun = true;
@@ -289,6 +296,7 @@ namespace AdamsHaven.Tower
             if (run.firewood <= 0) return "No firewood to make camp.";
             run.firewood--;
             HealParty(35, false);
+            EaseStress(40);
             LowerThreat(ThreatCampRest);
             PassRestTime();
             Note("The party rested by the fire.");
@@ -305,6 +313,8 @@ namespace AdamsHaven.Tower
             if (run.hp[i] >= 100) return "Already at full health.";
             run.tonics--;
             run.hp[i] = run.hp[i] <= 0 ? 50 : Mathf.Min(100, run.hp[i] + 40);
+            NormalizeRewards(run);
+            run.stress[i] = Mathf.Max(0, run.stress[i] - 20);
             return null;
         }
 

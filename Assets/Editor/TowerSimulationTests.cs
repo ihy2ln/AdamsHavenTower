@@ -732,6 +732,7 @@ public sealed class TowerSimulationTests
         // Walk every floor: always head for the nearest revealed unexplored walkable cell, resolve rooms as found.
         for (int guard = 0; guard < 2000 && rules.Run != null && rules.Run.dungeonPoi.Length > 0; guard++)
         {
+            if (rules.RewardPending) { Assert.IsNull(rules.ChooseReward(0)); continue; }   // a won fight offers a reward
             int pending = rules.PendingRoom;
             if (pending >= 0)
             {

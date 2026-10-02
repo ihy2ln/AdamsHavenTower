@@ -313,6 +313,7 @@ namespace AdamsHaven.Tower
             var run = Run; var d = Dungeon;
             if (d == null) return "Not in a dungeon.";
             if (PendingRoom >= 0 && BattleRoom(d.rooms[PendingRoom].kind)) return "Deal with this room first.";
+            if (RewardPending) return "Choose your reward first.";
             if (!d.Walkable(tx, ty) || !Revealed(tx, ty)) return "You cannot see a way there.";
             if (tx == run.px && ty == run.py) return null;
             var prev = new int[TowerDungeon.Size * TowerDungeon.Size];
@@ -377,6 +378,7 @@ namespace AdamsHaven.Tower
         private TowerLoot RollLoot(TowerRng rng, float scale, string name)
         {
             float mul = (RunRegion == null ? 1 : RunRegion.reward) * (1 + Run.floor * 0.5f) * scale;
+            if (HasRelic("lucky_coin")) mul *= 1.25f;
             var loot = new TowerLoot { name = name, gold = Mathf.RoundToInt(25 * mul * rng.Range(0.8f, 1.4f)) };
             if (rng.Value() < 0.3f * scale) loot.ore = 1 + rng.Next(2);
             if (rng.Value() < 0.15f * scale) loot.essence = 1;
@@ -408,6 +410,7 @@ namespace AdamsHaven.Tower
                 case "rest":
                     if (run.firewood > 0) { run.firewood--; HealParty(50, false); Note("A warm fire: the party recovers."); }
                     else { HealParty(25, false); Note("A cold rest: the party recovers a little."); }
+                    EaseStress(25);
                     break;
                 case "unknown":
                     if (choice == "investigate")
@@ -466,7 +469,9 @@ namespace AdamsHaven.Tower
             RaiseThreat(ThreatBattle);
             AwardExpeditionXp(kind == "boss" ? 70 : kind == "elite" ? 35 : 15);
             Bump("expedition_win");
+            var rewardRng = RoomRng(r + 1000);
             CompleteRoom(r);
+            if (Run != null) AfterWin(kind, rewardRng);
             return null;
         }
 

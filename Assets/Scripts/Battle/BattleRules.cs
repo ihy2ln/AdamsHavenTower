@@ -20,8 +20,10 @@ public sealed class BattleCard
     public float SynergyScale;
     public bool Magic, TransferEp, TransferAp;
     public string[] Partners = Array.Empty<string>();
-    public float EffectivePower { get { return Power * (1f + 0.1f * (Level - 1)); } }
-    public float EffectiveHeal { get { return Heal * (1f + 0.1f * (Level - 1)); } }
+    // Each card level above 1 (expedition upgrades) adds LevelStep power and healing.
+    public const float LevelStep = 0.2f;
+    public float EffectivePower { get { return Power * (1f + LevelStep * (Level - 1)); } }
+    public float EffectiveHeal { get { return Heal * (1f + LevelStep * (Level - 1)); } }
     public BattleCard Copy() { return (BattleCard)MemberwiseClone(); }
 }
 
@@ -106,6 +108,8 @@ public sealed class BattleRunModifiers
 {
     public string Relic = "";
     public bool Scout, Fortify;
+    // Expedition relics: extra damage on every party attack, extra crit chance, and how fast stress builds.
+    public float DamageBonus, CritBonus, StressScale = 1f;
 }
 
 public sealed class BattleState
@@ -471,9 +475,10 @@ public sealed class BattleState
     private float RunDamageMultiplier(BattleCard card, BattleUnit actor)
     {
         if (card.EffectivePower <= 0 || (actor != null && actor.Enemy)) return 1f;
-        if (RunModifiers.Relic != "stormglass" && RunModifiers.Relic != "ironbark") return 1f;
+        float bonus = 1f + RunModifiers.DamageBonus;
+        if (RunModifiers.Relic != "stormglass" && RunModifiers.Relic != "ironbark") return bonus;
         bool favored = RunModifiers.Relic == "stormglass" ? card.Magic : !card.Magic;
-        return favored ? relicSpent ? 1f : 1.25f : .9f;
+        return bonus * (favored ? relicSpent ? 1f : 1.25f : .9f);
     }
 
     private bool Covered(BattleUnit unit)
@@ -526,7 +531,7 @@ public sealed class BattleState
     private void Deal(BattleCard card, BattleUnit actor, BattleUnit target, float bond, bool counter)
     {
         float element;
-        bool crit = rng.NextDouble() < actor.CritRate;
+        bool crit = rng.NextDouble() < actor.CritRate + (actor.Enemy ? 0f : RunModifiers.CritBonus);
         float raw = BaseDamage(card, actor, target, bond, runPlayMultiplier, out element);
         raw *= crit ? Math.Max(1f, actor.CritDamage) : 1f;
         int amount = Math.Max(1, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
@@ -559,7 +564,7 @@ public sealed class BattleState
         if (!target.Enemy)
         {
             Sp = Math.Min(SpMax, Sp + 1);
-            target.Stress = Math.Min(100, target.Stress + Math.Max(8, (int)Math.Round(35f * amount / Math.Max(1, target.MaxHp))));
+            target.Stress = Math.Min(100, target.Stress + (int)Math.Round(RunModifiers.StressScale * Math.Max(8, (int)Math.Round(35f * amount / Math.Max(1, target.MaxHp)))));
             if (target.Stress >= 100 && target.CollapseRounds == 0)
             {
                 target.CollapseRounds = 2;

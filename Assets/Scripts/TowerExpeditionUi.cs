@@ -1461,6 +1461,13 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         int safe = 0; foreach (var loot in run.pocket) safe += loot.gold;
         TextAt(panel, "Haul", "Haul: " + run.haul.Count + " finds, " + gold + "g   Pocket " + run.pocket.Count + "/" + TowerRules.PocketSlots +
             " (" + safe + "g)", 16, y, Side - 32, 22, 13, Gold); y += 26;
+        if (run.relics != null && run.relics.Count > 0)
+        {
+            // Run relics (TowerRunRewards), lost when the expedition ends.
+            var names = run.relics.ConvertAll(id => TowerRules.Relic(id) != null ? TowerRules.Relic(id).name : id);
+            TextAt(panel, "Relics", "Relics: " + string.Join(", ", names.ToArray()), 16, y, Side - 32, 36, 12, new Color(1f, 0.85f, 0.5f));
+            y += 38;
+        }
         ButtonAt(panel, "Loot", "HAUL & SAFE POCKET", 16, y, Side - 32, 36, () => { lootOpen = true; if (view == View.Dungeon) BuildLoot(); else Rebuild(); }, Teal, 14);
         y += 44;
         if (dungeon)
@@ -1525,6 +1532,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         BuildRunPanel(true);
         RefreshDungeon();
         if (lootOpen) BuildLoot();
+        else if (R.RewardPending) BuildRewardCard();
     }
 
     private void BuildBoard()
@@ -1780,7 +1788,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void DungeonInput()
     {
-        if (roomPanel != null || endPanel != null || lootOpen || Travelling) return;
+        if (roomPanel != null || endPanel != null || lootOpen || Travelling || R.RewardPending) return;
         var run = R.Run;
         var keyboard = Keyboard.current;
         if (keyboard != null)
@@ -1913,7 +1921,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void UpdateTravel()
     {
         if (!Travelling) return;
-        if (roomPanel != null || endPanel != null || lootOpen) { CancelTravel(); return; }
+        if (roomPanel != null || endPanel != null || lootOpen || R.RewardPending) { CancelTravel(); return; }
         int cell = travelPath[travelIndex];
         int x = cell % TowerDungeon.Size, y = cell / TowerDungeon.Size;
         travelClock += Time.unscaledDeltaTime * 5;
@@ -2112,6 +2120,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             unit.Defense *= 1 + R.LevelGuard(unit.Id);
             unit.Resistance *= 1 + R.LevelGuard(unit.Id);
             unit.Hp = Mathf.Max(1, Mathf.RoundToInt(unit.MaxHp * run.hp[i] / 100f));
+            unit.Stress = R.Stress(i);
             alive.Add(unit);
         }
         var field = alive.GetRange(0, Mathf.Min(3, alive.Count));
@@ -2122,10 +2131,15 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float vigor = 0f;
         foreach (var unit in alive) vigor += R.LevelHp(unit.Id) + R.GearHp(unit.Id);
         encounter.SummonerVigor = alive.Count > 0 ? vigor / alive.Count : 0f;
+        encounter.CardLevels = R.CardLevels();
+        encounter.Modifiers = R.BattleModifiers();
         tower.LaunchExpeditionBattle(spec.Depth, field, reserve, won =>
         {
             canvas.gameObject.SetActive(true);
             var hp = new List<int>(run.hp);
+            var stress = new List<int>();
+            for (int i = 0; i < run.party.Count; i++) { var u = alive.Find(a => a.Id == run.party[i]); stress.Add(u != null ? u.Stress : R.Stress(i)); }
+            R.RecordStress(stress);
             for (int i = 0; i < run.party.Count; i++)
             {
                 var unit = alive.Find(u => u.Id == run.party[i]);
@@ -2139,9 +2153,40 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     // ---------------------------------------------------------------- traversal events
 
     // Event card (choices with check odds), then its result, or an ambush that must be fought.
+    // Pick one of three after a won fight (TowerRunRewards): relic, card upgrade or supply.
+    private void BuildRewardCard()
+    {
+        var run = R.Run;
+        if (!R.RewardPending) return;
+        float width = root.rect.width, height = root.rect.height;
+        var shade = Stretch("Reward shade", content, new Color(0, 0, 0, 0.6f));
+        int n = run.rewardOffer.Count;
+        float pw = Mathf.Min(900, width - Side - 60), ph = 330;
+        float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
+        var panel = PanelAt("Reward", shade.transform, px, py, pw, ph).transform;
+        TextAt(panel, "Title", "VICTORY  •  CHOOSE ONE REWARD", 20, 14, pw - 40, 30, 21, Gold);
+        TextAt(panel, "Hint", "Upgrades and relics last until this expedition ends.", 20, 44, pw - 40, 22, 13, new Color(0.8f, 0.85f, 0.9f));
+        float cw = (pw - 40 - (n - 1) * 14) / Mathf.Max(1, n);
+        for (int i = 0; i < n; i++)
+        {
+            int index = i;
+            string offer = run.rewardOffer[i];
+            bool relic = offer.StartsWith("relic:", StringComparison.Ordinal);
+            bool upgrade = offer.StartsWith("upgrade:", StringComparison.Ordinal);
+            float cx = 20 + i * (cw + 14);
+            var card = At("Offer " + i, panel, cx, 76, cw, 236, relic ? new Color(0.24f, 0.19f, 0.08f, 0.98f) :
+                upgrade ? new Color(0.10f, 0.22f, 0.27f, 0.98f) : new Color(0.12f, 0.15f, 0.12f, 0.98f));
+            TextAt(card.transform, "Kind", relic ? "RELIC" : upgrade ? "CARD UPGRADE" : "SUPPLY", 12, 10, cw - 24, 20, 12, relic ? Gold : Teal);
+            TextAt(card.transform, "Name", TowerRules.RewardTitle(offer), 12, 32, cw - 24, 52, 18, Cream);
+            TextAt(card.transform, "Text", R.RewardText(offer), 12, 88, cw - 24, 88, 13, new Color(0.85f, 0.88f, 0.92f));
+            ButtonAt(card.transform, "Take", "TAKE", 12, 182, cw - 24, 42, () => { Act(R.ChooseReward(index)); }, relic ? Gold : Teal, 16);
+        }
+    }
+
     private void BuildEventCard()
     {
         var run = R.Run; var def = R.PendingEvent;
+        if (R.RewardPending) { BuildRewardCard(); return; }
         bool ambush = R.AmbushPending;
         if (def == null && !ambush && string.IsNullOrEmpty(run.eventResult)) return;
         float width = root.rect.width, height = root.rect.height;

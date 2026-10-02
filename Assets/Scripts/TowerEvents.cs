@@ -77,6 +77,7 @@ namespace AdamsHaven.Tower
         {
             if (AmbushPending) return "Fight off the ambush first.";
             if (PendingEvent != null) return "Decide what to do first.";
+            if (RewardPending) return "Choose your reward first.";
             return null;
         }
 
@@ -263,6 +264,7 @@ namespace AdamsHaven.Tower
                 run.haul.Add(loot);
                 run.battlesWon++;
                 AwardExpeditionXp(15);
+                AfterWin("ambush", EventRng("ambush reward"));
                 LowerThreat(10);
                 Note("The ambush was beaten back: " + LootLine(loot) + ".");
             }

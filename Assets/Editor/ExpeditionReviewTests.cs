@@ -123,6 +123,82 @@ public sealed class ExpeditionReviewTests
         Assert.AreEqual(6f, rules.RunHour(), 0.01f);
     }
 
+    // ---- step 3: run rewards
+
+    private static TowerRules WonFight(string kind)
+    {
+        var rules = Expedition();
+        var poi = rules.RunLayout.nodes.Find(n => n.kind == (kind == "elite" ? "elite" : "combat"));
+        rules.Run.at = poi.id;
+        Assert.IsNull(rules.EnterPoi());
+        var d = rules.Dungeon;
+        int index = d.rooms.FindIndex(r => r.kind == (kind == "elite" ? "elite" : "enemy"));
+        Assert.GreaterOrEqual(index, 0);
+        rules.Run.px = d.rooms[index].CenterX; rules.Run.py = d.rooms[index].CenterY;
+        Assert.IsNull(rules.ResolveBattle(true, new List<int> { 80, 80, 80 }));
+        return rules;
+    }
+
+    [Test]
+    public void AWonFightOffersThreeRewardsAndBlocksTheWayUntilOneIsTaken()
+    {
+        var rules = WonFight("enemy");
+        Assert.IsTrue(rules.RewardPending);
+        Assert.AreEqual(TowerRules.RewardChoices, rules.Run.rewardOffer.Count);
+        Assert.AreEqual(rules.Run.rewardOffer.Count, new HashSet<string>(rules.Run.rewardOffer).Count, "three different offers");
+        Assert.AreEqual("Choose your reward first.", rules.EventBlock());
+        Assert.IsNull(rules.ChooseReward(0));
+        Assert.IsFalse(rules.RewardPending);
+        Assert.IsNull(rules.EventBlock());
+    }
+
+    [Test]
+    public void ElitesAlwaysOfferARelic()
+    {
+        var rules = WonFight("elite");
+        Assert.IsTrue(rules.Run.rewardOffer.Exists(o => o.StartsWith("relic:")));
+    }
+
+    [Test]
+    public void UpgradesRaiseACardForTheRestOfTheRun()
+    {
+        var rules = WonFight("enemy");
+        rules.Run.rewardOffer = new List<string> { "upgrade:mv_frost_jab", "tonic", "rations" };
+        Assert.IsNull(rules.ChooseReward(0));
+        Assert.AreEqual(2, rules.CardLevel("mv_frost_jab"));
+        Assert.AreEqual(2, rules.CardLevels()["mv_frost_jab"]);
+        var card = new BattleCard { Power = 1f, Level = 2 };
+        Assert.AreEqual(1f + BattleCard.LevelStep, card.EffectivePower, 1e-4f);
+    }
+
+    [Test]
+    public void RelicsChangeTheFightAndTheRun()
+    {
+        var rules = WonFight("enemy");
+        rules.Run.rewardOffer = new List<string> { "relic:war_drum", "tonic", "rations" };
+        Assert.IsNull(rules.ChooseReward(0));
+        Assert.AreEqual(.08f, rules.BattleModifiers().DamageBonus, 1e-4f);
+        // Mending Moss: the next won fight heals the party by 8%.
+        rules.Run.relics.Add("mending_moss");
+        var d = rules.Dungeon;
+        int next = d.rooms.FindIndex(r => !r.goal && r.kind != "entrance" && r.kind != "stairs" && !rules.Run.roomsDone.Contains(d.rooms.IndexOf(r)));
+        Assert.GreaterOrEqual(next, 0);
+        d.rooms[next].kind = "enemy";
+        rules.Run.px = d.rooms[next].CenterX; rules.Run.py = d.rooms[next].CenterY;
+        Assert.IsNull(rules.ResolveBattle(true, new List<int> { 50, 80, 80 }));
+        Assert.AreEqual(58, rules.Run.hp[0]);
+    }
+
+    [Test]
+    public void StressCarriesBetweenFightsAndRestEasesIt()
+    {
+        var rules = Expedition();
+        rules.RecordStress(new List<int> { 60, 30, 0 });
+        Assert.AreEqual(60, rules.Stress(0));
+        var camp = rules.RunLayout.nodes.Find(n => n.kind == "camp");
+        if (camp != null) { rules.Run.at = camp.id; Assert.IsNull(rules.CampRest()); Assert.AreEqual(20, rules.Stress(0)); Assert.AreEqual(0, rules.Stress(1)); }
+    }
+
     [Test]
     public void DockSkirmishesPayThreeTimesADay()
     {
