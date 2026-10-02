@@ -62,8 +62,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private bool gridWalking;
     private int gridCenteredFor = -1;
     private GameObject gridBar;
-    // Phone test readout on the layered maps (frame rate, frame time, memory). Off once the map is tuned.
-    public static bool ShowMapStats = true;
+    // Phone test readout on the layered maps (frame rate, frame time, memory). Switch on for map tuning only.
+    public static bool ShowMapStats = false;
     private Text mapStats;
     private float statsClock;
     private int statsFrames;
@@ -73,6 +73,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private readonly List<string> planParty = new List<string>();
     private int planRations, planTonics, planFirewood;
     private bool lootOpen;
+    private bool retreatArmed;          // END EXPEDITION away from camp needs a second tap
     private int dismissedAt = -1;
 
     // dungeon board
@@ -513,8 +514,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         TextAt(panel.transform, "Name", region0.name.ToUpperInvariant(), 18, 14, Side - 36, 30, 20, Gold);
         TextAt(panel.transform, "Blurb", region0.blurb, 18, 46, Side - 36, 46, 15, Cream);
         TextAt(panel.transform, "Stats", "Danger " + region0.depth + "   •   Loot x" + region0.reward.ToString("0.0") +
-            "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" : isUnlocked ? "Open to explore" : "Locked: conquer " +
-            string.Join(" and ", Array.ConvertAll(region0.requires, n => TowerRules.Region(n).name))), 18, 96, Side - 36, 60, 15,
+            "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" : isUnlocked ? "Open to explore" : R.RegionLockReason(region0.id)), 18, 96, Side - 36, 60, 15,
             isUnlocked ? Cream : new Color(1f, 0.7f, 0.6f));
         TextAt(panel.transform, "Rule", TowerRules.GridMaps ? "Every expedition finds this forest rearranged. Clear its lair to conquer the region and open the way beyond." :
             TowerRules.SilverwoodDepth(region0.id) > 0 ?
@@ -701,7 +701,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         MapFrame(Resources.Load<Texture2D>(Root + "Maps/region"), 0, Top, width, height - Top, new Color(0.35f, 0.38f, 0.42f));
         var region = TowerRules.Region(selectedRegion);
         TopBar("PLAN EXPEDITION  •  " + region.name.ToUpperInvariant() + (selectedLayout.Length > 0 ? "  •  " + TowerForestLayouts.Get(selectedLayout).name.ToUpperInvariant() : ""),
-            "BACK", () => Go(TowerRules.SilverwoodDepth(selectedRegion) > 0 ? View.Map : View.Region));
+            "BACK", () => Go(TowerRules.SilverwoodDepth(selectedRegion) > 0 && !TowerRules.GridMaps ? View.Map : View.Region));
         float pw = Mathf.Min(1060, width - 40), px = (width - pw) / 2;
         var panel = PanelAt("Plan panel", content, px, Top + 16, pw, height - Top - 32).transform;
         TextAt(panel, "Party title", "PARTY  •  first three fight, the rest wait in reserve", 20, 12, pw - 40, 26, 17, Gold);
@@ -737,7 +737,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 slot < 0 ? new Color(0.6f, 0.65f, 0.7f) : Gold, TextAnchor.MiddleCenter);
         }
         TextAt(panel, "Prov title", "PROVISIONS  •  taken from Tower stores, unused ones come home", 20, 268, pw - 40, 26, 17, Gold);
-        Stepper(panel, 20, 300, "RATIONS", planRations, R.MaxRations, "1 per trail travelled. Each: " + TowerRules.RationFood +
+        Stepper(panel, 20, 300, "RATIONS", planRations, R.MaxRations, "Eaten by distance walked; roads are cheaper. Each: " + TowerRules.RationFood +
             " food + " + TowerRules.RationWater + " water.", v => planRations = v);
         Stepper(panel, 20, 350, "TONICS", planTonics, R.State.tonics, "Heal 40% or revive a fallen fighter.", v => planTonics = v);
         Stepper(panel, 20, 400, "FIREWOOD", planFirewood, R.MaxFirewood, "Full rest at camps and fires. Each: " +
@@ -1466,8 +1466,19 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         if (dungeon)
             ButtonAt(panel, "Leave", "LEAVE DUNGEON", 16, y, Side - 32, 40, () => Act(R.LeaveDungeon()), Alert, 15);
         else
-            ButtonAt(panel, "Abandon", "END EXPEDITION (bank haul)", 16, y, Side - 32, 40,
-                () => { R.EndExpedition(false); tower.CloseExpedition(null); }, Alert, 14);
+        {
+            // Heading home from the camp banks everything; anywhere else is a retreat that drops part of the haul.
+            int loss = R.RetreatLoss;
+            string label = R.AtSafeExit ? "HEAD HOME FROM CAMP (bank haul)" :
+                retreatArmed ? "TAP AGAIN: RETREAT, LOSE " + loss + "g" : "RETREAT HOME (lose " + Mathf.RoundToInt(TowerRules.RetreatTax * 100) + "% of haul)";
+            ButtonAt(panel, "Abandon", label, 16, y, Side - 32, 40, () =>
+            {
+                if (!R.AtSafeExit && !retreatArmed) { retreatArmed = true; Rebuild(); return; }
+                retreatArmed = false;
+                R.EndExpedition(false);
+                tower.CloseExpedition(null);
+            }, Alert, 13);
+        }
     }
 
     private void BuildLoot()
@@ -2104,6 +2115,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var field = alive.GetRange(0, Mathf.Min(3, alive.Count));
         var reserve = alive.Count > 3 ? alive.GetRange(3, Mathf.Min(3, alive.Count - 3)) : new List<BattleUnit>();
         canvas.gameObject.SetActive(false);
+        // Seeded from the run: reloading mid-fight replays the same fight instead of re-rolling it.
+        int seed = (int)(TowerForestLayouts.Hash(run.dungeonPoi + ":" + run.floor + ":" + run.px + "," + run.py + ":" + run.at,
+            run.seed + run.steps * 31 + run.battlesWon * 997) & 0x7fffffff) | 1;
         tower.LaunchExpeditionBattle(depth, field, reserve, won =>
         {
             canvas.gameObject.SetActive(true);
@@ -2111,10 +2125,11 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             for (int i = 0; i < run.party.Count; i++)
             {
                 var unit = alive.Find(u => u.Id == run.party[i]);
-                if (unit != null) hp[i] = unit.Hp <= 0 ? 0 : Mathf.Clamp(Mathf.CeilToInt(100f * unit.Hp / unit.MaxHp), 1, 100);
+                // Round to nearest (rounding up made HP creep upward fight after fight); a living fighter keeps 1%.
+                if (unit != null) hp[i] = unit.Hp <= 0 ? 0 : Mathf.Clamp(Mathf.RoundToInt(100f * unit.Hp / unit.MaxHp), 1, 100);
             }
             done(won, hp);
-        }, returnLabel);
+        }, returnLabel, seed);
     }
 
     // ---------------------------------------------------------------- traversal events

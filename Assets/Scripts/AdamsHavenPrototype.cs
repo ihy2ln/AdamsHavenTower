@@ -870,6 +870,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         expeditionDepth = depth;
         HideTower();
         battleMode = gameObject.AddComponent<BattleMode>();
+        if (!rules.SkirmishPays)
+            battleMode.RewardLine = "Practice fight: today's " + TowerRules.SkirmishPaidWins + " paid skirmishes are done.";
         battleMode.Begin(depth, OnBattleExpeditionComplete);
     }
 
@@ -935,12 +937,16 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     // A dungeon fight: the expedition UI hands over the screen and gets the party back afterwards.
     public void LaunchExpeditionBattle(int depth, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool> done,
-        string returnLabel = "BACK TO THE DUNGEON")
+        string returnLabel = "BACK TO THE DUNGEON", int seed = 0)
     {
         if (battleMode != null) return;
         Save();
         battleMode = gameObject.AddComponent<BattleMode>();
         battleMode.ReturnLabel = returnLabel;
+        // Spoils go into the run's haul (TowerDungeon.ResolveBattle), never straight to the Tower.
+        battleMode.RewardLine = "The spoils go into the expedition haul.";
+        battleMode.WithdrawLine = "The party falls back without spoils.";
+        battleMode.Seed = seed;
         battleMode.Begin(depth, field, reserve, (won, gold) =>
         {
             if (battleMode != null) Destroy(battleMode);
@@ -968,13 +974,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     private void OnBattleExpeditionComplete(bool victory, int gold)
     {
-        if (victory)
-        {
-            rules.State.gold += gold;
-            rules.State.ore += 1 + expeditionDepth / 4;
-            rules.Note("Battle expedition returned with " + gold + " gold and ore.");
-            message = "Battle won: +" + gold + " gold and ore.";
-        }
+        if (victory) message = rules.PaySkirmish(gold, expeditionDepth);
         else message = "The battle party withdrew. The Tower is ready for another expedition.";
         if (battleMode != null) Destroy(battleMode);
         battleMode = null;

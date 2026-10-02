@@ -65,6 +65,10 @@ namespace AdamsHaven.Tower
         public int gridVersion, gridSeed, shift, cx, cy, targetX = -1, targetY = -1, day;
         public float travelCarry, threatCarry;
         public List<TowerOverworldPoi> anchors = new List<TowerOverworldPoi>();   // places that stay put when the forest shifts
+        // Rooms finished in any visit, as "poi:floor:room": leaving and re-entering a dungeon keeps them done.
+        public List<string> roomsCleared = new List<string>();
+        // Time spent out in the wild, in Tower clock seconds on top of State.clock (the Tower is paused meanwhile).
+        public float clock;
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).
@@ -77,6 +81,8 @@ namespace AdamsHaven.Tower
     public sealed partial class TowerRules
     {
         public const int PocketSlots = 2, RationFood = 5, RationWater = 5, FirewoodBundle = 10;
+        // Ending a run away from the camp (or the plate map's entrance) leaves part of the haul behind.
+        public const float RetreatTax = 0.25f;
         public static readonly string[] Fighters = { "kaela", "ghislaine", "elara", "helda", "daisy", "clarity" };
 
         public static readonly TowerRegionDef[] Regions =
@@ -121,6 +127,18 @@ namespace AdamsHaven.Tower
         public bool RegionUnlocked(string id) { return State.regionsUnlocked.Contains(id) && RegionResearched(id); }
         public bool RegionConquered(string id) { return State.regionsConquered.Contains(id); }
 
+        // Why a region cannot be planned yet, or null when it is open.
+        public string RegionLockReason(string id)
+        {
+            var region = Region(id);
+            if (region == null) return "Unknown region.";
+            if (!State.regionsUnlocked.Contains(id))
+                return "Locked: conquer " + string.Join(" and ", Array.ConvertAll(region.requires, n => Region(n).name));
+            if (!RegionResearched(id))
+                return "Locked: research " + RegionResearchNode(id) + " " + ResearchDef(RegionResearchNode(id)).name + " at the Heart";
+            return null;
+        }
+
         private void NormalizeExpeditions()
         {
             if (State.regionsUnlocked == null) State.regionsUnlocked = new List<string>();
@@ -132,6 +150,19 @@ namespace AdamsHaven.Tower
                 State.run.dungeonPoi = "";
             if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
+            if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();
+            MarkPartyAway();
+        }
+
+        // Heroes out on an expedition are away from the Tower (no jobs, no rooms) until the run ends.
+        private void MarkPartyAway()
+        {
+            if (State.residents == null) return;
+            foreach (var id in Fighters)
+            {
+                var hero = HeroResident(id);
+                if (hero != null) hero.away = State.hasRun && State.run.party.Contains(id);
+            }
         }
 
         // ---------------------------------------------------------------- plan
@@ -197,6 +228,7 @@ namespace AdamsHaven.Tower
             State.hasRun = true;
             State.lastLayout = layout.id;
             if (GridMaps) StartGridRun(run, region);
+            MarkPartyAway();
             RevealFrom(run.at);
             Note("Expedition set out for " + Region(region).name + " (" + RunLayout.name + ").");
             return null;
@@ -254,6 +286,7 @@ namespace AdamsHaven.Tower
             run.firewood--;
             HealParty(35, false);
             LowerThreat(ThreatCampRest);
+            PassRestTime();
             Note("The party rested by the fire.");
             return null;
         }
@@ -327,11 +360,18 @@ namespace AdamsHaven.Tower
         {
             var run = Run;
             if (run == null) return "No expedition.";
-            int banked = 0, sigils = 0;
+            int banked = 0, sigils = 0, taxed = 0;
+            bool safe = AtSafeExit;
             foreach (var loot in run.pocket) { Bank(loot); banked += loot.gold; }
             if (!wiped)
             {
-                foreach (var loot in run.haul) { Bank(loot); banked += loot.gold; }
+                foreach (var loot in run.haul)
+                {
+                    // A hurried retreat through the woods drops part of every find; the Safe Pocket is never taxed.
+                    if (!safe) { taxed += loot.gold - Taxed(loot.gold); loot.gold = Taxed(loot.gold); loot.ore = Taxed(loot.ore);
+                        loot.essence = Taxed(loot.essence); loot.celestium = Taxed(loot.celestium); }
+                    Bank(loot); banked += loot.gold;
+                }
                 if (Researched("EXP-2") && banked > 0)   // Pack mules
                 { int extra = Mathf.RoundToInt(banked * 0.2f); State.gold += extra; banked += extra; }
                 State.food += run.rations * RationFood;
@@ -347,10 +387,45 @@ namespace AdamsHaven.Tower
                 if (hero != null && run.hp[i] < 50) hero.injury = Mathf.Max(hero.injury, 50 - run.hp[i] / 2f);
             }
             State.hasRun = false;
+            MarkPartyAway();
             Bump("expedition");
             Note(wiped ? "The expedition party fell. Only the Safe Pocket came home." :
-                "The expedition returned: " + banked + " gold banked" + (sigils > 0 ? ", +" + sigils + " Sigils." : "."));
+                "The expedition returned: " + banked + " gold banked" + (sigils > 0 ? ", +" + sigils + " Sigils" : "") +
+                (taxed > 0 ? " (" + taxed + " gold left behind in the retreat)." : "."));
             return null;
+        }
+
+        private static int Taxed(int amount) { return amount - Mathf.CeilToInt(amount * RetreatTax); }
+
+        // The camp (grid map) or the entrance and camps (plate maps) are safe places to head home from.
+        public bool AtSafeExit
+        {
+            get
+            {
+                var run = Run;
+                if (run == null) return false;
+                if (run.dungeonPoi.Length > 0) return false;
+                if (GridRun)
+                {
+                    var camp = Overworld.Camp;
+                    return camp != null && Mathf.Abs(camp.x - run.cx) <= 2 && Mathf.Abs(camp.y - run.cy) <= 2;
+                }
+                var node = RunLayout.Node(run.at);
+                return run.at == RunLayout.entrance || (node != null && node.kind == "camp");
+            }
+        }
+
+        // How much of the haul would be lost by heading home from here (0 at a safe exit).
+        public int RetreatLoss
+        {
+            get
+            {
+                var run = Run;
+                if (run == null || AtSafeExit) return 0;
+                int lost = 0;
+                foreach (var loot in run.haul) lost += loot.gold - Taxed(loot.gold);
+                return lost;
+            }
         }
 
         private void ConquerRegion(string id)

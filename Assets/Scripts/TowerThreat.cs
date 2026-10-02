@@ -47,7 +47,7 @@ namespace AdamsHaven.Tower
             get
             {
                 int radius = 1;
-                if (PartyHasTrait("Curious") && (IsDaylight(Hour()) || PartyHasTrait("Night Owl"))) radius++;
+                if (PartyHasTrait("Curious") && (IsDaylight(RunHour()) || PartyHasTrait("Night Owl"))) radius++;
                 if (GuildLevel >= 3) radius++;
                 return Mathf.Min(MaxRevealRadius, radius);
             }
@@ -86,7 +86,7 @@ namespace AdamsHaven.Tower
             bool road = OnRoad(from, to);
             if (!road) run.road.Add(RoadKey(from, to));
             bool pay = !road || ++run.roadSteps % 2 == 0;
-            RaiseThreat((road ? ThreatRoad : ThreatNewTrail) + (IsDaylight(Hour()) ? 0 : ThreatNight));
+            RaiseThreat((road ? ThreatRoad : ThreatNewTrail) + (IsDaylight(RunHour()) ? 0 : ThreatNight));
             return pay;
         }
 

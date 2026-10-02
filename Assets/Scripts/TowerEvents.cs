@@ -121,7 +121,7 @@ namespace AdamsHaven.Tower
         {
             var run = Run;
             int depth = RunRegion == null ? 1 : RunRegion.depth;
-            bool day = IsDaylight(Hour());
+            bool day = IsDaylight(RunHour());
             return TowerEvents.All.FindAll(e => e.weight > 0 && depth >= e.minDepth && depth <= e.maxDepth &&
                 (e.themes.Length == 0 || ("," + e.themes.Replace(" ", "") + ",").Contains("," + node.theme + ",")) &&
                 (e.time == "any" || (e.time == "day") == day) && (!road || e.onRoad) &&
@@ -240,6 +240,7 @@ namespace AdamsHaven.Tower
             if (hp != null && hp.Count == run.hp.Count) for (int i = 0; i < hp.Count; i++) run.hp[i] = Mathf.Clamp(hp[i], 0, 100);
             run.ambushDepth = 0;
             run.eventResult = "";
+            PassBattleTime();
             if (!PartyAlive) return EndExpedition(true);
             if (won)
             {

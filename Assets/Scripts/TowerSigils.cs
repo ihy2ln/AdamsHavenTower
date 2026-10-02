@@ -69,6 +69,7 @@ namespace AdamsHaven.Tower
             State.dailyDate = key;
             State.dailyBonusClaimed = false;
             State.dailyExpeditionSigils = 0;
+            State.dailySkirmishWins = 0;
             State.daily.Clear();
             State.daily.Add(new TowerDaily { id = DailyCheckIn.id });
             var pool = new List<TowerDailyDef>();
@@ -139,6 +140,23 @@ namespace AdamsHaven.Tower
             RefreshDaily();
             if (State.dailyExpeditionSigils >= ExpeditionSigilReturns) return 0;
             return Mathf.RoundToInt(2 + 1.5f * region.reward);
+        }
+
+        // The dock BATTLE button is a quick skirmish with no cost: only the first few wins of the day pay spoils,
+        // after that it is practice, so it cannot replace expeditions as a gold source.
+        public const int SkirmishPaidWins = 3;
+        public bool SkirmishPays { get { RefreshDaily(); return State.dailySkirmishWins < SkirmishPaidWins; } }
+
+        // A won skirmish: pays gold and ore while today's paid wins last. Returns the message for the player.
+        public string PaySkirmish(int gold, int depth)
+        {
+            if (!SkirmishPays) return "Practice won. Today's " + SkirmishPaidWins + " paid skirmishes are done; expeditions still pay.";
+            State.dailySkirmishWins++;
+            int ore = 1 + depth / 4;
+            State.gold += gold;
+            State.ore += ore;
+            Note("Skirmish won: +" + gold + " gold and " + ore + " ore.");
+            return "Battle won: +" + gold + " gold and " + ore + " ore (" + (SkirmishPaidWins - State.dailySkirmishWins) + " paid left today).";
         }
 
         private int PayExpeditionSigils(TowerRun run)

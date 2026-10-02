@@ -142,6 +142,10 @@ public sealed partial class BattleMode : MonoBehaviour
     // Expedition entry: the caller supplies the party (already scaled by gear and current HP) and reads
     // the units' Hp back after onLeave. Text on the result screen names where the party returns to.
     public string ReturnLabel = "RETURN TO TOWER";
+    // Result and withdraw wording; null keeps the Tower skirmish text. Seed 0 rolls a fresh fight, otherwise the
+    // same seed replays the same draws (expeditions derive it from the run so a reload does not re-roll a fight).
+    public string RewardLine, WithdrawLine;
+    public int Seed;
 
     public void Begin(int towerFloor, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool, int> onLeave)
     {
@@ -156,7 +160,7 @@ public sealed partial class BattleMode : MonoBehaviour
         leave = onLeave;
         var party = new List<BattleUnit>(field);
         party.AddRange(reserve);
-        battle = new BattleState(Environment.TickCount, field, reserve,
+        battle = new BattleState(Seed != 0 ? Seed : Environment.TickCount, field, reserve,
             BattleCatalog.Encounter(floor), BattleCatalog.Deck(party),
             BattleCatalog.JD(), BattleCatalog.EnemyCommander(floor));
         reward = Mathf.Abs(floor) >= 8 ? 300 : Mathf.Abs(floor) >= 3 ? 160 : 80;
@@ -1618,7 +1622,7 @@ public sealed partial class BattleMode : MonoBehaviour
         DrawGlow(new Vector2(800f, 340f), 420f, BattleGui.Alpha(c, .22f * pulse));
         DrawStreak(new Vector2(800f, 340f), 1100f, 34f, 0f, BattleGui.Alpha(c, .5f));
         Text(new Rect(0, 270f, VW, 130f), battle.Victory ? "VICTORY" : battle.Withdrawn ? "WITHDRAWN" : "DEFEAT", 110, c, TextAnchor.MiddleCenter, true, false, 5f);
-        Text(new Rect(300f, 404f, 1000f, 50f), battle.Victory ? reward + " gold will return to the Tower." : battle.LastMessage, 26, Color.white, TextAnchor.MiddleCenter, true, false, 2f);
+        Text(new Rect(300f, 404f, 1000f, 50f), battle.Victory ? RewardLine ?? reward + " gold will return to the Tower." : battle.LastMessage, 26, Color.white, TextAnchor.MiddleCenter, true, false, 2f);
         Rect button = new Rect(620f, 500f, 360f, 70f);
         if (MiniButton(button, ReturnLabel, true, true, c, -1f, 24)) ExitBattle();
     }
@@ -1648,7 +1652,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Round(box, new Color(.02f, .04f, .07f, .98f), 18f);
         Outline(box, BattleGui.Alpha(EnemyRed, .85f), 2f, 18f);
         Text(new Rect(box.x + 30f, box.y + 25f, 560f, 75f), "Withdraw from this fight?", 30, Gold, TextAnchor.MiddleCenter, true);
-        Text(new Rect(box.x + 30f, box.y + 100f, 560f, 49f), "The party returns to the Tower without a reward.", 18, Color.white, TextAnchor.MiddleCenter);
+        Text(new Rect(box.x + 30f, box.y + 100f, 560f, 49f), WithdrawLine ?? "The party returns to the Tower without a reward.", 18, Color.white, TextAnchor.MiddleCenter);
         if (MiniButton(new Rect(box.x + 40f, box.y + 172f, 240f, 55f), "KEEP FIGHTING", true, false, Ice, -1f, 17)) confirmWithdraw = false;
         if (MiniButton(new Rect(box.x + 340f, box.y + 172f, 240f, 55f), "WITHDRAW", true, false, EnemyRed, -1f, 17))
         { confirmWithdraw = false; battle.Forfeit(); ExitBattle(); }

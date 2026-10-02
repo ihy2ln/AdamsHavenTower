@@ -35,6 +35,9 @@ namespace AdamsHaven.Tower
         public const float RationCost = 20f;            // cost units per ration (about one old trail hop)
         public const float ThreatPerTrailCell = 0.8f, ThreatPerRoadCell = 0.3f, ThreatPerNightCell = 0.4f;
         public const int EventCells = 10, RoadWalked = 3, RoadMax = 9, RoadWornOnStir = 3, GridSight = 5;
+        // Time in the wild (Tower clock seconds; DaySeconds = one day): each cost unit walked is 8 minutes,
+        // a fight half an hour, a camp rest sleeps until dawn at night or three hours by day.
+        public const float TravelSecondsPerCost = DaySeconds / 24f * (8f / 60f), BattleSeconds = DaySeconds / 48f;
 
         public bool GridRun { get { var run = Run; return run != null && run.mapKind == GridKind; } }
 
@@ -105,7 +108,22 @@ namespace AdamsHaven.Tower
 
         // ---------------------------------------------------------------- the forest shifts
 
-        public int GameDay { get { return Mathf.FloorToInt((6f + State.clock / DaySeconds * 24f) / 24f); } }
+        public int GameDay { get { return Mathf.FloorToInt((6f + RunClock / DaySeconds * 24f) / 24f); } }
+
+        // The Tower stands still while an expedition is open, so the run keeps its own time on top of the Tower clock.
+        public float RunClock { get { var run = Run; return State.clock + (run != null ? run.clock : 0f); } }
+        public float RunHour() { return (6f + RunClock / DaySeconds * 24f) % 24f; }
+
+        private void PassRestTime()
+        {
+            var run = Run;
+            if (run == null) return;
+            float hour = RunHour();
+            float hours = IsDaylight(hour) ? 3f : (hour >= 6f ? 30f - hour : 6f - hour);   // night: sleep until 06:00
+            run.clock += hours * DaySeconds / 24f;
+        }
+
+        private void PassBattleTime() { var run = Run; if (run != null) run.clock += BattleSeconds; }
 
         // The woods rearrange around the party. Full (threat filled): every unexplored place moves, the woods regrow
         // and the fog closes in again away from what is known. Small (a new day): one unexplored place moves.
@@ -237,7 +255,7 @@ namespace AdamsHaven.Tower
             preview.path = map.FindPath(new Vector2Int(run.cx, run.cy), new Vector2Int(tx, ty), road);
             if (preview.path == null) { preview.error = "No way through there."; return preview; }
             preview.cost = map.PathCost(preview.path, road);
-            bool night = !IsDaylight(Hour());
+            bool night = !IsDaylight(RunHour());
             float threat = 0;
             for (int i = 1; i < preview.path.Count; i++)
             {
@@ -267,7 +285,6 @@ namespace AdamsHaven.Tower
             if (preview.error != null) { step.error = preview.error; return step; }
             run.targetX = tx; run.targetY = ty;
             step.walked.Add(new Vector2Int(run.cx, run.cy));
-            bool night = !IsDaylight(Hour());
             int eventRoad = 0, eventCells = 0;
             var roads = RoadTest();
             for (int i = 1; i < preview.path.Count; i++)
@@ -277,6 +294,8 @@ namespace AdamsHaven.Tower
                 bool onRoad = roads(map.Index(c.x, c.y));
                 float cost = map.Cost(c.x, c.y, roads) * (diagonal ? 1.4142f : 1f);
                 run.cx = c.x; run.cy = c.y;
+                run.clock += cost * TravelSecondsPerCost;
+                bool night = !IsDaylight(RunHour());
                 step.walked.Add(c);
                 Wear(c.x, c.y);
                 RevealCells(c.x, c.y, GridSightRadius);

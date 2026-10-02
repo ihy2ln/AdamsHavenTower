@@ -164,6 +164,7 @@ namespace AdamsHaven.Tower
         public List<TowerDaily> daily = new List<TowerDaily>();
         public bool dailyBonusClaimed;
         public int dailyExpeditionSigils;       // expedition returns that paid Sigils today
+        public int dailySkirmishWins;           // dock BATTLE wins that paid spoils today (TowerRules.SkirmishPaidWins)
         public List<TowerCounter> counters = new List<TowerCounter>();
         public List<TowerBond> bonds = new List<TowerBond>();
         public List<TowerMemorial> memorial = new List<TowerMemorial>();

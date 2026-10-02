@@ -267,6 +267,11 @@ namespace AdamsHaven.Tower
             run.fog = new string('0', TowerDungeon.Size * TowerDungeon.Size);
             run.roomsDone.Clear();
             run.roomsDone.Add(0);
+            // Rooms finished on an earlier visit stay finished: re-entering never re-rolls loot or rests.
+            if (run.roomsCleared == null) run.roomsCleared = new List<string>();
+            string prefix = run.dungeonPoi + ":" + floor + ":";
+            foreach (var key in run.roomsCleared)
+                if (key.StartsWith(prefix, StringComparison.Ordinal)) run.roomsDone.Add(int.Parse(key.Substring(prefix.Length)));
             var d = Dungeon;
             run.px = run.prevX = d.rooms[0].CenterX;
             run.py = run.prevY = d.rooms[0].CenterY;
@@ -432,6 +437,7 @@ namespace AdamsHaven.Tower
             int r = PendingRoom;
             if (r < 0 || !BattleRoom(d.rooms[r].kind)) return "No fight here.";
             if (hp != null && hp.Count == run.hp.Count) for (int i = 0; i < hp.Count; i++) run.hp[i] = Mathf.Clamp(hp[i], 0, 100);
+            PassBattleTime();
             if (!PartyAlive) return EndExpedition(true);
             if (!won)
             {
@@ -456,6 +462,9 @@ namespace AdamsHaven.Tower
         {
             var run = Run; var d = Dungeon;
             if (!run.roomsDone.Contains(r)) run.roomsDone.Add(r);
+            if (run.roomsCleared == null) run.roomsCleared = new List<string>();
+            string key = run.dungeonPoi + ":" + run.floor + ":" + r;
+            if (!run.roomsCleared.Contains(key)) run.roomsCleared.Add(key);
             if (!d.rooms[r].goal) return;
             var node = RunLayout.Node(run.dungeonPoi);
             run.cleared.Add(node.id);

@@ -74,9 +74,14 @@ namespace AdamsHaven.Tower
 
         public void SetActive(bool on) { if (root != null) root.gameObject.SetActive(on); }
 
+        private const int MaxImage = 2560;   // longest side of the map's render target
+
         public void Resize(int width, int height)
         {
-            width = Mathf.Clamp(width, 64, 2048); height = Mathf.Clamp(height, 64, 2048);
+            // Scale both sides together: clamping them separately stretched the map on wide 1440p screens.
+            width = Mathf.Max(64, width); height = Mathf.Max(64, height);
+            float fit = Mathf.Min(1f, MaxImage / (float)Mathf.Max(width, height));
+            width = Mathf.Max(64, Mathf.RoundToInt(width * fit)); height = Mathf.Max(64, Mathf.RoundToInt(height * fit));
             if (rt != null && rt.width == width && rt.height == height) return;
             if (rt != null) { cam.targetTexture = null; rt.Release(); Destroy(rt); }
             rt = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32) { name = "Expedition map" };
