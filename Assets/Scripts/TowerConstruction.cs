@@ -113,6 +113,7 @@ namespace AdamsHaven.Tower
                 var floor = Floor(work.floor);
                 if (floor == null) return;
                 if (work.side < 0) floor.west++; else floor.east++;
+                if (work.floor == 0) PlaceGates();
                 Note("Finished the " + (work.side < 0 ? "west" : "east") + " foundation of floor " + work.floor + ".");
             }
             else if (work.kind == "floor")

@@ -167,25 +167,19 @@ namespace AdamsHaven.Tower
             }
         }
 
-        // Raiders arrive at the Gate, where guards meet them first.
+        // Raiders arrive at one of the Gates, where guards meet them first.
         public string StartRaid()
         {
-            var gate = State.rooms.Find(r => r.type == "gate");
-            if (gate == null) return "There is no Gate to attack.";
-            if (State.incidents.Exists(i => i.roomUid == gate.uid)) return "The Gate is already under attack.";
+            var open = Gates().FindAll(g => !State.incidents.Exists(i => i.roomUid == g.uid));
+            if (!HasGate()) return "There is no Gate to attack.";
+            if (open.Count == 0) return "The Gates are already under attack.";
+            var gate = open[Mathf.Min(open.Count - 1, (int)(Random01() * open.Count))];
             State.incidents.Add(new TowerIncident { roomUid = gate.uid, kind = "raiders",
                 hp = 80 + State.threat * 0.6f, severity = 1 + Mathf.Min(2, State.residents.Count / 20f) });
             if (State.tutorialStep == 5) State.tutorialStep = 6;
-            Note("Silverwood raiders are at the Gate!");
+            Note("Silverwood raiders are at the " + (gate.x < CoreX ? "west" : "east") + " Gate!");
             Emit("incident", gate.uid, 0, "raiders");
             return null;
-        }
-
-        public int GuardCount()
-        {
-            var gate = State.rooms.Find(r => r.type == "gate");
-            return gate == null ? 0 : State.residents.FindAll(r => r.jobRoom == gate.uid && !r.downed &&
-                !r.exploring && !r.away).Count;
         }
 
         private List<TowerRoom> RaidNeighbours(TowerRoom room)

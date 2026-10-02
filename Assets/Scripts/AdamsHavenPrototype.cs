@@ -297,7 +297,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             TowerFloor f = rules.Floor(number);
             if (f == null) continue;
             float y = WorldY(number);
-            float leftEdge = WorldX(TowerRules.CoreX - f.west), rightEdge = WorldX(TowerRules.CoreX + 1 + f.east);
+            float leftEdge = WorldX(TowerRules.CoreX - rules.DrawnWest(f)), rightEdge = WorldX(TowerRules.CoreX + 1 + rules.DrawnEast(f));
             float span = rightEdge - leftEdge, middle3d = (leftEdge + rightEdge) * 0.5f;
             Cube("Floor " + number + " slab", new Vector3(middle3d, y - 1.02f, 1.4f),
                 new Vector3(span + 0.4f, 0.25f, 2.7f), new Color(0.25f, 0.22f, 0.26f), towerRoot);
@@ -305,7 +305,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 new Vector3(span + 0.4f, 2.05f, 0.23f), new Color(0.23f, 0.25f, 0.32f), towerRoot);
             Cube("Floor " + number + " left wall", new Vector3(leftEdge - 0.4f, y + 0.12f, 1.3f),
                 new Vector3(0.23f, 2.2f, 2.8f), new Color(0.33f, 0.29f, 0.31f), towerRoot);
-            for (int x = TowerRules.CoreX - f.west; x <= TowerRules.CoreX + f.east; x++)
+            for (int x = TowerRules.CoreX - rules.DrawnWest(f); x <= TowerRules.CoreX + rules.DrawnEast(f); x++)
             {
                 bool founded = rules.IsFounded(number, x);
                 if (founded && rules.RoomAt(number, x) == null)

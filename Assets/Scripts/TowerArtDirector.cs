@@ -316,8 +316,8 @@ public sealed class TowerArtDirector : MonoBehaviour
         {
             if (f.number < middle - range || f.number > middle + range) continue;
             float y = f.number * Storey;
-            int endCell = 23 + f.east;
-            float left = X(22 - f.west), right = X(endCell);
+            int endCell = 23 + tower.Rules.DrawnEast(f);
+            float left = X(22 - tower.Rules.DrawnWest(f)), right = X(endCell);
             float width = right - left;
             float center = (left + right) / 2;
             // Empty founded cells still have an actual timber interior.
@@ -358,7 +358,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                 Label(label, new Vector3(cx, y + 1.38f, -1.2f), rw);
             }
             // Tiled beams retain the scale of stonework rather than stretching one texture across a floor.
-            for (int cell = 22 - f.west; cell < endCell; cell += 2)
+            for (int cell = 22 - tower.Rules.DrawnWest(f); cell < endCell; cell += 2)
             {
                 float span = Mathf.Min(2, endCell - cell) * Cell;
                 float cx = X(cell) + span / 2;
@@ -386,7 +386,7 @@ public sealed class TowerArtDirector : MonoBehaviour
             if (f.number == 0)
                 Art("Ivy and stone foundation", "Structure/foundation_v1", center, y - 2.06f, 3.5f,
                     width + 2.4f, 3.1f);
-            for (int cell = 22 - f.west; cell < endCell; cell++)
+            for (int cell = 22 - tower.Rules.DrawnWest(f); cell < endCell; cell++)
                 if (cell != TowerRules.CoreX && tower.Rules.RoomAt(f.number, cell) == null &&
                     tower.Rules.WorkRoomAt(f.number, cell) == null)
                     Label("+", new Vector3(X(cell + 0.5f), y + 0.05f, -0.8f), 0.5f);

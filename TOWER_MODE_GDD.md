@@ -88,9 +88,8 @@
 
 ## 4. Tower structure
 
-- **Layout:** side-view cutaway. The **Heart shaft** (cell 22) and the **Celestium Gate** (ground floor, cell 23) form the **right edge of the field**. Every building stands **west (left) of the shaft**; there is no east wing. Floors are founded westward, up to 10 cells.
-- **Floors:** unlocked by Heart rank (table **[TBD]**, section 8.5). Above-ground floors build up; below-ground floors are dug.
-- **Why right-edge:** buildings grow their new bays to the left (5.2), so with nothing east of the shaft every building always has room to grow.
+- **Layout (revised 2026-10-01):** side-view cutaway. The **Heart shaft** (cell 22) stands in the middle, with a wing on **each side** (up to 10 cells west and 10 east per floor). The ground floor has **two Celestium Gates**, one just beyond each end; a Gate steps outward when its side is extended. On the ground floor a side may run at most one cell ahead of the other, so the Heart is always within half a cell of the midpoint between the Gates. Upper floors have no Gates and grow either way.
+- **Bay growth:** west-side buildings grow new bays to the left, east-side buildings to the right, always away from the Heart. Raiders can arrive at either Gate; both Gates take guards (2 each, 3 with DEF-3).
 - **Digging:** digging down costs Gold and time and moves through strata: dirt, soft rock, hard rock, Celestium-bearing rock, bedrock, full Celestium (the old Godot ladder reaches floor -18; final depth **[TBD]**). Deeper strata yield more Celestium through the Stone Quarry.
 - **Cells:** one building occupies one or more contiguous cells on a floor. A building cannot straddle the Heart shaft.
 - **Floor constraints (from catalog):** Farmstead requires a sunlit (above-ground) floor. Stone Quarry requires an underground floor.

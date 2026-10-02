@@ -177,6 +177,7 @@ namespace AdamsHaven.Tower
         public bool hasRun;                                     // a guild expedition is under way (run is valid)
         public TowerRun run = new TowerRun();
         public string lastLayout = "";
+        public int layoutVersion;    // 1 = two Gates, wings both sides of the Heart (TowerRules.LayoutVersion)
     }
 
     public sealed class TowerRoomDef
@@ -298,10 +299,7 @@ namespace AdamsHaven.Tower
                 if (string.IsNullOrEmpty(resident.trait) && resident.origin != "body")
                     resident.trait = Traits[(resident.id * 7 + 3) % Traits.Length];
             }
-            // The Heart shaft and the Gate are the Tower's right edge (TOWER_MODE_GDD 4): every building
-            // stands west of the shaft, and only the ground floor reaches one cell east, for the Gate.
-            MoveEastRoomsWest();
-            foreach (var floor in State.floors) floor.east = floor.number == 0 && State.introPhase != "dormant" ? 1 : 0;
+            MigrateLayout();
             if (State.researching == null) State.researching = "";
             MigrateResearch();
             if (State.introPhase == "complete") { RefillGoals(); RefreshDaily(); }
@@ -327,38 +325,6 @@ namespace AdamsHaven.Tower
                 if (string.IsNullOrEmpty(resident.exploreChoice)) resident.exploreChoice = "supplies";
                 if (resident.currentRoom == 0)
                     resident.currentRoom = resident.jobRoom > 0 ? resident.jobRoom : resident.homeRoom;
-            }
-        }
-
-        // Older saves built an east wing. Each of those rooms moves to the nearest free west cells on its
-        // floor (founding more of the west wing if needed); unfinished east construction is refunded.
-        private void MoveEastRoomsWest()
-        {
-            for (int i = State.works.Count - 1; i >= 0; i--)
-            {
-                var work = State.works[i];
-                if (work.kind == "wing" && work.side > 0) { State.works.RemoveAt(i); continue; }
-                if (work.kind != "room" || work.x <= CoreX) continue;
-                var def = TowerCatalog.Get(work.type);
-                State.works.RemoveAt(i);
-                if (def != null) State.gold += def.cost;
-            }
-            foreach (var room in State.rooms)
-            {
-                if (room.x <= CoreX || room.type == "gate" || room.type == "heart") continue;
-                var floor = Floor(room.floor);
-                int x = -1;
-                for (int start = CoreX - room.width; start >= MinBuildX && x < 0; start--)
-                {
-                    bool free = true;
-                    for (int cx = start; cx < start + room.width && free; cx++)
-                        free = State.rooms.Find(r => r != room && r.floor == room.floor && cx >= r.x && cx < r.x + r.width) == null;
-                    if (free) x = start;
-                }
-                if (x < 0 || floor == null) continue;   // no room left on this floor: it stays until the player moves it
-                room.x = x;
-                room.flip = false;
-                floor.west = Mathf.Max(floor.west, CoreX - x);
             }
         }
 
@@ -393,6 +359,8 @@ namespace AdamsHaven.Tower
             if (def == null) return null;
             var room = new TowerRoom { uid = State.nextRoomUid++, type = type, floor = floor,
                 x = x, width = TowerTiers.Bays(type, level), level = level };
+            // East of the Heart a room grows its new bays outward (to the right), away from the shaft.
+            if (x > CoreX && type != "gate" && type != "heart") room.flip = true;
             State.rooms.Add(room);
             roomIndex = null;
             return room;
@@ -414,8 +382,7 @@ namespace AdamsHaven.Tower
         {
             if (State.introPhase != "gate") return "Awaken the Heart first.";
             if (RoomAt(0, GateX) == null) AddRoom("gate", 0, GateX);
-            var ground = Floor(0);
-            if (ground != null && ground.east < 1) ground.east = 1;
+            State.layoutVersion = LayoutVersion;
             State.introPhase = "shack"; Note("The Gate joined the Heart."); return null;
         }
 
@@ -434,6 +401,7 @@ namespace AdamsHaven.Tower
             }
             State.introPhase = "complete";
             State.tutorialStep = 0;
+            PlaceGates();
             ReturnLegacyHeroes();
             RefillGoals();
             RefreshDaily();
@@ -536,8 +504,7 @@ namespace AdamsHaven.Tower
             if (floor < FloorMin || floor > FloorMax) return "Floor out of range.";
             int footprint = TowerTiers.Bays(type, 1);
             bool westSide = x + footprint <= CoreX, eastSide = x > CoreX;
-            if (eastSide) return "The Heart and the Gate are the Tower's right edge. Build to the west.";
-            if (!westSide) return "Rooms cannot cover the Heart shaft.";
+            if (!westSide && !eastSide) return "Rooms cannot cover the Heart shaft.";
             if (x < MinBuildX || x + footprint - 1 > MaxBuildX) return "Rooms stay within the ten-cell wings.";
             var f = Floor(floor);
             if (f == null) return "Open this floor first.";
@@ -613,7 +580,7 @@ namespace AdamsHaven.Tower
         {
             var floor = Floor(number);
             if (floor == null) return 0;
-            int cells = side < 0 ? floor.west : floor.east - (number == 0 ? 1 : 0);
+            int cells = side < 0 ? floor.west : floor.east;
             return 3 + (number > 0 ? Mathf.CeilToInt(number / 3f) : -number) + Mathf.Max(0, cells - 1);
         }
 
@@ -641,17 +608,25 @@ namespace AdamsHaven.Tower
             return null;
         }
 
-        public string ExpandFloor(int number) { return ExpandFloor(number, -1); }
+        // No side given: the ground floor takes its shorter side (west on a tie), other floors grow west.
+        public string ExpandFloor(int number)
+        {
+            var floor = Floor(number);
+            int side = number == 0 && floor != null && floor.east < floor.west ? 1 : -1;
+            return ExpandFloor(number, side);
+        }
 
         public string ExpandFloor(int number, int side)
         {
             var floor = Floor(number);
             if (floor == null) return "Open this floor first.";
-            if (side >= 0) return "The Tower grows west only: the Heart and the Gate stand at its right edge.";
+            side = side < 0 ? -1 : 1;
             if (WingWork(number, side) != null) return "That foundation is already being extended.";
-            if (WingCellsOf(number, side) >= WingCells + (side > 0 && number == 0 ? 1 : 0))
+            if (WingCellsOf(number, side) >= WingCells)
                 return side < 0 ? "The west wing is fully founded." : "The east wing is fully founded.";
-            if (side > 0 && number == 0 && RoomAt(0, GateX) == null) return "Place the Gate first.";
+            // The Heart stays between the two Gates: on the ground floor a wing may run at most one cell ahead.
+            if (number == 0 && WingCellsOf(0, side) > WingCellsOf(0, -side))
+                return "Extend the " + (side < 0 ? "east" : "west") + " side next, so the Heart stays in the middle.";
             int x = NextExpansionX(number, side);
             if (number < 0 && !State.excavatedCells.Contains(number + ":" + x))
                 return "Excavate that underground cell first.";
@@ -667,6 +642,7 @@ namespace AdamsHaven.Tower
                 return null;
             }
             if (side < 0) floor.west++; else floor.east++;
+            if (number == 0) PlaceGates();
             Note("Expanded floor " + number + (side < 0 ? " westward." : " eastward."));
             return null;
         }
@@ -862,7 +838,7 @@ namespace AdamsHaven.Tower
             for (int cx = from; cx < from + grow; cx++)
             {
                 bool free = cx >= MinBuildX && cx <= MaxBuildX && IsFounded(room.floor, cx) &&
-                    (westSide ? cx < CoreX : cx > CoreX) && !(room.floor == 0 && cx == GateX) &&
+                    (westSide ? cx < CoreX : cx > CoreX) &&
                     RoomAt(room.floor, cx) == null && WorkRoomAt(room.floor, cx) == null;
                 if (!free)
                     return TowerCatalog.Get(room.type).displayName + " needs the cell " +

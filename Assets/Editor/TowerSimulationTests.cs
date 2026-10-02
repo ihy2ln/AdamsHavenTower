@@ -843,31 +843,32 @@ public sealed class TowerSimulationTests
         rules.State.wood += 50;
         rules.State.stone += 50;
 
-        Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNotNull(rules.ExpandFloor(0), "one wing job at a time");
+        Assert.IsNull(rules.ExpandFloor(0, 1));
+        Assert.IsNotNull(rules.ExpandFloor(0, 1), "one wing job at a time");
         Assert.IsNull(rules.OpenFloor(1));
         Assert.IsNotNull(rules.OpenFloor(1), "duplicate floor job");
         Assert.IsNull(rules.Floor(1), "floor does not exist yet");
-        int west = rules.Floor(0).west;
-        float wing = rules.WingWork(0, -1).remaining;
+        int east = rules.Floor(0).east;
+        float wing = rules.WingWork(0, 1).remaining;
         Assert.Greater(wing, 10f);
 
         rules.Advance(wing - 2, true);
-        Assert.AreEqual(west, rules.Floor(0).west, "still building");
+        Assert.AreEqual(east, rules.Floor(0).east, "still building");
         rules.Advance(3, true);
-        Assert.AreEqual(west + 1, rules.Floor(0).west);
+        Assert.AreEqual(east + 1, rules.Floor(0).east);
+        Assert.AreEqual(TowerRules.CoreX + east + 2, rules.GateOn(1).x, "the east Gate stepped outward");
 
         Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - west - 1));
-        var site = rules.WorkRoomAt(0, TowerRules.CoreX - west - 1);
+        Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX + east + 1));
+        var site = rules.WorkRoomAt(0, TowerRules.CoreX + east + 1);
         Assert.IsNotNull(site);
-        Assert.IsNull(rules.RoomAt(0, TowerRules.CoreX - west - 1));
-        Assert.IsNotNull(rules.Build("well", 0, TowerRules.CoreX - west - 1), "site is taken");
+        Assert.IsNull(rules.RoomAt(0, TowerRules.CoreX + east + 1));
+        Assert.IsNotNull(rules.Build("well", 0, TowerRules.CoreX + east + 1), "site is taken");
 
         rules.CatchUp(600);
         Assert.AreEqual(0, rules.State.works.Count);
         Assert.IsNotNull(rules.Floor(1));
-        Assert.IsNotNull(rules.RoomAt(0, TowerRules.CoreX - west - 1));
+        Assert.IsNotNull(rules.RoomAt(0, TowerRules.CoreX + east + 1));
     }
 
     private static TowerRules Started()
@@ -1041,7 +1042,7 @@ public sealed class TowerSimulationTests
     {
         var rules = Started();
         var kitchen = Kitchen(rules);
-        Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 4);
         Assert.IsNull(rules.Build("well", 0, 19));
         var well = rules.RoomAt(0, 19);
         rules.State.pendingVisitors = 1;
@@ -1510,47 +1511,55 @@ public sealed class TowerSimulationTests
         var rules = Started();
         var ground = rules.Floor(0);
         Assert.AreEqual(1, ground.west);
-        Assert.AreEqual(1, ground.east); // the Gate holds the first east cell
+        Assert.AreEqual(0, ground.east);
         Assert.AreEqual("heart", rules.RoomAt(0, TowerRules.CoreX).type);
         Assert.AreEqual("house", rules.RoomAt(0, TowerRules.CoreX - 1).type);
-        Assert.AreEqual("gate", rules.RoomAt(0, TowerRules.CoreX + 1).type);
+        Assert.AreEqual(2, rules.Gates().Count, "a Gate at each end");
+        Assert.AreEqual(TowerRules.CoreX - 2, rules.GateOn(-1).x);
+        Assert.AreEqual(TowerRules.CoreX + 1, rules.GateOn(1).x);
+        Assert.LessOrEqual(Mathf.Abs((rules.GateOn(-1).x + rules.GateOn(1).x) / 2f - TowerRules.CoreX), 0.5f,
+            "the Heart is within half a cell of the middle");
         Assert.IsTrue(rules.IsFounded(0, TowerRules.CoreX - 1));
-        Assert.IsTrue(rules.IsFounded(0, TowerRules.CoreX + 1));
         Assert.IsFalse(rules.IsFounded(0, TowerRules.CoreX));
-        Assert.IsFalse(rules.IsFounded(0, TowerRules.CoreX + 2));
     }
 
     [Test]
-    public void HeartAndGateAreTheRightEdgeOfTheTower()
+    public void GatesStepOutwardAndTheGroundFloorStaysCentred()
     {
         var rules = Started();
         rules.State.celestium = 200; rules.State.gold = 3000; rules.State.wood = 100; rules.State.stone = 100;
-        Assert.IsNotNull(rules.ExpandFloor(0, 1), "nothing is founded east of the Gate");
-        Assert.AreEqual(1, rules.Floor(0).east, "only the Gate's cell");
-        Assert.IsNotNull(rules.CanBuild("kitchen", 0, 24));
-        Assert.IsNotNull(rules.CanBuild("well", 0, 23));   // the Gate's cell
-        Assert.IsNotNull(rules.CanBuild("well", 0, TowerRules.CoreX)); // never on the shaft
-        Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
+        StringAssert.Contains("east", rules.ExpandFloor(0, -1), "west is already one cell ahead");
+        Assert.IsNull(rules.ExpandFloor(0, 1));
+        Assert.AreEqual(1, rules.Floor(0).east);
+        Assert.AreEqual(TowerRules.CoreX + 2, rules.GateOn(1).x, "the Gate moved out to the new end");
+        Assert.IsNull(rules.CanBuild("well", 0, TowerRules.CoreX + 1), "the old Gate cell is a building lot now");
+        Assert.IsNotNull(rules.CanBuild("well", 0, TowerRules.CoreX + 2), "the Gate's own cell");
+        Assert.IsNotNull(rules.CanBuild("well", 0, TowerRules.CoreX), "never on the shaft");
+        Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX + 1));
+        Assert.IsTrue(rules.RoomAt(0, TowerRules.CoreX + 1).flip, "east rooms grow away from the Heart");
+        Assert.IsNull(rules.ExpandFloor(0));   // no side: the shorter one (west on a tie)
+        Assert.AreEqual(2, rules.Floor(0).west);
+        Assert.AreEqual(TowerRules.CoreX - 3, rules.GateOn(-1).x);
         Assert.IsNull(rules.OpenFloor(1));
-        Assert.AreEqual(0, rules.Floor(1).east, "upper floors end at the shaft");
-        Assert.IsNotNull(rules.CanBuild("house", 1, TowerRules.CoreX + 1));
-        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX - 1));
+        Assert.IsNull(rules.ExpandFloor(1, 1));
+        Assert.IsNull(rules.ExpandFloor(1, 1), "upper floors have no Gates and grow freely");
+        Assert.IsNull(rules.Build("house", 1, TowerRules.CoreX + 1));
     }
 
     [Test]
-    public void OldEastWingRoomsMoveWest()
+    public void OneGateSavesGainAWestGate()
     {
         var rules = Started();
-        rules.State.floors[0].east = 3;
-        var kitchen = rules.AddRoom("kitchen", 0, 24);
+        // A save from before the two Gates: the east Gate's cell counted in the ground floor, no west Gate.
+        rules.State.rooms.Remove(rules.GateOn(-1));
+        rules.State.floors[0].east = 1;
+        rules.State.layoutVersion = 0;
         var state = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State));
         var loaded = new TowerRules(state);
-        var moved = loaded.Room(kitchen.uid);
-        Assert.Less(moved.x + moved.width, TowerRules.CoreX + 1, "now west of the shaft");
-        Assert.AreEqual(TowerRules.CoreX - 2, moved.x, "next to the Shack");
-        Assert.AreEqual(1, loaded.Floor(0).east);
-        Assert.IsTrue(loaded.IsFounded(0, moved.x));
+        Assert.AreEqual(0, loaded.Floor(0).east);
+        Assert.AreEqual(TowerRules.CoreX + 1, loaded.GateOn(1).x, "the east Gate stays put");
+        Assert.IsNotNull(loaded.GateOn(-1), "a west Gate joins");
+        Assert.AreEqual(TowerRules.CoreX - loaded.Floor(0).west - 1, loaded.GateOn(-1).x);
     }
 
     [Test]
@@ -1558,9 +1567,12 @@ public sealed class TowerSimulationTests
     {
         var rules = Started();
         rules.State.celestium = 5000;
-        for (int i = 0; i < TowerRules.WingCells - 1; i++) Assert.IsNull(rules.ExpandFloor(0));
+        for (int i = 0; i < 2 * TowerRules.WingCells - 1; i++) Assert.IsNull(rules.ExpandFloor(0), "expansion " + i);
         Assert.AreEqual(TowerRules.WingCells, rules.Floor(0).west);
+        Assert.AreEqual(TowerRules.WingCells, rules.Floor(0).east);
         Assert.IsNotNull(rules.ExpandFloor(0));
+        Assert.AreEqual(TowerRules.CoreX - TowerRules.WingCells - 1, rules.GateOn(-1).x);
+        Assert.AreEqual(TowerRules.CoreX + TowerRules.WingCells + 1, rules.GateOn(1).x);
         Assert.IsNull(rules.OpenFloor(-1));
         Assert.IsNotNull(rules.ExpandFloor(-1), "dig the cell out first");
         Assert.IsNull(rules.Excavate(-1, rules.NextExpansionX(-1, -1)));
@@ -1568,11 +1580,13 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
-    public void PopulatedCheckpointsBuildOnlyWestOfTheHeart()
+    public void PopulatedCheckpointsBuildOnBothSidesWithAGateAtEachEnd()
     {
         var rules = new TowerRules(TowerMilestones.Create(4));
         Assert.IsTrue(rules.State.rooms.Exists(r => r.floor == 0 && r.x + r.width <= TowerRules.CoreX && r.type != "heart"));
-        Assert.IsFalse(rules.State.rooms.Exists(r => r.x > TowerRules.CoreX && r.type != "gate"));
+        Assert.IsTrue(rules.State.rooms.Exists(r => r.floor == 0 && r.x > TowerRules.CoreX && r.type != "gate"));
+        Assert.AreEqual(2, rules.Gates().Count);
+        Assert.AreEqual(TowerRules.CoreX, (rules.GateOn(-1).x + rules.GateOn(1).x) / 2, "the Heart is in the middle");
         foreach (var a in rules.State.rooms)
             foreach (var b in rules.State.rooms)
                 if (a != b && a.floor == b.floor)
@@ -1700,7 +1714,7 @@ public sealed class TowerSimulationTests
         string advice = rules.NeedsAdvice();
         StringAssert.Contains("WATER", advice);
         StringAssert.Contains("Well", advice);
-        Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 4);
         Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         rules.State.water = 3;
         StringAssert.Contains("Staff", rules.NeedsAdvice()); // built, but nobody works it
@@ -1720,14 +1734,12 @@ public sealed class TowerSimulationTests
     {
         var rules = Started();
         rules.State.eventCooldown = 100000; // isolate the economy from the storyteller
-        Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.ExpandFloor(0));
-        Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 4);
         Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
         Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         rules.State.gold += 2000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
         Learn(rules, "CON-6");   // the Hearth Nursery
-        for (int i = 0; i < 2; i++) Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 6);
         Assert.IsNull(rules.Build("lumber_mill", 0, TowerRules.CoreX - 4));
         Assert.IsNull(rules.Build("nursery", 0, TowerRules.CoreX - 5));
         rules.State.pendingVisitors = 2;
@@ -1801,13 +1813,14 @@ public sealed class TowerSimulationTests
     public void RaidersArriveAtTheGateAndGuardsDriveThemOff()
     {
         var rules = Quiet(Started());
-        var gate = rules.State.rooms.Find(r => r.type == "gate");
+        Assert.IsNull(rules.StartRaid());
+        var gate = rules.Room(rules.State.incidents[0].roomUid);
+        Assert.AreEqual("gate", gate.type, "raiders arrive at one of the Gates");
         var guard = rules.State.residents[0];
         guard.might = 10; guard.weapon = 3;
         Assert.IsNull(rules.Assign(guard.id, gate.uid));
         Assert.AreEqual(1, rules.GuardCount());
-        Assert.IsNull(rules.StartRaid());
-        Assert.AreEqual(gate.uid, rules.State.incidents[0].roomUid);
+        Assert.AreEqual(2 * rules.Capacity(gate), rules.GuardSlots(), "both Gates take guards");
         int gold = rules.State.gold;
         for (int i = 0; i < 300 && rules.State.incidents.Count > 0; i++) rules.Advance(1, true);
         Assert.AreEqual(0, rules.State.incidents.Count, "the guard should beat the raid");
@@ -1887,7 +1900,7 @@ public sealed class TowerSimulationTests
     {
         var rules = Quiet(Started());
         rules.State.gold += 3000; rules.State.wood += 60; rules.State.stone += 30; rules.State.celestium += 60;
-        for (int i = 0; i < 3; i++) Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 4);
         Assert.IsNull(rules.Build("kitchen", 0, TowerRules.CoreX - 2));
         Assert.IsNull(rules.Build("well", 0, TowerRules.CoreX - 3));
         var worker = rules.State.residents[0];
@@ -1931,13 +1944,23 @@ public sealed class TowerSimulationTests
         }
     }
 
+    // Founds the ground floor out to `west` cells (the east side one behind, as the centring rule allows) and moves
+    // the Gates out to match. For tests about something other than the cost of founding.
+    private static void FoundGround(TowerRules rules, int west)
+    {
+        var ground = rules.Floor(0);
+        ground.west = Mathf.Max(ground.west, west);
+        ground.east = Mathf.Max(ground.east, west - 1);
+        rules.PlaceGates();
+    }
+
     private static TowerRules BarnLot()
     {
         var rules = Started();
         rules.State.gold = 999999; rules.State.wood = rules.State.stone = 9999; rules.State.celestium = 9999;
         foreach (string id in new[] { "barn", "cottage" })
             if (!rules.State.blueprints.Contains(id)) rules.State.blueprints.Add(id);
-        for (int i = 0; i < 5; i++) Assert.IsNull(rules.ExpandFloor(0));
+        FoundGround(rules, 6);
         return rules;
     }
 

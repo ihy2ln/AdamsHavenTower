@@ -6,7 +6,7 @@ namespace AdamsHaven.Tower
     public static class TowerMilestones
     {
         // Bump when checkpoint generation changes; older unplayed checkpoint files are rebuilt.
-        public const int Version = 3;
+        public const int Version = 4;   // 4: wings on both sides of the Heart, a Gate at each end
         // Testing aid: every checkpoint (slots 2-10) gets a Barn, Silo and Warehouse at each rank F to SSR on extra
         // floors above the tower, full stocks (at the cap those storage rooms create) and full resident, room and Heart
         // conditions. These checkpoints are also pinned (TowerState.pinned), so they are never rebuilt or reset by the
@@ -45,7 +45,6 @@ namespace AdamsHaven.Tower
 
             state.introPhase = "complete";
             state.tutorialStep = 7;
-            rules.AddRoom("gate", 0, TowerRules.GateX);
             // Checkpoints climb the GDD 8.4 ladder: building ranks never exceed what the Heart allows.
             state.heartRank = new[] { 1, 1, 2, 2, 3, 4, 6, 7, 8, 9 }[index];
             state.heartHp = TowerRules.HeartMaxHp(state.heartRank);
@@ -68,10 +67,10 @@ namespace AdamsHaven.Tower
             state.floors.Clear();
             for (int floor = -Down[index]; floor <= Up[index]; floor++)
             {
-                state.floors.Add(new TowerFloor { number = floor, west = TowerRules.WingCells,
-                    east = floor == 0 ? 1 : 0,
+                var built = new TowerFloor { number = floor, west = TowerRules.WingCells, east = 0,
                     landing = index >= 5 && floor % 4 == 0 ? "freight_lift" :
-                        (index >= 2 ? "stairs" : "energy") });
+                        (index >= 2 ? "stairs" : "energy") };
+                state.floors.Add(built);
                 // Producers go first so wide high-rank rooms never crowd the mill or kitchen out of the wing.
                 string[] rooms = floor == 0 ? new[] { "lumber_mill", "kitchen", "well", "house", "cottage" } :
                     floor == 1 ? new[] { "terrace_row", "market", "well", "cottage", "house" } :
@@ -90,7 +89,8 @@ namespace AdamsHaven.Tower
                     var room = rules.AddRoom(type, floor, x, rank);
                     room.condition = 92 + (room.uid * 7) % 9;
                 }
-                // A second mix fills the rest of the west wing (the Heart and Gate are the right edge).
+                // A second mix fills the east wing, so the Heart stands in the middle of the floor.
+                int usedEast = 0;
                 string[] east = floor == 0 ? new[] { "cottage", "lumber_mill", "farmstead", "barn" } :
                     floor > 0 ? (floor % 2 == 0 ? new[] { "cottage", "kitchen", "well", "cottage" } :
                         new[] { "terrace_row", "well", "market", "cottage" }) :
@@ -102,14 +102,16 @@ namespace AdamsHaven.Tower
                     if (eastDef.groundOnly && floor != 0) continue;
                     if (eastDef.undergroundOnly && floor >= 0) continue;
                     int eastWidth = TowerTiers.Bays(type, rank);
-                    if (used + eastWidth > TowerRules.WingCells) continue;
-                    int x = TowerRules.CoreX - used - eastWidth;
-                    used += eastWidth;
+                    if (usedEast + eastWidth > TowerRules.WingCells) continue;
+                    int x = TowerRules.CoreX + 1 + usedEast;
+                    usedEast += eastWidth;
                     var room = rules.AddRoom(type, floor, x, rank);
                     room.condition = 90 + (room.uid * 5) % 10;
                 }
+                built.east = TowerRules.WingCells;
             }
 
+            rules.PlaceGates();   // a Gate at each end of the ground floor
             int heroCount = Mathf.Min(HeroIds.Length, index < 2 ? 2 + index : 3 + index / 2);
             for (int i = 0; i < heroCount; i++)
                 rules.AddResident(HeroIds[i], HeroNames[i], "hero", Mathf.Max(1, index * 5));
@@ -171,11 +173,11 @@ namespace AdamsHaven.Tower
             rules.StaffForSurvival(80);
             if (index >= 2)
             {
-                var gate = state.rooms.Find(r => r.type == "gate");
                 var guards = state.residents.FindAll(r => r.origin == "villager");
                 guards.Sort((a, b) => (b.might + b.weapon).CompareTo(a.might + a.weapon));
-                for (int i = 0; gate != null && i < 2 && i < guards.Count; i++)
-                    rules.Assign(guards[i].id, gate.uid);
+                int next = 0;
+                foreach (var gate in rules.Gates())
+                    for (int i = 0; i < 2 && next < guards.Count; i++) rules.Assign(guards[next++].id, gate.uid);
                 rules.StaffForSurvival(20);
             }
             if (MaxedForTesting) AddStorageRanks(rules, Up[index]);

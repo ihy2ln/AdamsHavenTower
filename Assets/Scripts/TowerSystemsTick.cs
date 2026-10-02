@@ -467,7 +467,7 @@ namespace AdamsHaven.Tower
 
         private void TickVisitors(float dt)
         {
-            if (RoomAt(0, GateX) == null || BiologicalPopulation() + State.pendingVisitors >= PopulationCap()) return;
+            if (!HasGate() || BiologicalPopulation() + State.pendingVisitors >= PopulationCap()) return;
             State.gateTimer += dt;
             if (State.gateTimer < 240) return;
             State.gateTimer -= 240;

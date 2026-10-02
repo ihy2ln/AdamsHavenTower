@@ -52,12 +52,8 @@ public sealed partial class TowerHud
         Refresh();
     }
 
-    // Guard places at the Gate (a third with DEF-3 Gate guard post).
-    private int GateSlots()
-    {
-        var gate = tower.Rules.State.rooms.Find(r => r.type == "gate");
-        return gate == null ? 2 : tower.Rules.Capacity(gate);
-    }
+    // Guard places at both Gates (one more each with DEF-3 Gate guard post).
+    private int GateSlots() { return tower.Rules.GuardSlots(); }
 
     private static string Duration(long seconds)
     {
