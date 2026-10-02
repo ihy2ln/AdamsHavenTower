@@ -82,7 +82,11 @@ public sealed partial class TowerHud
             bool open = !done && !active && rules.CanResearch(def.id) == null;
             string label = (def.id == researchSelected ? "> " : "") + def.index + "  " + def.name;
             if (active) label += "  " + Mathf.FloorToInt(rules.ResearchProgress() * 100) + "%";
-            LabelOf(researchNodes[i]).text = label;
+            // The skinned button art mutes the tint, so the label colour carries the state too.
+            var text = LabelOf(researchNodes[i]);
+            text.text = label;
+            text.color = done ? new Color(1f, 0.84f, 0.4f) : active ? new Color(0.85f, 0.72f, 1f) :
+                open ? new Color(0.62f, 1f, 0.9f) : new Color(0.5f, 0.54f, 0.6f);
             researchNodes[i].GetComponent<Image>().color = done ? ResearchDone : active ? ResearchActive :
                 open ? Teal : ResearchLocked;
         }
@@ -107,8 +111,11 @@ public sealed partial class TowerHud
                 Duration(rules.ResearchRemaining()) + " left.";
         researchDetail.text = text;
 
-        researchStart.interactable = rules.CanResearch(node.id) == null;
-        LabelOf(researchStart).text = rules.Researched(node.id) ? "KNOWN" : "STUDY";
+        bool canStart = rules.CanResearch(node.id) == null;
+        researchStart.interactable = canStart;
+        LabelOf(researchStart).text = rules.Researched(node.id) ? "KNOWN" : state.researching == node.id ? "STUDYING" :
+            canStart ? "STUDY" : "LOCKED";
+        LabelOf(researchStart).color = canStart ? Cream : new Color(0.5f, 0.54f, 0.6f);
         int rush = rules.RushTonicCost();
         researchRush.gameObject.SetActive(rules.Researching);
         researchRush.interactable = rules.Researching && state.tonics >= rush;
