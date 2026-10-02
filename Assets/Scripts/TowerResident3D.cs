@@ -21,6 +21,8 @@ namespace AdamsHaven.Tower
         private bool placed;
         private Vector3 lastPosition;
         private float yaw, facing = -1;                     // facing: -1 left, +1 right (last walk direction)
+        private float gameSpeed = 1, groundSpeed;           // groundSpeed: smoothed sideways speed in world units/s
+        private float strideRate = -1;                      // walk/run playback matched to groundSpeed; -1 = game speed
 
         // Roster heroes use their own model; Celestium bodies use the one for their chassis. Null keeps the 2D atlas.
         public static string ModelFor(TowerResident resident)
@@ -53,7 +55,9 @@ namespace AdamsHaven.Tower
             return actor;
         }
 
-        public void SetPlaybackSpeed(float value) { chibi.Speed = Mathf.Max(0, value); }
+        public void SetPlaybackSpeed(float value) { gameSpeed = Mathf.Max(0, value); ApplySpeed(); }
+
+        private void ApplySpeed() { chibi.Speed = strideRate >= 0 ? strideRate : gameSpeed; }
 
         public void SetSleeping(bool value) { sleeping = value; }
 
@@ -75,6 +79,9 @@ namespace AdamsHaven.Tower
 
             bool resting = isDowned || sleeping;
             float dx = placed ? position.x - lastPosition.x : 0;
+            float dt = Time.deltaTime;
+            if (dt > 0)
+                groundSpeed = placed ? Mathf.Lerp(groundSpeed, Mathf.Abs(dx) / dt, 1 - Mathf.Exp(-12 * dt)) : 0;
             if (traveling && !resting && Mathf.Abs(dx) > 0.0005f) facing = Mathf.Sign(dx);
             else if (working && !traveling && !resting && !float.IsNaN(roomCenterX) &&
                 Mathf.Abs(roomCenterX - position.x) > 0.05f) facing = Mathf.Sign(roomCenterX - position.x);
@@ -85,12 +92,29 @@ namespace AdamsHaven.Tower
             placed = true;
 
             string clip;
+            strideRate = -1;
             if (isDowned) clip = "AH_knocked_down";
             else if (sleeping) clip = "AH_sleep";
-            else if (traveling) clip = "AH_walk";
+            else if (traveling) clip = Stride();
             else if (working && workRoom != null && TowerChibi3D.RoomClips.TryGetValue(workRoom, out clip)) { }
             else clip = "AH_idle";
             chibi.Play(clip);
+            ApplySpeed();
+        }
+
+        // Walk, or run when moving fast, played at the rate whose stride matches the actual speed so the feet
+        // don't slide. Riding the shaft straight up or down (no sideways speed) stands still instead.
+        private string Stride()
+        {
+            if (groundSpeed < 0.05f) return "AH_idle";
+            // The body is turned WalkYaw from the camera, so its stride runs at that angle to the floor's x axis.
+            float along = groundSpeed / Mathf.Sin(WalkYaw * Mathf.Deg2Rad);
+            float scale = chibi.transform.lossyScale.x;
+            float walk = chibi.GroundSpeed("AH_walk") * scale, run = chibi.GroundSpeed("AH_run") * scale;
+            string clip = run > 0 && along > walk * 1.6f ? "AH_run" : "AH_walk";
+            float natural = clip == "AH_run" ? run : walk;
+            if (natural > 0) strideRate = Mathf.Clamp(along / natural, 0.35f, 3f);
+            return clip;
         }
     }
 }

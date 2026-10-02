@@ -97,6 +97,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                     0.105f * cameraView.orthographicSize * 2 * cameraView.aspect;
                 cameraView.transform.position = new Vector3(X(22.5f + (east - west) * 0.5f) + shift,
                     newState && west <= 2 ? 0.35f : cameraView.transform.position.y, -30);
+                tower.ClampView();
             }
         }
         UpdateSites();
@@ -394,27 +395,39 @@ public sealed class TowerArtDirector : MonoBehaviour
         BuildSites(middle, range);
     }
 
+    // The painted world: one landscape/sky painting with a mirrored copy on each side, and geology under all of
+    // it. The camera never shows past these bounds (AdamsHavenPrototype.ClampCamera), even fully zoomed out.
+    private const float Ground = -1.23f, PaintedWidth = 68f;
+    public static float ArtLeft { get { return X(22) - 1.5f * PaintedWidth; } }
+    public static float ArtRight { get { return X(22) + 1.5f * PaintedWidth; } }
+    public static float ArtTop { get { return Ground + (TowerRules.FloorMax + 3) * Storey; } }
+    public static float ArtBottom { get { return Ground - 27 * Storey; } }
+
     private void BuildLandscape()
     {
         // Match ShelterView's world coordinates: grass is fixed at the surface,
         // Silverwood is east of the gate, and geology continues below every plot.
-        const float ground = -1.23f, worldWidth = 68f;
+        const float ground = Ground, worldWidth = PaintedWidth;
         float center = X(22), skyHeight = (TowerRules.FloorMax + 3) * Storey;
-        Art("Silverbrook high sky", "Scenery/sky_strata_continuous", center,
-            ground + skyHeight / 2, 18, worldWidth, skyHeight);
         var landscape = Resources.Load<Texture2D>(Root + "Scenery/silverbrook_world_extended_day");
-        if (landscape != null)
+        var material = Resources.Load<Material>(Root + "Scenery/TowerHorizon");
+        for (int side = -1; side <= 1; side++)
         {
+            float cx = center + side * worldWidth;
+            Mirror(Art("Silverbrook high sky " + side, "Scenery/sky_strata_continuous", cx,
+                ground + skyHeight / 2, 18, worldWidth, skyHeight), side);
+            if (landscape == null) continue;
             float height = worldWidth * landscape.height / landscape.width;
             float bottom = ground - height * 0.215f;
-            var horizon = Art("Silverbrook plain and eastern Silverwood", "Scenery/silverbrook_world_extended_day",
-                center, bottom + height / 2, 16, worldWidth, height);
+            var horizon = Art("Silverbrook plain and eastern Silverwood " + side, "Scenery/silverbrook_world_extended_day",
+                cx, bottom + height / 2, 16, worldWidth, height);
             // A continuous shader blend avoids visible bands between the original sky paintings.
-            var material = Resources.Load<Material>(Root + "Scenery/TowerHorizon");
             if (horizon != null && material != null)
                 horizon.GetComponent<SpriteRenderer>().sharedMaterial = material;
+            Mirror(horizon, side);
         }
-        for (int cell = 0; cell < 42; cell += 6)
+        // Columns of geology from ArtLeft to ArtRight (cell = x / Cell + 17.5).
+        for (int cell = -30; cell < 78; cell += 6)
         {
             float cx = X(cell + 3);
             TerrainBand("Continuous soil to Celestium rock " + cell, "strata_upper_continuous",
@@ -436,6 +449,14 @@ public sealed class TowerArtDirector : MonoBehaviour
             }
         }
     }
+    // The side copies are mirrored so their edges meet the middle painting seamlessly.
+    private static void Mirror(GameObject layer, int side)
+    {
+        if (layer == null || side == 0) return;
+        var scale = layer.transform.localScale;
+        layer.transform.localScale = new Vector3(-scale.x, scale.y, scale.z);
+    }
+
     private void TerrainBand(string name, string texture, float x, float top, float height, bool blend)
     {
         var layer = Art(name, "Scenery/" + texture, x, top - height / 2, 12,

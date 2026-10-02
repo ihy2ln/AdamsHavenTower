@@ -333,7 +333,7 @@ public sealed partial class TowerHud
 
         // Left: a profile card, like the traveler card in the Paimon menu.
         var card = Box("Menu profile", popupMenu.transform, new Vector2(0, 0.5f), new Vector2(0, 0.5f),
-            new Vector2(64, 0), new Vector2(340, 380), Color.white);
+            new Vector2(64, 0), new Vector2(340, 428), Color.white);
         TowerUiSkin.ApplyPanel(card, Glass, true);
         card.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;   // swallow taps
         var c = card.transform;
@@ -350,9 +350,11 @@ public sealed partial class TowerHud
         menuValues.lineSpacing = 1.3f;
         menuValues.fontStyle = FontStyle.Bold;
         menuRun = TextAt(c, "Menu run", "", 24, 266, 296, 36, 12, TowerUiSkin.TextDim, TextAnchor.UpperLeft);
-        ButtonAt(c, "Menu save", "SAVE NOW", 24, 316, 140, 40, () => { tower.SaveNow(); CloseAllPopups(); }, Gold, 14);
-        ButtonAt(c, "Menu checkpoints", "CHECKPOINTS", 176, 316, 140, 40,
+        menuNewGame = ButtonAt(c, "Menu new game", "NEW GAME", 24, 316, 140, 40, ConfirmNewGame, Alert, 14);
+        ButtonAt(c, "Menu save", "SAVE NOW", 176, 316, 140, 40, () => { tower.SaveNow(); CloseAllPopups(); }, Gold, 14);
+        ButtonAt(c, "Menu checkpoints", "CHECKPOINTS", 24, 364, 140, 40,
             () => { CloseAllPopups(); saveOverlay.gameObject.SetActive(true); }, Teal, 13);
+        ButtonAt(c, "Menu dev", "DEV", 176, 364, 140, 40, OpenDev, Teal, 14);
 
         // Right: every system as an icon tile.
         var tiles = new[] {
@@ -403,7 +405,7 @@ public sealed partial class TowerHud
             "\n" + rules.BiologicalPopulation() + " / " + rules.PopulationCap() +
             "\n" + state.regionsConquered.Count + " / " + TowerRules.Regions.Length + " conquered" +
             "\n" + state.sigils + "\n" + state.celestium + "\n" + TowerRules.Compact(state.gold);
-        menuRun.text = "Run " + (state.runs + 1) + "   ·   Legacy " + state.legacyRank + "   ·   Steward " + (state.steward ? "on" : "off") +
+        menuRun.text = (tower.CurrentSlot == 0 ? "New game" : "Slot " + tower.CurrentSlot) + "   ·   Run " + (state.runs + 1) + "   ·   Legacy " + state.legacyRank + "   ·   Steward " + (state.steward ? "on" : "off") +
             "\nHold a dock or top button for shortcuts.";
         if (menuSteward != null) menuSteward.GetComponent<Image>().color = state.steward ? Gold : Teal;
     }

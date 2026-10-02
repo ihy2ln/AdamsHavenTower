@@ -13,8 +13,8 @@ public static class AndroidReleaseBuilder
 {
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
-    private const string Version = "0.8.0";
-    private const int VersionCode = 8;
+    private const string Version = "0.8.1";
+    private const int VersionCode = 9;
     private const string ApkName = "AdamsHavenTowerBattle-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }

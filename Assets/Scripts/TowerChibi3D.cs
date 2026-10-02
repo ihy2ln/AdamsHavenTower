@@ -117,6 +117,53 @@ public sealed class TowerChibi3D : MonoBehaviour
 
     public float ClipTime => time;
 
+    // Ground speed an in-place clip implies, in this component's local units per second: how fast the planted
+    // (lower) foot slides back under the body. Moving the chibi at this speed makes the feet stick to the floor.
+    static readonly Dictionary<string, float> groundSpeeds = new Dictionary<string, float>();
+
+    public float GroundSpeed(string clipName)
+    {
+        string key = Id + "/" + clipName;
+        if (groundSpeeds.TryGetValue(key, out var cached)) return cached;
+        float speed = 0;
+        Transform left = Bone("LeftFoot"), right = Bone("RightFoot");
+        if (left && right && Clips.TryGetValue(clipName, out var clip) && clip.length > 0)
+        {
+            const int samples = 120;
+            float dt = clip.length / samples;
+            var feet = new Vector3[samples + 1, 2];
+            float floor = float.MaxValue;
+            for (int i = 0; i <= samples; i++)
+            {
+                clip.SampleAnimation(Model, i * dt);
+                feet[i, 0] = transform.InverseTransformPoint(left.position);
+                feet[i, 1] = transform.InverseTransformPoint(right.position);
+                floor = Mathf.Min(floor, Mathf.Min(feet[i, 0].y, feet[i, 1].y));
+            }
+            // Only a foot on the floor counts (runs have airborne frames). The chibi faces local -Z, so a
+            // planted foot moves toward +Z as the body "travels" forward; the median rejects contact/lift frames.
+            float contact = floor + Height * 0.03f;
+            var rates = new List<float>();
+            for (int i = 1; i <= samples; i++)
+                for (int f = 0; f < 2; f++)
+                    if (feet[i, f].y < contact && feet[i - 1, f].y < contact)
+                        rates.Add((feet[i, f].z - feet[i - 1, f].z) / dt);
+            rates.Sort();
+            speed = rates.Count > 0 ? Mathf.Max(0, rates[rates.Count / 2]) : 0;
+            Sample(time);
+            Springs?.ResetState();
+        }
+        groundSpeeds[key] = speed;
+        return speed;
+    }
+
+    Transform Bone(string name)
+    {
+        foreach (var t in Model.GetComponentsInChildren<Transform>(true))
+            if (t.name == name) return t;
+        return null;
+    }
+
     void Update()
     {
         time += Time.deltaTime * Speed;

@@ -115,7 +115,7 @@ public sealed partial class TowerHud : MonoBehaviour
         BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
         BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
         BuildHeartPopup(); BuildAlertsPopup();
-        BuildSaves(); BuildDefeat(); BuildFlyout();
+        BuildSaves(); BuildDefeat(); BuildFlyout(); BuildDev();
         UpdateSafeArea();
         Refresh();
     }
@@ -126,6 +126,7 @@ public sealed partial class TowerHud : MonoBehaviour
     {
         if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight) UpdateSafeArea();
         if (tower == null) return;
+        TickNewGameConfirm();
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;
@@ -763,8 +764,14 @@ public sealed partial class TowerHud : MonoBehaviour
         var card = Rect("Checkpoint card", saveOverlay.transform,
             new Vector2(0.22f, 0.14f), new Vector2(0.78f, 0.86f), Vector2.zero, Vector2.zero, Panel);
         TowerUiSkin.ApplyPanel(card, Glass, true);
-        TextAt(card.transform, "Checkpoint title", "TOWER CHECKPOINTS", 28, 19, 550, 44,
+        TextAt(card.transform, "Checkpoint title", "TOWER CHECKPOINTS", 28, 19, 340, 44,
             27, Gold);
+        // Slot 0 is the NEW GAME save; this reopens it without wiping it.
+        ButtonAt(card.transform, "Continue new game", "MY NEW GAME", 380, 18, 175, 43, () =>
+        {
+            if (!System.IO.File.Exists(TowerSaveFiles.PathFor(0))) { tower.Apply("No new game yet: use MENU > NEW GAME."); return; }
+            tower.LoadCheckpoint(0); saveOverlay.gameObject.SetActive(false); Refresh();
+        }, Gold, 14);
         ButtonAt(card.transform, "Close checkpoints", "CLOSE", 570, 18, 130, 43,
             () => { saveOverlay.gameObject.SetActive(false); Refresh(); }, Alert, 16);
         for (int i = 0; i < 10; i++)
@@ -942,6 +949,7 @@ public sealed partial class TowerHud : MonoBehaviour
         if (popupHeart.gameObject.activeSelf) RefreshHeart(state);
         if (popupAlerts.gameObject.activeSelf) RefreshAlerts(state);
         if (popupMenu.gameObject.activeSelf) RefreshMainMenu(state);
+        RefreshDev();
         RefreshChip();
     }
 

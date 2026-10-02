@@ -64,7 +64,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private void Awake()
     {
         TowerMilestones.EnsureSlots();
-        LoadSlot(1);
+        // Reopen the slot played last (slot 0 is NEW GAME's own slot); a first launch starts on slot 1.
+        LoadSlot(Mathf.Clamp(PlayerPrefs.GetInt(LastSlotKey, 1), 0, 10));
         QualitySettings.vSyncCount = 1;
         Application.targetFrameRate = 60;
     }
@@ -134,10 +135,17 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         catch (Exception ex) { Debug.LogError("Tower save failed: " + ex); }
     }
 
-    private void LoadSlot(int number)
+    private const string LastSlotKey = "AdamsHaven.Tower.LastSlot";
+
+    private void LoadSlot(int number, bool saveCurrent = true)
     {
-        Save();
+        if (saveCurrent) Save();
+        // Resident ids are per save, so another save's rigs must not be reused.
+        foreach (var actor in residents3D.Values) if (actor != null) Destroy(actor.gameObject);
+        residents3D.Clear();
         slot = number;
+        PlayerPrefs.SetInt(LastSlotKey, slot);
+        PlayerPrefs.Save();
         TowerState state = TowerSaveFiles.Load(number);
         if (state == null) state = TowerMilestones.Create(number);
         rules = new TowerRules(state);
@@ -807,7 +815,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     {
         if (view == null || number < TowerRules.FloorMin || number > TowerRules.FloorMax) return;
         floor = number;
-        view.transform.position = new Vector3(view.transform.position.x, number * Storey, -30);
+        view.transform.position = ClampCamera(new Vector3(view.transform.position.x, number * Storey, -30));
         RebuildScene();
         if (hud != null) hud.Refresh();
     }
@@ -947,6 +955,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (rules == null || !rules.State.defeated) return;
         Save();
         // GDD 8.5: the tower resets; heroes, Sigils and summon pity carry into the new run.
+        foreach (var actor in residents3D.Values) if (actor != null) Destroy(actor.gameObject);
+        residents3D.Clear();
         rules = new TowerRules(TowerRules.LegacyRun(rules.State));
         selectedRoom = selectedResident = pendingWalkResident = 0;
         buildType = "house";
@@ -969,6 +979,19 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (battleMode != null) Destroy(battleMode);
         battleMode = null;
         ShowTower();
+    }
+
+    // NEW GAME: slot 0 always restarts from a dormant Heart, so the founding and the guided lessons can be replayed.
+    public void NewGame()
+    {
+        Save();
+        var fresh = TowerMilestones.Create(0);
+        fresh.label = "New Game";
+        TowerSaveFiles.Save(fresh);
+        LoadSlot(0, false);
+        message = "New game started in slot 0. Touch the Celestium Heart to begin.";
+        if (view != null) FocusOnFloor(0);
+        if (hud != null) hud.Refresh();
     }
 
     public void LoadCheckpoint(int number)
@@ -1062,11 +1085,29 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (Mathf.Abs(view.transform.position.y - lastBuiltCameraY) > Storey * 0.65f) RebuildScene();
     }
 
-    private static Vector3 ClampCamera(Vector3 position)
+    private Vector3 ClampCamera(Vector3 position)
     {
         position.x = Mathf.Clamp(position.x, WorldX(11), WorldX(34));
         position.y = Mathf.Clamp(position.y, TowerRules.FloorMin * Storey, TowerRules.FloorMax * Storey);
+        // Never show past the painted world: keep the whole view inside TowerArtDirector's art bounds.
+        float halfHeight = view.orthographicSize, halfWidth = halfHeight * view.aspect;
+        position.x = Mathf.Clamp(position.x, TowerArtDirector.ArtLeft + halfWidth, TowerArtDirector.ArtRight - halfWidth);
+        position.y = Mathf.Clamp(position.y, TowerArtDirector.ArtBottom + halfHeight, TowerArtDirector.ArtTop - halfHeight);
         return position;
+    }
+
+    // Zoom and position limited to the painted world; the art director calls this after framing the tower.
+    public void ClampView()
+    {
+        if (view == null) return;
+        view.orthographicSize = Mathf.Min(view.orthographicSize, MaxZoom());
+        view.transform.position = ClampCamera(view.transform.position);
+    }
+
+    private float MaxZoom()
+    {
+        return Mathf.Min(ZoomMax, (TowerArtDirector.ArtTop - TowerArtDirector.ArtBottom) / 2f,
+            (TowerArtDirector.ArtRight - TowerArtDirector.ArtLeft) / (2f * view.aspect));
     }
 
     private const float ZoomMin = 2.5f, ZoomMax = 30f;
@@ -1078,7 +1119,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     // scale > 1 zooms in. The world point under `anchor` (screen pixels) stays under it, like a map.
     private void ZoomBy(float scale, Vector2 anchor)
     {
-        float size = Mathf.Clamp(view.orthographicSize / Mathf.Max(0.05f, scale), ZoomMin, ZoomMax);
+        float size = Mathf.Clamp(view.orthographicSize / Mathf.Max(0.05f, scale), ZoomMin, MaxZoom());
         if (Mathf.Approximately(size, view.orthographicSize)) return;
         Vector3 before = view.ScreenToWorldPoint(new Vector3(anchor.x, anchor.y, 0));
         view.orthographicSize = size;
@@ -1231,7 +1272,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 // Glide toward the wander/station spot so state changes walk instead of snapping.
                 Vector3 shown;
                 if (!residentSmoothed.TryGetValue(resident.id, out shown)) shown = position;
-                float step = 1.4f * Time.deltaTime * Mathf.Max(1f, speed);
+                // 3D chibis stroll at their natural walking pace (~0.7 units/s stride, TowerChibi3D.GroundSpeed).
+                float pace = residents3D.ContainsKey(resident.id) ? 0.8f : 1.4f;
+                float step = pace * Time.deltaTime * Mathf.Max(1f, speed);
                 Vector3 next = Vector3.MoveTowards(shown, position, step);
                 strolling = (position - next).sqrMagnitude > 0.0009f;
                 residentSmoothed[resident.id] = next;
