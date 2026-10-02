@@ -153,8 +153,9 @@ public sealed class TowerChibi3D : MonoBehaviour
                 var tex = src ? src.mainTexture : null;
                 m.SetTexture("_BaseMap", tex ? tex : Texture2D.whiteTexture);
                 m.SetColor("_BaseColor", src && !tex ? src.color : Color.white);
-                // chibis read small on the tower; a slightly heavier ink line keeps the silhouette
-                m.SetFloat("_OutlineWidth", .004f);
+                // The width is a fraction of the ortho view height (~1 px at 1080p). The Tower view is ~25 units tall
+                // and a chibi only ~1.2, so anything heavier swallows the whole figure in ink.
+                m.SetFloat("_OutlineWidth", .001f);
                 materials.Add(m);
                 mats[i] = m;
             }
