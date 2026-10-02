@@ -1,14 +1,24 @@
 {
-  "source": "S:\\AI\\Harness\\Codex\\home\\worktrees\\chibi-3d-tpose\\AdamsHavenCardGame\\art\\character_cards\\chibi-shared-3d-v2\\ghislaine-dedoldia\\battle-motion-v1\\battle.glb",
+  "model": "S:\\AI\\Game\\Unity AHCG\\My project\\MeshyJobs\\anime-battle-v2\\ghislaine\\rigged.glb",
+  "spec": "Tools\\battle_rigs\\ghislaine.json",
+  "pipeline": "meshy-autorig+build_battle_rig",
   "clips": [
-    "AH_attack_aimed_shot",
-    "AH_attack_cast_release",
-    "AH_attack_cross_slash",
-    "AH_attack_guard_pulse",
-    "AH_attack_heavy_sweep",
-    "AH_attack_invocation",
-    "AH_attack_overhead_burst",
-    "AH_attack_rising_strike",
-    "AH_battle_guard"
+    "AH_attack_basic",
+    "AH_battle_guard",
+    "AH_hit_react",
+    "AH_knock_down",
+    "AH_walk"
+  ],
+  "contacts": {
+    "AH_attack_basic": 0.36
+  },
+  "tail_bones": [
+    "Tail1",
+    "Tail2",
+    "Tail3",
+    "Tail4"
+  ],
+  "props": [
+    "Weapon_Greatsword"
   ]
 }

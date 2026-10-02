@@ -1,0 +1,96 @@
+{
+  "id": "clarity",
+  "style": "Bartender assassin, twin crimson kunai (reverse grip). Basic: coil, spin-slash (contact), snap recovery.",
+  "props": [
+    {
+      "name": "KunaiR",
+      "file": "MeshyJobs/anime-battle-v2/weapons/clarity-kunai.glb",
+      "faces": 1800,
+      "bone": "RightHand",
+      "length": 0.3,
+      "grip": 0.2,
+      "flip": true,
+      "tip_dir": "back",
+      "palm": 0.45
+    },
+    {
+      "name": "KunaiL",
+      "file": "MeshyJobs/anime-battle-v2/weapons/clarity-kunai.glb",
+      "faces": 1800,
+      "bone": "LeftHand",
+      "length": 0.3,
+      "grip": 0.2,
+      "flip": true,
+      "tip_dir": "back",
+      "palm": 0.45
+    }
+  ],
+  "keep_clips": {
+    "Kung_Fu_Punch": "AH_skill_radiant_palm",
+    "Double_Blade_Spin": "AH_ult_blade_spin"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.36,
+      "in_place": 0.5,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "Left_Slash",
+          "frame": 0
+        },
+        {
+          "t": 0.14,
+          "clip": "Left_Slash",
+          "frame": 16,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.28,
+          "clip": "Left_Slash",
+          "frame": 27,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.36,
+          "clip": "Left_Slash",
+          "frame": 34,
+          "ease": "in"
+        },
+        {
+          "t": 0.44,
+          "clip": "Left_Slash",
+          "frame": 36,
+          "ease": "linear"
+        },
+        {
+          "t": 0.8,
+          "clip": "Left_Slash",
+          "frame": 50,
+          "ease": "out"
+        },
+        {
+          "t": 1.0,
+          "clip": "Combat_Stance",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ],
+      "extras": [
+        {
+          "bone": "Hips",
+          "loc": [
+            0,
+            -0.03,
+            0
+          ],
+          "t": [
+            0.0,
+            0.14,
+            0.3
+          ]
+        }
+      ]
+    }
+  }
+}

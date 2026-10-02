@@ -1,0 +1,91 @@
+{
+  "id": "helda",
+  "style": "Dwarf brewmaster, crystal frost war hammer. Basic: hoist overhead, hang, slam into the ground (contact), heavy recover.",
+  "props": [
+    {
+      "name": "Hammer",
+      "file": "MeshyJobs/anime-battle-v2/weapons/helda-dwarf-hammer.glb",
+      "faces": 5000,
+      "bone": "RightHand",
+      "length": 0.85,
+      "grip": 0.14,
+      "tip_dir": "forward",
+      "roll": 90,
+      "palm": 0.45
+    }
+  ],
+  "keep_clips": {
+    "Charged_Ground_Slam": "AH_skill_ground_slam",
+    "Charged_Axe_Chop": "AH_ult_axe_chop"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.48,
+      "in_place": 0.4,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "Combat_Stance",
+          "frame": 0
+        },
+        {
+          "t": 0.12,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 20,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.3,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 29,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.38,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 30,
+          "ease": "linear"
+        },
+        {
+          "t": 0.48,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 36,
+          "ease": "in"
+        },
+        {
+          "t": 0.6,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 38,
+          "ease": "linear"
+        },
+        {
+          "t": 0.95,
+          "clip": "Heavy_Hammer_Swing",
+          "frame": 42,
+          "ease": "out"
+        },
+        {
+          "t": 1.25,
+          "clip": "Combat_Stance",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ],
+      "extras": [
+        {
+          "bone": "Hips",
+          "loc": [
+            0,
+            -0.04,
+            0
+          ],
+          "t": [
+            0.38,
+            0.5,
+            0.8
+          ]
+        }
+      ]
+    }
+  }
+}

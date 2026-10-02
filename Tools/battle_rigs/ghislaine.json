@@ -1,0 +1,86 @@
+{
+  "id": "ghislaine",
+  "style": "White-tiger swordswoman, two-handed fire greatsword. Basic 'Tiger Cleave': low tiger crouch, blade over the shoulder, explosive diagonal cleave (contact), heavy follow-through.",
+  "no_yaw": [
+    "GH_Guard",
+    "GH_Cleave"
+  ],
+  "tail": {
+    "tip_dir": [
+      1.0,
+      0.3,
+      -0.5
+    ],
+    "bones": 4,
+    "min_len": 0.55,
+    "lag_frames": 3,
+    "follow": 0.4,
+    "sway_deg": 7,
+    "period": 1.7
+  },
+  "props": [
+    {
+      "name": "Greatsword",
+      "file": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine_props.glb",
+      "faces": 3000,
+      "bone": "RightHand",
+      "length": 1.4,
+      "grip": 0.14,
+      "flip": true,
+      "tip_dir": "forward",
+      "palm": 0.45
+    }
+  ],
+  "keep_clips": {
+    "GH_Guard": "AH_battle_guard"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.36,
+      "in_place": 0.6,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "GH_Cleave",
+          "frame": 0
+        },
+        {
+          "t": 0.2,
+          "clip": "GH_Cleave",
+          "frame": 6,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.28,
+          "clip": "GH_Cleave",
+          "frame": 9,
+          "ease": "linear"
+        },
+        {
+          "t": 0.36,
+          "clip": "GH_Cleave",
+          "frame": 12,
+          "ease": "in"
+        },
+        {
+          "t": 0.48,
+          "clip": "GH_Cleave",
+          "frame": 15,
+          "ease": "out"
+        },
+        {
+          "t": 0.58,
+          "clip": "GH_Cleave",
+          "frame": 15,
+          "ease": "linear"
+        },
+        {
+          "t": 1.1,
+          "clip": "GH_Cleave",
+          "frame": 26,
+          "ease": "smooth"
+        }
+      ]
+    }
+  }
+}

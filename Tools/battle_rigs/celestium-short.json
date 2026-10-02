@@ -1,0 +1,73 @@
+{
+  "id": "celestium-short",
+  "job": "celestium-short",
+  "out": "celestium-short",
+  "style": "Celestium porcelain body. Basic 'crystal-light palm blast': draw palms back, step, double palm thrust (contact).",
+  "keep_clips": {
+    "Charged_Spell_Cast": "AH_skill_charged_cast"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.32,
+      "in_place": 0.4,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "Combat_Stance",
+          "frame": 0
+        },
+        {
+          "t": 0.14,
+          "clip": "Punch_Forward_with_Both_Fists",
+          "frame": 28,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.22,
+          "clip": "Punch_Forward_with_Both_Fists",
+          "frame": 30,
+          "ease": "linear"
+        },
+        {
+          "t": 0.32,
+          "clip": "Punch_Forward_with_Both_Fists",
+          "frame": 35,
+          "ease": "in"
+        },
+        {
+          "t": 0.46,
+          "clip": "Punch_Forward_with_Both_Fists",
+          "frame": 40,
+          "ease": "linear"
+        },
+        {
+          "t": 0.85,
+          "clip": "Punch_Forward_with_Both_Fists",
+          "frame": 62,
+          "ease": "out"
+        },
+        {
+          "t": 1.05,
+          "clip": "Combat_Stance",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ],
+      "extras": [
+        {
+          "bone": "Hips",
+          "loc": [
+            0,
+            -0.03,
+            0
+          ],
+          "t": [
+            0.0,
+            0.18,
+            0.32
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "id": "kaela",
+  "style": "Snow-leopard brawler, ice gauntlets. Basic 'Frost Jab': crouch, snap jab, right cross (contact, near side to camera), settle.",
+  "tail": {
+    "tip_dir": [
+      1.0,
+      0.25,
+      -0.45
+    ],
+    "bones": 4,
+    "min_len": 0.3,
+    "lag_frames": 3,
+    "follow": 0.35,
+    "sway_deg": 6,
+    "period": 1.6
+  },
+  "props": [
+    {
+      "name": "GauntletL",
+      "file": "MeshyJobs/anime-battle-v2/weapons/kaela-ice-gauntlets.glb",
+      "split": "max_x",
+      "faces": 3500,
+      "bone": "LeftHand",
+      "length": 0.31,
+      "grip": 0.55,
+      "flip": true,
+      "tip_dir": "along",
+      "palm": 0.4
+    },
+    {
+      "name": "GauntletR",
+      "file": "MeshyJobs/anime-battle-v2/weapons/kaela-ice-gauntlets.glb",
+      "split": "min_x",
+      "faces": 3500,
+      "bone": "RightHand",
+      "length": 0.31,
+      "grip": 0.55,
+      "flip": true,
+      "tip_dir": "along",
+      "palm": 0.4
+    }
+  ],
+  "keep_clips": {
+    "Punch_Combo": "AH_skill_punch_combo",
+    "Flying_Fist_Kick": "AH_ult_flying_fist_kick"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.34,
+      "in_place": 0.5,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "Left_Jab_from_Guard",
+          "frame": 0
+        },
+        {
+          "t": 0.08,
+          "clip": "Left_Jab_from_Guard",
+          "frame": 6,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.16,
+          "clip": "Left_Jab_from_Guard",
+          "frame": 12,
+          "ease": "in"
+        },
+        {
+          "t": 0.22,
+          "clip": "Right_Jab_from_Guard",
+          "frame": 9,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.34,
+          "clip": "Right_Jab_from_Guard",
+          "frame": 15,
+          "ease": "in"
+        },
+        {
+          "t": 0.42,
+          "clip": "Right_Jab_from_Guard",
+          "frame": 16,
+          "ease": "linear"
+        },
+        {
+          "t": 0.7,
+          "clip": "Right_Jab_from_Guard",
+          "frame": 26,
+          "ease": "out"
+        },
+        {
+          "t": 0.9,
+          "clip": "Combat_Stance",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ],
+      "extras": [
+        {
+          "bone": "Hips",
+          "loc": [
+            0,
+            -0.035,
+            0
+          ],
+          "t": [
+            0.0,
+            0.08,
+            0.2
+          ]
+        },
+        {
+          "bone": "Hips",
+          "loc": [
+            0,
+            -0.02,
+            0
+          ],
+          "t": [
+            0.22,
+            0.34,
+            0.5
+          ]
+        }
+      ]
+    }
+  }
+}

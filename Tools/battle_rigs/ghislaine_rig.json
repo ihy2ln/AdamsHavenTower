@@ -1,0 +1,415 @@
+{
+  "id": "ghislaine",
+  "job": "MeshyJobs/anime-battle-v2/ghislaine",
+  "donor": "MeshyJobs/anime-battle-v2/kaela/rigged.glb",
+  "body": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine_body.glb",
+  "height": 1.8,
+  "donor_clips": {
+    "Hit_Reaction": "Hit_Reaction",
+    "Knock_Down": "Knock_Down",
+    "Walking": "Walking"
+  },
+  "weapon": {
+    "bone": "RightHand",
+    "tip_vec": [
+      0,
+      1,
+      0
+    ],
+    "grip_back": 0.11,
+    "off_hand": {
+      "upper": "LeftArm",
+      "fore": "LeftForeArm",
+      "hand": "LeftHand",
+      "pole": [
+        -0.6,
+        -0.3,
+        -1
+      ]
+    }
+  },
+  "poses": {
+    "guard_a": {
+      "hips": [
+        0,
+        0,
+        -0.1
+      ],
+      "yaw": 15,
+      "lean": -8,
+      "spine_twist": -15,
+      "spine_lean": -10,
+      "aim": {
+        "LeftUpLeg": [
+          -0.25,
+          0.45,
+          -1
+        ],
+        "LeftLeg": [
+          -0.05,
+          -0.2,
+          -1
+        ],
+        "LeftFoot": [
+          -0.1,
+          1,
+          -0.6
+        ],
+        "RightUpLeg": [
+          0.25,
+          -0.35,
+          -1
+        ],
+        "RightLeg": [
+          0.05,
+          -0.5,
+          -1
+        ],
+        "RightFoot": [
+          0.3,
+          0.8,
+          -0.6
+        ],
+        "RightArm": [
+          0.35,
+          0.35,
+          -0.85
+        ],
+        "RightForeArm": [
+          -0.25,
+          0.95,
+          0.05
+        ],
+        "RightHand": [
+          -0.1,
+          0.9,
+          0.2
+        ]
+      },
+      "blade": [
+        0,
+        0.75,
+        0.66
+      ],
+      "off_pole": [
+        -0.6,
+        -0.3,
+        -1
+      ]
+    },
+    "guard_b": {
+      "hips": [
+        0,
+        0,
+        -0.115
+      ],
+      "yaw": 15,
+      "lean": -9,
+      "spine_twist": -15,
+      "spine_lean": -12,
+      "aim": {
+        "LeftUpLeg": [
+          -0.25,
+          0.45,
+          -1
+        ],
+        "LeftLeg": [
+          -0.05,
+          -0.2,
+          -1
+        ],
+        "LeftFoot": [
+          -0.1,
+          1,
+          -0.6
+        ],
+        "RightUpLeg": [
+          0.25,
+          -0.35,
+          -1
+        ],
+        "RightLeg": [
+          0.05,
+          -0.5,
+          -1
+        ],
+        "RightFoot": [
+          0.3,
+          0.8,
+          -0.6
+        ],
+        "RightArm": [
+          0.35,
+          0.35,
+          -0.85
+        ],
+        "RightForeArm": [
+          -0.25,
+          0.95,
+          0.1
+        ],
+        "RightHand": [
+          -0.1,
+          0.9,
+          0.25
+        ]
+      },
+      "blade": [
+        0,
+        0.7,
+        0.72
+      ],
+      "off_pole": [
+        -0.6,
+        -0.3,
+        -1
+      ]
+    },
+    "windup": {
+      "hips": [
+        0,
+        -0.05,
+        -0.14
+      ],
+      "yaw": -25,
+      "lean": -5,
+      "spine_twist": -25,
+      "spine_lean": -5,
+      "aim": {
+        "LeftUpLeg": [
+          -0.25,
+          0.55,
+          -0.9
+        ],
+        "LeftLeg": [
+          -0.05,
+          -0.3,
+          -1
+        ],
+        "LeftFoot": [
+          -0.1,
+          1,
+          -0.6
+        ],
+        "RightUpLeg": [
+          0.3,
+          -0.45,
+          -0.9
+        ],
+        "RightLeg": [
+          0.05,
+          -0.55,
+          -0.9
+        ],
+        "RightFoot": [
+          0.3,
+          0.8,
+          -0.6
+        ],
+        "RightArm": [
+          0.6,
+          -0.1,
+          0.6
+        ],
+        "RightForeArm": [
+          -0.3,
+          -0.2,
+          1
+        ],
+        "RightHand": [
+          0,
+          -0.3,
+          1
+        ]
+      },
+      "blade": [
+        0.25,
+        -0.75,
+        0.6
+      ],
+      "off_pole": [
+        -0.6,
+        0.2,
+        -0.6
+      ]
+    },
+    "contact": {
+      "hips": [
+        0,
+        0.12,
+        -0.16
+      ],
+      "yaw": 20,
+      "lean": -12,
+      "spine_twist": 25,
+      "spine_lean": -20,
+      "aim": {
+        "LeftUpLeg": [
+          -0.2,
+          0.8,
+          -0.7
+        ],
+        "LeftLeg": [
+          0,
+          -0.05,
+          -1
+        ],
+        "LeftFoot": [
+          -0.1,
+          1,
+          -0.5
+        ],
+        "RightUpLeg": [
+          0.2,
+          -0.6,
+          -0.8
+        ],
+        "RightLeg": [
+          0.05,
+          -0.6,
+          -0.8
+        ],
+        "RightFoot": [
+          0.2,
+          0.9,
+          -0.8
+        ],
+        "RightArm": [
+          0.05,
+          0.85,
+          -0.3
+        ],
+        "RightForeArm": [
+          -0.15,
+          0.9,
+          -0.4
+        ],
+        "RightHand": [
+          0,
+          1,
+          -0.3
+        ]
+      },
+      "blade": [
+        -0.15,
+        0.7,
+        -0.7
+      ],
+      "off_pole": [
+        -0.7,
+        0,
+        -0.7
+      ]
+    },
+    "follow": {
+      "hips": [
+        0,
+        0.12,
+        -0.17
+      ],
+      "yaw": 30,
+      "lean": -14,
+      "spine_twist": 35,
+      "spine_lean": -22,
+      "aim": {
+        "LeftUpLeg": [
+          -0.2,
+          0.8,
+          -0.7
+        ],
+        "LeftLeg": [
+          0,
+          -0.05,
+          -1
+        ],
+        "LeftFoot": [
+          -0.1,
+          1,
+          -0.5
+        ],
+        "RightUpLeg": [
+          0.2,
+          -0.6,
+          -0.8
+        ],
+        "RightLeg": [
+          0.05,
+          -0.6,
+          -0.8
+        ],
+        "RightFoot": [
+          0.2,
+          0.9,
+          -0.8
+        ],
+        "RightArm": [
+          -0.25,
+          0.7,
+          -0.6
+        ],
+        "RightForeArm": [
+          -0.6,
+          0.45,
+          -0.6
+        ],
+        "RightHand": [
+          -0.6,
+          0.4,
+          -0.6
+        ]
+      },
+      "blade": [
+        -0.65,
+        0.25,
+        -0.7
+      ],
+      "off_pole": [
+        -0.7,
+        0,
+        -0.7
+      ]
+    }
+  },
+  "actions": {
+    "GH_Guard": [
+      [
+        0,
+        "guard_a"
+      ],
+      [
+        20,
+        "guard_b"
+      ],
+      [
+        40,
+        "guard_a"
+      ]
+    ],
+    "GH_Cleave": [
+      [
+        0,
+        "guard_a"
+      ],
+      [
+        6,
+        "windup"
+      ],
+      [
+        9,
+        "windup"
+      ],
+      [
+        12,
+        "contact"
+      ],
+      [
+        15,
+        "follow"
+      ],
+      [
+        26,
+        "guard_a"
+      ]
+    ]
+  }
+}

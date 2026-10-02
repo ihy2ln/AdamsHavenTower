@@ -1,0 +1,80 @@
+{
+  "id": "elara",
+  "style": "Elf scholar-mage, floating spellbook + quill. Basic 'Arc Bolt': lift the book, swing it down to release (contact, ranged).",
+  "keep_clips": {
+    "mage_soell_cast_1": "AH_skill_cast",
+    "Charged_Spell_Cast": "AH_ult_charged_cast"
+  },
+  "author": {
+    "AH_battle_guard": {
+      "contact": null,
+      "in_place": 0.0,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "mage_soell_cast",
+          "frame": 0
+        },
+        {
+          "t": 0.8,
+          "clip": "mage_soell_cast",
+          "frame": 4,
+          "ease": "smooth"
+        },
+        {
+          "t": 1.6,
+          "clip": "mage_soell_cast",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ]
+    },
+    "AH_attack_basic": {
+      "contact": 0.5,
+      "in_place": 0.3,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "mage_soell_cast",
+          "frame": 0
+        },
+        {
+          "t": 0.15,
+          "clip": "mage_soell_cast",
+          "frame": 14,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.3,
+          "clip": "mage_soell_cast",
+          "frame": 22,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.5,
+          "clip": "mage_soell_cast",
+          "frame": 36,
+          "ease": "in"
+        },
+        {
+          "t": 0.58,
+          "clip": "mage_soell_cast",
+          "frame": 38,
+          "ease": "linear"
+        },
+        {
+          "t": 0.95,
+          "clip": "mage_soell_cast",
+          "frame": 50,
+          "ease": "out"
+        },
+        {
+          "t": 1.1,
+          "clip": "mage_soell_cast",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ]
+    }
+  }
+}

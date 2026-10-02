@@ -1,0 +1,86 @@
+{
+  "id": "daisy",
+  "style": "Bonfire wild-woman, fire spear. Basic: chamber, spin, lunging thrust (contact), twirl back.",
+  "mesh_props": [
+    {
+      "action": "delete",
+      "min_verts": 1
+    }
+  ],
+  "carve": [
+    {
+      "bone": "RightHand",
+      "radius": 0.09,
+      "height": 0.8,
+      "spare": [
+        "RightHand",
+        "RightForeArm"
+      ],
+      "spare_radius": 0.055
+    }
+  ],
+  "props": [
+    {
+      "name": "Spear",
+      "file": "MeshyJobs/anime-battle-v2/weapons/daisy-fire-spear.glb",
+      "faces": 2500,
+      "bone": "RightHand",
+      "length": 1.35,
+      "grip": 0.55,
+      "tip_dir": "forward",
+      "palm": 0.45
+    }
+  ],
+  "keep_clips": {
+    "Weapon_Combo": "AH_skill_weapon_combo"
+  },
+  "author": {
+    "AH_attack_basic": {
+      "contact": 0.34,
+      "in_place": 0.5,
+      "timeline": [
+        {
+          "t": 0.0,
+          "clip": "Combat_Stance",
+          "frame": 0
+        },
+        {
+          "t": 0.12,
+          "clip": "Thrust_Slash",
+          "frame": 30,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.24,
+          "clip": "Thrust_Slash",
+          "frame": 38,
+          "ease": "smooth"
+        },
+        {
+          "t": 0.34,
+          "clip": "Thrust_Slash",
+          "frame": 46,
+          "ease": "in"
+        },
+        {
+          "t": 0.42,
+          "clip": "Thrust_Slash",
+          "frame": 48,
+          "ease": "linear"
+        },
+        {
+          "t": 0.8,
+          "clip": "Thrust_Slash",
+          "frame": 62,
+          "ease": "out"
+        },
+        {
+          "t": 1.0,
+          "clip": "Combat_Stance",
+          "frame": 0,
+          "ease": "smooth"
+        }
+      ]
+    }
+  }
+}

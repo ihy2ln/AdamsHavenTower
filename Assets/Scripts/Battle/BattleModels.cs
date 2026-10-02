@@ -31,7 +31,14 @@ public sealed partial class BattleMode
     static readonly Dictionary<string, Move[]> MoveSets = new Dictionary<string, Move[]>
     {
         // basic, skill, ultimate
-        { "kaela", new[] { new Move("AH_attack_cross_slash", 0, .52f), new Move("AH_attack_rising_strike", 0, .66f), new Move("AH_flying_kick", 1.7f, 2.54f) } },
+        // Full-body Meshy rigs + Tools/build_battle_rig.py: AH_attack_basic is the authored CZN-timed basic
+        // (contact time from Tools/battle_rigs/<id>.json); skill/ultimate use each fighter's own style clips.
+        { "kaela", new[] { new Move("AH_attack_basic", 0, .34f), new Move("AH_skill_punch_combo", .9f, 1.33f), new Move("AH_ult_flying_fist_kick", 1.7f, 2.23f) } },
+        { "ghislaine", new[] { new Move("AH_attack_basic", 0, .36f), new Move("AH_attack_basic", 0, .36f), new Move("AH_attack_basic", 0, .36f) } },
+        { "elara", new[] { new Move("AH_attack_basic", 0, .5f), new Move("AH_skill_cast", .9f, 1.57f), new Move("AH_ult_charged_cast", 1.2f, 1.8f) } },
+        { "helda", new[] { new Move("AH_attack_basic", 0, .48f), new Move("AH_skill_ground_slam", .8f, 1.4f), new Move("AH_ult_axe_chop", 2.2f, 2.9f) } },
+        { "daisy", new[] { new Move("AH_attack_basic", 0, .34f), new Move("AH_skill_weapon_combo", 0, .5f), new Move("AH_skill_weapon_combo", 0, .5f) } },
+        { "clarity", new[] { new Move("AH_attack_basic", 0, .36f), new Move("AH_skill_radiant_palm", 2f, 2.63f), new Move("AH_ult_blade_spin", 1.3f, 1.9f) } },
     };
     const int AnimeColumns = 6, AnimeRows = 4, AnimeFrames = 24;
     const float AnimeFps = 12f;
@@ -110,7 +117,8 @@ public sealed partial class BattleMode
         bool hasPoint = false;
         foreach (var r in renderers)
         {
-            if (r.name.StartsWith("Deck", StringComparison.Ordinal) || r.name.StartsWith("PlayingCard", StringComparison.Ordinal)) continue;
+            if (r.name.StartsWith("Deck", StringComparison.Ordinal) || r.name.StartsWith("PlayingCard", StringComparison.Ordinal)
+                || r.name.StartsWith("Weapon_", StringComparison.Ordinal)) continue;  // held props must not shrink the body
             Mesh mesh = null;
             bool baked = r is SkinnedMeshRenderer;
             if (r is SkinnedMeshRenderer skin) { mesh = new Mesh(); skin.BakeMesh(mesh, true); }

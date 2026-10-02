@@ -17,3 +17,6 @@
 *.apk
 *.aab
 *.tmp
+
+# Battle rig check renders (Assets/Editor/BattleRigBatchCheck.cs)
+/BattleRigCheck/
