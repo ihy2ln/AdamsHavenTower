@@ -1,0 +1,163 @@
+{
+  "promptDocument": "S:/AI/Game/Unity AHCG/My project/SILVERWOOD_EVENT_SCENES.md",
+  "generator": "Built-in imagegen",
+  "styleReference": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Battle/silverwood_battle_v1.png",
+  "createdCount": 22,
+  "previouslyExistingCount": 20,
+  "assets": [
+    {
+      "id": "animal_snared_stag",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A silver stag with faintly glowing antlers thrashing in a poacher's rope snare among roots, one foreleg bleeding, leaves scattered, soft dappled light. Pathos, no humans.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-fff07132-e62b-44f5-bbbf-c89c2ac0f114.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/animal_snared_stag.png",
+      "saved": true
+    },
+    {
+      "id": "hazard_fog_fork",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A forest trail splitting in two around a huge mossy boulder, both branches vanishing into thick white fog between silver-barked trunks. Quiet, uncertain, balanced composition.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-9b161502-b007-4f4c-a2d0-b3bfea133f2d.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/hazard_fog_fork.png",
+      "saved": true
+    },
+    {
+      "id": "social_lantern_stranger",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A hooded cloaked figure with a green lantern standing under dark trees at night, a small cloth of wares laid on a root, green light spilling on the mossy ground. Face hidden in shadow. (Figure allowed, silhouette.)",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-b7c585d8-df84-4876-a799-475f0757a984.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/social_lantern_stranger.png",
+      "saved": true
+    },
+    {
+      "id": "hazard_collapsed_bridge",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A wooden footbridge broken in the middle over a cold fast stream, planks hanging, white water over rocks below, moss and ferns on both banks. Clear gap as focal point.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-f87bc12f-001a-4e66-9f6a-836e4f203f3a.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/hazard_collapsed_bridge.png",
+      "saved": true
+    },
+    {
+      "id": "spirit_moonwell",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A still round pool in a ruined stone ring glowing faintly pale blue, faint wisps rising from the water like whispers, silver blossoms on the edge. Cool moonlight, magical, calm.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-bcb63c02-a4f5-47a3-82e0-007487e533cf.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/spirit_moonwell.png",
+      "saved": true
+    },
+    {
+      "id": "social_raider_tracks",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: Muddy trail with fresh boot prints crossing it, a dropped knife stuck in a log, a torn scrap of red cloth on a thorn, the forest quiet and watchful beyond. Tension, no people.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-7a9203bd-9d7f-4b38-a5e7-6c0f5df4ca76.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/social_raider_tracks.png",
+      "saved": true
+    },
+    {
+      "id": "camp_sleepless_night",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A low-burning campfire with empty bedrolls around it in a dark glade, the forest black and close, pairs of faint eye-glints deep between the trees, a thin trail of smoke. No people.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-8fc58466-dcd8-4fe3-977d-131a0932952d.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/camp_sleepless_night.png",
+      "saved": true
+    },
+    {
+      "id": "magic_mushroom_ring",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A perfect circle of pale glowing mushrooms in a mossy clearing, the air inside shimmering with soft light and floating spores, ordinary dark forest outside the ring. Enchanted, slightly eerie.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-6cd7d502-8fa7-4b82-9cd7-630d30cf6304.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/magic_mushroom_ring.png",
+      "saved": true
+    },
+    {
+      "id": "find_abandoned_wagon",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A tipped wooden cart on a forest road with a canvas cover half pulled off, crates and sacks showing underneath, a broken wheel, ropes trailing, no oxen. Overgrown, quiet, a story of a hurried departure.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-8f8dfd62-8e64-4843-b9ff-467854463757.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/find_abandoned_wagon.png",
+      "saved": true
+    },
+    {
+      "id": "animal_howling_pack",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A moonlit forest at night, many pairs of glowing eyes ringing the view from the dark between the trunks, one lone howling silhouette on a rise against the moon. Threatening, no gore.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-f340b492-d459-4eb8-920d-9cdfaf0ea1ac.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/animal_howling_pack.png",
+      "saved": true
+    },
+    {
+      "id": "social_hermit_herbalist",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A sunny clearing with a small thatched hut and a neat herb garden, drying bundles hanging from the eaves, a small kettle on a fire, bees and butterflies. Warm and welcoming. An elderly woman may appear small, seen from behind, tending the plants.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-78a1fc33-4bd5-422c-8ab2-76994cb64a3c.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/social_hermit_herbalist.png",
+      "saved": true
+    },
+    {
+      "id": "hazard_bramble_wall",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A trail blocked by an enormous wall of thick black thorny brambles as wide as wrists, a faint gap of light in the middle, a few torn scraps of cloth snagged on the thorns.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-261a46ef-5406-42e4-baec-97d27983ec29.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/hazard_bramble_wall.png",
+      "saved": true
+    },
+    {
+      "id": "magic_crystal_echo",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A cave-like forest hollow lined with tall glowing blue and violet crystals, faint ripples of sound visible in the air between them, small shards floating, soft cold light.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-e5f5b4b9-6efc-4fb1-b9e0-521fa979199a.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/magic_crystal_echo.png",
+      "saved": true
+    },
+    {
+      "id": "find_sunken_cache",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A swampy pool with an iron-banded strongbox visible a foot under dark murky water, reeds around, bubbles rising, faint green light on the surface. Mist and still water.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-a5fbb29b-8b4f-44dc-a261-b9a965cdb6b9.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/find_sunken_cache.png",
+      "saved": true
+    },
+    {
+      "id": "spirit_roadside_shrine",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A small moss-covered stone shrine to old forest spirits at the side of a trail, carved with leaf and antler patterns, a few dried flowers and a candle stub in front of it, soft green light through leaves.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-8580b405-8eb0-4a07-aa88-1836ceee0d90.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/spirit_roadside_shrine.png",
+      "saved": true
+    },
+    {
+      "id": "spirit_lost",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A small glowing humanoid spirit curled up and crying between huge roots in a dark forest, pale blue light on the bark, drifting motes. Sad and tender. (Spirit allowed, small and simple.)",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-4a25e4a8-9cd1-41db-b1c3-ab65fcf001c7.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/spirit_lost.png",
+      "saved": true
+    },
+    {
+      "id": "spirit_gift",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A hollow in an ancient tree with a small glowing spirit peeking out and beckoning, warm golden-green light spilling from inside, flowers blooming at the base of the tree. Gentle and hopeful.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-51329083-582f-49ae-885c-82de9f465bde.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/spirit_gift.png",
+      "saved": true
+    },
+    {
+      "id": "social_smugglers_toll",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A narrow forest trail blocked by a rope barrier and a crude barricade of crates and barrels, a lantern on a post, a few armed silhouettes just visible behind it in shadow. Tension, no faces. (Silhouettes allowed.)",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-b3529ce7-6d62-4fee-8e68-c96d7bd69e79.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/social_smugglers_toll.png",
+      "saved": true
+    },
+    {
+      "id": "hazard_cave_draft",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A dark cave crack in a rock wall with faint daylight and drifting leaves and dust flowing out of it, a cold mist along the floor, a thin sliver of sky glimpsed beyond. Mysterious, hopeful.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-aa2edca3-c3e2-4c64-98cc-27605b1aa1f8.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/hazard_cave_draft.png",
+      "saved": true
+    },
+    {
+      "id": "hazard_downpour",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A dense forest in a heavy hazard_downpour, rain hammering through the canopy in silver streaks, puddles rippling, leaves bowed, a dim grey-blue light with a faint warm glow far away. Atmospheric.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-dde3464b-1eee-46ec-a16c-1e680398dd73.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/hazard_downpour.png",
+      "saved": true
+    },
+    {
+      "id": "camp_quiet_glade",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A hushed sunlit glade surrounded by tall silver-barked trees, still and silent, golden light shafts and drifting pollen, a ring of soft grass. Every shadow beyond the glade is dark. Calm before something. (Rest scene for the pre-boss pause.)",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-db808b4c-6924-4f49-903d-c624b6d1ec94.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/camp_quiet_glade.png",
+      "saved": true
+    },
+    {
+      "id": "threat_ambush",
+      "prompt": "Use case: stylized-concept. Asset type: ONE 16:9 landscape 1672x941 PNG eye-level event scene plate for Unity Adams Haven roguelite expedition banner above story text. Rich readable painterly fantasy game art with soft brush texture, ancient silver-bark trunks and deep green canopy, cool teal-blue forest light and restrained amber accents, cinematic atmospheric depth mist floating motes. Reference image is paint style and palette ONLY, create a NEW distinct composition and location for the scene; do not copy arena or waterfalls or ruins unless requested. Eye-level never overhead. Clear focal subject central two thirds, calm simple bottom 25% ground moss water for text overlay. Strong silhouette phone readability. No party, heroes, UI, text, letters, labels, logos, card borders, watermark, signature, corner emblems, map markers. Figures and creatures only as scene specifically allows. Scene: A forest path with branches creaking and many dark shapes moving between the trunks, glimpses of eyes, claws and weapons in shadow, mist, an urgent red-tinted light low on the horizon. Danger closing in. (Shapes in silhouette only.)",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-1b863dc1-9264-4de2-aeb6-0bbecda01ec1.png",
+      "destination": "S:/AI/Game/Unity AHCG/My project/Assets/Resources/AdamsHaven/Events/Art/threat_ambush.png",
+      "saved": true
+    }
+  ]
+}

@@ -5,7 +5,7 @@
   python Tools/char_to_3d.py Elara --quick    # cheaper settings for testing the pipeline
   python Tools/char_to_3d.py Elara --multiview  # front + Qwen left/back/right views (run char_views.py first)
 
-Maximum-quality settings for a 16 GB card: structure decoded at 64^3, shape upsampled to 2048^3, MoGe-3 field of view,
+Maximum-quality settings for a 16 GB card: structure at the native 32^3, shape upsampled to 1536^3, MoGe-3 field of view,
 more sampler steps, 1024^3 remesh, 4096 px base colour / normal / AO bakes. Time is not a constraint.
 Outputs (per character, next to the source art): <Name>/pixal-max-v1/<name>_pixal_raw.glb
 """
@@ -31,8 +31,8 @@ REFS = {
     'CelestiumMed': ('Celestium', 'exec-ae2e53b3-a344-4d1f-9ed4-cc342366592e.png'),
 }
 
-MAX = dict(struct_res='64', struct_steps=25, shape_steps=30, up_res=2048, up_steps=20, tex_steps=20,
-           remesh=1024, faces=400000, atlas=4096, moge_refine=6)
+MAX = dict(struct_res='32', struct_steps=25, shape_steps=30, up_res=1536, up_steps=20, tex_steps=20,
+           remesh=1024, faces=400000, atlas=4096, moge_refine=6)   # 64^3 structure and 2048 upsample produce broken shapes
 QUICK = dict(struct_res='32', struct_steps=12, shape_steps=20, up_res=1024, up_steps=12, tex_steps=12,
              remesh=640, faces=120000, atlas=2048, moge_refine=3)
 
@@ -74,8 +74,9 @@ def graph(image, has_alpha, prefix, s, seed=42, views=None):
             n(base + 2, 'ImageCropToMask', images=L(base), masks=L(base + 1), width=1024, height=1024, pad_factor=1.1,
               grow_mask=0, background='#000000')
             cond[vname] = L(base + 2)
-        n(5, 'Pixal3DMultiViewConditioning', clip_vision_model=L(4), fov=20.0, front=cond['front'], left=cond['left'],
-          back=cond['back'], right=cond['right'])
+        # the rig's 'left'/'right' are mirrored relative to char_views.py's naming, so swap them or the mesh comes out mirrored
+        n(5, 'Pixal3DMultiViewConditioning', clip_vision_model=L(4), fov=20.0, front=cond['front'], left=cond['right'],
+          back=cond['back'], right=cond['left'])
         n(6, 'UNETLoader', unet_name='pixal3d_multiview_int8_convrot.safetensors', weight_dtype='default')
     else:
         # camera field of view from MoGe-3, then Pixal3D pixel-aligned conditioning
@@ -151,8 +152,20 @@ def run(key, settings, tag, multiview=False):
         views = {}
         for v in ('left', 'back', 'right'):
             shutil.copy(vd / f'{v}.png', COMFY / 'input' / f'view_{key}_{v}.png'); views[v] = f'view_{key}_{v}.png'
-    pid = call('/prompt', {'prompt': graph(image, has_alpha, f'3d/char_{key}{tag}', settings, views=views)})['prompt_id']
-    print(key, 'queued', pid, 'alpha' if has_alpha else 'birefnet', flush=True)
+    ladder = [settings] if settings is QUICK else [settings,
+              {**settings, 'up_res': 1280}, {**settings, 'up_res': 1024}]
+    for attempt, cfg in enumerate(ladder):
+        ok, h = submit(key, image, has_alpha, tag, cfg, views)
+        if ok: break
+        print(key, 'attempt', attempt, 'failed; retrying with lower resolution', flush=True)
+    else:
+        raise SystemExit(f'{key} failed at every resolution')
+    f = finish(h, key, out, final, image)
+
+
+def submit(key, image, has_alpha, tag, cfg, views):
+    pid = call('/prompt', {'prompt': graph(image, has_alpha, f'3d/char_{key}{tag}', cfg, views=views)})['prompt_id']
+    print(key, 'queued', pid, 'alpha' if has_alpha else 'birefnet', 'up_res', cfg['up_res'], flush=True)
     t0 = time.time()
     while True:
         try:
@@ -164,10 +177,15 @@ def run(key, settings, tag, multiview=False):
             break
         time.sleep(10)
     if h['status'].get('status_str') == 'error':
-        print(json.dumps(h['status'], indent=1)[:3000]); raise SystemExit(f'{key} failed')
+        print(json.dumps(h['status'], indent=1)[:1500]); return False, h
+    print(key, 'sampled in %ds' % (time.time() - t0), flush=True)
+    return True, h
+
+
+def finish(h, key, out, final, image):
     files = [f for o in h['outputs'].values() for v in o.values() if isinstance(v, list) for f in v
              if isinstance(f, dict) and str(f.get('filename', '')).endswith('.glb')]
-    print(key, 'done in %ds' % (time.time() - t0), files, flush=True)
+    print(key, 'done', files, flush=True)
     f = files[-1]
     shutil.copy(COMFY / 'output' / f.get('subfolder', '') / f['filename'], final)
     shutil.copy(COMFY / 'input' / image, out / f'{key}_reference.png')

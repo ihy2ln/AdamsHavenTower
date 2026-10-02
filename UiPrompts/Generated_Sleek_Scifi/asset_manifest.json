@@ -1,0 +1,114 @@
+[
+  {
+    "name": "bar2_progress.png",
+    "width": 1774,
+    "height": 887,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_dock_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_fab_states.png",
+    "width": 1774,
+    "height": 887,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_heart_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_primary_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_round_states.png",
+    "width": 1774,
+    "height": 887,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_secondary_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_tab_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_violet_states.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "btn2_window_modes.png",
+    "width": 1774,
+    "height": 887,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "chip2_resource_9slice.png",
+    "width": 2172,
+    "height": 724,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "icons2_dock.png",
+    "width": 1983,
+    "height": 793,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "icons2_utility.png",
+    "width": 1983,
+    "height": 793,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "panel2_frame_9slice.png",
+    "width": 1254,
+    "height": 1254,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 1
+  },
+  {
+    "name": "panel2_header_9slice.png",
+    "width": 1983,
+    "height": 793,
+    "format": "Format32bppArgb",
+    "cornerAlpha": 0
+  },
+  {
+    "name": "ui2_style_anchor.png",
+    "width": 1774,
+    "height": 887,
+    "format": "Format24bppRgb",
+    "cornerAlpha": 255
+  }
+]

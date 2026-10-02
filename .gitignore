@@ -22,3 +22,9 @@
 /BattleRigCheck/
 # Tower 3D chibi check renders (Assets/Editor/TowerChibi3DCheck.cs)
 /TowerChibi3DCheck/
+
+# Android IL2CPP/CMake scratch from release builds
+/.utmp/
+# Character pipeline run logs
+/BarnModels/*.log
+/BarnModels/*.err

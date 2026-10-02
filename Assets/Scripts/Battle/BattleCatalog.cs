@@ -84,9 +84,9 @@ public static class BattleCatalog
             cards.Add(C("mv_frost_jab", "Frost Jab", id, 1, 1, 1.3f));
             cards.Add(C("mv_rime_sweep", "Rime Sweep", id, 2, 1, 1.1f, status: "Slow", magnitude: .25f, duration: 2));
             cards.Add(C("mv_glacier_guard", "Glacier Guard", id, 1, 0, target: BattleTarget.Self, status: "DefenseUp", magnitude: .35f, duration: 2));
-            cards.Add(C("mv_shatter_hook", "Shatter Hook", id, 3, 1, 2.2f, status: "DefenseDown", magnitude: .2f, duration: 2));
+            cards.Add(C("mv_shatter_hook", "Shatter", id, 3, 1, 2.2f, status: "DefenseDown", magnitude: .2f, duration: 2));
             cards.Add(C("mv_whiteout_counter", "Whiteout Counter", id, 2, 0, target: BattleTarget.Self, status: "IceCounter", magnitude: 1.4f, duration: 1));
-            cards.Add(C("mv_permafrost_brace", "Permafrost Brace", id, 2, 0, target: BattleTarget.Self, status: "DefenseUp", magnitude: .4f, duration: 2, heal: 24));
+            cards.Add(C("mv_permafrost_brace", "Perma Brace", id, 2, 0, target: BattleTarget.Self, status: "DefenseUp", magnitude: .4f, duration: 2, heal: 24));
         }
         else if (id == "ghislaine")
         {
@@ -94,7 +94,7 @@ public static class BattleCatalog
             cards.Add(C("gh_guard_stance", "Guard Stance", id, 1, 0, target: BattleTarget.Self, status: "DefenseUp", magnitude: .4f, duration: 2));
             cards.Add(C("gh_fireline_cut", "Fireline Cut", id, 2, 1, 1.5f, BattleTarget.AllEnemies));
             cards.Add(C("gh_ember_chain", "Ember Chain", id, 2, 1, 1.2f));
-            cards.Add(C("gh_reckless_swing", "Reckless Swing", id, 3, 1, 3f));
+            cards.Add(C("gh_reckless_swing", "Reckless Hit", id, 3, 1, 3f));
             cards.Add(C("gh_tiger_riposte", "Tiger Riposte", id, 2, 1, 1.8f, status: "DefenseDown", magnitude: .3f, duration: 2));
         }
         else if (id == "elara")
@@ -102,15 +102,15 @@ public static class BattleCatalog
             cards.Add(C("el_arc_bolt", "Arc Bolt", id, 1, 1, 1.3f, magic: true));
             cards.Add(C("el_piercing_shot", "Piercing Shot", id, 2, 1, 2.2f, magic: true));
             cards.Add(C("el_forest_scout", "Forest Scout", id, 1, 0, target: BattleTarget.None, draw: 2));
-            cards.Add(C("el_sapping_volley", "Sapping Volley", id, 2, 1, 1f, status: "AttackDown", magnitude: .25f, duration: 2, magic: true));
-            cards.Add(C("el_artillery_barrage", "Artillery Barrage", id, 3, 1, 1.5f, BattleTarget.AllEnemies, magic: true));
+            cards.Add(C("el_sapping_volley", "Sap Volley", id, 2, 1, 1f, status: "AttackDown", magnitude: .25f, duration: 2, magic: true));
+            cards.Add(C("el_artillery_barrage", "Barrage", id, 3, 1, 1.5f, BattleTarget.AllEnemies, magic: true));
             cards.Add(C("el_storm_tally", "Storm Tally", id, 2, 1, 1f, BattleTarget.AllEnemies, magic: true));
         }
         else if (id == "helda")
         {
-            cards.Add(C("he_hearthfire_mend", "Hearthfire Mend", id, 1, 1, target: BattleTarget.Ally, heal: 28));
+            cards.Add(C("he_hearthfire_mend", "Hearth Mend", id, 1, 1, target: BattleTarget.Ally, heal: 28));
             cards.Add(C("he_chilling_touch", "Chilling Touch", id, 1, 1, 1.1f, magic: true));
-            cards.Add(C("he_frosted_ward", "Frosted Ward", id, 2, 1, target: BattleTarget.AllAllies, status: "DefenseUp", magnitude: .25f, duration: 2));
+            cards.Add(C("he_frosted_ward", "Frost Ward", id, 2, 1, target: BattleTarget.AllAllies, status: "DefenseUp", magnitude: .25f, duration: 2));
             cards.Add(C("he_reserve_tonic", "Reserve Tonic", id, 1, 0, target: BattleTarget.Ally, draw: 1, epGain: 1));
             cards.Add(C("he_lend_strength", "Lend Strength", id, 0, 0, target: BattleTarget.Ally, transferEp: true));
             cards.Add(C("he_bulwark_brew", "Bulwark Brew", id, 3, 1, target: BattleTarget.AllAllies, status: "DefenseUp", magnitude: .5f, duration: 2));
@@ -120,18 +120,18 @@ public static class BattleCatalog
             cards.Add(C("da_bonfire_brand", "Bonfire Brand", id, 1, 1, 1.5f));
             cards.Add(C("da_wand_sweep", "Wand Sweep", id, 2, 1, 1.5f, BattleTarget.AllEnemies));
             cards.Add(C("da_ember_thrust", "Ember Thrust", id, 1, 1, 1.4f));
-            cards.Add(C("da_matriarch_pyre", "Matriarch's Pyre", id, 3, 1, 1.8f, BattleTarget.AllEnemies, "DefenseDown", .2f, 2));
-            cards.Add(C("da_spearflame_rush", "Spearflame Rush", id, 3, 1, 2.2f, status: "DefenseDown", magnitude: .2f, duration: 2));
-            cards.Add(C("da_burning_circle", "Burning Circle", id, 3, 1, 1.8f, BattleTarget.AllEnemies, "DefenseDown", .2f, 2));
+            cards.Add(C("da_matriarch_pyre", "Matriarch Pyre", id, 3, 1, 1.8f, BattleTarget.AllEnemies, "DefenseDown", .2f, 2));
+            cards.Add(C("da_spearflame_rush", "Flame Rush", id, 3, 1, 2.2f, status: "DefenseDown", magnitude: .2f, duration: 2));
+            cards.Add(C("da_burning_circle", "Fire Circle", id, 3, 1, 1.8f, BattleTarget.AllEnemies, "DefenseDown", .2f, 2));
         }
         else if (id == "clarity")
         {
             cards.Add(C("cy_radiant_palm", "Radiant Palm", id, 1, 1, 1.4f));
-            cards.Add(C("cy_barkeep_tonic", "Barkeep's Tonic", id, 1, 0, target: BattleTarget.Ally, heal: 22));
+            cards.Add(C("cy_barkeep_tonic", "Tonic", id, 1, 0, target: BattleTarget.Ally, heal: 22));
             cards.Add(C("cy_flare", "Flare", id, 2, 1, 1.6f, BattleTarget.AllEnemies, magic: true));
             cards.Add(C("cy_uplift", "Uplift", id, 2, 1, target: BattleTarget.AllAllies, status: "AttackUp", magnitude: .25f, duration: 2));
             cards.Add(C("cy_smite", "Smite", id, 3, 1, 2.9f, magic: true));
-            cards.Add(C("cy_rejuvenating_draught", "Rejuvenating Draught", id, 2, 0, target: BattleTarget.Ally, heal: 22, epGain: 1));
+            cards.Add(C("cy_rejuvenating_draught", "Draught", id, 2, 0, target: BattleTarget.Ally, heal: 22, epGain: 1));
         }
         foreach (BattleCard card in cards) card.Element = unit.Element;
         return cards;
@@ -144,12 +144,12 @@ public static class BattleCatalog
             C("sm_rally", "Rally", "jd", 0, 1, target: BattleTarget.None, draw: 2),
             C("sm_surge", "Surge", "jd", 0, 1, target: BattleTarget.Ally, epGain: 2),
             C("sm_second", "Second Wind", "jd", 0, 2, target: BattleTarget.Ally, apGain: 1),
-            C("sm_banner", "Commander's Banner", "jd", 0, 1, target: BattleTarget.AllAllies, status: "AttackUp", magnitude: .3f, duration: 2),
+            C("sm_banner", "Banner", "jd", 0, 1, target: BattleTarget.AllAllies, status: "AttackUp", magnitude: .3f, duration: 2),
             C("sm_aegis", "Aegis", "jd", 0, 1, target: BattleTarget.AllAllies, status: "DefenseUp", magnitude: .3f, duration: 2),
-            C("sm_wither", "Withering Gaze", "jd", 0, 1, target: BattleTarget.AllEnemies, status: "DefenseDown", magnitude: .25f, duration: 2),
-            C("sm_hush", "Hush the Corrupt", "jd", 0, 1, target: BattleTarget.AllEnemies, status: "AttackDown", magnitude: .25f, duration: 2),
+            C("sm_wither", "Wither", "jd", 0, 1, target: BattleTarget.AllEnemies, status: "DefenseDown", magnitude: .25f, duration: 2),
+            C("sm_hush", "Hush", "jd", 0, 1, target: BattleTarget.AllEnemies, status: "AttackDown", magnitude: .25f, duration: 2),
             C("sm_mend", "Blessing", "jd", 0, 2, target: BattleTarget.AllAllies, heal: 30),
-            C("sm_draw_eye", "Draw Their Eye", "jd", 0, 1, target: BattleTarget.Ally, status: "Taunt", duration: 2),
+            C("sm_draw_eye", "Taunt", "jd", 0, 1, target: BattleTarget.Ally, status: "Taunt", duration: 2),
         };
     }
 
@@ -163,9 +163,9 @@ public static class BattleCatalog
     {
         return new List<BattleCard>
         {
-            C("ult_sum_a", "JD's Rallying Decree", "jd", 0, 0,
+            C("ult_sum_a", "Rally Decree", "jd", 0, 0,
                 target: BattleTarget.AllAllies, status: "AttackUp", magnitude: .5f, duration: 3, heal: 25),
-            C("ult_sum_b", "JD's Sundering Decree", "jd", 0, 0,
+            C("ult_sum_b", "Sunder Decree", "jd", 0, 0,
                 target: BattleTarget.AllEnemies, status: "DefenseDown", magnitude: .4f, duration: 3),
         };
     }
@@ -230,7 +230,7 @@ public static class BattleCatalog
                 card = C("aw_daisy", "Wildheart Surge", unit.Id, 0, 0, target: BattleTarget.AllAllies,
                     status: "AttackUp", magnitude: .25f, duration: 2, draw: 1); break;
             case "clarity":
-                card = C("aw_clarity", "Luminous Recovery", unit.Id, 0, 0, target: BattleTarget.AllAllies,
+                card = C("aw_clarity", "Recovery", unit.Id, 0, 0, target: BattleTarget.AllAllies,
                     status: "DefenseUp", magnitude: .20f, duration: 2, heal: 20); break;
             default: return null;
         }
@@ -294,7 +294,7 @@ public static class BattleCatalog
         List<BattleCard> cards = new List<BattleCard>();
         if (id == "shardling_sprout" || id == "amberhide_grazer" || id == "moonstone_ravager")
         {
-            cards.Add(C("e_bash", "Crystalline Bash", enemy.Id, 1, 1, 1.2f));
+            cards.Add(C("e_bash", "Crystal Bash", enemy.Id, 1, 1, 1.2f));
             cards.Add(C("e_guard", "Root Guard", enemy.Id, 1, 1, target: BattleTarget.Self, status: "DefenseUp", magnitude: .3f, duration: 2));
         }
         else if (id == "eclipse_core_golem")
@@ -315,7 +315,7 @@ public static class BattleCatalog
     {
         return new List<BattleCard>
         {
-            C("es_dirge", "Corrupting Dirge", "enemy_commander", 0, 1,
+            C("es_dirge", "Dirge", "enemy_commander", 0, 1,
                 target: BattleTarget.AllEnemies, status: "AttackDown", magnitude: .20f, duration: 2),
             C("es_rot", "Creeping Rot", "enemy_commander", 0, 1,
                 target: BattleTarget.AllEnemies, status: "Poison", magnitude: 7f, duration: 2),

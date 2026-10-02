@@ -1,0 +1,199 @@
+{
+  "generator": "Codex built-in image generation",
+  "promptDocument": "SILVERWOOD_DUNGEON_PROMPTS.md",
+  "assets": [
+    {
+      "file": "Dungeon/AnimeV2/mine_room.png",
+      "prompt": "Use case: stylized-concept. ONE high-fidelity modern anime fantasy RPG dungeon ROOM DIORAMA sprite for Adams Haven. Nearly overhead orthographic 2.5D cutaway, little visible perimeter wall thickness, aligned square footprint NOT diamond isometric, north at top. Open square playable centre central 70%; props and raised structures only around perimeter. Narrow CLEAR OPEN PASSAGE centred on EACH of FOUR edges: north south east west, connecting flat continuous walking floor. No tall centre objects. Crisp exquisite anime illustration, blue-violet shadows, teal Celestium inlays, silver highlights, warm amber light pools, polished JRPG environment. Square 2048x2048 PNG, whole room soft contact shadow isolated on genuine transparent background, close crop. Reference is style/framing only. No other rooms, exterior paths, labels, text, UI, grids, characters, badges or numbers. Scene: Abandoned mine chamber carved into blue-grey rock, perimeter timber supports, rusted rails flush across floor, ore carts and winch frame along edges, collapsed side tunnel away from cardinal doors, hanging lanterns, crystal ore glints. Cold blue light warm lantern pools.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-98b6ab09-e2ce-4192-9eaf-735b58c142bd.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/AnimeV2/mine_vista.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Long timber-braced mine gallery receding into darkness, floor rails, roof lanterns, mist at far end.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-d3e7c378-e3fb-4c03-8527-145a2839dafe.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/Silverbrook/mine_terrain.png",
+      "prompt": "Use case: stylized-concept. 1024x1024 square seamless repeating top-down dungeon ground texture for Adams Haven. Edge-to-edge matching tile, uniform scale and diffuse lighting, muted low contrast painterly anime materials. No perspective, horizon, borders, central focal subject, text, UI or objects casting directional shadows. Scene: Dark slate, gravel, old rail timbers and scattered ore flecks.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-73d2659a-4571-4882-bbd1-161540e9c875.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/AnimeV2/blight_room.png",
+      "prompt": "Use case: stylized-concept. ONE high-fidelity modern anime fantasy RPG dungeon ROOM DIORAMA sprite for Adams Haven. Nearly overhead orthographic 2.5D cutaway, little visible perimeter wall thickness, aligned square footprint NOT diamond isometric, north at top. Open square playable centre central 70%; props and raised structures only around perimeter. Narrow CLEAR OPEN PASSAGE centred on EACH of FOUR edges: north south east west, connecting flat continuous walking floor. No tall centre objects. Crisp exquisite anime illustration, blue-violet shadows, teal Celestium inlays, silver highlights, warm amber light pools, polished JRPG environment. Square 2048x2048 PNG, whole room soft contact shadow isolated on genuine transparent background, close crop. Reference is style/framing only. No other rooms, exterior paths, labels, text, UI, grids, characters, badges or numbers. Scene: Cracked grey stone floor violet corruption seams, dead black thorn vines on perimeter walls, violet spore pools along edges, broken statues and ash drifts. Four openings overgrown but completely clear, menacing readable.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-19134d19-245c-4df3-865e-f3ece4f411d4.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/AnimeV2/blight_vista.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Hall of dead grey trees growing through ruined masonry, violet light from floor cracks, drifting ash, faint sickly distant glow.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-341365cc-2eb0-472b-8aa9-0b8ed3c87dc6.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/Silverbrook/blight_terrain.png",
+      "prompt": "Use case: stylized-concept. 1024x1024 square seamless repeating top-down dungeon ground texture for Adams Haven. Edge-to-edge matching tile, uniform scale and diffuse lighting, muted low contrast painterly anime materials. No perspective, horizon, borders, central focal subject, text, UI or objects casting directional shadows. Scene: Cracked ash-grey earth with thin violet corruption veins and dead leaves.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-10dfce78-0547-4f27-9578-591f3df9d1a0.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/AnimeV2/heartwood_room.png",
+      "prompt": "Use case: stylized-concept. ONE high-fidelity modern anime fantasy RPG dungeon ROOM DIORAMA sprite for Adams Haven. Nearly overhead orthographic 2.5D cutaway, little visible perimeter wall thickness, aligned square footprint NOT diamond isometric, north at top. Open square playable centre central 70%; props and raised structures only around perimeter. Narrow CLEAR OPEN PASSAGE centred on EACH of FOUR edges: north south east west, connecting flat continuous walking floor. No tall centre objects. Crisp exquisite anime illustration, blue-violet shadows, teal Celestium inlays, silver highlights, warm amber light pools, polished JRPG environment. Square 2048x2048 PNG, whole room soft contact shadow isolated on genuine transparent background, close crop. Reference is style/framing only. No other rooms, exterior paths, labels, text, UI, grids, characters, badges or numbers. Scene: Living-wood chamber, enormous silver-barked roots forming perimeter arches and benches, flat stone rune circle in floor glowing gold and teal, drifting pollen fireflies, golden shafts from above. Calm awe-inspiring.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-4d7711ad-17a6-4697-8772-e02848ee8f2e.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/AnimeV2/heartwood_vista.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Colonnade of colossal silver trunks like a cathedral, golden shafts, floating spirit lights, distant glowing living-wood gate.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-1642ca82-2468-4178-9bc5-a9df3fc9c223.png",
+      "saved": true
+    },
+    {
+      "file": "Dungeon/Silverbrook/heartwood_terrain.png",
+      "prompt": "Use case: stylized-concept. 1024x1024 square seamless repeating top-down dungeon ground texture for Adams Haven. Edge-to-edge matching tile, uniform scale and diffuse lighting, muted low contrast painterly anime materials. No perspective, horizon, borders, central focal subject, text, UI or objects casting directional shadows. Scene: Soft moss, silver root fibres and fallen golden leaves.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-2d76f743-48ae-403b-8aa5-d14bb720e0d8.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/trap_0.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Forest-root stone hall: pressure plate focal hazard, fine tripwires, dart holes, half-hidden pit with rusted spike, skeleton hand in shadow. Candlelight mist.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-5e199e80-7716-4a56-b36c-82017d5af03b.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/trap_1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Ruined masonry hall, tripwire sharply catching moonlight as focal hazard, pressure plate, dart holes, half-hidden spike pit, skeletal hand in shadows.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-a10dd48e-c82f-49cd-88ee-024706bc9ff7.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/trap_2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Cave stone passage with lantern-lit pressure plate focal hazard, tripwire, dart holes, partly hidden spike pit, skeleton hand in shadow. STRICT CLEAN ART: No corner sparkle emblems, no signatures, no subtitles or decorative writing anywhere. All paper, scrolls and open book pages are completely BLANK aged parchment without strokes, letters or writing. Floors have no text. Generate a fresh image complying with these constraints.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-6af05909-3b09-4263-9c3b-e83dded74765.png",
+      "saved": true,
+      "rejectedSource": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-4381908d-de23-4a4a-93ea-9fb3a0d2a861.png",
+      "cleanupPrompt": "Use case: precise-object-edit. Remove the small faint emblem in the extreme top right corner and replace it seamlessly with matching unmarked dark stone. Preserve all other composition, scene objects, colors, lighting, dimensions and painted style exactly. No text, logos, watermarks or added corner marks anywhere. Output 1672x941 landscape."
+    },
+    {
+      "file": "Rooms/skill_check_0.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Forest stone ring door with carved nonlinguistic symbols, silver roots, sunbeam on rotating ring mechanism, quiet dust.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-d7d769e9-b0c3-42fd-a724-7b164e0a865e.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/skill_check_1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Ruin lever and chain mechanism with jammed gear, sunbeam and dust, mechanism focal subject.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-7e4f2dff-0d2c-4963-886f-74f6aa18f051.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/skill_check_2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Cave rope bridge with broken winch, shaft of daylight on winch, quiet dust.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-917e22c3-db7e-4143-b484-523500c95db7.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/story_0.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Forest-root chamber with collapsed library shelf, one open book and candle, scattered papers, warm light, no readable writing. STRICT CLEAN ART: No corner sparkle emblems, no signatures, no subtitles or decorative writing anywhere. All paper, scrolls and open book pages are completely BLANK aged parchment without strokes, letters or writing. Floors have no text. Generate a fresh image complying with these constraints.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-2f3308f1-057d-4d14-a1ae-c306d0536e89.png",
+      "saved": true,
+      "rejectedSource": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-e0dbeb5e-1881-41aa-b96c-eb17983c0fb9.png",
+      "cleanupPrompt": "Use case: precise-object-edit. Remove the entire line of faint white pseudo-lettering across the bottom centre edge and replace with matching uninterrupted stone floor. Preserve all other composition, scene objects, colors, lighting, dimensions and painted style exactly. No text, logos, watermarks or added corner marks anywhere. Output 1672x941 landscape."
+    },
+    {
+      "file": "Rooms/story_1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Ruin chamber with abandoned campsite, bedroll and cold cup, scattered papers, one warm lantern, someone recently left. STRICT CLEAN ART: No corner sparkle emblems, no signatures, no subtitles or decorative writing anywhere. All paper, scrolls and open book pages are completely BLANK aged parchment without strokes, letters or writing. Floors have no text. Generate a fresh image complying with these constraints.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-056ae81d-8470-4a8f-ad3a-fb36328612b2.png",
+      "saved": true,
+      "rejectedSource": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-2b4141e0-ca71-4f65-ac72-f6661dfb1fbe.png"
+    },
+    {
+      "file": "Rooms/story_2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Cave chamber with carved pictorial narrative mural, scattered papers, warm single candle. Mural figures are carvings only, no living figures. STRICT CLEAN ART: No corner sparkle emblems, no signatures, no subtitles or decorative writing anywhere. All paper, scrolls and open book pages are completely BLANK aged parchment without strokes, letters or writing. Floors have no text. Generate a fresh image complying with these constraints.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-715f205a-26b6-41bb-b6be-07a419833b36.png",
+      "saved": true,
+      "rejectedSource": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-3ab132fa-cfdf-4c79-8c7e-7d9c51cfa631.png"
+    },
+    {
+      "file": "Rooms/key_gate_0.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Forest chamber massive sealed iron and silver-bark gate with large ornate keyhole faint glow, carved guardian statues flank it, roots across frame, calm floor, gold-teal light. STRICT CLEAN ART: No corner sparkle emblems, no signatures, no subtitles or decorative writing anywhere. All paper, scrolls and open book pages are completely BLANK aged parchment without strokes, letters or writing. Floors have no text. Generate a fresh image complying with these constraints.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-fad02b2a-6441-4605-91b7-69b89798f8e8.png",
+      "saved": true,
+      "rejectedSource": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-135b11c4-c0f6-4f8c-8505-81074611bff1.png"
+    },
+    {
+      "file": "Rooms/key_gate_1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Ruined chamber massive sealed iron and silver-bark gate, ornate keyhole faint glow, carved guardian statues roots across frame, calm floor, blue moonlight amber candles.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-8de11e8c-ccf2-49b1-bb94-a32c1849f8e3.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/key_gate_2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Cave chamber massive sealed iron and silver-bark gate ornate keyhole faint glow, carved guardian statues roots across frame, calm floor, cool mineral light lantern accents.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-c95c819c-a7c8-4eba-b16d-2625d0716ea2.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/rest_alcove_0.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Sheltered forest-root alcove, small fire ring, wall-side bedrolls, kettle lantern drying herbs, soft warm glow cool dark room, safe restful.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-f2c7442b-b641-4526-a76f-bb5c27d52fa4.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/rest_alcove_1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Sheltered ruined stone alcove, small fire ring bedrolls against wall, kettle lantern drying herbs, amber light blue moonlight, safe restful.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-8514268c-9a3f-4031-a323-82d30bb7b993.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/rest_alcove_2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Hidden cave alcove, small fire ring bedrolls against wall kettle lantern hanging drying herbs, warm glow cool dark cave safe restful.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-9b50b072-840d-4156-924f-1b4a6c7581b9.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/boss_d1.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Boss silhouette explicitly allowed only as described. Scene: Vast thorn-root arena clearing, ring of antlered trophies, huge crooked tree antler-like branches at far end, dark antlered boss silhouette obscured in mist. Never fully visible.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-c1175b47-3c1c-419a-8db2-3a0d41fbe0f5.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/boss_d2.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Boss silhouette explicitly allowed only as described. Scene: Flooded temple hall, black water over broken mosaics, bald-cypress pillars, throne of coral-like roots, green-blue underwater glow. Empty arena, no creatures.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-6e8b6d34-1c74-4be3-adc1-504ae1af25d2.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/boss_d3.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Boss silhouette explicitly allowed only as described. Scene: Huge cave cavern luminous crystal pillars, titanic dormant stone-crystal figure half embedded in far wall and obscured by mist, violet light. Never fully visible.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-b15035b0-f89c-4814-be14-0adb56d421d0.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/boss_d4.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Boss silhouette explicitly allowed only as described. Scene: Ruined old citadel throne room under blighted roots, tall armoured boss silhouette before shattered throne, ash violet embers, obscured in mist, never fully visible.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-7871399a-5d90-472d-a113-0a8c3090a3ed.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/boss_d5.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Boss silhouette explicitly allowed only as described. Scene: Cathedral of colossal silver trunks around glowing spring, vast shadowy bark-antler-light shape behind thick mist, golden shafts, boss never fully visible.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-81f63feb-59f4-4faa-b264-348246290220.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/megadungeon_entrance.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Colossal carved cave maw in cliff, steps descend into darkness, silver roots wrapped around carved stone teeth, faint inner lantern glow, mist pools on stairs, awe dread.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-5c6a36c6-6c67-46d6-a2a2-858fd568b028.png",
+      "saved": true
+    },
+    {
+      "file": "Rooms/megadungeon_descent.png",
+      "prompt": "Use case: stylized-concept. One 16:9 landscape 1672x941 PNG eye-level dungeon room illustration for Adams Haven Unity roguelite popup. Moody painterly fantasy, atmospheric depth, soft mist, warm candle or lantern accents against cool teal-blue shadow, moss, silver roots and old stone. View from room entrance, focal subject in central two thirds, calm lower quarter for text. Reference is rendering and palette ONLY; new distinct composition. No people, party, creatures unless explicitly specified, no text, letters, labels, UI, card border, watermark. Scene: Huge spiral staircase and vertical shaft descending through layers of old stone roots, ladders platforms, teal glow at bottom, dust in light shafts. Looking into descent from entrance landing.",
+      "source": "S:\\AI\\Harness\\Codex\\home\\generated_images\\01a0f596-8b00-7a31-8f0d-efb72e7ebd98\\exec-75ca3e67-072e-47c3-a68d-df87ccce3d2b.png",
+      "saved": true
+    }
+  ]
+}

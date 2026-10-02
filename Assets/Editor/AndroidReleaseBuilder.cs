@@ -13,7 +13,8 @@ public static class AndroidReleaseBuilder
 {
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
-    private const string Version = "0.7.0";
+    private const string Version = "0.8.0";
+    private const int VersionCode = 8;
     private const string ApkName = "AdamsHavenTowerBattle-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }
@@ -29,6 +30,21 @@ public static class AndroidReleaseBuilder
         SessionState.SetString(StageKey, "switch");
         Continue();
     }
+
+    // Batch entry: Unity -batchmode -buildTarget Android -executeMethod AndroidReleaseBuilder.BuildBatch -apkOut <file>
+    public static void BuildBatch()
+    {
+        var args = Environment.GetCommandLineArgs();
+        int at = Array.IndexOf(args, "-apkOut");
+        if (at >= 0 && at + 1 < args.Length) outputOverride = args[at + 1];
+        Directory.CreateDirectory(BuildsFolder);
+        File.WriteAllText(LogPath, "batch started " + DateTime.Now + "\n");
+        string name = PlayerSettings.productName;
+        try { Build(); }
+        finally { PlayerSettings.productName = name; AssetDatabase.SaveAssets(); Note("batch finished " + DateTime.Now); }
+    }
+
+    private static string outputOverride;
 
     private static void Note(string text) { File.AppendAllText(LogPath, text + "\n"); }
 
@@ -82,7 +98,7 @@ public static class AndroidReleaseBuilder
         PlayerSettings.productName = "Adams Haven: Tower Battle";
         PlayerSettings.SetApplicationIdentifier(android, "com.adamshaven.tower");
         PlayerSettings.bundleVersion = Version;
-        PlayerSettings.Android.bundleVersionCode = 7;
+        PlayerSettings.Android.bundleVersionCode = VersionCode;
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
@@ -98,7 +114,7 @@ public static class AndroidReleaseBuilder
         var settingsScenes = new EditorBuildSettingsScene[scenes.Count];
         for (int i = 0; i < scenes.Count; i++) settingsScenes[i] = new EditorBuildSettingsScene(scenes[i], true);
         EditorBuildSettings.scenes = settingsScenes;
-        string output = Path.Combine(BuildsFolder, ApkName);
+        string output = outputOverride ?? Path.Combine(BuildsFolder, ApkName);
         Note("building " + string.Join(",", scenes) + " -> " + output);
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {

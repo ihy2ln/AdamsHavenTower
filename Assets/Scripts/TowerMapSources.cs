@@ -40,7 +40,14 @@ namespace AdamsHaven.Tower
 
         public Texture2D Prop(TowerOverworldPoi p, out float width)
         {
-            width = p.kind == "camp" || p.kind == "lair" ? 2.6f : 2.2f;
+            switch (p.kind)
+            {
+                case "lair": width = 4.2f; break;
+                case "camp": width = 3.4f; break;
+                case "merchant": case "combat": width = 3.6f; break;
+                case "elite": width = 3.2f; break;
+                default: width = 3.3f; break;
+            }
             return TowerMapArt.Prop(p.kind);
         }
 
