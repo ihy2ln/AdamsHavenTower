@@ -27,6 +27,7 @@ namespace AdamsHaven.Tower
                     Mathf.Lerp(0.65f, 1.15f, resident.happiness / 100f) * need *
                     TraitWorkMultiplier(resident);
             }
+            if (rate <= 0) return 0;   // nobody producing: skip the neighbour scan
             return rate * Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room);
         }
 

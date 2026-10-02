@@ -197,8 +197,13 @@ namespace AdamsHaven.Tower
 
         // ---- Mood ------------------------------------------------------------------
 
+        // Filled for the length of one TickNeeds pass (nothing moves or is built during it); null otherwise.
+        private Dictionary<int, int> floorHeadcount;
+        private int cachedAmenities = -1;
+
         private int AmenityKinds()
         {
+            if (cachedAmenities >= 0) return cachedAmenities;
             int kinds = 0;
             foreach (string type in new[] { "market", "frosted_mug", "guild_hall" })
                 if (State.rooms.Exists(r => r.type == type)) kinds++;
@@ -232,7 +237,12 @@ namespace AdamsHaven.Tower
             if (resident.familyPartnerId > 0) list.Add(new TowerThought("With family", 10));
             int neighbours = 0;
             var here = Room(resident.currentRoom);
-            if (here != null)
+            if (here != null && floorHeadcount != null)
+            {
+                floorHeadcount.TryGetValue(here.floor, out neighbours);
+                neighbours--;   // the count includes this resident
+            }
+            else if (here != null)
                 foreach (var other in State.residents)
                     if (other.id != resident.id && other.origin != "body" && other.currentRoom > 0 &&
                         Room(other.currentRoom) != null && Room(other.currentRoom).floor == here.floor) neighbours++;

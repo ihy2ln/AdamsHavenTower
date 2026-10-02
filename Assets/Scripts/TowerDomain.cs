@@ -356,7 +356,26 @@ namespace AdamsHaven.Tower
         }
 
         public TowerFloor Floor(int number) { return State.floors.Find(f => f.number == number); }
-        public TowerRoom Room(int uid) { return State.rooms.Find(r => r.uid == uid); }
+        // Room lookups run inside every per-resident loop, so they go through an index instead of a list search.
+        // AddRoom and Demolish drop the index; a replaced or resized room list rebuilds it too.
+        private Dictionary<int, TowerRoom> roomIndex;
+        private List<TowerRoom> indexedRooms;
+        private int indexedCount;
+
+        public TowerRoom Room(int uid)
+        {
+            if (uid <= 0) return null;
+            if (roomIndex == null || indexedRooms != State.rooms || indexedCount != State.rooms.Count)
+            {
+                if (roomIndex == null) roomIndex = new Dictionary<int, TowerRoom>();
+                roomIndex.Clear();
+                foreach (var r in State.rooms) roomIndex[r.uid] = r;
+                indexedRooms = State.rooms;
+                indexedCount = State.rooms.Count;
+            }
+            TowerRoom room;
+            return roomIndex.TryGetValue(uid, out room) ? room : null;
+        }
         public TowerResident Resident(int id) { return State.residents.Find(r => r.id == id); }
         public TowerRoom RoomAt(int floor, int x)
         { return State.rooms.Find(r => r.floor == floor && x >= r.x && x < r.x + r.width); }
@@ -368,6 +387,7 @@ namespace AdamsHaven.Tower
             var room = new TowerRoom { uid = State.nextRoomUid++, type = type, floor = floor,
                 x = x, width = TowerTiers.Bays(type, level), level = level };
             State.rooms.Add(room);
+            roomIndex = null;
             return room;
         }
 
@@ -882,7 +902,7 @@ namespace AdamsHaven.Tower
             if (State.incidents.Exists(i => i.roomUid == roomUid)) return "Resolve the incident first.";
             foreach (var resident in State.residents)
             { if (resident.homeRoom == roomUid) resident.homeRoom = 0; if (resident.jobRoom == roomUid) resident.jobRoom = 0; }
-            State.rooms.Remove(room); Note("Demolished " + room.type + "."); return null;
+            State.rooms.Remove(room); roomIndex = null; Note("Demolished " + room.type + "."); return null;
         }
 
         private float Random01()

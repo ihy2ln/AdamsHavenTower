@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace AdamsHaven.Tower
@@ -51,6 +52,32 @@ namespace AdamsHaven.Tower
             int cells = 0;
             foreach (var room in State.rooms) if (room.type != "heart" && room.type != "gate") cells += room.width;
             State.firewood = Mathf.Max(0, State.firewood - 0.00065f * cells * dt);
+            BeginMoodPass();
+            try { NeedsPass(dt, live); }
+            finally { floorHeadcount = null; cachedAmenities = -1; }
+        }
+
+        private readonly Dictionary<int, int> headcountBuffer = new Dictionary<int, int>();
+
+        private void BeginMoodPass()
+        {
+            headcountBuffer.Clear();
+            foreach (var other in State.residents)
+            {
+                if (other.origin == "body" || other.currentRoom <= 0) continue;
+                var room = Room(other.currentRoom);
+                if (room == null) continue;
+                int count;
+                headcountBuffer.TryGetValue(room.floor, out count);
+                headcountBuffer[room.floor] = count + 1;
+            }
+            cachedAmenities = -1;
+            cachedAmenities = AmenityKinds();
+            floorHeadcount = headcountBuffer;
+        }
+
+        private void NeedsPass(float dt, bool live)
+        {
             foreach (var resident in State.residents)
             {
                 if (resident.origin == "body")
@@ -183,30 +210,69 @@ namespace AdamsHaven.Tower
             }
         }
 
+        // How many residents hold each (task, target room) pair. PlanJobs keeps it current as it assigns, so each
+        // resident still sees the claims made by the residents planned before it.
+        private readonly Dictionary<string, Dictionary<int, int>> claims = new Dictionary<string, Dictionary<int, int>>();
+        private readonly HashSet<int> incidentRooms = new HashSet<int>();
+
+        private void Claim(string task, int room, int delta)
+        {
+            if (room <= 0 || task == null) return;
+            Dictionary<int, int> byRoom;
+            if (!claims.TryGetValue(task, out byRoom)) { byRoom = new Dictionary<int, int>(); claims[task] = byRoom; }
+            int count;
+            byRoom.TryGetValue(room, out count);
+            byRoom[room] = count + delta;
+        }
+
+        // Residents other than this one already on (task, room).
+        private int ClaimedByOthers(TowerResident resident, string task, int room)
+        {
+            Dictionary<int, int> byRoom;
+            int count;
+            if (!claims.TryGetValue(task, out byRoom) || !byRoom.TryGetValue(room, out count)) return 0;
+            return resident.currentTask == task && resident.targetRoom == room ? count - 1 : count;
+        }
+
         private void PlanJobs()
         {
+            foreach (var byRoom in claims.Values) byRoom.Clear();
+            foreach (var r in State.residents) Claim(r.currentTask, r.targetRoom, 1);
+            incidentRooms.Clear();
+            foreach (var incident in State.incidents) incidentRooms.Add(incident.roomUid);
+            TowerRoom heartRoom = null;
+            foreach (var room in State.rooms) if (room.type == "heart") { heartRoom = room; break; }
             foreach (var resident in State.residents)
             {
+                string oldTask = resident.currentTask;
+                int oldTarget = resident.targetRoom;
+                PlanJob(resident, heartRoom);
+                if (resident.currentTask != oldTask || resident.targetRoom != oldTarget)
+                { Claim(oldTask, oldTarget, -1); Claim(resident.currentTask, resident.targetRoom, 1); }
+            }
+        }
+
+        private void PlanJob(TowerResident resident, TowerRoom heartRoom)
+        {
+            {
                 if (resident.away || resident.exploring || resident.downed || resident.ageStage != 0)
-                { resident.currentTask = resident.ageStage == 1 ? "child" : resident.downed ? "downed" : "away"; continue; }
+                { resident.currentTask = resident.ageStage == 1 ? "child" : resident.downed ? "downed" : "away"; return; }
                 if (resident.origin == "body" && resident.charge < 300)
                 {
-                    var heart = State.rooms.Find(r => r.type == "heart");
-                    SetTask(resident, "recharge", heart == null ? 0 : heart.uid);
-                    continue;
+                    SetTask(resident, "recharge", heartRoom == null ? 0 : heartRoom.uid);
+                    return;
                 }
                 if (resident.origin != "body" &&
                     (resident.rest < 25 || resident.hunger < 12 || resident.thirst < 12))
                 {
-                    var heart = State.rooms.Find(r => r.type == "heart");
                     SetTask(resident, "rest", resident.homeRoom > 0 ? resident.homeRoom :
-                        heart == null ? 0 : heart.uid);
-                    continue;
+                        heartRoom == null ? 0 : heartRoom.uid);
+                    return;
                 }
                 if (resident.breakSeconds > 0)
                 {
                     SetTask(resident, "break", BreakTarget(resident));
-                    continue;
+                    return;
                 }
                 string task = "idle";
                 int target = resident.homeRoom;
@@ -222,10 +288,7 @@ namespace AdamsHaven.Tower
                     string candidate = incident.kind == "fire" ? "fire" :
                         incident.kind == "illness" ? "care" :
                         incident.kind == "cave_in" ? "repair" : "defense";
-                    int assigned = 0;
-                    foreach (var other in State.residents)
-                        if (other.id != resident.id && other.currentTask == candidate &&
-                            other.targetRoom == incident.roomUid) assigned++;
+                    int assigned = ClaimedByOthers(resident, candidate, incident.roomUid);
                     if (assigned >= 4) continue;
                     float score = 80 + priority * 12 + incident.hp * 0.03f -
                         Mathf.Abs((Room(resident.currentRoom) ?? Room(incident.roomUid)).floor -
@@ -241,24 +304,20 @@ namespace AdamsHaven.Tower
                             (!patient.downed && patient.injury < 30 && patient.illness < 30)) continue;
                         int room = patient.currentRoom > 0 ? patient.currentRoom : patient.homeRoom;
                         if (room > 0 && 65 + resident.priorityCare * 9 > best &&
-                            !State.residents.Exists(other => other.id != resident.id &&
-                                other.currentTask == "care" && other.targetRoom == room))
+                            ClaimedByOthers(resident, "care", room) == 0)
                         { best = 65 + resident.priorityCare * 9; task = "care"; target = room; }
                     }
                 if (resident.priorityRepair > 0 && State.wood > 0 && State.stone > 0)
                     foreach (var room in State.rooms)
-                        if (room.condition < 65 && !State.incidents.Exists(i => i.roomUid == room.uid) &&
+                        if (room.condition < 65 && !incidentRooms.Contains(room.uid) &&
                             45 + resident.priorityRepair * 9 > best &&
-                            !State.residents.Exists(other => other.id != resident.id &&
-                                other.currentTask == "repair" && other.targetRoom == room.uid))
+                            ClaimedByOthers(resident, "repair", room.uid) == 0)
                         { best = 45 + resident.priorityRepair * 9; task = "repair"; target = room.uid; }
                 if (State.haulingUnlocked && resident.priorityHaul > 0)
                     foreach (var room in State.rooms)
                         if (room.ready && 25 + resident.priorityHaul * 8 > best)
                         {
-                            bool claimed = State.residents.Exists(other => other.id != resident.id &&
-                                other.currentTask == "haul" && other.targetRoom == room.uid);
-                            if (claimed) continue;
+                            if (ClaimedByOthers(resident, "haul", room.uid) > 0) continue;
                             float score = 25 + resident.priorityHaul * 8 -
                                 Mathf.Abs((Room(resident.currentRoom) ?? room).floor - room.floor) * 0.5f;
                             if (score > best) { best = score; task = "haul"; target = room.uid; }
@@ -374,8 +433,8 @@ namespace AdamsHaven.Tower
             {
                 room.rushFatigue = Mathf.Max(0, room.rushFatigue - dt / 220f);
                 var def = TowerCatalog.Get(room.type);
-                if (def == null || State.incidents.Exists(i => i.roomUid == room.uid) ||
-                    room.condition < 20 || !IsPowered(room)) continue;
+                if (def == null || room.condition < 20 || !IsPowered(room) ||
+                    State.incidents.Count > 0 && State.incidents.Exists(i => i.roomUid == room.uid)) continue;
                 float rate = ProductionRate(room);
                 if (rate <= 0) continue;
                 if (def.kind == "train")
