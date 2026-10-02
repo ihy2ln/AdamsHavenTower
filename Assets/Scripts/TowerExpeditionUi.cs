@@ -836,6 +836,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         float scale = canvas.scaleFactor;
         gridView.Resize(Mathf.RoundToInt(areaW * scale), Mathf.RoundToInt(areaH * scale));
         gridView.Bind(new TowerRunMapSource(R));
+        gridView.SetThreat(run.threat / (float)TowerRules.ThreatMax);
         gridView.SetActive(true);
         if (gridCenteredFor != run.gridSeed + run.shift * 31) { gridCenteredFor = run.gridSeed + run.shift * 31; gridView.CenterOnParty(); }
         image.texture = gridView.Texture;
@@ -1884,7 +1885,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void ZoomAt(float factor, Vector2 screen)
     {
-        float next = Mathf.Clamp(zoom * factor, 0.35f, 3f);
+        float next = Mathf.Clamp(zoom * factor, 0.35f, 2.2f);   // the 1254 px backdrop turns blurry past about 2x
         Vector2 before, after;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(board, screen, InputCamera, out before);
         zoom = next;

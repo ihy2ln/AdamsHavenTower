@@ -11,7 +11,7 @@ namespace AdamsHaven.Tower
     public sealed class TowerMapView : MonoBehaviour
     {
         private static readonly Vector3 Origin = new Vector3(20000, 20000, 0);
-        private const int Px = 4;                   // mask pixels per cell
+        private const int Px = 8;                   // mask pixels per cell (4 read soft and smeary up close)
         private const float WalkSpeed = 4.2f, FollowGap = 0.95f;
 
         private ITowerMapSource source;
@@ -143,7 +143,7 @@ namespace AdamsHaven.Tower
                     int cx = px / Px, cy = map.height - 1 - py / Px;    // texture rows run bottom to top
                     weights[TowerMapArt.GroundOf(map.At(cx, cy))][py * W + px] = 1;
                 }
-            for (int g = 0; g < weights.Length; g++) { Blur(weights[g], W, H, 3); Blur(weights[g], W, H, 2); }
+            for (int g = 0; g < weights.Length; g++) { Blur(weights[g], W, H, 5); Blur(weights[g], W, H, 3); }
             w0 = Pack(weights, 0, W, H); w1 = Pack(weights, 4, W, H); w2 = Pack(weights, 8, W, H);
             roadTex = MaskTexture(W, H); seenTex = MaskTexture(W, H);
 
@@ -367,9 +367,35 @@ namespace AdamsHaven.Tower
             }
         }
 
+        // Fog colour per biome; threat pulls it toward a hostile red as the forest grows restless.
+        private Color fogBase = new Color(0.11f, 0.14f, 0.19f, 1);
+        private static readonly Color FogHunted = new Color(0.24f, 0.07f, 0.11f, 1);
+
+        private static Color BiomeFog(string biome)
+        {
+            switch (biome)
+            {
+                case "lakes": return new Color(0.09f, 0.15f, 0.22f, 1);
+                case "mountains": return new Color(0.15f, 0.16f, 0.19f, 1);
+                case "ruins": return new Color(0.17f, 0.14f, 0.12f, 1);
+                case "heart": return new Color(0.15f, 0.10f, 0.20f, 1);
+                default: return new Color(0.11f, 0.14f, 0.19f, 1);
+            }
+        }
+
+        // threat01: the run's threat meter, 0..1. Below half nothing changes; past it the fog reddens.
+        public void SetThreat(float threat01)
+        {
+            if (fogMat == null) return;
+            float k = Mathf.Clamp01((threat01 - 0.5f) / 0.5f);
+            fogMat.SetColor("_Color", Color.Lerp(fogBase, FogHunted, k * k * 0.7f));
+        }
+
         private void BuildFog()
         {
             fogMat = new Material(Shader.Find("AdamsHaven/MapFog"));
+            fogBase = BiomeFog(map.biome);
+            fogMat.SetColor("_Color", fogBase);
             fogMat.SetTexture("_Seen", seenTex);
             fogMat.SetVector("_Cells", new Vector4(map.width, map.height, 0, 0));
             var cloud = Resources.Load<Texture2D>(TowerMapArt.Root + "fx/cloud_tile");
@@ -447,8 +473,8 @@ namespace AdamsHaven.Tower
                     seenCells[i] = source.Seen(x, y) ? 1 : 0;
                     roadCells[i] = source.Road(x, y);
                 }
-            UploadMask(seenTex, seenCells, 3);
-            UploadMask(roadTex, roadCells, 1);
+            UploadMask(seenTex, seenCells, 6);
+            UploadMask(roadTex, roadCells, 2);
             foreach (var p in map.pois)
             {
                 bool seen = source.Seen(p.x, p.y);
@@ -583,7 +609,7 @@ namespace AdamsHaven.Tower
                     roadCells[i] = Mathf.Max(roadCells[i], source.Road(c.x, c.y));
                     changed = true;
                 }
-                if (changed) { UploadMask(seenTex, seenCells, 3); UploadMask(roadTex, roadCells, 1); }
+                if (changed) { UploadMask(seenTex, seenCells, 6); UploadMask(roadTex, roadCells, 2); }
                 Vector2 dir;
                 var lead = PointAlong(walkDist, out dir);
                 PlaceParty(lead, 0, dir, 0, true);

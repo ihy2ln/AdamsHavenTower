@@ -11,9 +11,11 @@ public sealed class TowerPresentationImporter : AssetPostprocessor
             var expedition = (TextureImporter)assetImporter;
             expedition.textureType = TextureImporterType.Default;
             expedition.alphaIsTransparency = true;
-            expedition.mipmapEnabled = false;
+            // Room scenes are drawn far below their source size in the room card: mipmaps stop them shimmering.
+            expedition.mipmapEnabled = assetPath.Contains("/Rooms/");
             expedition.wrapMode = assetPath.Contains("/Dungeon/Silverbrook/") ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
-            expedition.filterMode = assetPath.Contains("/Icons/") ? FilterMode.Point : FilterMode.Bilinear;
+            // Icons are scaled on the map and in the route bar: point filtering made them jagged.
+            expedition.filterMode = FilterMode.Bilinear;
             expedition.maxTextureSize = 2048;
             if (assetPath.Contains("/Dungeon/AnimeV2/"))
             {
