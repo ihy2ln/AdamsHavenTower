@@ -353,13 +353,25 @@ namespace AdamsHaven.Tower
             return null;
         }
 
+        // Danger sets the numbers only; whether a fight is a pack, an elite or the lair boss comes from the room
+        // (BattleCatalog.Build), so a deep region no longer turns every room into the boss line-up.
         public int BattleDepth(string kind)
         {
             var region = RunRegion;
             int depth = region == null ? 1 : region.depth;
             if (kind == "boss") return region == null ? 3 : region.bossDepth;
-            if (kind == "elite") return Mathf.Max(3, depth + 1);
+            if (kind == "elite") return depth + Run.floor + 1;
             return depth + Run.floor;
+        }
+
+        // The fight waiting in the current dungeon room: the dungeon's theme picks the species, the region its lair
+        // boss. Seeded by run, place, floor and room, so leaving and coming back meets the same fight.
+        public BattleEncounterSpec RoomEncounter(string kind)
+        {
+            var run = Run; var d = Dungeon;
+            return new BattleEncounterSpec { Depth = BattleDepth(kind), Kind = kind == "enemy" ? "normal" : kind,
+                Theme = d != null ? d.theme : "", Region = run.region,
+                Seed = (int)(TowerForestLayouts.Hash(run.dungeonPoi + ":" + run.floor + ":" + PendingRoom, run.seed) & 0x7fffffff) | 1 };
         }
 
         private TowerLoot RollLoot(TowerRng rng, float scale, string name)

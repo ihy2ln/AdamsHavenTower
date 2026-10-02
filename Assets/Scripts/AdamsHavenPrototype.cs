@@ -937,7 +937,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     // A dungeon fight: the expedition UI hands over the screen and gets the party back afterwards.
     public void LaunchExpeditionBattle(int depth, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool> done,
-        string returnLabel = "BACK TO THE DUNGEON", int seed = 0)
+        string returnLabel = "BACK TO THE DUNGEON", int seed = 0, BattleEncounter encounter = null)
     {
         if (battleMode != null) return;
         Save();
@@ -947,6 +947,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         battleMode.RewardLine = "The spoils go into the expedition haul.";
         battleMode.WithdrawLine = "The party falls back without spoils.";
         battleMode.Seed = seed;
+        battleMode.Encounter = encounter;
         battleMode.Begin(depth, field, reserve, (won, gold) =>
         {
             if (battleMode != null) Destroy(battleMode);

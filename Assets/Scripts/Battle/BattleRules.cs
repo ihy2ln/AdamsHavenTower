@@ -40,6 +40,10 @@ public sealed class BattleUnit
     public bool Enemy, InnateTaunt, Moved, AwakeningReady;
     public int Lane, MaxHp, Hp, Ap = 1, Ep = 3, MaxAp = 1, MaxEp = 3;
     public int Ultimate, Stress, CollapseRounds;
+    // Elite affix (Vampiric, Thorned, Hasted, Shielded, Enraged) and lair-boss phase (1, then 2 below half health).
+    public string Affix = "";
+    public bool Boss;
+    public int Phase;
     public float Attack, Magic, Defense, Resistance, Speed, CritRate = 0.1f, CritDamage = 1.75f;
     public readonly List<BattleStatus> Statuses = new List<BattleStatus>();
     public bool Alive { get { return Hp > 0; } }
@@ -168,13 +172,18 @@ public sealed class BattleState
     private void StartRound()
     {
         Round++;
+        // Stun and Slow bite on the round after they land, so they are read before durations tick down.
+        var stunned = new HashSet<BattleUnit>();
+        var slowed = new HashSet<BattleUnit>();
         foreach (BattleUnit unit in BothSides())
         {
             if (!unit.Alive) continue;
+            if (unit.HasStatus("Stun")) stunned.Add(unit);
+            if (unit.HasStatus("Slow")) slowed.Add(unit);
             for (int i = unit.Statuses.Count - 1; i >= 0; i--)
             {
                 BattleStatus status = unit.Statuses[i];
-                if (status.Name == "Poison") ApplyTick(unit, "poison", Math.Max(1, (int)status.Magnitude));
+                if (status.Name == "Poison" || status.Name == "Burn") ApplyTick(unit, "poison", Math.Max(1, (int)status.Magnitude));
                 if (status.Name == "Regen") ApplyTick(unit, "regen", Math.Max(1, (int)status.Magnitude));
                 status.Turns--;
                 if (status.Turns <= 0) { unit.Statuses.RemoveAt(i); Say(unit.Name + ": " + status.Name + " expired"); }
@@ -184,6 +193,8 @@ public sealed class BattleState
         {
             if (!unit.Alive) continue;
             unit.Refill();
+            if (stunned.Contains(unit)) { unit.Ap = 0; Say(unit.Name + " is stunned and loses the round."); }
+            if (slowed.Contains(unit)) unit.Ep = Math.Max(0, unit.Ep - 1);
             if (!unit.Enemy && unit.CollapseRounds > 0)
             {
                 unit.CollapseRounds--;
@@ -498,7 +509,8 @@ public sealed class BattleState
         float attack = card.Magic ? actor.Magic : actor.Attack;
         float defense = card.Magic ? target.Resistance : target.Defense;
         float synergy = card.Synergy == "combo_marked" && target.HasStatus("DefenseDown") ? 1f + card.SynergyScale : 1f;
-        float raw = Math.Max(1f, card.EffectivePower * synergy * bond * runMultiplier * attack * actor.AttackMultiplier * StrikeMultiplier(actor) - defense * target.DefenseMultiplier * GuardMultiplier(target));
+        float rage = actor.Affix == "Enraged" && actor.Hp * 2 <= actor.MaxHp ? 1.5f : 1f;
+        float raw = Math.Max(1f, card.EffectivePower * synergy * bond * runMultiplier * attack * rage * actor.AttackMultiplier * StrikeMultiplier(actor) - defense * target.DefenseMultiplier * GuardMultiplier(target));
         return raw * element;
     }
 
@@ -518,8 +530,32 @@ public sealed class BattleState
         float raw = BaseDamage(card, actor, target, bond, runPlayMultiplier, out element);
         raw *= crit ? Math.Max(1f, actor.CritDamage) : 1f;
         int amount = Math.Max(1, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
+        int shield = (int)target.StatusValue("Shield");
+        if (shield > 0)
+        {
+            int absorbed = Math.Min(shield, amount);
+            amount -= absorbed;
+            if (shield - absorbed <= 0) target.Statuses.RemoveAll(s => s.Name == "Shield");
+            else target.ApplyStatus("Shield", shield - absorbed, 99);
+            Say(target.Name + "'s shield absorbs " + absorbed + ".");
+            if (amount <= 0) { Fact("damage", actor, target, card, 0, crit, element, bond); return; }
+        }
         target.DamageBy(amount);
         target.Charge(12);
+        if (actor.Affix == "Vampiric" && actor.Alive)
+        {
+            int drained = Math.Max(1, amount * 3 / 10);
+            actor.HealBy(drained);
+            Fact("heal", actor, actor, card, drained, false, 1f, 1f);
+        }
+        if (target.Affix == "Thorned" && !card.Magic && actor.Alive && target != actor)
+        {
+            int thorns = Math.Max(1, amount / 5);
+            actor.DamageBy(thorns);
+            Fact("poison", null, actor, null, thorns, false, 1f, 1f);
+            Say(actor.Name + " is cut by thorns for " + thorns + ".");
+        }
+        if (target.Boss && target.Phase == 1 && target.Alive && target.Hp * 2 <= target.MaxHp) EnterSecondPhase(target);
         if (!target.Enemy)
         {
             Sp = Math.Min(SpMax, Sp + 1);
@@ -561,6 +597,19 @@ public sealed class BattleState
         Say(unit.Name + (kind == "poison" ? " takes " : " regenerates ") + amount + " HP.");
     }
 
+    // Below half health a lair boss shakes off its debuffs, hits harder for the rest of the fight and raises a
+    // shield; from then on it charges its signature move more often.
+    private void EnterSecondPhase(BattleUnit boss)
+    {
+        boss.Phase = 2;
+        boss.Statuses.RemoveAll(s => s.Name == "AttackDown" || s.Name == "DefenseDown" || s.Name == "Slow" ||
+            s.Name == "Poison" || s.Name == "Burn" || s.Name == "Stun");
+        boss.ApplyStatus("AttackUp", .25f, 99);
+        boss.ApplyStatus("Shield", boss.MaxHp * .12f, 99);
+        Fact("status", boss, boss, new BattleCard { Id = "boss_phase", Name = "Frenzy", Status = "Frenzy" }, 0, false, 1f, 1f);
+        Say(boss.Name + " flies into a frenzy!");
+    }
+
     private void RollIntents()
     {
         Intents.Clear(); IntentTargets.Clear();
@@ -570,18 +619,68 @@ public sealed class BattleState
             if (!enemy.Alive) continue;
             List<BattleCard> pool = BattleCatalog.EnemyCards(enemy);
             if (pool.Count == 0) continue;
-            BattleCard card = pool[rng.Next(pool.Count)];
+            BattleCard card = null;
+            if (enemy.Boss && enemy.HasStatus("Charging"))
+            {
+                // The charge-up announced last round: the signature move lands now.
+                card = pool.Find(c => c.Id == "e_cataclysm");
+                enemy.Statuses.RemoveAll(s => s.Name == "Charging");
+            }
+            if (card == null) card = ChooseEnemyCard(enemy, pool);
+            if (card == null) continue;
             Intents[enemy.Id] = card;
-            IntentTargets[enemy.Id] = card.Target == BattleTarget.Enemy ? EnemyVictim(card) : card.Target == BattleTarget.Self ? enemy : null;
+            IntentTargets[enemy.Id] = card.Target == BattleTarget.Enemy ? EnemyVictim(card) : card.Target == BattleTarget.Self ? enemy :
+                card.Target == BattleTarget.Ally ? MostHurt(Enemies) : null;
         }
     }
 
+    // Weighted by the situation: heal a hurt friend, buff when nobody is buffed, guard when unguarded, else attack.
+    private BattleCard ChooseEnemyCard(BattleUnit enemy, List<BattleCard> pool)
+    {
+        float total = 0f;
+        var weights = new float[pool.Count];
+        for (int i = 0; i < pool.Count; i++)
+        {
+            BattleCard card = pool[i];
+            float w;
+            if (card.Id == "e_cataclysm" || card.Ep > enemy.Ep || card.Ap > enemy.Ap) w = 0f;
+            else if (card.Id == "e_gather") w = enemy.HasStatus("Charging") ? 0f : enemy.Phase >= 2 ? 2.2f : 1.1f;
+            else if (card.Target == BattleTarget.Ally) { BattleUnit hurt = MostHurt(Enemies); w = hurt != null && hurt.Hp * 100 < hurt.MaxHp * 55 ? 4f : 0f; }
+            else if (card.Target == BattleTarget.AllAllies && card.EffectivePower <= 0)
+                w = Enemies.Exists(u => u.Alive && u.HasStatus(card.Status)) ? .3f : 2f;
+            else if (card.Target == BattleTarget.Self) w = enemy.HasStatus(card.Status) ? .2f : 1.2f;
+            else if (card.Target == BattleTarget.AllEnemies && card.EffectivePower <= 0) w = 1.5f;
+            else w = card.Target == BattleTarget.AllEnemies ? 2.5f : 3f;
+            weights[i] = w; total += w;
+        }
+        if (total <= 0f) return null;
+        double roll = rng.NextDouble() * total;
+        for (int i = 0; i < pool.Count; i++) { roll -= weights[i]; if (roll <= 0) return pool[i]; }
+        return pool[pool.Count - 1];
+    }
+
+    private static BattleUnit MostHurt(List<BattleUnit> side)
+    {
+        BattleUnit best = null;
+        foreach (BattleUnit unit in side)
+            if (unit.Alive && unit.Hp < unit.MaxHp && (best == null || unit.Hp * (long)best.MaxHp < best.Hp * (long)unit.MaxHp)) best = unit;
+        return best;
+    }
+
+    // Enemies go for the weakest exposed fighter more often than not; JD is a rarer, opportunistic target.
     private BattleUnit EnemyVictim(BattleCard card)
     {
         List<BattleUnit> available = new List<BattleUnit>();
         for (int i = 0; i < Allies.Count; i++) if (Exposed(Allies[i])) available.Add(Allies[i]);
-        if (Summoner != null && Summoner.Alive && card.Target == BattleTarget.Enemy && (available.Count == 0 || rng.NextDouble() < 0.22)) return Summoner;
-        return available.Count == 0 ? null : available[rng.Next(available.Count)];
+        if (Summoner != null && Summoner.Alive && card.Target == BattleTarget.Enemy && (available.Count == 0 || rng.NextDouble() < 0.12)) return Summoner;
+        if (available.Count == 0) return null;
+        if (rng.NextDouble() < 0.55)
+        {
+            BattleUnit weakest = available[0];
+            foreach (BattleUnit unit in available) if (unit.Hp * (long)weakest.MaxHp < weakest.Hp * (long)unit.MaxHp) weakest = unit;
+            return weakest;
+        }
+        return available[rng.Next(available.Count)];
     }
 
     public void EndTurn()
@@ -595,15 +694,20 @@ public sealed class BattleState
             if (!enemy.Alive) continue;
             BattleCard card;
             if (!Intents.TryGetValue(enemy.Id, out card)) continue;
-            if (enemy.Ap < card.Ap || enemy.Ep < card.Ep) continue;
             BattleUnit target = IntentTargets[enemy.Id];
-            if (card.Target == BattleTarget.Enemy && (target == null || !target.Alive || !Exposed(target))) target = EnemyVictim(card);
-            if ((card.Target == BattleTarget.Enemy || card.Target == BattleTarget.Self) && target == null) continue;
-            enemy.Ap -= card.Ap; enemy.Ep -= card.Ep;
-            Say(enemy.Name + " uses " + card.Name + ".");
-            Resolve(card, enemy, target);
-            CheckEnd();
-            if (Finished) return;
+            // Hasted elites have two actions and repeat their move while they can pay for it.
+            for (int act = 0; act < 2 && enemy.Alive && enemy.Ap >= card.Ap && enemy.Ep >= card.Ep; act++)
+            {
+                if (act > 0 && enemy.Affix != "Hasted") break;
+                if (card.Target == BattleTarget.Enemy && (target == null || !target.Alive || !Exposed(target))) target = EnemyVictim(card);
+                if (card.Target == BattleTarget.Ally && (target == null || !target.Alive)) target = MostHurt(Enemies);
+                if ((card.Target == BattleTarget.Enemy || card.Target == BattleTarget.Self || card.Target == BattleTarget.Ally) && target == null) break;
+                enemy.Ap -= card.Ap; enemy.Ep -= card.Ep;
+                Say(enemy.Name + " uses " + card.Name + ".");
+                Resolve(card, enemy, target);
+                CheckEnd();
+                if (Finished) return;
+            }
         }
         if (EnemySummoner != null && EnemySummoner.Alive)
         {

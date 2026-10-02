@@ -2080,7 +2080,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private void Fight()
     {
         var room = R.Dungeon.rooms[R.PendingRoom];
-        FightWithParty(R.BattleDepth(room.kind), "BACK TO THE DUNGEON", (won, hp) =>
+        FightWithParty(R.RoomEncounter(room.kind), "BACK TO THE DUNGEON", (won, hp) =>
         {
             Act(R.ResolveBattle(won, hp));
             if (R.Run != null && won) Say("Victory! The spoils are added to your haul.");
@@ -2089,7 +2089,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     private void FightAmbush()
     {
-        FightWithParty(R.AmbushDepth, "BACK TO THE FOREST", (won, hp) =>
+        FightWithParty(R.AmbushEncounter, "BACK TO THE FOREST", (won, hp) =>
         {
             Act(R.ResolveAmbush(won, hp));
             if (R.Run != null && R.State.log.Count > 0) Say(R.State.log[R.State.log.Count - 1]);
@@ -2097,7 +2097,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     }
 
     // Builds the living party (Tower gear applied) and hands the screen to BattleMode; done gets HP percents back.
-    private void FightWithParty(int depth, string returnLabel, Action<bool, List<int>> done)
+    private void FightWithParty(BattleEncounterSpec spec, string returnLabel, Action<bool, List<int>> done)
     {
         var run = R.Run;
         var units = BattleCatalog.Party(run.party);
@@ -2108,17 +2108,21 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (unit == null || run.hp[i] <= 0) continue;
             unit.Attack *= 1 + R.GearAttack(unit.Id);
             unit.Magic *= 1 + R.GearAttack(unit.Id);
-            unit.MaxHp = Mathf.RoundToInt(unit.MaxHp * (1 + R.GearHp(unit.Id)));
+            unit.MaxHp = Mathf.RoundToInt(unit.MaxHp * (1 + R.GearHp(unit.Id) + R.LevelHp(unit.Id)));
+            unit.Defense *= 1 + R.LevelGuard(unit.Id);
+            unit.Resistance *= 1 + R.LevelGuard(unit.Id);
             unit.Hp = Mathf.Max(1, Mathf.RoundToInt(unit.MaxHp * run.hp[i] / 100f));
             alive.Add(unit);
         }
         var field = alive.GetRange(0, Mathf.Min(3, alive.Count));
         var reserve = alive.Count > 3 ? alive.GetRange(3, Mathf.Min(3, alive.Count - 3)) : new List<BattleUnit>();
         canvas.gameObject.SetActive(false);
-        // Seeded from the run: reloading mid-fight replays the same fight instead of re-rolling it.
-        int seed = (int)(TowerForestLayouts.Hash(run.dungeonPoi + ":" + run.floor + ":" + run.px + "," + run.py + ":" + run.at,
-            run.seed + run.steps * 31 + run.battlesWon * 997) & 0x7fffffff) | 1;
-        tower.LaunchExpeditionBattle(depth, field, reserve, won =>
+        // The spec's seed builds the line-up and drives the fight, so reloading mid-fight replays the same battle.
+        var encounter = BattleCatalog.Build(spec);
+        float vigor = 0f;
+        foreach (var unit in alive) vigor += R.LevelHp(unit.Id) + R.GearHp(unit.Id);
+        encounter.SummonerVigor = alive.Count > 0 ? vigor / alive.Count : 0f;
+        tower.LaunchExpeditionBattle(spec.Depth, field, reserve, won =>
         {
             canvas.gameObject.SetActive(true);
             var hp = new List<int>(run.hp);
@@ -2129,7 +2133,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 if (unit != null) hp[i] = unit.Hp <= 0 ? 0 : Mathf.Clamp(Mathf.RoundToInt(100f * unit.Hp / unit.MaxHp), 1, 100);
             }
             done(won, hp);
-        }, returnLabel, seed);
+        }, returnLabel, spec.Seed, encounter);
     }
 
     // ---------------------------------------------------------------- traversal events

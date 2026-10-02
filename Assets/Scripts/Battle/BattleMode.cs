@@ -146,6 +146,12 @@ public sealed partial class BattleMode : MonoBehaviour
     // same seed replays the same draws (expeditions derive it from the run so a reload does not re-roll a fight).
     public string RewardLine, WithdrawLine;
     public int Seed;
+    // Expedition fights hand over a built encounter (enemies, commander, title, theme); null = a Tower skirmish.
+    public BattleEncounter Encounter;
+    private string background = DefaultBackground;
+    private const string DefaultBackground = "Battle/silverwood_battle_v1";
+    // Landscape scene art per dungeon theme (the other themes only have portrait vistas, so they keep the default).
+    private static readonly string[] ThemedBackgrounds = { "blight", "crystal", "heartwood", "mine", "cave" };
 
     public void Begin(int towerFloor, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool, int> onLeave)
     {
@@ -160,9 +166,16 @@ public sealed partial class BattleMode : MonoBehaviour
         leave = onLeave;
         var party = new List<BattleUnit>(field);
         party.AddRange(reserve);
+        BattleUnit jd = BattleCatalog.JD();
+        if (Encounter != null && Encounter.SummonerVigor > 0f)
+        {
+            jd.MaxHp = jd.Hp = Mathf.RoundToInt(jd.MaxHp * (1f + Encounter.SummonerVigor));
+            jd.Defense *= 1f + Encounter.SummonerVigor * .5f; jd.Resistance *= 1f + Encounter.SummonerVigor * .5f;
+        }
         battle = new BattleState(Seed != 0 ? Seed : Environment.TickCount, field, reserve,
-            BattleCatalog.Encounter(floor), BattleCatalog.Deck(party),
-            BattleCatalog.JD(), BattleCatalog.EnemyCommander(floor));
+            Encounter != null ? Encounter.Enemies : BattleCatalog.Encounter(floor), BattleCatalog.Deck(party),
+            jd, Encounter != null ? Encounter.Commander : BattleCatalog.EnemyCommander(floor));
+        background = BackgroundFor(Encounter);
         reward = Mathf.Abs(floor) >= 8 ? 300 : Mathf.Abs(floor) >= 3 ? 160 : 80;
         moteSeed = new float[48 * 4];
         for (int i = 0; i < moteSeed.Length; i++) moteSeed[i] = UnityEngine.Random.value;
@@ -176,7 +189,8 @@ public sealed partial class BattleMode : MonoBehaviour
         PreloadArt();
         BuildFieldRigs();
         queueEnd = 1.0f;
-        ShowBanner("ROUND 1", Gold);
+        ShowBanner(Encounter != null && Encounter.Boss != null ? Encounter.Boss.Name.ToUpperInvariant() : "ROUND 1",
+            Encounter != null && Encounter.Boss != null ? EnemyRed : Gold);
         SyncHand();
         Toast("Pick a card, then a highlighted target. Every fighter has a free basic attack.");
     }
@@ -192,6 +206,16 @@ public sealed partial class BattleMode : MonoBehaviour
     }
 
     private void Toast(string text) { toast = text; toastStart = Time.time; }
+
+    // Lair bosses in the Silverwood depths fight in their own boss room; other fights use their theme's scene.
+    private static string BackgroundFor(BattleEncounter encounter)
+    {
+        if (encounter == null) return DefaultBackground;
+        if (encounter.Kind == "boss" && encounter.Region.StartsWith("silverwood_d", StringComparison.Ordinal) && encounter.Region.Length == 13)
+            return "Expedition/Rooms/boss_d" + encounter.Region[12];
+        if (Array.IndexOf(ThemedBackgrounds, encounter.Theme) >= 0) return "Expedition/Dungeon/AnimeV2/" + encounter.Theme + "_vista";
+        return DefaultBackground;
+    }
 
     private static float SavedSpeed()
     {
@@ -242,48 +266,14 @@ public sealed partial class BattleMode : MonoBehaviour
         if (!AutoStep()) DoEndTurn();
     }
 
+    // AUTO: BattleAutoPlayer picks (ultimates, JD's decree, the strongest card, then basics); Perform animates it.
     private bool AutoStep()
     {
         if (battle == null) return false;
-        for (int i = 0; i < battle.Hand.Count; i++)
-        {
-            BattleCard card = battle.Hand[i];
-            BattleUnit actor = battle.OwnerOf(card);
-            if (!battle.CanPay(card, actor)) continue;
-            BattleUnit target = AutomaticTarget(card, actor);
-            if (battle.IsTarget(card, actor, target)) return Perform(card, actor, target);
-        }
-        for (int i = 0; i < battle.Allies.Count; i++)
-        {
-            BattleUnit actor = battle.Allies[i];
-            BattleCard basic = BattleCatalog.Basic(actor);
-            BattleUnit target = AutomaticTarget(basic, actor);
-            if (battle.CanPay(basic, actor) && battle.IsTarget(basic, actor, target)) return Perform(basic, actor, target);
-        }
-        return false;
-    }
-
-    private BattleUnit AutomaticTarget(BattleCard card, BattleUnit actor)
-    {
-        if (card.Target == BattleTarget.Self) return actor;
-        if (card.Target == BattleTarget.Ally)
-        {
-            BattleUnit weakest = null;
-            for (int i = 0; i < battle.Allies.Count; i++)
-            {
-                BattleUnit unit = battle.Allies[i];
-                if (!unit.Alive) continue;
-                if (weakest == null || (float)unit.Hp / unit.MaxHp < (float)weakest.Hp / weakest.MaxHp) weakest = unit;
-            }
-            return weakest;
-        }
-        if (card.Target == BattleTarget.Enemy)
-        {
-            for (int i = 0; i < battle.Enemies.Count; i++)
-                if (battle.Exposed(battle.Enemies[i])) return battle.Enemies[i];
-            return battle.EnemySummoner != null && battle.EnemySummoner.Alive ? battle.EnemySummoner : null;
-        }
-        return null;
+        BattleAutoPlayer.Move move;
+        if (!BattleAutoPlayer.Next(battle, out move)) return false;
+        if (move.Decree) { DoDecree(); return true; }
+        return Perform(move.Card, move.Actor, move.Target, move.Ultimate);
     }
 
     // ---- actions (every rules mutation goes through here so the timeline sees it) ----------
@@ -702,7 +692,7 @@ public sealed partial class BattleMode : MonoBehaviour
     private void DrawBackground()
     {
         Fill(new Rect(0, 0, VW, VH), new Color(.02f, .03f, .05f));
-        Texture2D bg = Art("Battle/silverwood_battle_v1");
+        Texture2D bg = Art(background) ?? Art(DefaultBackground);
         float zoom = 1.06f + Mathf.Sin(Time.time * 0.17f) * 0.006f;
         Vector2 par = new Vector2(Mathf.Clamp((mouse.x - 800f) / 800f, -1f, 1f) * -16f, Mathf.Clamp((mouse.y - 450f) / 450f, -1f, 1f) * -8f);
         Rect r = new Rect(-VW * (zoom - 1f) * 0.5f + par.x, -VH * (zoom - 1f) * 0.5f + par.y - 10f, VW * zoom, VH * zoom);
@@ -1133,7 +1123,8 @@ public sealed partial class BattleMode : MonoBehaviour
         Outline(pill, BattleGui.Alpha(Gold, .6f), 1.6f, 25f);
         Text(new Rect(pill.x, pill.y + 2f, pill.width, 30f), "ROUND " + battle.Round, 26, Color.white, TextAnchor.MiddleCenter, true, false, 1.5f);
         string stage = Mathf.Abs(floor) >= 8 ? "BOSS" : Mathf.Abs(floor) >= 3 ? "ELITE" : "GROVE";
-        Text(new Rect(pill.x, pill.y + 28f, pill.width, 18f), "SILVERWOOD  -  " + stage + "  -  FLOOR " + floor, 12, Ice, TextAnchor.MiddleCenter, true);
+        string header = Encounter != null ? Encounter.Title + "  -  DANGER " + Encounter.Depth : "SILVERWOOD  -  " + stage + "  -  FLOOR " + floor;
+        Text(new Rect(pill.x - 60f, pill.y + 28f, pill.width + 120f, 18f), header, 12, Ice, TextAnchor.MiddleCenter, true);
 
         if (battle.EnemySummoner != null) DrawPlate(new Rect(1010f, 12f, 356f, 88f), battle.EnemySummoner, true, "VALE COMMANDER");
         else

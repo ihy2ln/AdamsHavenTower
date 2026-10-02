@@ -224,7 +224,7 @@ public sealed partial class BattleMode
     private static bool IsBuff(string status)
     {
         return status == "AttackUp" || status == "DefenseUp" || status == "Haste" || status == "Regen"
-            || status == "Taunt" || status == "IceCounter";
+            || status == "Taunt" || status == "IceCounter" || status == "Shield" || status == "Charging" || status == "Frenzy";
     }
 
     private static string StatusLabel(string status)
@@ -241,6 +241,11 @@ public sealed partial class BattleMode
             case "Regen": return "REGEN";
             case "Taunt": return "TAUNT";
             case "IceCounter": return "ICE COUNTER";
+            case "Burn": return "BURNING";
+            case "Stun": return "STUNNED";
+            case "Shield": return "SHIELDED";
+            case "Charging": return "CHARGING";
+            case "Frenzy": return "FRENZY";
         }
         return status.ToUpperInvariant();
     }

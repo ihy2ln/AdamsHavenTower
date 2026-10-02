@@ -232,6 +232,20 @@ namespace AdamsHaven.Tower
 
         public int AmbushDepth { get { return Mathf.Max(1, RunRegion == null ? 1 : RunRegion.depth); } }
 
+        // Ambushers come from the nearest place's theme.
+        public BattleEncounterSpec AmbushEncounter
+        {
+            get
+            {
+                var run = Run;
+                string theme = "";
+                if (GridRun) { var near = NearestPoi(run.cx, run.cy); if (near != null) theme = near.theme; }
+                else { var node = RunLayout.Node(run.at); if (node != null) theme = node.theme; }
+                return new BattleEncounterSpec { Depth = AmbushDepth, Kind = "ambush", Theme = theme, Region = run.region,
+                    Seed = (int)(TowerForestLayouts.Hash("ambush:" + run.steps + ":" + run.cx + "," + run.cy, run.seed) & 0x7fffffff) | 1 };
+            }
+        }
+
         // hp: percent per party member after the ambush fight (same order as run.party).
         public string ResolveAmbush(bool won, List<int> hp)
         {

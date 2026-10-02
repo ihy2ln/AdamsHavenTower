@@ -175,6 +175,10 @@ namespace AdamsHaven.Tower
         { return State.residents.Find(r => r.unitId == unitId && r.origin == "hero"); }
         public float GearAttack(string unitId) { var h = HeroResident(unitId); return h == null ? 0 : 0.08f * h.weapon; }
         public float GearHp(string unitId) { var h = HeroResident(unitId); return h == null ? 0 : 0.06f * h.tool; }
+        // Hero level buys survivability in battle, never damage: +2% health and +1% defence per level.
+        public int HeroLevel(string unitId) { var h = HeroResident(unitId); return h == null ? 1 : Mathf.Max(1, h.level); }
+        public float LevelHp(string unitId) { return 0.02f * (HeroLevel(unitId) - 1); }
+        public float LevelGuard(string unitId) { return 0.01f * (HeroLevel(unitId) - 1); }
 
         public string CanStartExpedition(string region, List<string> party, int rations, int tonics, int firewood)
         {
