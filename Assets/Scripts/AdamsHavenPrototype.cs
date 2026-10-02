@@ -1272,7 +1272,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             {
                 actor3D.SetSleeping(asleep);
                 actor3D.SetPose(position, traveling || strolling, working, down,
-                    resident.currentTask == "haul" ? "barn" : fromRoom.type);
+                    resident.currentTask == "haul" ? "barn" : fromRoom.type, WorldX(fromRoom.x + fromRoom.width * 0.5f));
             }
             else if (residentAnimators.TryGetValue(resident.id, out animator) && animator != null)
             {

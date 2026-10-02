@@ -11,7 +11,9 @@ namespace AdamsHaven.Tower
     {
         private const float FigureHeight = 1.22f;           // the 1.30 quad's figure, less its headroom
         private const float BodyHalf = 0.65f;               // TowerRoomDepth's half quad height
-        private const float WalkYaw = 70f, RestYaw = 20f, TurnSpeed = 540f;
+        // Work loops turn side-on: their stations (anvil, pot, well rope) stand in front of the body and
+        // would hide it from the side-on tower camera.
+        private const float WalkYaw = 70f, RestYaw = 20f, WorkYaw = 70f, TurnSpeed = 540f;
 
         public string ModelId { get; private set; }
         private TowerChibi3D chibi;
@@ -62,8 +64,10 @@ namespace AdamsHaven.Tower
             if (chibi.Springs != null) chibi.Springs.ResetState();
         }
 
-        // workRoom is the room type whose work loop plays while working.
-        public void SetPose(Vector3 position, bool traveling, bool working, bool isDowned, string workRoom)
+        // workRoom is the room type whose work loop plays while working; workers face roomCenterX so their
+        // station stays inside the room.
+        public void SetPose(Vector3 position, bool traveling, bool working, bool isDowned, string workRoom,
+            float roomCenterX = float.NaN)
         {
             float depth = TowerRoomDepth.ScaleFromZ(position.z);
             transform.localPosition = position;
@@ -72,7 +76,9 @@ namespace AdamsHaven.Tower
             bool resting = isDowned || sleeping;
             float dx = placed ? position.x - lastPosition.x : 0;
             if (traveling && !resting && Mathf.Abs(dx) > 0.0005f) facing = Mathf.Sign(dx);
-            float target = resting ? 0 : traveling ? facing * -WalkYaw : working ? 0 : facing * -RestYaw;
+            else if (working && !traveling && !resting && !float.IsNaN(roomCenterX) &&
+                Mathf.Abs(roomCenterX - position.x) > 0.05f) facing = Mathf.Sign(roomCenterX - position.x);
+            float target = resting ? 0 : facing * -(traveling ? WalkYaw : working ? WorkYaw : RestYaw);
             yaw = placed ? Mathf.MoveTowardsAngle(yaw, target, TurnSpeed * Time.deltaTime) : target;
             chibi.transform.localRotation = Quaternion.Euler(0, yaw, 0);
             lastPosition = position;
