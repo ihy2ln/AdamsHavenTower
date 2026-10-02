@@ -606,6 +606,7 @@ namespace AdamsHaven.Tower
                     var c = walkCells[walkCellsDone];
                     RevealLocal(c.x, c.y);
                     int i = map.Index(c.x, c.y);
+                    TowerAudio.PlayVaried(roadCells[i] > 0 || source.Road(c.x, c.y) > 0 ? "step_road" : "step", 0.45f);
                     roadCells[i] = Mathf.Max(roadCells[i], source.Road(c.x, c.y));
                     changed = true;
                 }

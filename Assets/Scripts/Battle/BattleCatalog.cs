@@ -284,6 +284,24 @@ public static class BattleCatalog
         new Species("eclipse_core_golem", "Eclipse Core Golem", BattleElement.Dark, Bruiser, true, 8, "blight"),
     };
 
+    // Every species id, in bestiary order (the guild journal lists them all).
+    public static string[] SpeciesIds { get { var ids = new string[Bestiary.Length]; for (int i = 0; i < ids.Length; i++) ids[i] = Bestiary[i].Id; return ids; } }
+
+    // "Earth  •  found in briar, crystal, marsh" for the journal.
+    public static string SpeciesInfo(string id)
+    {
+        foreach (Species s in Bestiary)
+            if (s.Id == id) return s.Element + (s.Large ? ", large" : "") + "  •  found in " + string.Join(", ", s.Themes) + " places";
+        return "";
+    }
+
+    // The bestiary name of a species id (journal), or the id itself when unknown.
+    public static string SpeciesName(string id)
+    {
+        foreach (Species s in Bestiary) if (s.Id == id) return s.Name;
+        return id;
+    }
+
     private static Species SpeciesOf(string id)
     {
         foreach (Species s in Bestiary) if (s.Id == id) return s;

@@ -53,6 +53,14 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private int planRations, planTonics, planFirewood;
     private bool lootOpen;
     private bool retreatArmed;          // END EXPEDITION away from camp needs a second tap
+    // Immersion (review step 7): the region card on setting out, the journal, a line of banter, sounds played once.
+    private bool introOpen, journalOpen;
+    private int journalTab;
+    private GameObject banterBubble;
+    private float banterClock;
+    private int movesSinceBanter;
+    private string soundedEvent = "", soundedReward = "";
+    private readonly System.Random banterRng = new System.Random();
     private int dismissedAt = -1;
 
     // dungeon board
@@ -108,6 +116,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
 
     public void Shutdown()
     {
+        TowerAudio.Ambience("");
         if (canvas != null) Destroy(canvas.gameObject);
         if (gridView != null) Destroy(gridView);
         Destroy(this);
@@ -136,14 +145,29 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         {
             case View.Region: BuildRegion(); break;
             case View.Plan: BuildPlan(); break;
-            case View.Forest: BuildForest(); break;
-            case View.Dungeon: BuildDungeon(); break;
+            case View.Forest: if (R.Run != null) BuildForest(); break;
+            case View.Dungeon: if (R.Run != null) BuildDungeon(); break;
         }
+        bool ended = R.Run == null && (view == View.Forest || view == View.Dungeon);
+        if (ended && gridView != null) gridView.SetActive(false);
+        if (journalOpen && !ended) BuildJournal();
         var toastBox = Box("Toast", content, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(-Side / 2, -Top - 8),
             new Vector2(640, 34), new Color(0.03f, 0.05f, 0.08f, 0.88f));
         toastBox.raycastTarget = false;
         toast = TextAt(toastBox.transform, "Toast text", "", 10, 0, 620, 34, 15, Gold, TextAnchor.MiddleCenter);
         toastBox.gameObject.SetActive(false);
+        if (ended) ShowSummary();
+        UpdateAmbience();
+    }
+
+    // The looping bed for what is on screen: the dungeon's theme, the biome (with crickets after dusk), or the forest.
+    private void UpdateAmbience()
+    {
+        var run = R.Run;
+        if (run == null) { TowerAudio.Ambience(view == View.Region || view == View.Plan ? "forest" : ""); return; }
+        if (view == View.Dungeon && R.Dungeon != null) TowerAudio.Ambience(TowerAudio.ThemeBed(R.Dungeon.theme));
+        else if (view == View.Forest) TowerAudio.Ambience(TowerAudio.BiomeBed(run.biome), TowerRules.NightLevel(R.RunHour()));
+        else TowerAudio.Ambience("forest");
     }
 
     private void Say(string text)
@@ -158,9 +182,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     // Runs a rules call, reports an error, saves, and redraws.
     private void Act(string error, bool rebuild = true)
     {
-        if (error != null) Say(error);
+        if (error != null) { Say(error); TowerAudio.Play("error", 0.6f); }
         else tower.SaveExpedition();
-        if (R.Run == null && view != View.Region && view != View.Plan) { ShowEnd(); return; }
+        if (R.Run == null && view != View.Region && view != View.Plan) { Rebuild(); return; }
         if (view == View.Dungeon && R.Run.dungeonPoi.Length == 0)
         {
             string last = R.State.log.Count > 0 ? R.State.log[R.State.log.Count - 1] : "";
@@ -181,6 +205,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (toastTimer <= 0 && toast != null) toast.transform.parent.gameObject.SetActive(false);
         }
         if (view == View.Region && atlasLabels.Count > 0) PlaceAtlasLabels();
+        if (banterBubble != null && (banterClock -= Time.unscaledDeltaTime) <= 0) { Destroy(banterBubble); banterBubble = null; }
         if (mapStats != null)
         {
             statsFrames++;
@@ -294,7 +319,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         button.colors = colors;
         TowerUiSkin.Apply(image, color);
         TowerUiSkin.StyleLabel(TextAt(image.transform, name + " label", value, 4, 0, width - 8, height, fontSize, Cream, TextAnchor.MiddleCenter));
-        if (action != null) button.onClick.AddListener(() => action());
+        if (action != null) button.onClick.AddListener(() => { TowerAudio.Play("click", 0.7f); action(); });
         button.interactable = interactable;
         return button;
     }
@@ -310,7 +335,16 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     {
         var bar = Box("Top bar", content, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, new Vector2(root.rect.width, Top),
             new Color(0.02f, 0.03f, 0.05f, 0.92f)).rectTransform;
-        TextAt(bar, "Title", title, 16, 0, root.rect.width - 260, Top, 20, Gold);
+        float right = root.rect.width - 230;
+        ButtonAt(bar, "Sound", TowerAudio.Muted ? "SOUND OFF" : "SOUND ON", right - 112, 7, 104, 38,
+            () => { TowerAudio.Muted = !TowerAudio.Muted; Rebuild(); }, TowerAudio.Muted ? new Color(0.35f, 0.37f, 0.4f) : Moss, 12);
+        right -= 120;
+        if (R.Run != null && (view == View.Forest || view == View.Dungeon))
+        {
+            TextAt(bar, "Clock", R.ClockLine(), right - 380, 0, 372, Top, 14, Cream, TextAnchor.MiddleRight);
+            right -= 388;
+        }
+        TextAt(bar, "Title", title, 16, 0, Mathf.Max(120, right - 16), Top, 20, Gold);
         if (back != null) ButtonAt(bar, "Back", back, root.rect.width - 222, 7, 210, 38, backAction, Alert, 14);
         return bar;
     }
@@ -396,6 +430,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 "Choose a region. Start near Silverbrook; conquering a region's lair opens the lands beyond it.",
                 18, 18, Side - 36, 120, 16, Cream);
             if (run != null) ButtonAt(panel.transform, "Resume", "RESUME EXPEDITION", 18, 150, Side - 36, 48, Resume, Teal, 17);
+            ButtonAt(panel.transform, "Journal", "GUILD JOURNAL", 18, 206, Side - 36, 38, OpenJournal, Moss, 14);
             return;
         }
         bool isUnlocked = R.RegionUnlocked(region0.id);
@@ -407,9 +442,10 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         TextAt(panel.transform, "Rule", "Every expedition finds this forest rearranged. Clear its lair to conquer the region and open the way beyond.",
             18, 160, Side - 36, 60, 13, new Color(0.8f, 0.85f, 0.9f));
         if (run != null)
-            ButtonAt(panel.transform, "Resume", "RESUME EXPEDITION", 18, 250, Side - 36, 50, Resume, Teal, 17);
+            ButtonAt(panel.transform, "Resume", "RESUME EXPEDITION", 18, 226, Side - 36, 46, Resume, Teal, 17);
         else
-            ButtonAt(panel.transform, "Plan", "PLAN EXPEDITION", 18, 250, Side - 36, 50, OpenPlan, Teal, 17, isUnlocked);
+            ButtonAt(panel.transform, "Plan", "PLAN EXPEDITION", 18, 226, Side - 36, 46, OpenPlan, Teal, 17, isUnlocked);
+        ButtonAt(panel.transform, "Journal", "GUILD JOURNAL", 18, 278, Side - 36, 38, OpenJournal, Moss, 14);
     }
 
     // ---------------------------------------------------------------- Atlas (layered region map)
@@ -596,8 +632,10 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         string error = R.StartExpedition(selectedRegion, planParty, planRations, planTonics, planFirewood);
         if (error != null) { Say(error); return; }
         tower.SaveExpedition();
+        introOpen = true;
+        movesSinceBanter = 0;
         Go(View.Forest);
-        Say("The forest has shifted into " + R.RunLayout.name + ". Tap the map to plan a route.");
+        TowerAudio.Play("chime", 0.8f);
     }
 
     // ---------------------------------------------------------------- forest map
@@ -619,6 +657,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         gridView.Bind(new TowerRunMapSource(R));
         gridView.SetThreat(run.threat / (float)TowerRules.ThreatMax);
         gridView.SetActive(true);
+        image.color = DayTint(R.RunHour());
+        BuildWeather(rect, R.Weather);
         if (gridCenteredFor != run.gridSeed + run.shift * 31) { gridCenteredFor = run.gridSeed + run.shift * 31; gridView.CenterOnParty(); }
         image.texture = gridView.Texture;
         var frame = gridView.TakeShiftFrame();
@@ -645,10 +685,11 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             () => { tower.CloseExpedition(null); });
         BuildRunPanel(false);
         if (lootOpen) BuildLoot();
+        else if (introOpen) BuildIntroCard();
         else BuildEventCard();
         AddMapStats(areaW);
         // A walk an event interrupted carries on by itself once the event is settled.
-        if (!gridWalking && !lootOpen && R.GridHasTarget && R.EventBlock() == null && string.IsNullOrEmpty(run.eventResult))
+        if (!gridWalking && !lootOpen && !introOpen && R.GridHasTarget && R.EventBlock() == null && string.IsNullOrEmpty(run.eventResult))
         {
             var step = R.GridResume();
             if (step.error != null) { R.GridCancelTarget(); Say(step.error); }
@@ -755,8 +796,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             gridWalking = false;
             Act(null);
             if (R.Run == null) return;
-            if (step.shifted) Say("The forest shifts! Unexplored places have moved.");
+            if (step.shifted) { Say("The forest shifts! Unexplored places have moved."); TowerAudio.Play("shift"); }
             else if (step.arrived != null && !step.halted && R.EventBlock() == null) Say("Arrived: " + step.arrived.name + ".");
+            if (!step.halted && R.EventBlock() == null && !R.RewardPending) MaybeBanter(false);
         });
     }
 
@@ -801,7 +843,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             TextAt(panel, "Kind", run.cleared.Contains(node.id) ? "Cleared." : kind, 16, y, Side - 32, 40, 13, Cream); y += 44;
             if (node.kind == "camp")
             {
-                ButtonAt(panel, "Rest", "REST AT CAMP (1 firewood)", 16, y, Side - 32, 42, () => Act(R.CampRest()), Teal, 14, run.firewood > 0);
+                ButtonAt(panel, "Rest", "REST AT CAMP (1 firewood)", 16, y, Side - 32, 42, () => { string e = R.CampRest(); Act(e); if (e == null) MaybeBanter(true); }, Teal, 14, run.firewood > 0);
                 y += 48;
                 float half = (Side - 40) / 2;
                 ButtonAt(panel, "Cook", "COOK (1 ration)", 16, y, half, 38, () => Act(R.CampCook()), Teal, 12, run.rations > 0);
@@ -810,15 +852,17 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             }
             else
                 ButtonAt(panel, "Enter", "ENTER " + (node.kind == "landmark" ? "LANDMARK" : "DUNGEON"), 16, y, Side - 32, 42,
-                    () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); Go(View.Dungeon); } },
+                    () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); TowerAudio.Play("door"); Go(View.Dungeon); } },
                     Teal, 16, !run.cleared.Contains(node.id));
             y += 50;
         }
         if (!dungeon)
         {
-            TextAt(panel, "Travel", R.GridRun ? "Tap anywhere you can see to plan a route; tap again or WALK to go. Walked ground becomes road: cheaper and safer. Drag to pan, wheel or pinch to zoom." :
-                "Tap a glowing place to look; tap it again or WALK THERE to set off. Brighter glows are one trail away.", 16, y, Side - 32, R.GridRun ? 62 : 34, 12, new Color(0.8f, 0.85f, 0.9f));
-            y += R.GridRun ? 66 : 38;
+            string effect = TowerRules.WeatherEffect(R.Weather);
+            TextAt(panel, "Travel", effect.Length > 0 ? effect + " Tap the map to plan a route; walked ground becomes road." :
+                "Tap anywhere you can see to plan a route; tap again or WALK to go. Walked ground becomes road: cheaper and safer. Drag to pan, wheel or pinch to zoom.",
+                16, y, Side - 32, 62, 12, effect.Length > 0 ? new Color(0.75f, 0.88f, 1f) : new Color(0.8f, 0.85f, 0.9f));
+            y += 66;
         }
         else
         {
@@ -871,7 +915,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             TextAt(panel, "Relics", "Relics: " + string.Join(", ", names.ToArray()), 16, y, Side - 32, 36, 12, new Color(1f, 0.85f, 0.5f));
             y += 38;
         }
-        ButtonAt(panel, "Loot", "HAUL & SAFE POCKET", 16, y, Side - 32, 36, () => { lootOpen = true; if (view == View.Dungeon) BuildLoot(); else Rebuild(); }, Teal, 14);
+        float halfW = (Side - 40) / 2;
+        ButtonAt(panel, "Loot", "HAUL & POCKET", 16, y, halfW, 36, () => { lootOpen = true; if (view == View.Dungeon) BuildLoot(); else Rebuild(); }, Teal, 13);
+        ButtonAt(panel, "Journal", "JOURNAL", 24 + halfW, y, halfW, 36, OpenJournal, Moss, 13);
         y += 44;
         if (dungeon)
             ButtonAt(panel, "Leave", "LEAVE DUNGEON", 16, y, Side - 32, 40, () => Act(R.LeaveDungeon()), Alert, 15);
@@ -886,7 +932,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 if (!R.AtSafeExit && !retreatArmed) { retreatArmed = true; Rebuild(); return; }
                 retreatArmed = false;
                 R.EndExpedition(false);
-                tower.CloseExpedition(null);
+                tower.SaveExpedition();
+                Rebuild();
             }, Alert, 13);
         }
     }
@@ -1338,6 +1385,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         if (travelClock < 1) return;
         string error = R.DungeonAdvance(x, y);
         if (error != null) { CancelTravel(); Say(error); return; }
+        TowerAudio.PlayVaried("step", 0.45f);
         travelIndex++; travelClock = 0;
         commitDungeonStep();
         if (travelIndex <= routeMarks.Count && routeMarks[travelIndex - 1] != null) routeMarks[travelIndex - 1].SetActive(false);
@@ -1575,6 +1623,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         canvas.gameObject.SetActive(false);
         // The spec's seed builds the line-up and drives the fight, so reloading mid-fight replays the same battle.
         var encounter = BattleCatalog.Build(spec);
+        var species = new List<string>();
+        foreach (var enemy in encounter.Enemies) if (!string.IsNullOrEmpty(enemy.Species)) species.Add(enemy.Species);
+        R.RecordBeasts(species);
         float vigor = 0f;
         foreach (var unit in alive) vigor += R.LevelHp(unit.Id) + R.GearHp(unit.Id);
         encounter.SummonerVigor = alive.Count > 0 ? vigor / alive.Count : 0f;
@@ -1606,6 +1657,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var run = R.Run;
         if (!R.RewardPending) return;
         float width = root.rect.width, height = root.rect.height;
+        string offerKey = string.Join("|", run.rewardOffer.ToArray());
+        if (offerKey != soundedReward) { soundedReward = offerKey; TowerAudio.Play("reward"); }
         var shade = Stretch("Reward shade", content, new Color(0, 0, 0, 0.6f));
         int n = run.rewardOffer.Count;
         float pw = Mathf.Min(900, width - Side - 60), ph = 330;
@@ -1636,6 +1689,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var run = R.Run;
         var region = TowerRules.Region(run.conquest);
         float width = root.rect.width, height = root.rect.height;
+        if (soundedEvent != "conquest:" + run.conquest) { soundedEvent = "conquest:" + run.conquest; TowerAudio.Play("victory"); }
         var shade = Stretch("Conquest shade", content, new Color(0, 0, 0, 0.7f));
         float pw = Mathf.Min(760, width - Side - 60), ph = 300;
         float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
@@ -1658,6 +1712,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         if (R.RewardPending) { BuildRewardCard(); return; }
         bool ambush = R.AmbushPending;
         if (def == null && !ambush && string.IsNullOrEmpty(run.eventResult)) return;
+        string eventKey = ambush ? "ambush:" + run.steps : def != null ? def.id + ":" + run.steps : "";
+        if (eventKey.Length > 0 && eventKey != soundedEvent) { soundedEvent = eventKey; TowerAudio.Play(ambush ? "status" : "chime", 0.8f); }
         float width = root.rect.width, height = root.rect.height;
         var shade = Stretch("Event shade", content, new Color(0, 0, 0, 0.55f));
         int choices = ambush || def == null ? 1 : def.choices.Count;
@@ -1733,16 +1789,230 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
     }
 
-    private void ShowEnd()
+    // ---------------------------------------------------------------- immersion (review step 7)
+
+    // The map darkens and cools through dusk to night, and warms at dawn.
+    private static Color DayTint(float hour)
     {
-        if (content == null) Rebuild();
+        float night = TowerRules.NightLevel(hour);
+        Color tint = Color.Lerp(Color.white, new Color(0.42f, 0.5f, 0.72f), night);
+        if (hour >= 17f && hour < 20f) tint = Color.Lerp(tint, new Color(1f, 0.82f, 0.66f), 0.35f * (1f - Mathf.Abs(hour - 18.5f) / 1.5f));
+        if (hour >= 5f && hour < 7.5f) tint = Color.Lerp(tint, new Color(1f, 0.86f, 0.76f), 0.3f * (1f - Mathf.Abs(hour - 6.25f) / 1.25f));
+        return tint;
+    }
+
+    // Fog is a pale haze over the map; rain is a sheet of falling streaks.
+    private void BuildWeather(RectTransform map, string weather)
+    {
+        if (weather == "fog")
+        {
+            var haze = new GameObject("Fog haze", typeof(RectTransform), typeof(Image)).GetComponent<Image>();
+            haze.transform.SetParent(map, false);
+            var r = haze.rectTransform; r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = r.offsetMax = Vector2.zero;
+            haze.color = new Color(0.78f, 0.82f, 0.86f, 0.22f); haze.raycastTarget = false;
+        }
+        else if (weather == "rain")
+        {
+            var rain = new GameObject("Rain", typeof(RectTransform), typeof(RawImage), typeof(TowerRainLayer)).GetComponent<RawImage>();
+            rain.transform.SetParent(map, false);
+            var r = rain.rectTransform; r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = r.offsetMax = Vector2.zero;
+            rain.raycastTarget = false;
+        }
+    }
+
+    // A line from the party: always at camp, otherwise now and then after a walk.
+    private void MaybeBanter(bool always)
+    {
+        var run = R.Run;
+        if (run == null || view != View.Forest || gridView == null) return;
+        movesSinceBanter++;
+        if (!always && (movesSinceBanter < 3 || banterRng.NextDouble() > 0.45)) return;
+        string line = TowerBanter.Pick(run.party, run.hp, TowerBanter.Mood(R), banterRng);
+        if (line == null) return;
+        movesSinceBanter = 0;
+        if (banterBubble != null) Destroy(banterBubble);
+        float areaW = root.rect.width - Side - 12, areaH = root.rect.height - Top;
+        var vp = gridView.CellToViewport(run.cx, run.cy);
+        float w = 300, h = 56;
+        float x = Mathf.Clamp(vp.x * areaW - w / 2, 8, areaW - w - 8), y = Mathf.Clamp(Top + (1 - vp.y) * areaH - h - 46, Top + 8, root.rect.height - h - 8);
+        var bubble = PanelAt("Banter", content, x, y, w, h);
+        bubble.raycastTarget = false;
+        TextAt(bubble.transform, "Line", line, 12, 4, w - 24, h - 8, 13, Cream, TextAnchor.MiddleLeft).fontStyle = FontStyle.Italic;
+        banterBubble = bubble.gameObject;
+        banterClock = 5.5f;
+    }
+
+    // Setting out: the region, its danger and a hook, over a painting of what lies ahead.
+    private void BuildIntroCard()
+    {
+        var run = R.Run; var region = R.RunRegion;
         float width = root.rect.width, height = root.rect.height;
-        var shade = Stretch("End shade", content, new Color(0, 0, 0, 0.75f));
+        var shade = Stretch("Intro shade", content, new Color(0, 0, 0, 0.62f));
+        float pw = Mathf.Min(820, width - Side - 60), ph = 340, px = (width - Side - pw) / 2, py = (height - ph) / 2;
+        var panel = PanelAt("Intro", shade.transform, px, py, pw, ph).transform;
+        var art = Resources.Load<Texture2D>(TowerDungeonIllustration.ArtRoot + IntroArt(run.biome) + "_vista");
+        float artW = 0;
+        if (art != null)
+        {
+            artW = Mathf.Min(260, pw * 0.34f);
+            var pic = new GameObject("Region art", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+            pic.transform.SetParent(panel, false); pic.texture = art; pic.raycastTarget = false;
+            var pr = pic.rectTransform; pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0, 1);
+            pr.anchoredPosition = new Vector2(12, -12); pr.sizeDelta = new Vector2(artW, ph - 24);
+            float aspect = artW / (ph - 24), src = art.width / (float)art.height;
+            pic.uvRect = src > aspect ? new Rect((1 - aspect / src) / 2, 0, aspect / src, 1) : new Rect(0, (1 - src / aspect) / 2, 1, src / aspect);
+            artW += 12;
+        }
+        float tx = 24 + artW, tw = pw - tx - 24;
+        TextAt(panel, "Kicker", "THE GUILD SETS OUT", tx, 22, tw, 22, 14, new Color(0.75f, 0.85f, 0.95f));
+        TextAt(panel, "Name", region.name.ToUpperInvariant(), tx, 46, tw, 44, 32, Gold);
+        TextAt(panel, "Biome", BiomeName(run.biome) + "  •  Danger " + region.depth + "  •  " + TowerRules.WeatherName(R.Weather), tx, 92, tw, 22, 14, Cream);
+        TextAt(panel, "Blurb", region.blurb + " " + BiomeHook(run.biome), tx, 122, tw, 96, 16, Cream, TextAnchor.UpperLeft);
+        TextAt(panel, "Goal", "Find the lair and clear it to conquer the region. Head home from camp to bank the haul.", tx, 222, tw, 40, 13,
+            new Color(0.8f, 0.86f, 0.92f), TextAnchor.UpperLeft);
+        ButtonAt(panel, "Go", "SET OFF", pw - 224, ph - 70, 200, 52, () => { introOpen = false; Rebuild(); }, Teal, 18);
+    }
+
+    private static string IntroArt(string biome)
+    {
+        switch (biome)
+        {
+            case "lakes": return "marsh";
+            case "mountains": return "mine";
+            case "ruins": return "ruin";
+            case "heart": return "heartwood";
+            default: return "briar";
+        }
+    }
+
+    private static string BiomeName(string biome)
+    {
+        switch (biome)
+        {
+            case "lakes": return "Lakes and marsh";
+            case "mountains": return "Mountain passes";
+            case "ruins": return "Old ruins";
+            case "heart": return "The Heart of the Silverwood";
+            default: return "The forest edge";
+        }
+    }
+
+    private static string BiomeHook(string biome)
+    {
+        switch (biome)
+        {
+            case "lakes": return "Mist lies on the water, and something moves under it.";
+            case "mountains": return "Thin air, deep mines, and things that dig.";
+            case "ruins": return "Stone remembers what the forest forgot.";
+            case "heart": return "The Silverwood's heart beats slow and sick.";
+            default: return "Old roads and older trees. The forest is waking.";
+        }
+    }
+
+    // The end of a run: what came home, what was lost, and where the party went.
+    private void ShowSummary()
+    {
+        var s = R.LastSummary;
+        float width = root.rect.width, height = root.rect.height;
+        var shade = Stretch("End shade", content, new Color(0, 0, 0, 0.78f));
         endPanel = shade.rectTransform;
-        var panel = PanelAt("End", shade.transform, (width - 560) / 2, (height - 260) / 2, 560, 260).transform;
-        TextAt(panel, "Title", "THE PARTY HAS FALLEN", 20, 20, 520, 40, 26, Alert, TextAnchor.MiddleCenter);
-        TextAt(panel, "Text", "The survivors limp home. Only the Safe Pocket and the experience they earned return to the Tower.",
-            30, 70, 500, 80, 16, Cream, TextAnchor.MiddleCenter);
-        ButtonAt(panel, "Home", "RETURN TO TOWER", 150, 170, 260, 56, () => tower.CloseExpedition(null), Teal, 18);
+        float pw = Mathf.Min(620, width - 40), ph = 420;
+        var panel = PanelAt("End", shade.transform, (width - pw) / 2, (height - ph) / 2, pw, ph).transform;
+        bool wiped = s != null && s.wiped;
+        string title = s == null ? "THE EXPEDITION IS OVER" : wiped ? "THE PARTY HAS FALLEN" : s.retreated ? "A HURRIED RETREAT" : "THE GUILD RETURNS";
+        TextAt(panel, "Title", title, 20, 18, pw - 40, 40, 28, wiped ? Alert : Gold, TextAnchor.MiddleCenter);
+        if (s != null && soundedEvent != "end")
+        {
+            soundedEvent = "end";
+            TowerAudio.Play(wiped ? "defeat" : s.retreated ? "confirm" : "victory");
+        }
+        if (s == null)
+        {
+            TextAt(panel, "Text", "The survivors are home.", 30, 80, pw - 60, 40, 16, Cream, TextAnchor.MiddleCenter);
+        }
+        else
+        {
+            TextAt(panel, "Region", s.region + "  •  " + s.days + (s.days == 1 ? " day" : " days") + " in the wild", 30, 62, pw - 60, 24, 16, Cream, TextAnchor.MiddleCenter);
+            string journey = s.places + " places reached  •  " + s.cleared + " cleared  •  " + s.fights + (s.fights == 1 ? " fight" : " fights") + " won";
+            string growth = s.relics + (s.relics == 1 ? " relic" : " relics") + " and " + s.upgrades + " card upgrades (they stay in the wild)";
+            TextAt(panel, "Journey", journey, 30, 100, pw - 60, 24, 15, Cream, TextAnchor.MiddleCenter);
+            TextAt(panel, "Growth", growth, 30, 126, pw - 60, 24, 13, new Color(0.8f, 0.86f, 0.92f), TextAnchor.MiddleCenter);
+            TextAt(panel, "Banked title", wiped ? "ONLY THE SAFE POCKET CAME HOME" : "BANKED IN THE TOWER", 30, 166, pw - 60, 24, 15, Gold, TextAnchor.MiddleCenter);
+            var parts = new List<string> { s.gold + " gold" };
+            if (s.ore > 0) parts.Add(s.ore + " ore");
+            if (s.essence > 0) parts.Add(s.essence + " essence");
+            if (s.celestium > 0) parts.Add(s.celestium + " celestium");
+            if (s.sigils > 0) parts.Add(s.sigils + " Sigils");
+            TextAt(panel, "Banked", string.Join("  •  ", parts.ToArray()), 30, 194, pw - 60, 30, 20, Cream, TextAnchor.MiddleCenter);
+            string loss = s.goldLeft > 0 ? s.goldLeft + " gold was dropped in the retreat. Head home from a camp to keep it all." :
+                s.fallen > 0 ? s.fallen + (s.fallen == 1 ? " fighter comes" : " fighters come") + " home wounded and will need rest." : "";
+            if (loss.Length > 0) TextAt(panel, "Loss", loss, 30, 236, pw - 60, 44, 14, new Color(1f, 0.7f, 0.6f), TextAnchor.MiddleCenter);
+        }
+        ButtonAt(panel, "Home", "RETURN TO TOWER", (pw - 280) / 2, ph - 84, 280, 58, () => tower.CloseExpedition(null), Teal, 18);
+    }
+
+    // ---------------------------------------------------------------- guild journal
+
+    private void OpenJournal() { journalOpen = true; Rebuild(); }
+
+    private void BuildJournal()
+    {
+        var journal = R.Journal;
+        float width = root.rect.width, height = root.rect.height;
+        var shade = Stretch("Journal shade", content, new Color(0, 0, 0, 0.7f));
+        float pw = Mathf.Min(900, width - 40), ph = Mathf.Min(600, height - 70);
+        var panel = PanelAt("Journal", shade.transform, (width - pw) / 2, (height - ph) / 2 + 10, pw, ph).transform;
+        TextAt(panel, "Title", "GUILD JOURNAL", 22, 12, 300, 32, 22, Gold);
+        ButtonAt(panel, "Close", "CLOSE", pw - 124, 12, 104, 34, () => { journalOpen = false; Rebuild(); }, Alert, 14);
+        string[] tabs = { "BEASTS", "EVENTS", "REGIONS" };
+        int[] counts = { journal.beasts.Count, journal.events.Count, journal.regions.Count };
+        int[] totals = { BattleCatalog.SpeciesIds.Length, TowerEvents.All.Count, TowerRules.Regions.Length };
+        for (int i = 0; i < tabs.Length; i++)
+        {
+            int tab = i;
+            ButtonAt(panel, "Tab " + i, tabs[i] + "  " + counts[i] + "/" + totals[i], 22 + i * 190, 54, 180, 36,
+                () => { journalTab = tab; Rebuild(); }, journalTab == i ? Teal : new Color(0.2f, 0.24f, 0.3f), 13);
+        }
+        var rows = new List<KeyValuePair<string, string>>();
+        if (journalTab == 0)
+            foreach (var id in BattleCatalog.SpeciesIds)
+                rows.Add(journal.beasts.Contains(id) ? new KeyValuePair<string, string>(BattleCatalog.SpeciesName(id), BattleCatalog.SpeciesInfo(id))
+                    : new KeyValuePair<string, string>("Unknown beast", "Not yet met in battle."));
+        else if (journalTab == 1)
+        {
+            foreach (var id in journal.events)
+            {
+                var def = TowerEvents.Get(id);
+                if (def != null) rows.Add(new KeyValuePair<string, string>(def.title, def.text));
+            }
+            if (rows.Count == 0) rows.Add(new KeyValuePair<string, string>("Nothing yet", "Events met in the wild are written down here."));
+        }
+        else
+            foreach (var region in TowerRules.Regions)
+                rows.Add(journal.regions.Contains(region.id) || R.RegionConquered(region.id)
+                    ? new KeyValuePair<string, string>(region.name + (R.RegionConquered(region.id) ? "  (conquered)" : ""), region.blurb + " Danger " + region.depth + ".")
+                    : new KeyValuePair<string, string>("Uncharted", "No expedition has set out for this land yet."));
+        ScrollRows(panel, 22, 102, pw - 44, ph - 120, rows);
+    }
+
+    // A scrolling list of title + text rows.
+    private void ScrollRows(Transform parent, float x, float y, float w, float h, List<KeyValuePair<string, string>> rows)
+    {
+        var holder = At("Rows view", parent, x, y, w, h, new Color(0.02f, 0.03f, 0.05f, 0.6f));
+        holder.gameObject.AddComponent<RectMask2D>();
+        const float rowH = 62;
+        var list = new GameObject("Rows", typeof(RectTransform)).GetComponent<RectTransform>();
+        list.SetParent(holder.transform, false);
+        list.anchorMin = new Vector2(0, 1); list.anchorMax = new Vector2(1, 1); list.pivot = new Vector2(0.5f, 1);
+        list.anchoredPosition = Vector2.zero; list.sizeDelta = new Vector2(0, Mathf.Max(h, rows.Count * rowH + 8));
+        for (int i = 0; i < rows.Count; i++)
+        {
+            bool unknown = rows[i].Key == "Unknown beast" || rows[i].Key == "Uncharted";
+            TextAt(list, "Row title " + i, rows[i].Key, 14, 8 + i * rowH, w - 28, 20, 15, unknown ? new Color(0.55f, 0.6f, 0.66f) : Gold);
+            TextAt(list, "Row text " + i, rows[i].Value, 14, 28 + i * rowH, w - 28, 32, 12, unknown ? new Color(0.5f, 0.55f, 0.6f) : Cream, TextAnchor.UpperLeft);
+        }
+        var scroll = holder.gameObject.AddComponent<ScrollRect>();
+        scroll.content = list; scroll.viewport = holder.rectTransform;
+        scroll.horizontal = false; scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 40;
     }
 }

@@ -146,6 +146,7 @@ namespace AdamsHaven.Tower
             run.eventId = id;
             run.eventResult = "";
             if (!run.eventsSeen.Contains(id)) run.eventsSeen.Add(id);
+            RecordJournalEvent(id);
         }
 
         public float ChoiceChance(TowerEventChoice choice)

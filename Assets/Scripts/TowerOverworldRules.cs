@@ -234,7 +234,7 @@ namespace AdamsHaven.Tower
             return i => road[i];
         }
 
-        private int GridSightRadius { get { return GridSight + 2 * (RevealRadius - 1); } }
+        private int GridSightRadius { get { return Mathf.Max(3, GridSight + 2 * (RevealRadius - 1) - WeatherSightPenalty); } }
 
         // Lifts the fog in a circle; places inside it become known.
         private void RevealCells(int cx, int cy, int radius)
@@ -276,14 +276,14 @@ namespace AdamsHaven.Tower
             if (preview.path == null) { preview.error = "No way through there."; return preview; }
             preview.cost = map.PathCost(preview.path, road);
             bool night = !IsDaylight(RunHour());
-            float threat = 0;
+            float threat = 0, weather = WeatherThreatScale;
             for (int i = 1; i < preview.path.Count; i++)
             {
                 bool onRoad = road(map.Index(preview.path[i].x, preview.path[i].y));
                 if (onRoad) preview.roadCells++; else preview.trailCells++;
-                threat += (onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0);
+                threat += ((onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0)) * weather;
             }
-            preview.rations = preview.cost / RationCost;
+            preview.rations = preview.cost * WeatherRationScale / RationCost;
             preview.threat = Mathf.RoundToInt(threat);
             return preview;
         }
@@ -320,7 +320,7 @@ namespace AdamsHaven.Tower
                 Wear(c.x, c.y);
                 RevealCells(c.x, c.y, GridSightRadius);
                 // Rations by distance and ground.
-                run.travelCarry += cost;
+                run.travelCarry += cost * WeatherRationScale;
                 while (run.travelCarry >= RationCost)
                 {
                     run.travelCarry -= RationCost;
@@ -332,7 +332,7 @@ namespace AdamsHaven.Tower
                     }
                 }
                 // Threat by ground walked.
-                run.threatCarry += (onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0);
+                run.threatCarry += ((onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0)) * WeatherThreatScale;
                 int raise = Mathf.FloorToInt(run.threatCarry);
                 if (raise > 0) { run.threatCarry -= raise; RaiseThreat(raise); }
                 // Something on the way, every few cells.

@@ -135,6 +135,17 @@ public sealed partial class BattleMode
 
     private bool Busy { get { return fx < queueEnd - 0.001f || beats.Count > 0; } }
 
+    // An ultimate cut-in is on screen (it plays at the battle speed, so 0.5x makes it long).
+    private bool CutInShowing { get { return cutUnit != null && cutCard != null && fx >= cutStart && fx < cutStart + cutLen; } }
+
+    // Tap during a cut-in: jump to its end. The action itself still plays, so nothing is lost but the cinematic.
+    private void SkipCutIn()
+    {
+        fx = cutStart + cutLen;
+        hitStop = 0f;
+        if (ultPlayer != null) ultPlayer.Stop();
+    }
+
     private void ResetFx()
     {
         beats.Clear(); vis.Clear(); particles.Clear(); effects.Clear(); floaters.Clear();
@@ -145,6 +156,7 @@ public sealed partial class BattleMode
 
     private void Signal(BattleAnimationPhase phase, BattleUnit actor, BattleUnit target, BattleCard card, BattleFact fact = null)
     {
+        Sound(phase, actor, card, fact);
         Action<BattleAnimationSignal> listeners = AnimationSignal;
         if (listeners == null) return;
         BattleAnimationSignal signal = new BattleAnimationSignal
@@ -157,6 +169,26 @@ public sealed partial class BattleMode
     }
 
     private void At(float time, Action run) { beats.Add(new Beat { At = time, Run = run }); }
+
+    // Each beat of the fight has a sound; they follow the beats, so they slow down with the battle speed.
+    private void Sound(BattleAnimationPhase phase, BattleUnit actor, BattleCard card, BattleFact fact)
+    {
+        switch (phase)
+        {
+            case BattleAnimationPhase.Ultimate: AdamsHaven.Tower.TowerAudio.Play("ult"); break;
+            case BattleAnimationPhase.Action:
+                if (card != null && actor != null && !Ranged(actor, card)) AdamsHaven.Tower.TowerAudio.PlayVaried("swing", 0.6f);
+                break;
+            case BattleAnimationPhase.Hit:
+                if (fact != null && fact.Kind == "poison") AdamsHaven.Tower.TowerAudio.PlayVaried("status", 0.4f);
+                else AdamsHaven.Tower.TowerAudio.PlayVaried(fact != null && fact.Crit ? "crit" : "hit", fact != null && fact.Crit ? 1f : 0.75f);
+                break;
+            case BattleAnimationPhase.Heal: AdamsHaven.Tower.TowerAudio.PlayVaried("heal", 0.6f, 0.04f); break;
+            case BattleAnimationPhase.Status: AdamsHaven.Tower.TowerAudio.PlayVaried("status", 0.55f); break;
+            case BattleAnimationPhase.Down: AdamsHaven.Tower.TowerAudio.Play("down", 0.8f); break;
+            case BattleAnimationPhase.PlayCard: AdamsHaven.Tower.TowerAudio.PlayVaried("card", 0.6f); break;
+        }
+    }
 
     private UnitVis V(BattleUnit unit)
     {

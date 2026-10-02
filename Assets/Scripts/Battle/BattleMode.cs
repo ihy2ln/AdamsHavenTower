@@ -145,6 +145,7 @@ public sealed partial class BattleMode : MonoBehaviour
     // Result and withdraw wording; null keeps the Tower skirmish text. Seed 0 rolls a fresh fight, otherwise the
     // same seed replays the same draws (expeditions derive it from the run so a reload does not re-roll a fight).
     public string RewardLine, WithdrawLine;
+    private bool resultSounded;
     public int Seed;
     // Expedition fights hand over a built encounter (enemies, commander, title, theme); null = a Tower skirmish.
     public BattleEncounter Encounter;
@@ -165,6 +166,8 @@ public sealed partial class BattleMode : MonoBehaviour
         auto = false; autoTimer = 0f; speed = SavedSpeed();
         floor = towerFloor;
         leave = onLeave;
+        resultSounded = false;
+        AdamsHaven.Tower.TowerAudio.Ambience("battle");
         var party = new List<BattleUnit>(field);
         party.AddRange(reserve);
         BattleUnit jd = BattleCatalog.JD();
@@ -400,6 +403,8 @@ public sealed partial class BattleMode : MonoBehaviour
         battle = null;
         CloseSheet();
         ReleaseUltClip();
+        // Silence the drums; an expedition puts its own ambience back when it redraws.
+        AdamsHaven.Tower.TowerAudio.Ambience("");
         if (callback != null) callback(won, won ? reward : 0);
     }
 
@@ -618,6 +623,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (debugClick && e.type == EventType.Repaint) { pressed = true; debugClick = false; }
 #endif
         used = false; modalDrawing = false;
+        if (pressed && CutInShowing) { SkipCutIn(); pressed = false; used = true; }
         TrackHold(e);
 
         Matrix4x4 old = GUI.matrix;
@@ -643,7 +649,11 @@ public sealed partial class BattleMode : MonoBehaviour
         DrawHint();
         if (paint) { DrawFlyingCards(); DrawCutIn(); DrawBanners(); DrawToast(); }
         DrawTooltip();
-        if (battle.Finished && !Busy) DrawResult();
+        if (battle.Finished && !Busy)
+        {
+            if (!resultSounded && paint) { resultSounded = true; AdamsHaven.Tower.TowerAudio.Play(battle.Victory ? "victory" : "defeat"); }
+            DrawResult();
+        }
         if (showLog) DrawLog();
         if (confirmWithdraw) DrawWithdrawConfirm();
         if (sheetUnit != null) DrawCharacterSheet();
@@ -1582,6 +1592,7 @@ public sealed partial class BattleMode : MonoBehaviour
             Text(new Rect(nx, VH - 190f, 900f, 34f), cutCard.Kind == BattleCardKind.Awakening ? "AWAKENING" : "ULTIMATE", 24, BattleGui.Alpha(Gold, va), TextAnchor.MiddleLeft, true, false, 2f);
             Text(new Rect(nx, VH - 160f, 1100f, 80f), cutCard.Name.ToUpperInvariant(), 58, new Color(1, 1, 1, va), TextAnchor.MiddleLeft, true, false, 4f);
             Text(new Rect(nx, VH - 92f, 900f, 30f), cutUnit.Name.ToUpperInvariant(), 22, BattleGui.Alpha(accent, va), TextAnchor.MiddleLeft, true, false, 2f);
+            DrawSkipHint(va);
             return;
         }
         Fill(new Rect(0, 0, VW, VH), new Color(0, 0, .02f, .66f * a));
@@ -1610,6 +1621,13 @@ public sealed partial class BattleMode : MonoBehaviour
         Text(new Rect(tx, 372f, 900f, 40f), cutCard.Kind == BattleCardKind.Awakening ? "AWAKENING" : "ULTIMATE", 26, BattleGui.Alpha(Gold, a), TextAnchor.MiddleLeft, true, false, 2f);
         Text(new Rect(tx, 408f, 900f, 90f), cutCard.Name.ToUpperInvariant(), 66, new Color(1, 1, 1, a), TextAnchor.MiddleLeft, true, false, 4f);
         Text(new Rect(tx, 496f, 900f, 34f), cutUnit.Name.ToUpperInvariant(), 24, BattleGui.Alpha(accent, a), TextAnchor.MiddleLeft, true, false, 2f);
+        DrawSkipHint(a);
+    }
+
+    private void DrawSkipHint(float a)
+    {
+        float blink = 0.55f + 0.45f * Mathf.Sin(Time.unscaledTime * 3f);
+        Text(new Rect(VW - 360f, VH - 58f, 320f, 30f), "TAP TO SKIP", 18, new Color(1, 1, 1, a * blink), TextAnchor.MiddleRight, true, false, 2f);
     }
 
     private void DrawResult()

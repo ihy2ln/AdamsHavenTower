@@ -159,6 +159,7 @@ namespace AdamsHaven.Tower
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
             if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();
             if (State.hasRun) NormalizeRewards(State.run);
+            NormalizeJournal();
             MigratePlateRun();
             MarkPartyAway();
         }
@@ -240,6 +241,7 @@ namespace AdamsHaven.Tower
             State.run = run;
             State.hasRun = true;
             State.lastLayout = layout.id;
+            RecordJournalRegion(region);
             if (GridMaps) StartGridRun(run, region);
             MarkPartyAway();
             RevealFrom(run.at);
@@ -433,7 +435,8 @@ namespace AdamsHaven.Tower
             if (run == null) return "No expedition.";
             int banked = 0, sigils = 0, taxed = 0;
             bool safe = AtSafeExit;
-            foreach (var loot in run.pocket) { Bank(loot); banked += loot.gold; }
+            var summary = Summarize(run, wiped, safe);
+            foreach (var loot in run.pocket) { Bank(loot); banked += loot.gold; AddLoot(summary, loot); }
             if (!wiped)
             {
                 foreach (var loot in run.haul)
@@ -441,10 +444,10 @@ namespace AdamsHaven.Tower
                     // A hurried retreat through the woods drops part of every find; the Safe Pocket is never taxed.
                     if (!safe) { taxed += loot.gold - Taxed(loot.gold); loot.gold = Taxed(loot.gold); loot.ore = Taxed(loot.ore);
                         loot.essence = Taxed(loot.essence); loot.celestium = Taxed(loot.celestium); }
-                    Bank(loot); banked += loot.gold;
+                    Bank(loot); banked += loot.gold; AddLoot(summary, loot);
                 }
                 if (Researched("EXP-2") && banked > 0)   // Pack mules
-                { int extra = Mathf.RoundToInt(banked * 0.2f); State.gold += extra; banked += extra; }
+                { int extra = Mathf.RoundToInt(banked * 0.2f); State.gold += extra; banked += extra; summary.gold += extra; }
                 State.food += run.rations * RationFood;
                 State.water += run.rations * RationWater;
                 State.tonics += run.tonics;
@@ -457,6 +460,8 @@ namespace AdamsHaven.Tower
                 var hero = HeroResident(run.party[i]);
                 if (hero != null && run.hp[i] < 50) hero.injury = Mathf.Max(hero.injury, 50 - run.hp[i] / 2f);
             }
+            summary.sigils = sigils; summary.goldLeft = taxed;
+            LastSummary = summary;
             State.hasRun = false;
             MarkPartyAway();
             Bump("expedition");

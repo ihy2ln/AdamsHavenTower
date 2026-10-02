@@ -9,10 +9,10 @@ public sealed class TowerSimulationTests
     // Traversal events stay off unless a test is about them, so forest walks are predictable.
     // Plate-map runs unless a test asks for the grid map: the plate graphs are small and fixed, so walks are predictable.
     // TearDown puts the game's default (grid) back, since statics outlive the test run.
-    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
+    [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; TowerRules.Weathers = false; }
     [TearDown] public void TimedBuilds()
     {
-        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true;
+        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true; TowerRules.Weathers = true;
         TowerRules.Today = () => System.DateTime.Now.Date;
         TowerRules.NowUnix = () => System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }

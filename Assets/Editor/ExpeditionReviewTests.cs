@@ -7,10 +7,10 @@ using UnityEngine;
 // and the capped dock skirmish.
 public sealed class ExpeditionReviewTests
 {
-    [SetUp] public void Setup() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
+    [SetUp] public void Setup() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; TowerRules.Weathers = false; }
     [TearDown] public void Teardown()
     {
-        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true;
+        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true; TowerRules.Weathers = true;
         TowerRules.Today = () => System.DateTime.Now.Date;
     }
 
