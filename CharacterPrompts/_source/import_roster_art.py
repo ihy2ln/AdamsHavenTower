@@ -18,7 +18,8 @@ from PIL import Image
 HERE = Path(__file__).resolve().parent
 GEN = HERE.parent / "Generated"
 ROOT = HERE.parent.parent / "Assets" / "Resources" / "AdamsHaven" / "Roster"
-SUBSET = {"card-front", "card", "work-full", "casual", "chibi-battle", "chibi-work", "chibi-casual"}
+SUBSET = {"card-front", "card", "work-full", "casual", "chibi-battle", "chibi-work", "chibi-casual",
+          "icon-avatar", "portrait-bust", "summon-reveal", "summon-reveal-wide"}
 MAX_EDGE = 1024
 roster = json.loads((ROOT / "tower_roster.json").read_text(encoding="utf-8"))["units"]
 by_code = {u["code"]: u["id"] for u in roster}
