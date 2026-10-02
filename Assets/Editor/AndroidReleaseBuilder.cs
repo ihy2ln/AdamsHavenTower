@@ -14,7 +14,7 @@ public static class AndroidReleaseBuilder
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
     private const string Version = "0.6.0";
-    private const string ApkName = "AdamsHavenTower-" + Version + ".apk";
+    private const string ApkName = "AdamsHavenTowerBattle-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }
     private static string LogPath { get { return Path.Combine(BuildsFolder, "apk_build_log.txt"); } }
@@ -35,7 +35,10 @@ public static class AndroidReleaseBuilder
     private static void Continue()
     {
         string stage = SessionState.GetString(StageKey, "");
-        if (stage.Length == 0 || EditorApplication.isPlaying || EditorApplication.isCompiling) return;
+        if (stage.Length == 0 || EditorApplication.isPlaying) return;
+        // After the target switch the editor may still be compiling or importing: try again next editor tick instead of
+        // giving up, which left builds stuck at the "build" stage.
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating) { EditorApplication.delayCall += Continue; return; }
         try
         {
             if (stage == "switch")
@@ -76,7 +79,7 @@ public static class AndroidReleaseBuilder
     private static void Build()
     {
         var android = NamedBuildTarget.Android;
-        PlayerSettings.productName = "Adams Haven Tower";
+        PlayerSettings.productName = "Adams Haven: Tower Battle";
         PlayerSettings.SetApplicationIdentifier(android, "com.adamshaven.tower");
         PlayerSettings.bundleVersion = Version;
         PlayerSettings.Android.bundleVersionCode = 6;
