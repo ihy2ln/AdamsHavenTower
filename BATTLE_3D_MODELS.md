@@ -98,3 +98,33 @@ BattleChibi loops. `MoveSets` in BattleModels.cs picks basic / skill / ultimate 
 flinch with AH_hit_react and hold AH_knock_down when downed.
 Kaela: basic = AH_attack_cross_slash, skill = AH_attack_rising_strike, ultimate = AH_flying_kick.
 Meshy cost for Kaela: 35 credits (model); remesh, rig and preset animations were free in the web app.
+
+## Celestium weapons, 0.5x speed, character sheet (Oct 2, BM 10.2.0)
+
+**Weapons.** Every fighter now holds the Celestium weapon from `S:/AI/Game/Game Assets/characters/<Name>/Celestium Weapons/`.
+Kaela (ice gauntlets), Helda (dwarf hammer) and Clarity (kunai) already used Meshy models of that art. The other three did not:
+Ghislaine held the steel sword split off her body mesh, Daisy a plain red stick cut from hers, and Elara only had the quill
+modelled into her left hand. Those three are now built from the 2D art itself by `Tools/weapon_from_art.py`
+(stage 2 `Tools/weapon_from_art_mesh.py` runs in Blender): the transparent PNG's silhouette is inflated into a closed mesh
+(thin parts come out round, blades are capped at a set half-thickness) and both faces carry the art as texture.
+Output: `MeshyJobs/anime-battle-v2/weapons/{ghislaine-celestium-greatsword,daisy-celestium-spear,elara-celestium-pen}.glb`.
+No Meshy credits. `python Tools/weapon_from_art.py all` rebuilds them; tune `SPECS` (alpha, open, grow, flat, step) per weapon.
+Specs updated: `ghislaine.json` (new file, `flip: false` because the new mesh has its tip on +Z), `daisy.json` (new file),
+`elara.json` (carves the quill out of the left hand, adds `Weapon_Pen` there). Rebuilt with `build_battle_rig.py` as usual.
+The old Daisy spear is kept as `weapons/daisy-fire-spear.glb` (re-exported from her old .blend).
+At runtime `Weapon_*` renderers get a "crystal light" toon setup in `CreateRig` (no cel shadow, brighter, strong rim, fine line).
+
+**Field framing.** The field camera now spans -0.55..2.95 model units (`FieldCamCenter`/`FieldCamHalf`, 600 px image); the old
+-0.5..2.5 clipped weapons raised overhead (Ghislaine's cleave reaches ~3.0 body units, measured in Blender).
+
+**Speed.** The battle clock's base rate is 0.5x (`Speeds = {0.5, 1, 2}` in BattleMode.cs); the top-bar button cycles
+0.5x / 1x / 2x and the choice is kept in PlayerPrefs `AdamsHaven.BattleSpeed`. Everything on the clock slows together
+(lunges, hit timing, rig clips), so contacts stay in sync.
+
+**Character sheet** (`Assets/Scripts/Battle/BattleSheet.cs`). Press and hold (0.45 s) a party tile in the bottom-left, a reserve
+portrait, JD's plate or an ally on the field. A quick tap still selects as before. The left half is a model viewer with its own
+1024 px rig (`CreateRig`, stage at x=2000): drag sideways to turn, up/down to move, scroll or +/- to zoom (0.6x-4x),
+buttons for every AH_* clip (idle, basic, skill, ultimate, hit, down, walk; JD: draw / play card), play/pause, a scrub bar,
+and 0.25x / 0.5x / 1x playback (0.5x default). The right half shows rank, element and role, live stats, stress and statuses,
+the Celestium weapon, and every move and ultimate with its cost and effect. X, a tap outside or Escape closes it.
+Editor test hooks: `DebugOpenSheet(id)`, `DebugSheetPose(clip, time, yaw, zoom)`, `DebugBeginHold(id)`, `DebugSpeed`.

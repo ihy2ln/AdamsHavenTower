@@ -10,6 +10,8 @@ public sealed partial class BattleMode
     sealed class FieldRig
     {
         public GameObject Stage, Model;
+        public Transform Pivot;
+        public float Yaw;   // degrees the pivot is turned about the stage's vertical axis
         public Camera Camera;
         public RenderTexture Image;
         public readonly Dictionary<string, AnimationClip> Clips = new Dictionary<string, AnimationClip>();
@@ -17,6 +19,12 @@ public sealed partial class BattleMode
         public float Started, Rate = 1f, Offset;
         public bool Hold;   // knocked down: stay on the last frame instead of returning to guard
         public readonly List<Material> Materials = new List<Material>();
+
+        public void TurnTo(float yaw)
+        {
+            Pivot.RotateAround(Stage.transform.position, Vector3.up, yaw - Yaw);
+            Yaw = yaw;
+        }
     }
     readonly Dictionary<BattleUnit, FieldRig> fieldRigs = new Dictionary<BattleUnit, FieldRig>();
 
@@ -24,6 +32,9 @@ public sealed partial class BattleMode
     // AH_hit_react) and JD's card duelist render in 3D; everyone else uses the painted BattleChibi loops.
     // The older civilian-outfit 3D drafts are skipped. Set true to force every 3D rig back on.
     static readonly bool UseOld3DRigs = false;
+    // Field camera: the 2-unit-tall model plus room for weapons raised overhead (Ghislaine's cleave reaches ~3 units).
+    const float FieldCamCenter = 1.2f, FieldCamHalf = 1.75f;
+    const int FieldImage = 600;
     static bool IsAnimeRig(FieldRig rig, BattleUnit unit) { return unit.Id == "jd" || rig.Clips.ContainsKey("AH_hit_react"); }
 
     // Move sets per unit: clip, start offset into the clip (skips long wind-ups) and first contact time.
@@ -87,15 +98,25 @@ public sealed partial class BattleMode
     }
     void AddFieldRig(BattleUnit unit)
     {
+        // Export faces -Z; the field shows a three-quarter view toward the enemy line.
+        var rig = CreateRig(unit, "Battle rig: ", new Vector3(1000 + fieldRigs.Count * 20, -1000, 0), FieldImage, FieldImage, 155f);
+        if (rig != null) fieldRigs.Add(unit, rig);
+    }
+
+    // One offscreen rig: the unit's model scaled to 2 units tall with its feet on the stage, toon materials,
+    // and a transparent orthographic camera rendering into its own image. Null when the unit has no usable model.
+    FieldRig CreateRig(BattleUnit unit, string label, Vector3 at, int width, int height, float yaw)
+    {
         string path = "AdamsHaven/BattleModels/" + unit.Id + "/model";
         var prefab = Resources.Load<GameObject>(path);
-        if (!prefab) return;
+        if (!prefab) return null;
         var rig = new FieldRig();
-        rig.Stage = new GameObject("Battle rig: " + unit.Id);
+        rig.Stage = new GameObject(label + unit.Id);
         rig.Stage.transform.SetParent(transform, false);
-        rig.Stage.transform.position = new Vector3(1000 + fieldRigs.Count * 20, -1000, 0);
+        rig.Stage.transform.position = at;
         var pivot = new GameObject("Model scale and facing").transform;
         pivot.SetParent(rig.Stage.transform, false);
+        rig.Pivot = pivot;
         rig.Model = Instantiate(prefab, pivot);
         foreach (var a in rig.Model.GetComponentsInChildren<Animation>()) a.enabled = false;
         foreach (var a in rig.Model.GetComponentsInChildren<Animator>()) a.enabled = false;
@@ -105,13 +126,13 @@ public sealed partial class BattleMode
             int start = clip.name.LastIndexOf("AH_", StringComparison.Ordinal);
             if (start >= 0) rig.Clips[clip.name.Substring(start)] = clip;
         }
-        if (!UseOld3DRigs && !IsAnimeRig(rig, unit)) { Destroy(rig.Stage); return; }
+        if (!UseOld3DRigs && !IsAnimeRig(rig, unit)) { Destroy(rig.Stage); return null; }
         AnimationClip idle;
         if (rig.Clips.TryGetValue("AH_battle_guard", out idle)) idle.SampleAnimation(rig.Model, 0);
         foreach (var helper in rig.Model.GetComponentsInChildren<MeshRenderer>())
             if (helper.name == "Icosphere") helper.gameObject.SetActive(false);
         var renderers = rig.Model.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0) { Destroy(rig.Stage); return; }
+        if (renderers.Length == 0) { Destroy(rig.Stage); return null; }
         // Renderer.bounds can still describe the bind pose immediately after sampling.
         var bounds = new Bounds();
         bool hasPoint = false;
@@ -134,12 +155,13 @@ public sealed partial class BattleMode
         }
         float scale = 2f / Mathf.Max(.01f, bounds.size.y);
         pivot.localScale = Vector3.one * scale;
-        pivot.position += new Vector3(-bounds.center.x + rig.Stage.transform.position.x, -bounds.min.y + rig.Stage.transform.position.y, -bounds.center.z + rig.Stage.transform.position.z) * scale;
-        // Export faces -Z; show a three-quarter view toward the enemy line.
-        pivot.RotateAround(rig.Stage.transform.position, Vector3.up, 155f);
+        // Model space and world space differ by the stage offset; the bounds were measured in world space.
+        pivot.position += new Vector3(-bounds.center.x + at.x, -bounds.min.y + at.y, -bounds.center.z + at.z) * scale;
+        rig.TurnTo(yaw);
         foreach (var r in renderers)
         {
             if (r is SkinnedMeshRenderer skinned) skinned.updateWhenOffscreen = true;
+            bool weapon = r.name.StartsWith("Weapon_", StringComparison.Ordinal);
             var mats = r.materials;
             foreach (var mat in mats)
             {
@@ -152,6 +174,17 @@ public sealed partial class BattleMode
                     mat.shader = toon;
                     mat.SetTexture("_BaseMap", tex);
                     mat.SetColor("_BaseColor", color);
+                    if (weapon)
+                    {
+                        // Celestium weapons are crystal light: no cel shadow, brighter, a strong rim and a fine line.
+                        mat.SetColor("_BaseColor", new Color(color.r * 1.25f, color.g * 1.25f, color.b * 1.25f, 1f));
+                        mat.SetColor("_ShadeColor", new Color(.92f, .92f, .95f, 1f));
+                        mat.SetColor("_RimColor", new Color(1f, .97f, .9f, 1f));
+                        mat.SetFloat("_RimStrength", .6f);
+                        mat.SetFloat("_RimPower", 3f);
+                        mat.SetFloat("_Saturation", 1.2f);
+                        mat.SetFloat("_OutlineWidth", .0015f);
+                    }
                     rig.Materials.Add(mat);
                     continue;
                 }
@@ -168,22 +201,30 @@ public sealed partial class BattleMode
         }
         var cameraObject = new GameObject("Portrait camera");
         cameraObject.transform.SetParent(rig.Stage.transform, false);
-        cameraObject.transform.localPosition = new Vector3(0, 1, -6);
+        cameraObject.transform.localPosition = new Vector3(0, FieldCamCenter, -6);
         rig.Camera = cameraObject.AddComponent<Camera>();
         rig.Camera.orthographic = true;
-        rig.Camera.orthographicSize = 1.5f;
+        rig.Camera.orthographicSize = FieldCamHalf;
         rig.Camera.nearClipPlane = .1f; rig.Camera.farClipPlane = 12;
         rig.Camera.clearFlags = CameraClearFlags.SolidColor;
         rig.Camera.backgroundColor = Color.clear;
         rig.Camera.allowHDR = false;
-        rig.Image = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+        rig.Image = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         rig.Image.Create(); rig.Camera.targetTexture = rig.Image;
         var lightObject = new GameObject("Portrait light");
         lightObject.transform.SetParent(rig.Stage.transform, false);
         lightObject.transform.localPosition = new Vector3(-2, 3, -3);
         var light = lightObject.AddComponent<Light>();
         light.type = LightType.Point; light.range = 9; light.intensity = 35;
-        fieldRigs.Add(unit, rig);
+        return rig;
+    }
+
+    static void ReleaseRig(FieldRig rig)
+    {
+        if (rig.Camera) rig.Camera.targetTexture = null;
+        if (rig.Image) { rig.Image.Release(); Destroy(rig.Image); }
+        foreach (var material in rig.Materials) if (material) Destroy(material);
+        if (rig.Stage) Destroy(rig.Stage);
     }
     void PlayRig(FieldRig rig, string clip, float start, float rate, bool hold = false)
     {
@@ -255,20 +296,16 @@ public sealed partial class BattleMode
     {
         FieldRig rig;
         if (!fieldRigs.TryGetValue(unit, out rig)) return false;
-        float size = height * 1.5f;
-        GUI.DrawTexture(new Rect(foot.x - size / 2, foot.y - height * 1.25f, size, size), rig.Image, ScaleMode.StretchToFill, true);
+        // 1 model unit = height / 2 pixels; the image spans the camera's 2 * FieldCamHalf units.
+        float size = height * FieldCamHalf;
+        GUI.DrawTexture(new Rect(foot.x - size / 2, foot.y - height * (FieldCamCenter + FieldCamHalf) / 2f, size, size), rig.Image, ScaleMode.StretchToFill, true);
         return true;
     }
     void ReleaseFieldRigs()
     {
-        foreach (var rig in fieldRigs.Values)
-        {
-            if (rig.Camera) rig.Camera.targetTexture = null;
-            if (rig.Image) { rig.Image.Release(); Destroy(rig.Image); }
-            foreach (var material in rig.Materials) if (material) Destroy(material);
-            if (rig.Stage) Destroy(rig.Stage);
-        }
+        foreach (var rig in fieldRigs.Values) ReleaseRig(rig);
         fieldRigs.Clear();
+        CloseSheet();
     }
 #if UNITY_EDITOR
     public void DebugRigDraw()

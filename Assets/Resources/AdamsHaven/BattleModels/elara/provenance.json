@@ -16,5 +16,7 @@
     "AH_attack_basic": 0.5
   },
   "tail_bones": [],
-  "props": []
+  "props": [
+    "Weapon_Pen"
+  ]
 }

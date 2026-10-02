@@ -47,7 +47,7 @@ public sealed partial class BattleMode : MonoBehaviour
     private BattleUnit selectedActor, chooseUltimateFor, swapFrom, swapReserve, focusUnit;
     private int selectedUltimate = -1;
     private int floor, reward;
-    private bool auto, confirmWithdraw, showLog, fastForward;
+    private bool auto, confirmWithdraw, showLog;
     private float autoTimer, toastStart = -9f;
     private string toast = "";
     private Vector2 logScroll;
@@ -123,7 +123,11 @@ public sealed partial class BattleMode : MonoBehaviour
 #endif
     private bool pressed, rightPressed, used, modalDrawing;
     private float[] moteSeed;
-    private float speed = 1f;
+    // Presentation speed: the battle clock (lunges, hit timing and the 3D rigs' clips) runs at this rate.
+    // 0.5x is the base so the fighters' moves can be watched; the top-bar button cycles 0.5x / 1x / 2x.
+    private static readonly float[] Speeds = { 0.5f, 1f, 2f };
+    private const string SpeedPref = "AdamsHaven.BattleSpeed";
+    private float speed = 0.5f;
     private BattleUnit popupUnit;
     private Rect popupRect, popupTile;
 
@@ -147,7 +151,7 @@ public sealed partial class BattleMode : MonoBehaviour
         ClearSelection();
         swapFrom = null; swapReserve = null; focusUnit = null; popupUnit = null;
         hoverCard = null; hoverUnit = null; showLog = false; confirmWithdraw = false;
-        auto = false; autoTimer = 0f; fastForward = false; speed = 1f;
+        auto = false; autoTimer = 0f; speed = SavedSpeed();
         floor = towerFloor;
         leave = onLeave;
         var party = new List<BattleUnit>(field);
@@ -185,6 +189,22 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void Toast(string text) { toast = text; toastStart = Time.time; }
 
+    private static float SavedSpeed()
+    {
+        float saved = PlayerPrefs.GetFloat(SpeedPref, Speeds[0]);
+        return Array.IndexOf(Speeds, saved) >= 0 ? saved : Speeds[0];
+    }
+
+    private static void SaveSpeed(float value) { PlayerPrefs.SetFloat(SpeedPref, value); PlayerPrefs.Save(); }
+
+    private static float NextSpeed(float value)
+    {
+        int i = Array.IndexOf(Speeds, value);
+        return Speeds[(i + 1) % Speeds.Length];
+    }
+
+    private static string SpeedLabel(float value) { return value < 1f ? value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "x" : value.ToString("0", System.Globalization.CultureInfo.InvariantCulture) + "x"; }
+
     private Texture2D Art(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
@@ -208,9 +228,10 @@ public sealed partial class BattleMode : MonoBehaviour
         TickFx(dt);
         LayoutField();
         TickFieldRigs();
+        TickSheet(dt);
         UpdateHand(dt);
         if (!Busy) RefreshIntents();
-        if (battle.Finished || !auto || showLog || confirmWithdraw || Busy) return;
+        if (battle.Finished || !auto || showLog || confirmWithdraw || sheetUnit != null || Busy) return;
         autoTimer -= dt;
         if (autoTimer > 0f) return;
         autoTimer = 0.3f;
@@ -375,6 +396,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Action<bool, int> callback = leave; leave = null;
         bool won = battle.Victory;
         battle = null;
+        CloseSheet();
         ReleaseUltClip();
         if (callback != null) callback(won, won ? reward : 0);
     }
@@ -555,14 +577,14 @@ public sealed partial class BattleMode : MonoBehaviour
     private bool Press(Rect rect)
     {
         if (!pressed || used || !rect.Contains(mouse)) return false;
-        if ((showLog || confirmWithdraw) && !modalDrawing) return false;
+        if ((showLog || confirmWithdraw || sheetUnit != null) && !modalDrawing) return false;
         used = true;
         return true;
     }
 
     private bool Over(Rect rect)
     {
-        if ((showLog || confirmWithdraw) && !modalDrawing) return false;
+        if ((showLog || confirmWithdraw || sheetUnit != null) && !modalDrawing) return false;
         return rect.Contains(mouse);
     }
 
@@ -594,6 +616,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (debugClick && e.type == EventType.Repaint) { pressed = true; debugClick = false; }
 #endif
         used = false; modalDrawing = false;
+        TrackHold(e);
 
         Matrix4x4 old = GUI.matrix;
         Matrix4x4 baseMatrix = Matrix4x4.TRS(new Vector3(offset.x, offset.y, 0f), Quaternion.identity, new Vector3(scale, scale, 1f));
@@ -621,10 +644,11 @@ public sealed partial class BattleMode : MonoBehaviour
         if (battle.Finished && !Busy) DrawResult();
         if (showLog) DrawLog();
         if (confirmWithdraw) DrawWithdrawConfirm();
+        if (sheetUnit != null) DrawCharacterSheet();
 
-        if (pressed && !used && !showLog && !confirmWithdraw && (selected != null || focusUnit != null || swapFrom != null || swapReserve != null))
+        if (pressed && !used && !showLog && !confirmWithdraw && sheetUnit == null && (selected != null || focusUnit != null || swapFrom != null || swapReserve != null))
         { ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null; used = true; }
-        if (rightPressed) { ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null; }
+        if (rightPressed && sheetUnit == null) { ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null; }
         if (used && (e.type == EventType.MouseDown)) e.Use();
         GUI.matrix = old;
     }
@@ -633,7 +657,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         BattleCard previous = hoverCard;
         hoverCard = null; hoverUnit = null;
-        if (showLog || confirmWithdraw) return;
+        if (showLog || confirmWithdraw || sheetUnit != null) return;
         if (popupUnit != null && popupRect.Contains(mouse)) return;
         // Keep the current hover while the pointer is over either its lifted or resting shape,
         // otherwise a lifted card would drop away as soon as the pointer reached its lower half.
@@ -1020,7 +1044,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void HandleFieldClicks()
     {
-        if (!pressed || used || hoverCard != null || showLog || confirmWithdraw) return;
+        if (!pressed || used || hoverCard != null || showLog || confirmWithdraw || sheetUnit != null) return;
         BattleUnit u = hoverUnit;
         if (u == null) return;
         if (selected != null)
@@ -1037,7 +1061,7 @@ public sealed partial class BattleMode : MonoBehaviour
             swapReserve = null;
             return;
         }
-        if (battle.Allies.Contains(u)) { used = true; focusUnit = focusUnit == u ? null : u; }
+        if (battle.Allies.Contains(u)) { BeginHold(u); used = true; focusUnit = focusUnit == u ? null : u; }
     }
 
     private void DrawFocusBar()
@@ -1086,6 +1110,8 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         Rect jd = new Rect(16f, 12f, 356f, 88f);
         DrawPlate(jd, battle.Summoner, false, "JD  -  SUMMONER");
+        if (pressed && !used && selected == null && Over(jd)) BeginHold(battle.Summoner);
+        DrawHoldRing(battle.Summoner, new Rect(jd.x + 8f, jd.y + 8f, 70f, 72f));
         // SP track and CP pips live under the plate's HP bar.
         for (int i = 0; i < BattleState.SpMax; i++)
         {
@@ -1115,8 +1141,8 @@ public sealed partial class BattleMode : MonoBehaviour
         }
 
         if (MiniButton(new Rect(1382f, 14f, 46f, 46f), "LOG", true, showLog, Ice, -1f, 12)) showLog = !showLog;
-        if (MiniButton(new Rect(1436f, 14f, 46f, 46f), fastForward ? "2x" : "1x", true, fastForward, Gold, -1f, 15))
-        { fastForward = !fastForward; speed = fastForward ? 2f : 1f; }
+        if (MiniButton(new Rect(1436f, 14f, 46f, 46f), SpeedLabel(speed), true, speed > Speeds[0], Gold, -1f, speed < 1f ? 13 : 15))
+        { speed = NextSpeed(speed); SaveSpeed(speed); }
         if (MiniButton(new Rect(1490f, 14f, 46f, 46f), "AUTO", !battle.Finished, auto, Gold, -1f, 11))
         { auto = !auto; autoTimer = .2f; ClearSelection(); }
         if (MiniButton(new Rect(1544f, 14f, 46f, 46f), battle.Finished ? "EXIT" : "RUN", true, false, EnemyRed, -1f, 12))
@@ -1144,6 +1170,8 @@ public sealed partial class BattleMode : MonoBehaviour
             Rect hp = new Rect(r.x + 3f, r.yMax + 4f, r.width - 6f, 6f);
             Bar(hp, unit.Hp / (float)Mathf.Max(1, unit.MaxHp), 0f, new Color(.28f, .78f, .88f), Color.clear);
             if (!live) Text(r, "DOWN", 12, EnemyRed, TextAnchor.MiddleCenter, true, false, 1f);
+            if (pressed && !used && Over(r)) BeginHold(unit);
+            DrawHoldRing(unit, r);
             if (Press(r) && !Busy && !battle.Finished)
             {
                 if (swapFrom != null && live)
@@ -1423,6 +1451,9 @@ public sealed partial class BattleMode : MonoBehaviour
                 { ClearSelection(); chooseUltimateFor = chooseUltimateFor == u ? null : u; focusUnit = null; }
             }
             if (chooseUltimateFor == u) { popupUnit = u; popupTile = tile; popupRect = UltimatePopupRect(u, tile); }
+            // Press and hold the profile to open the character sheet; a quick tap still selects the fighter.
+            if (pressed && !used && Over(tile)) BeginHold(u);
+            DrawHoldRing(u, face);
             if (Press(tile) && selected == null && !Busy)
             {
                 if (swapReserve != null && !Busy) { if (battle.TrySwap(u, swapReserve)) { Toast(swapReserve.Name.Split(' ')[0] + " joins the line."); AfterAction(); } swapReserve = null; }
@@ -1494,7 +1525,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawTooltip()
     {
-        if (Event.current.type != EventType.Repaint || hoverUnit == null || selected != null || showLog || confirmWithdraw) return;
+        if (Event.current.type != EventType.Repaint || hoverUnit == null || selected != null || showLog || confirmWithdraw || sheetUnit != null) return;
         BattleUnit u = hoverUnit;
         SlotInfo s = Slot(u);
         List<string> lines = new List<string>();

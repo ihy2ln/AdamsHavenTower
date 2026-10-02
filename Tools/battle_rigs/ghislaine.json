@@ -1,6 +1,6 @@
 {
   "id": "ghislaine",
-  "style": "White-tiger swordswoman, two-handed fire greatsword. Basic 'Tiger Cleave': low tiger crouch, blade over the shoulder, explosive diagonal cleave (contact), heavy follow-through.",
+  "style": "White-tiger swordswoman, two-handed Celestium fire greatsword. Basic 'Tiger Cleave': low tiger crouch, blade over the shoulder, explosive diagonal cleave (contact), heavy follow-through.",
   "no_yaw": [
     "GH_Guard",
     "GH_Cleave"
@@ -21,12 +21,12 @@
   "props": [
     {
       "name": "Greatsword",
-      "file": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine_props.glb",
-      "faces": 3000,
+      "file": "MeshyJobs/anime-battle-v2/weapons/ghislaine-celestium-greatsword.glb",
+      "faces": 6000,
       "bone": "RightHand",
       "length": 1.4,
       "grip": 0.14,
-      "flip": true,
+      "flip": false,
       "tip_dir": "forward",
       "palm": 0.45
     }

@@ -1,6 +1,30 @@
 {
   "id": "elara",
-  "style": "Elf scholar-mage, floating spellbook + quill. Basic 'Arc Bolt': lift the book, swing it down to release (contact, ranged).",
+  "style": "Elf scholar-mage, floating spellbook + Celestium fountain pen (replaces the modelled quill). Basic 'Arc Bolt': lift the book, swing it down to release (contact, ranged).",
+  "carve": [
+    {
+      "bone": "LeftHand",
+      "radius": 0.1,
+      "height": 0.4,
+      "spare": [
+        "LeftHand",
+        "LeftForeArm"
+      ],
+      "spare_radius": 0.045
+    }
+  ],
+  "props": [
+    {
+      "name": "Pen",
+      "file": "MeshyJobs/anime-battle-v2/weapons/elara-celestium-pen.glb",
+      "faces": 5000,
+      "bone": "LeftHand",
+      "length": 0.42,
+      "grip": 0.3,
+      "tip_dir": "up",
+      "palm": 0.3
+    }
+  ],
   "keep_clips": {
     "mage_soell_cast_1": "AH_skill_cast",
     "Charged_Spell_Cast": "AH_ult_charged_cast"

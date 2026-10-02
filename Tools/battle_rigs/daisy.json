@@ -1,6 +1,6 @@
 {
   "id": "daisy",
-  "style": "Bonfire wild-woman, fire spear. Basic: chamber, spin, lunging thrust (contact), twirl back.",
+  "style": "Bonfire wild-woman, Celestium fire spear. Basic: chamber, spin, lunging thrust (contact), twirl back.",
   "mesh_props": [
     {
       "action": "delete",
@@ -22,8 +22,8 @@
   "props": [
     {
       "name": "Spear",
-      "file": "MeshyJobs/anime-battle-v2/weapons/daisy-fire-spear.glb",
-      "faces": 2500,
+      "file": "MeshyJobs/anime-battle-v2/weapons/daisy-celestium-spear.glb",
+      "faces": 8000,
       "bone": "RightHand",
       "length": 1.35,
       "grip": 0.55,
