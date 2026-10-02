@@ -1,0 +1,99 @@
+{
+  "model": "S:\\AI\\Game\\Game Assets\\characters\\chibi-meshy-tasks-v1\\celestium-short\\meshy_rigged_anim.glb",
+  "spec": "Tools\\tower_rigs\\celestium-short.json",
+  "pipeline": "meshy-remesh30k+autorig+presets+build_tower_rig",
+  "clips": [
+    "AH_chat",
+    "AH_idle",
+    "AH_knocked_down",
+    "AH_run",
+    "AH_sit",
+    "AH_sleep",
+    "AH_task_farm",
+    "AH_task_forge",
+    "AH_task_guard",
+    "AH_task_haul",
+    "AH_task_heart",
+    "AH_task_kitchen",
+    "AH_task_lumber",
+    "AH_task_market",
+    "AH_task_quarry",
+    "AH_task_tavern",
+    "AH_task_train",
+    "AH_task_warehouse",
+    "AH_task_well",
+    "AH_walk",
+    "AH_walk_injured"
+  ],
+  "clip_props": {
+    "AH_task_forge": [
+      "Prop_Hammer",
+      "Set_Anvil"
+    ],
+    "AH_task_kitchen": [
+      "Prop_Ladle",
+      "Set_Pot"
+    ],
+    "AH_task_well": [
+      "Set_Rope"
+    ],
+    "AH_task_lumber": [
+      "Prop_Axe"
+    ],
+    "AH_task_quarry": [
+      "Prop_Pickaxe"
+    ],
+    "AH_task_tavern": [
+      "Prop_Mug"
+    ],
+    "AH_sit": [
+      "Set_Chair"
+    ],
+    "AH_sleep": [
+      "Set_Bed"
+    ]
+  },
+  "props": [
+    "Prop_Hammer",
+    "Prop_Pickaxe",
+    "Prop_Axe",
+    "Prop_Ladle",
+    "Prop_Mug",
+    "Set_Anvil",
+    "Set_Pot",
+    "Set_Rope",
+    "Set_Chair",
+    "Set_Bed"
+  ],
+  "tail_bones": [],
+  "braids": [],
+  "jiggle": [
+    {
+      "bone": "Breast_L",
+      "parent": "Spine01",
+      "radius": 0.1029,
+      "verts": 141
+    },
+    {
+      "bone": "Breast_R",
+      "parent": "Spine01",
+      "radius": 0.1029,
+      "verts": 129
+    },
+    {
+      "bone": "Butt_L",
+      "parent": "Hips",
+      "radius": 0.1122,
+      "verts": 70
+    },
+    {
+      "bone": "Butt_R",
+      "parent": "Hips",
+      "radius": 0.1122,
+      "verts": 61
+    }
+  ],
+  "jiggle_strength": 0.45,
+  "height": 1.7,
+  "fps": 24
+}

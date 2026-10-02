@@ -1,0 +1,1 @@
+{ "id": "ghislaine", "tail": { "tip_dir": [1.0, 0.35, -0.45], "bones": 6, "min_len": 0.6, "jump": 1.4, "neck_search": 25 }, "jiggle": { "chest": 1, "hips": 1, "strength": 1.0 } }

@@ -20,3 +20,5 @@
 
 # Battle rig check renders (Assets/Editor/BattleRigBatchCheck.cs)
 /BattleRigCheck/
+# Tower 3D chibi check renders (Assets/Editor/TowerChibi3DCheck.cs)
+/TowerChibi3DCheck/
