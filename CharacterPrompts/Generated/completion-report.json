@@ -1,0 +1,32 @@
+{
+  "requested": 696,
+  "heroes": 504,
+  "residents": 192,
+  "units": 60,
+  "corrections": 21,
+  "missing": 0,
+  "unreadable": 0,
+  "dimensions": [
+    {
+      "Name": "1024, 1536",
+      "Count": 120
+    },
+    {
+      "Name": "1086, 1448",
+      "Count": 204
+    },
+    {
+      "Name": "1254, 1254",
+      "Count": 216
+    },
+    {
+      "Name": "1774, 887",
+      "Count": 132
+    },
+    {
+      "Name": "1983, 793",
+      "Count": 24
+    }
+  ],
+  "notes": "Native generator canvas sizes are retained. File readability verified; exhaustive visual, rigging and Unity integration approval not performed."
+}

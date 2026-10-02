@@ -1,0 +1,39 @@
+{
+  "requested": 276,
+  "completed": 276,
+  "characters": 60,
+  "heroImages": 180,
+  "residentImages": 96,
+  "correctedAssets": 38,
+  "thirdVersions": 6,
+  "missing": 0,
+  "unreadable": 0,
+  "transparentPortraits": 60,
+  "dimensions": [
+    {
+      "canvas": "1024, 1536",
+      "count": 96
+    },
+    {
+      "canvas": "1254, 1254",
+      "count": 120
+    },
+    {
+      "canvas": "1536, 1024",
+      "count": 60
+    }
+  ],
+  "stillsOnly": true,
+  "existingCardArtRetained": true,
+  "generator": "Codex built-in ImageGen",
+  "nativeCanvasPolicy": "Native generator canvases retained as permitted by brief; avatars are native-resolution masters rather than literal 512px exports.",
+  "scope": "276 character stills requested in user table; shared summon assets are separate.",
+  "gallery": "missing-gallery.html",
+  "manifest": "missing-generation-manifest.json",
+  "correctionFilesSaved": 54,
+  "failedAssets": 0,
+  "visualReview": "All 276 originals reviewed; 38 flagged assets corrected and selected corrections reviewed.",
+  "portraitsWithNonzeroLowerCorners": 43,
+  "opaqueBackgroundFailures": 0,
+  "alphaCheckNote": "All 60 portraits have transparent upper background corners. Lower corners may contain the character silhouette and are not required to be transparent."
+}

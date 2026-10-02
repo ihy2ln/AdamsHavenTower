@@ -1,0 +1,4874 @@
+[
+  {
+    "file": "A-1_tsukiko-raikami_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-1_tsukiko-raikami_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-1_tsukiko-raikami/A-1_tsukiko-raikami_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-2_seraphine-auric_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-2_seraphine-auric/A-2_seraphine-auric_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-3_ignatius-vael-drakon_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-3_ignatius-vael-drakon/A-3_ignatius-vael-drakon_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "A-4_maelor-deepvein_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/A-4_maelor-deepvein/A-4_maelor-deepvein_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-1_kestrel_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-1_kestrel/B-1_kestrel_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-2_sable_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-2_sable/B-2_sable_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-3_thalassa-brinegate_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-3_thalassa-brinegate/B-3_thalassa-brinegate_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "B-4_corvin-ashmantle_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/B-4_corvin-ashmantle/B-4_corvin-ashmantle_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-1_nyx-veilwhisper_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-1_nyx-veilwhisper/C-1_nyx-veilwhisper_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-2_captain-rhea-stormhail_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-2_captain-rhea-stormhail/C-2_captain-rhea-stormhail_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-3_torvald-greywall_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-3_torvald-greywall/C-3_torvald-greywall_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "C-4_marisol-pyreheart_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/C-4_marisol-pyreheart/C-4_marisol-pyreheart_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-1_ashlyn-cinderbraid_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-1_ashlyn-cinderbraid/D-1_ashlyn-cinderbraid_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-2_juniper-gale_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-2_juniper-gale/D-2_juniper-gale_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-3_tarn-deepcurrent_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-3_tarn-deepcurrent/D-3_tarn-deepcurrent_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "D-4_brother-isidore-lumen_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/D-4_brother-isidore-lumen/D-4_brother-isidore-lumen_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-1_zippa-sparkwhisker_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-1_zippa-sparkwhisker/E-1_zippa-sparkwhisker_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-2_sister-calla-dawnmend_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-2_sister-calla-dawnmend/E-2_sister-calla-dawnmend_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-3_mordecai-gloam_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-3_mordecai-gloam/E-3_mordecai-gloam_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "E-4_ulric-cairnbreaker_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/E-4_ulric-cairnbreaker/E-4_ulric-cairnbreaker_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_casual-v2.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_chibi-battle-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-1_pip-thistlewick_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-1_pip-thistlewick/F-1_pip-thistlewick_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-2_bram-oakhelm_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-2_bram-oakhelm/F-2_bram-oakhelm_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-3_tilly-nettlebright_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-3_tilly-nettlebright/F-3_tilly-nettlebright_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "F-4_rook-emberwick_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/F-4_rook-emberwick/F-4_rook-emberwick_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-01_tobias-rake_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-01_tobias-rake/R-01_tobias-rake_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-02_mina-dewlight_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-02_mina-dewlight/R-02_mina-dewlight_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_casual-v2.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_expressions-v2.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-03_gorm-hatchet_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-03_gorm-hatchet/R-03_gorm-hatchet_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-04_wren-kettle_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-04_wren-kettle/R-04_wren-kettle_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-05_hobb-ledgerfoot_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-05_hobb-ledgerfoot/R-05_hobb-ledgerfoot_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-06_sera-quickneedle_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-06_sera-quickneedle/R-06_sera-quickneedle_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-07_dunstan-pickaxe_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-07_dunstan-pickaxe/R-07_dunstan-pickaxe_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-08_lio-marigold_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-08_lio-marigold/R-08_lio-marigold_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-09_ilsa-brewbright_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-09_ilsa-brewbright/R-09_ilsa-brewbright_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-10_fenwick-quill_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-10_fenwick-quill/R-10_fenwick-quill_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-11_nessa-tidewell_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-11_nessa-tidewell/R-11_nessa-tidewell_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-12_brakka-ironsmoke_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-12_brakka-ironsmoke/R-12_brakka-ironsmoke_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-13_odalys-thornfield_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-13_odalys-thornfield/R-13_odalys-thornfield_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-14_cato-lanternjaw_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-14_cato-lanternjaw/R-14_cato-lanternjaw_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-15_yarrow-moss_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-15_yarrow-moss/R-15_yarrow-moss_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_work-full-v2.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-16_pell-fortunecoin_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-16_pell-fortunecoin/R-16_pell-fortunecoin_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_work-full-v2.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-17_dr-ambrose-pennywhistle_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-17_dr-ambrose-pennywhistle/R-17_dr-ambrose-pennywhistle_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-18_kasimir-veil_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-18_kasimir-veil/R-18_kasimir-veil_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-19_mother-hesper_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-19_mother-hesper/R-19_mother-hesper_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-20_ruvik-glasseye_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-20_ruvik-glasseye/R-20_ruvik-glasseye_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-21_tamsin-starling_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-21_tamsin-starling/R-21_tamsin-starling_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-22_magister-oru_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-22_magister-oru/R-22_magister-oru_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-23_sunniva-hearthsong_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-23_sunniva-hearthsong/R-23_sunniva-hearthsong_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_work-full.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_work-full.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_chibi-work-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_chibi-casual-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_tool.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_tool.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_card.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_card.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_expressions.png",
+    "width": 1983,
+    "height": 793,
+    "readable": true
+  },
+  {
+    "file": "R-24_elder-ysolde-everwell_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/residents/R-24_elder-ysolde-everwell/R-24_elder-ysolde-everwell_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-1_nerissa-pearlwhisper_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-1_nerissa-pearlwhisper/S-1_nerissa-pearlwhisper_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-2_vesper-nightingale_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-2_vesper-nightingale/S-2_vesper-nightingale_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-3_aeolus-brandt_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-3_aeolus-brandt/S-3_aeolus-brandt_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "S-4_tesserax-9-tess_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/S-4_tesserax-9-tess/S-4_tesserax-9-tess_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-1_lumina-lumi-starlit_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-1_lumina-lumi-starlit/SS-1_lumina-lumi-starlit_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-2_orsolya-granitecrown_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-2_orsolya-granitecrown/SS-2_orsolya-granitecrown_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-3_draven-emberlord_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-3_draven-emberlord/SS-3_draven-emberlord_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SS-4_thetis-maelstrom_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SS-4_thetis-maelstrom/SS-4_thetis-maelstrom_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-1_elder-tuan-windshell_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-1_elder-tuan-windshell/SSR-1_elder-tuan-windshell_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_chibi-battle-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-2_solenne-auralis_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-2_solenne-auralis/SSR-2_solenne-auralis_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-3_erebus-nightcrown_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-3_erebus-nightcrown/SSR-3_erebus-nightcrown_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_card-front.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_card-front.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_casual.png",
+    "width": 1024,
+    "height": 1536,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_chibi-battle.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_chibi-battle.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_chibi-work.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_chibi-work.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_chibi-casual.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_chibi-casual.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_weapon.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_weapon.png",
+    "width": 1254,
+    "height": 1254,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ability-passive.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ability-passive.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ability-ability-1.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ability-ability-1.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ability-ability-2.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ability-ability-2.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ability-ability-3.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ability-ability-3.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ability-ultimate.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ability-ultimate.png",
+    "width": 1086,
+    "height": 1448,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_ultimate-cutin.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_ultimate-cutin.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_expressions.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_expressions.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  },
+  {
+    "file": "SSR-4_ragnhild-thunderveil_model-sheet.png",
+    "selectedOutput": "S:/AI/Game/Unity AHCG/My project/CharacterPrompts/Generated/heroes/SSR-4_ragnhild-thunderveil/SSR-4_ragnhild-thunderveil_model-sheet.png",
+    "width": 1774,
+    "height": 887,
+    "readable": true
+  }
+]

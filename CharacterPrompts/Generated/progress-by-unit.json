@@ -1,0 +1,362 @@
+[
+  {
+    "id": "A-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\A-1_tsukiko-raikami"
+  },
+  {
+    "id": "A-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\A-2_seraphine-auric"
+  },
+  {
+    "id": "A-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\A-3_ignatius-vael-drakon"
+  },
+  {
+    "id": "A-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\A-4_maelor-deepvein"
+  },
+  {
+    "id": "B-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\B-1_kestrel"
+  },
+  {
+    "id": "B-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\B-2_sable"
+  },
+  {
+    "id": "B-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\B-3_thalassa-brinegate"
+  },
+  {
+    "id": "B-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\B-4_corvin-ashmantle"
+  },
+  {
+    "id": "C-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\C-1_nyx-veilwhisper"
+  },
+  {
+    "id": "C-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\C-2_captain-rhea-stormhail"
+  },
+  {
+    "id": "C-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\C-3_torvald-greywall"
+  },
+  {
+    "id": "C-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\C-4_marisol-pyreheart"
+  },
+  {
+    "id": "D-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\D-1_ashlyn-cinderbraid"
+  },
+  {
+    "id": "D-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\D-2_juniper-gale"
+  },
+  {
+    "id": "D-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\D-3_tarn-deepcurrent"
+  },
+  {
+    "id": "D-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\D-4_brother-isidore-lumen"
+  },
+  {
+    "id": "E-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\E-1_zippa-sparkwhisker"
+  },
+  {
+    "id": "E-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\E-2_sister-calla-dawnmend"
+  },
+  {
+    "id": "E-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\E-3_mordecai-gloam"
+  },
+  {
+    "id": "E-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\E-4_ulric-cairnbreaker"
+  },
+  {
+    "id": "F-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\F-1_pip-thistlewick"
+  },
+  {
+    "id": "F-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\F-2_bram-oakhelm"
+  },
+  {
+    "id": "F-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\F-3_tilly-nettlebright"
+  },
+  {
+    "id": "F-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\F-4_rook-emberwick"
+  },
+  {
+    "id": "R-01",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-01_tobias-rake"
+  },
+  {
+    "id": "R-02",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-02_mina-dewlight"
+  },
+  {
+    "id": "R-03",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-03_gorm-hatchet"
+  },
+  {
+    "id": "R-04",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-04_wren-kettle"
+  },
+  {
+    "id": "R-05",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-05_hobb-ledgerfoot"
+  },
+  {
+    "id": "R-06",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-06_sera-quickneedle"
+  },
+  {
+    "id": "R-07",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-07_dunstan-pickaxe"
+  },
+  {
+    "id": "R-08",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-08_lio-marigold"
+  },
+  {
+    "id": "R-09",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-09_ilsa-brewbright"
+  },
+  {
+    "id": "R-10",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-10_fenwick-quill"
+  },
+  {
+    "id": "R-11",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-11_nessa-tidewell"
+  },
+  {
+    "id": "R-12",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-12_brakka-ironsmoke"
+  },
+  {
+    "id": "R-13",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-13_odalys-thornfield"
+  },
+  {
+    "id": "R-14",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-14_cato-lanternjaw"
+  },
+  {
+    "id": "R-15",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-15_yarrow-moss"
+  },
+  {
+    "id": "R-16",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-16_pell-fortunecoin"
+  },
+  {
+    "id": "R-17",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-17_dr-ambrose-pennywhistle"
+  },
+  {
+    "id": "R-18",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-18_kasimir-veil"
+  },
+  {
+    "id": "R-19",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-19_mother-hesper"
+  },
+  {
+    "id": "R-20",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-20_ruvik-glasseye"
+  },
+  {
+    "id": "R-21",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-21_tamsin-starling"
+  },
+  {
+    "id": "R-22",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-22_magister-oru"
+  },
+  {
+    "id": "R-23",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-23_sunniva-hearthsong"
+  },
+  {
+    "id": "R-24",
+    "requested": 8,
+    "saved": 8,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\residents\\R-24_elder-ysolde-everwell"
+  },
+  {
+    "id": "S-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\S-1_nerissa-pearlwhisper"
+  },
+  {
+    "id": "S-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\S-2_vesper-nightingale"
+  },
+  {
+    "id": "S-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\S-3_aeolus-brandt"
+  },
+  {
+    "id": "S-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\S-4_tesserax-9-tess"
+  },
+  {
+    "id": "SS-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SS-1_lumina-lumi-starlit"
+  },
+  {
+    "id": "SS-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SS-2_orsolya-granitecrown"
+  },
+  {
+    "id": "SS-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SS-3_draven-emberlord"
+  },
+  {
+    "id": "SS-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SS-4_thetis-maelstrom"
+  },
+  {
+    "id": "SSR-1",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SSR-1_elder-tuan-windshell"
+  },
+  {
+    "id": "SSR-2",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SSR-2_solenne-auralis"
+  },
+  {
+    "id": "SSR-3",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SSR-3_erebus-nightcrown"
+  },
+  {
+    "id": "SSR-4",
+    "requested": 14,
+    "saved": 14,
+    "folder": "S:\\AI\\Game\\Unity AHCG\\My project\\CharacterPrompts\\Generated\\heroes\\SSR-4_ragnhild-thunderveil"
+  }
+]

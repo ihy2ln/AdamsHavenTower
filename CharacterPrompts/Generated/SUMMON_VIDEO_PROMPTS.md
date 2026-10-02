@@ -1,0 +1,495 @@
+# Summon cinematic: video prompts
+
+Codex only makes stills. Videos come from MiniMax H3 (ComfyUI), image-to-video with a start and an end frame, per `battle-motion-direction`. 9:16 first, then rerun at 16:9 from the `-wide` stills.
+
+## Shared charge-up (3 s)
+
+Start frame `_summon/summon-charge.png`.
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 3 seconds, hand-painted 2D look, no text. The Celestium Heart crystal above its carved altar slowly brightens from a faint glow, thin threads of light stream in from the moonlit trees, a soft pulse builds, camera pushing in gently. No characters. Loopable end frame equal to start frame brightness.
+```
+
+## Per unit (5 s each, 60 clips)
+
+Start frame `_summon/summon-burst-<rank>.png`, end frame the unit's `_summon-reveal.png`, output `<unit>_summon-video.mp4` saved in the unit folder. Full list with columns in `summon_video_queue.csv`.
+
+### F-1 Pip Thistlewick (rank F)
+
+start `_summon/summon-burst-F.png` · end `F-1_pip-thistlewick_summon-reveal.png` · out `F-1_pip-thistlewick_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Pip Thistlewick. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Pip Thistlewick steps forward out of it, hair and cloth moving in the updraft, Earth effects (stone shards, crystals) in amber, moss green, slate swirling around the figure. 3-5 s: Pip Thistlewick raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### F-2 Bram Oakhelm (rank F)
+
+start `_summon/summon-burst-F.png` · end `F-2_bram-oakhelm_summon-reveal.png` · out `F-2_bram-oakhelm_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Bram Oakhelm. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Bram Oakhelm steps forward out of it, hair and cloth moving in the updraft, Water effects (ribbons of water, bubbles) in aqua, deep blue, pearl swirling around the figure. 3-5 s: Bram Oakhelm plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### F-3 Tilly Nettlebright (rank F)
+
+start `_summon/summon-burst-F.png` · end `F-3_tilly-nettlebright_summon-reveal.png` · out `F-3_tilly-nettlebright_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Tilly Nettlebright. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Tilly Nettlebright steps forward out of it, hair and cloth moving in the updraft, Wind effects (spiraling leaves, gust lines) in teal, pale green, silver swirling around the figure. 3-5 s: Tilly Nettlebright snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### F-4 Rook Emberwick (rank F)
+
+start `_summon/summon-burst-F.png` · end `F-4_rook-emberwick_summon-reveal.png` · out `F-4_rook-emberwick_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Rook Emberwick. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Rook Emberwick steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Rook Emberwick opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### E-1 Zippa Sparkwhisker (rank E)
+
+start `_summon/summon-burst-E.png` · end `E-1_zippa-sparkwhisker_summon-reveal.png` · out `E-1_zippa-sparkwhisker_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Zippa Sparkwhisker. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Zippa Sparkwhisker steps forward out of it, hair and cloth moving in the updraft, Lightning effects (branching arcs, static sparks) in electric yellow, cyan, indigo swirling around the figure. 3-5 s: Zippa Sparkwhisker snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### E-2 Sister Calla Dawnmend (rank E)
+
+start `_summon/summon-burst-E.png` · end `E-2_sister-calla-dawnmend_summon-reveal.png` · out `E-2_sister-calla-dawnmend_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Sister Calla Dawnmend. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Sister Calla Dawnmend steps forward out of it, hair and cloth moving in the updraft, Light effects (sun motes, feather-like light) in warm gold, white, soft rose swirling around the figure. 3-5 s: Sister Calla Dawnmend opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### E-3 Mordecai Gloam (rank E)
+
+start `_summon/summon-burst-E.png` · end `E-3_mordecai-gloam_summon-reveal.png` · out `E-3_mordecai-gloam_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Mordecai Gloam. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Mordecai Gloam steps forward out of it, hair and cloth moving in the updraft, Dark effects (shadow smoke, star specks) in violet, black, magenta swirling around the figure. 3-5 s: Mordecai Gloam raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### E-4 Ulric Cairnbreaker (rank E)
+
+start `_summon/summon-burst-E.png` · end `E-4_ulric-cairnbreaker_summon-reveal.png` · out `E-4_ulric-cairnbreaker_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Ulric Cairnbreaker. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ulric Cairnbreaker steps forward out of it, hair and cloth moving in the updraft, Earth effects (stone shards, crystals) in amber, moss green, slate swirling around the figure. 3-5 s: Ulric Cairnbreaker plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### D-1 Ashlyn Cinderbraid (rank D)
+
+start `_summon/summon-burst-D.png` · end `D-1_ashlyn-cinderbraid_summon-reveal.png` · out `D-1_ashlyn-cinderbraid_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Ashlyn Cinderbraid. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ashlyn Cinderbraid steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Ashlyn Cinderbraid snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### D-2 Juniper Gale (rank D)
+
+start `_summon/summon-burst-D.png` · end `D-2_juniper-gale_summon-reveal.png` · out `D-2_juniper-gale_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Juniper Gale. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Juniper Gale steps forward out of it, hair and cloth moving in the updraft, Wind effects (spiraling leaves, gust lines) in teal, pale green, silver swirling around the figure. 3-5 s: Juniper Gale raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### D-3 Tarn Deepcurrent (rank D)
+
+start `_summon/summon-burst-D.png` · end `D-3_tarn-deepcurrent_summon-reveal.png` · out `D-3_tarn-deepcurrent_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Tarn Deepcurrent. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Tarn Deepcurrent steps forward out of it, hair and cloth moving in the updraft, Water effects (ribbons of water, bubbles) in aqua, deep blue, pearl swirling around the figure. 3-5 s: Tarn Deepcurrent plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### D-4 Brother Isidore Lumen (rank D)
+
+start `_summon/summon-burst-D.png` · end `D-4_brother-isidore-lumen_summon-reveal.png` · out `D-4_brother-isidore-lumen_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Brother Isidore Lumen. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Brother Isidore Lumen steps forward out of it, hair and cloth moving in the updraft, Light effects (sun motes, feather-like light) in warm gold, white, soft rose swirling around the figure. 3-5 s: Brother Isidore Lumen opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### C-1 Nyx Veilwhisper (rank C)
+
+start `_summon/summon-burst-C.png` · end `C-1_nyx-veilwhisper_summon-reveal.png` · out `C-1_nyx-veilwhisper_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Nyx Veilwhisper. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Nyx Veilwhisper steps forward out of it, hair and cloth moving in the updraft, Dark effects (shadow smoke, star specks) in violet, black, magenta swirling around the figure. 3-5 s: Nyx Veilwhisper snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### C-2 Captain Rhea Stormhail (rank C)
+
+start `_summon/summon-burst-C.png` · end `C-2_captain-rhea-stormhail_summon-reveal.png` · out `C-2_captain-rhea-stormhail_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Captain Rhea Stormhail. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Captain Rhea Stormhail steps forward out of it, hair and cloth moving in the updraft, Lightning effects (branching arcs, static sparks) in electric yellow, cyan, indigo swirling around the figure. 3-5 s: Captain Rhea Stormhail opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### C-3 Torvald Greywall (rank C)
+
+start `_summon/summon-burst-C.png` · end `C-3_torvald-greywall_summon-reveal.png` · out `C-3_torvald-greywall_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Torvald Greywall. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Torvald Greywall steps forward out of it, hair and cloth moving in the updraft, Earth effects (stone shards, crystals) in amber, moss green, slate swirling around the figure. 3-5 s: Torvald Greywall plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### C-4 Marisol Pyreheart (rank C)
+
+start `_summon/summon-burst-C.png` · end `C-4_marisol-pyreheart_summon-reveal.png` · out `C-4_marisol-pyreheart_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Marisol Pyreheart. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Marisol Pyreheart steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Marisol Pyreheart raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### B-1 Kestrel (rank B)
+
+start `_summon/summon-burst-B.png` · end `B-1_kestrel_summon-reveal.png` · out `B-1_kestrel_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Kestrel. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Kestrel steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Kestrel snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### B-2 Sable (rank B)
+
+start `_summon/summon-burst-B.png` · end `B-2_sable_summon-reveal.png` · out `B-2_sable_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Sable. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Sable steps forward out of it, hair and cloth moving in the updraft, Wind effects (spiraling leaves, gust lines) in teal, pale green, silver swirling around the figure. 3-5 s: Sable opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### B-3 Thalassa Brinegate (rank B)
+
+start `_summon/summon-burst-B.png` · end `B-3_thalassa-brinegate_summon-reveal.png` · out `B-3_thalassa-brinegate_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Thalassa Brinegate. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Thalassa Brinegate steps forward out of it, hair and cloth moving in the updraft, Water effects (ribbons of water, bubbles) in aqua, deep blue, pearl swirling around the figure. 3-5 s: Thalassa Brinegate plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### B-4 Corvin Ashmantle (rank B)
+
+start `_summon/summon-burst-B.png` · end `B-4_corvin-ashmantle_summon-reveal.png` · out `B-4_corvin-ashmantle_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Corvin Ashmantle. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Corvin Ashmantle steps forward out of it, hair and cloth moving in the updraft, Dark effects (shadow smoke, star specks) in violet, black, magenta swirling around the figure. 3-5 s: Corvin Ashmantle raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### A-1 Tsukiko Raikami (rank A)
+
+start `_summon/summon-burst-A.png` · end `A-1_tsukiko-raikami_summon-reveal.png` · out `A-1_tsukiko-raikami_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Tsukiko Raikami. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Tsukiko Raikami steps forward out of it, hair and cloth moving in the updraft, Lightning effects (branching arcs, static sparks) in electric yellow, cyan, indigo swirling around the figure. 3-5 s: Tsukiko Raikami snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### A-2 Seraphine Auric (rank A)
+
+start `_summon/summon-burst-A.png` · end `A-2_seraphine-auric_summon-reveal.png` · out `A-2_seraphine-auric_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Seraphine Auric. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Seraphine Auric steps forward out of it, hair and cloth moving in the updraft, Light effects (sun motes, feather-like light) in warm gold, white, soft rose swirling around the figure. 3-5 s: Seraphine Auric opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### A-3 Ignatius Vael-Drakon (rank A)
+
+start `_summon/summon-burst-A.png` · end `A-3_ignatius-vael-drakon_summon-reveal.png` · out `A-3_ignatius-vael-drakon_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Ignatius Vael-Drakon. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ignatius Vael-Drakon steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Ignatius Vael-Drakon plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### A-4 Maelor Deepvein (rank A)
+
+start `_summon/summon-burst-A.png` · end `A-4_maelor-deepvein_summon-reveal.png` · out `A-4_maelor-deepvein_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Maelor Deepvein. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Maelor Deepvein steps forward out of it, hair and cloth moving in the updraft, Earth effects (stone shards, crystals) in amber, moss green, slate swirling around the figure. 3-5 s: Maelor Deepvein raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### S-1 Nerissa Pearlwhisper (rank S)
+
+start `_summon/summon-burst-S.png` · end `S-1_nerissa-pearlwhisper_summon-reveal.png` · out `S-1_nerissa-pearlwhisper_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of Nerissa Pearlwhisper. 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Nerissa Pearlwhisper steps forward out of it, hair and cloth moving in the updraft, Water effects (ribbons of water, bubbles) in aqua, deep blue, pearl swirling around the figure. 3-5 s: Nerissa Pearlwhisper opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### S-2 Vesper Nightingale (rank S)
+
+start `_summon/summon-burst-S.png` · end `S-2_vesper-nightingale_summon-reveal.png` · out `S-2_vesper-nightingale_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of Vesper Nightingale. 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Vesper Nightingale steps forward out of it, hair and cloth moving in the updraft, Dark effects (shadow smoke, star specks) in violet, black, magenta swirling around the figure. 3-5 s: Vesper Nightingale snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### S-3 Aeolus Brandt (rank S)
+
+start `_summon/summon-burst-S.png` · end `S-3_aeolus-brandt_summon-reveal.png` · out `S-3_aeolus-brandt_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of Aeolus Brandt. 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Aeolus Brandt steps forward out of it, hair and cloth moving in the updraft, Wind effects (spiraling leaves, gust lines) in teal, pale green, silver swirling around the figure. 3-5 s: Aeolus Brandt plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### S-4 TESSERAX-9 (Tess) (rank S)
+
+start `_summon/summon-burst-S.png` · end `S-4_tesserax-9-tess_summon-reveal.png` · out `S-4_tesserax-9-tess_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of TESSERAX-9 (Tess). 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and TESSERAX-9 (Tess) steps forward out of it, hair and cloth moving in the updraft, Lightning effects (branching arcs, static sparks) in electric yellow, cyan, indigo swirling around the figure. 3-5 s: TESSERAX-9 (Tess) raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SS-1 Lumina 'Lumi' Starlit (rank SS)
+
+start `_summon/summon-burst-SS.png` · end `SS-1_lumina-lumi-starlit_summon-reveal.png` · out `SS-1_lumina-lumi-starlit_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the violet and gold with floating motifs rank burst keyframe and end on the reveal still of Lumina 'Lumi' Starlit. 0-1.5 s: the Celestium Heart pulses and a layered burst, concentric glyph rings, floating motifs and trailing gold light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Lumina 'Lumi' Starlit steps forward out of it, hair and cloth moving in the updraft, Light effects (sun motes, feather-like light) in warm gold, white, soft rose swirling around the figure. 3-5 s: Lumina 'Lumi' Starlit opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SS-2 Orsolya Granitecrown (rank SS)
+
+start `_summon/summon-burst-SS.png` · end `SS-2_orsolya-granitecrown_summon-reveal.png` · out `SS-2_orsolya-granitecrown_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the violet and gold with floating motifs rank burst keyframe and end on the reveal still of Orsolya Granitecrown. 0-1.5 s: the Celestium Heart pulses and a layered burst, concentric glyph rings, floating motifs and trailing gold light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Orsolya Granitecrown steps forward out of it, hair and cloth moving in the updraft, Earth effects (stone shards, crystals) in amber, moss green, slate swirling around the figure. 3-5 s: Orsolya Granitecrown raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SS-3 Draven Emberlord (rank SS)
+
+start `_summon/summon-burst-SS.png` · end `SS-3_draven-emberlord_summon-reveal.png` · out `SS-3_draven-emberlord_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the violet and gold with floating motifs rank burst keyframe and end on the reveal still of Draven Emberlord. 0-1.5 s: the Celestium Heart pulses and a layered burst, concentric glyph rings, floating motifs and trailing gold light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Draven Emberlord steps forward out of it, hair and cloth moving in the updraft, Fire effects (embers, flame ribbons) in ember red, orange, gold swirling around the figure. 3-5 s: Draven Emberlord snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SS-4 Thetis Maelstrom (rank SS)
+
+start `_summon/summon-burst-SS.png` · end `SS-4_thetis-maelstrom_summon-reveal.png` · out `SS-4_thetis-maelstrom_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the violet and gold with floating motifs rank burst keyframe and end on the reveal still of Thetis Maelstrom. 0-1.5 s: the Celestium Heart pulses and a layered burst, concentric glyph rings, floating motifs and trailing gold light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Thetis Maelstrom steps forward out of it, hair and cloth moving in the updraft, Water effects (ribbons of water, bubbles) in aqua, deep blue, pearl swirling around the figure. 3-5 s: Thetis Maelstrom plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SSR-1 Elder Tuan Windshell (rank SSR)
+
+start `_summon/summon-burst-SSR.png` · end `SSR-1_elder-tuan-windshell_summon-reveal.png` · out `SSR-1_elder-tuan-windshell_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the radiant violet-gold with prismatic edges rank burst keyframe and end on the reveal still of Elder Tuan Windshell. 0-1.5 s: the Celestium Heart pulses and an epic screen-filling burst, orbiting Celestium crystals, a vast halo of glyphs and falling golden light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Elder Tuan Windshell steps forward out of it, hair and cloth moving in the updraft, Wind effects (spiraling leaves, gust lines) in teal, pale green, silver swirling around the figure. 3-5 s: Elder Tuan Windshell plants their feet and braces with a steady, protective stance, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SSR-2 Solenne Auralis (rank SSR)
+
+start `_summon/summon-burst-SSR.png` · end `SSR-2_solenne-auralis_summon-reveal.png` · out `SSR-2_solenne-auralis_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the radiant violet-gold with prismatic edges rank burst keyframe and end on the reveal still of Solenne Auralis. 0-1.5 s: the Celestium Heart pulses and an epic screen-filling burst, orbiting Celestium crystals, a vast halo of glyphs and falling golden light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Solenne Auralis steps forward out of it, hair and cloth moving in the updraft, Light effects (sun motes, feather-like light) in warm gold, white, soft rose swirling around the figure. 3-5 s: Solenne Auralis opens one hand in a warm welcoming gesture, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SSR-3 Erebus Nightcrown (rank SSR)
+
+start `_summon/summon-burst-SSR.png` · end `SSR-3_erebus-nightcrown_summon-reveal.png` · out `SSR-3_erebus-nightcrown_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the radiant violet-gold with prismatic edges rank burst keyframe and end on the reveal still of Erebus Nightcrown. 0-1.5 s: the Celestium Heart pulses and an epic screen-filling burst, orbiting Celestium crystals, a vast halo of glyphs and falling golden light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Erebus Nightcrown steps forward out of it, hair and cloth moving in the updraft, Dark effects (shadow smoke, star specks) in violet, black, magenta swirling around the figure. 3-5 s: Erebus Nightcrown raises the focus item with a sly confident flourish, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### SSR-4 Ragnhild Thunderveil (rank SSR)
+
+start `_summon/summon-burst-SSR.png` · end `SSR-4_ragnhild-thunderveil_summon-reveal.png` · out `SSR-4_ragnhild-thunderveil_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the radiant violet-gold with prismatic edges rank burst keyframe and end on the reveal still of Ragnhild Thunderveil. 0-1.5 s: the Celestium Heart pulses and an epic screen-filling burst, orbiting Celestium crystals, a vast halo of glyphs and falling golden light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ragnhild Thunderveil steps forward out of it, hair and cloth moving in the updraft, Lightning effects (branching arcs, static sparks) in electric yellow, cyan, indigo swirling around the figure. 3-5 s: Ragnhild Thunderveil snaps into a sharp ready stance with a quick flourish of the weapon, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-01 Tobias Rake (rank F)
+
+start `_summon/summon-burst-F.png` · end `R-01_tobias-rake_summon-reveal.png` · out `R-01_tobias-rake_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Tobias Rake. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Tobias Rake steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Tobias Rake looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-02 Mina Dewlight (rank F)
+
+start `_summon/summon-burst-F.png` · end `R-02_mina-dewlight_summon-reveal.png` · out `R-02_mina-dewlight_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Mina Dewlight. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Mina Dewlight steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Mina Dewlight looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-03 Gorm Hatchet (rank F)
+
+start `_summon/summon-burst-F.png` · end `R-03_gorm-hatchet_summon-reveal.png` · out `R-03_gorm-hatchet_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Gorm Hatchet. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Gorm Hatchet steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Gorm Hatchet looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-04 Wren Kettle (rank F)
+
+start `_summon/summon-burst-F.png` · end `R-04_wren-kettle_summon-reveal.png` · out `R-04_wren-kettle_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the dull silver-white rank burst keyframe and end on the reveal still of Wren Kettle. 0-1.5 s: the Celestium Heart pulses and a thin soft glow, a few dust motes, quiet and plain blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Wren Kettle steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Wren Kettle looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-05 Hobb Ledgerfoot (rank E)
+
+start `_summon/summon-burst-E.png` · end `R-05_hobb-ledgerfoot_summon-reveal.png` · out `R-05_hobb-ledgerfoot_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Hobb Ledgerfoot. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Hobb Ledgerfoot steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Hobb Ledgerfoot looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-06 Sera Quickneedle (rank E)
+
+start `_summon/summon-burst-E.png` · end `R-06_sera-quickneedle_summon-reveal.png` · out `R-06_sera-quickneedle_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Sera Quickneedle. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Sera Quickneedle steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Sera Quickneedle looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-07 Dunstan Pickaxe (rank E)
+
+start `_summon/summon-burst-E.png` · end `R-07_dunstan-pickaxe_summon-reveal.png` · out `R-07_dunstan-pickaxe_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Dunstan Pickaxe. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Dunstan Pickaxe steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Dunstan Pickaxe looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-08 Lio Marigold (rank E)
+
+start `_summon/summon-burst-E.png` · end `R-08_lio-marigold_summon-reveal.png` · out `R-08_lio-marigold_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the pale mint-white rank burst keyframe and end on the reveal still of Lio Marigold. 0-1.5 s: the Celestium Heart pulses and a small gentle bloom of light and a few drifting sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Lio Marigold steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Lio Marigold looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-09 Ilsa Brewbright (rank D)
+
+start `_summon/summon-burst-D.png` · end `R-09_ilsa-brewbright_summon-reveal.png` · out `R-09_ilsa-brewbright_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Ilsa Brewbright. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ilsa Brewbright steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Ilsa Brewbright looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-10 Fenwick Quill (rank D)
+
+start `_summon/summon-burst-D.png` · end `R-10_fenwick-quill_summon-reveal.png` · out `R-10_fenwick-quill_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Fenwick Quill. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Fenwick Quill steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Fenwick Quill looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-11 Nessa Tidewell (rank D)
+
+start `_summon/summon-burst-D.png` · end `R-11_nessa-tidewell_summon-reveal.png` · out `R-11_nessa-tidewell_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the clear teal-blue rank burst keyframe and end on the reveal still of Nessa Tidewell. 0-1.5 s: the Celestium Heart pulses and a modest ring of light and a rising spray of sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Nessa Tidewell steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Nessa Tidewell looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-12 Brakka Ironsmoke (rank C)
+
+start `_summon/summon-burst-C.png` · end `R-12_brakka-ironsmoke_summon-reveal.png` · out `R-12_brakka-ironsmoke_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Brakka Ironsmoke. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Brakka Ironsmoke steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Brakka Ironsmoke looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-13 Odalys Thornfield (rank C)
+
+start `_summon/summon-burst-C.png` · end `R-13_odalys-thornfield_summon-reveal.png` · out `R-13_odalys-thornfield_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Odalys Thornfield. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Odalys Thornfield steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Odalys Thornfield looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-14 Cato Lanternjaw (rank C)
+
+start `_summon/summon-burst-C.png` · end `R-14_cato-lanternjaw_summon-reveal.png` · out `R-14_cato-lanternjaw_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the bright sapphire blue rank burst keyframe and end on the reveal still of Cato Lanternjaw. 0-1.5 s: the Celestium Heart pulses and a clear expanding light ring with crisp rays blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Cato Lanternjaw steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Cato Lanternjaw looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-15 Yarrow Moss (rank B)
+
+start `_summon/summon-burst-B.png` · end `R-15_yarrow-moss_summon-reveal.png` · out `R-15_yarrow-moss_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Yarrow Moss. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Yarrow Moss steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Yarrow Moss looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-16 Pell Fortunecoin (rank B)
+
+start `_summon/summon-burst-B.png` · end `R-16_pell-fortunecoin_summon-reveal.png` · out `R-16_pell-fortunecoin_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Pell Fortunecoin. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Pell Fortunecoin steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Pell Fortunecoin looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-17 Dr. Ambrose Pennywhistle (rank B)
+
+start `_summon/summon-burst-B.png` · end `R-17_dr-ambrose-pennywhistle_summon-reveal.png` · out `R-17_dr-ambrose-pennywhistle_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the blue-violet with silver threads rank burst keyframe and end on the reveal still of Dr. Ambrose Pennywhistle. 0-1.5 s: the Celestium Heart pulses and a strong burst, a double light ring and streaming silver Celestium threads blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Dr. Ambrose Pennywhistle steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Dr. Ambrose Pennywhistle looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-18 Kasimir Veil (rank A)
+
+start `_summon/summon-burst-A.png` · end `R-18_kasimir-veil_summon-reveal.png` · out `R-18_kasimir-veil_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Kasimir Veil. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Kasimir Veil steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Kasimir Veil looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-19 Mother Hesper (rank A)
+
+start `_summon/summon-burst-A.png` · end `R-19_mother-hesper_summon-reveal.png` · out `R-19_mother-hesper_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Mother Hesper. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Mother Hesper steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Mother Hesper looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-20 Ruvik Glasseye (rank A)
+
+start `_summon/summon-burst-A.png` · end `R-20_ruvik-glasseye_summon-reveal.png` · out `R-20_ruvik-glasseye_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the rich purple with silver filigree rank burst keyframe and end on the reveal still of Ruvik Glasseye. 0-1.5 s: the Celestium Heart pulses and a vivid sweeping burst, wide light ribbons and glowing filigree glyphs blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Ruvik Glasseye steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Ruvik Glasseye looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-21 Tamsin Starling (rank S)
+
+start `_summon/summon-burst-S.png` · end `R-21_tamsin-starling_summon-reveal.png` · out `R-21_tamsin-starling_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of Tamsin Starling. 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Tamsin Starling steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Tamsin Starling looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-22 Magister Oru (rank S)
+
+start `_summon/summon-burst-S.png` · end `R-22_magister-oru_summon-reveal.png` · out `R-22_magister-oru_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the magenta and gold rank burst keyframe and end on the reveal still of Magister Oru. 0-1.5 s: the Celestium Heart pulses and a dramatic starburst, long gold light ribbons and a rain of gold sparks blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Magister Oru steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Magister Oru looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-23 Sunniva Hearthsong (rank SS)
+
+start `_summon/summon-burst-SS.png` · end `R-23_sunniva-hearthsong_summon-reveal.png` · out `R-23_sunniva-hearthsong_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the violet and gold with floating motifs rank burst keyframe and end on the reveal still of Sunniva Hearthsong. 0-1.5 s: the Celestium Heart pulses and a layered burst, concentric glyph rings, floating motifs and trailing gold light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Sunniva Hearthsong steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Sunniva Hearthsong looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
+
+### R-24 Elder Ysolde Everwell (rank SSR)
+
+start `_summon/summon-burst-SSR.png` · end `R-24_elder-ysolde-everwell_summon-reveal.png` · out `R-24_elder-ysolde-everwell_summon-video.mp4`
+
+```text
+Vertical 9:16 anime fantasy summon cinematic, 5 seconds, hand-painted 2D look, no text. Start from the radiant violet-gold with prismatic edges rank burst keyframe and end on the reveal still of Elder Ysolde Everwell. 0-1.5 s: the Celestium Heart pulses and an epic screen-filling burst, orbiting Celestium crystals, a vast halo of glyphs and falling golden light blooms, camera pushes in slowly. 1.5-3 s: the light column parts and Elder Ysolde Everwell steps forward out of it, hair and cloth moving in the updraft, a few soft golden sparks swirling around the figure. 3-5 s: Elder Ysolde Everwell looks around in warm surprise, then gives a small friendly wave, camera eases to a stable hero framing, the light settles into a soft glow with drifting motes. Keep the face, outfit and proportions identical to the reference, no morphing, no extra limbs, no new characters, smooth easing, final frame matches the reveal still.
+```
