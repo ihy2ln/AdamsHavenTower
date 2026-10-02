@@ -83,9 +83,9 @@ public sealed partial class TowerHud
             string label = (def.id == researchSelected ? "> " : "") + def.index + "  " + def.name;
             if (active) label += "  " + Mathf.FloorToInt(rules.ResearchProgress() * 100) + "%";
             // The skinned button art mutes the tint, so the label colour carries the state too.
-            var text = LabelOf(researchNodes[i]);
-            text.text = label;
-            text.color = done ? new Color(1f, 0.84f, 0.4f) : active ? new Color(0.85f, 0.72f, 1f) :
+            var nodeLabel = LabelOf(researchNodes[i]);
+            nodeLabel.text = label;
+            nodeLabel.color = done ? new Color(1f, 0.84f, 0.4f) : active ? new Color(0.85f, 0.72f, 1f) :
                 open ? new Color(0.62f, 1f, 0.9f) : new Color(0.5f, 0.54f, 0.6f);
             researchNodes[i].GetComponent<Image>().color = done ? ResearchDone : active ? ResearchActive :
                 open ? Teal : ResearchLocked;
