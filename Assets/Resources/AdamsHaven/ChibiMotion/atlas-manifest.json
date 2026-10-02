@@ -22,182 +22,206 @@
   "units": {
     "kaela": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/idle.png",
-        "bytes": 952209,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/kaela/kaela-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/kaela/idle.png",
+        "bytes": 509427,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/walk_in_place.png",
-        "bytes": 941556,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/kaela/kaela-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/kaela/walk_in_place.png",
+        "bytes": 539563,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/task.png",
-        "bytes": 942496,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/kaela/kaela-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/kaela/task.png",
+        "bytes": 443588,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/kaela-stormfang/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/kaela/knocked_down.png",
-        "bytes": 281551,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/kaela/kaela-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/kaela/knocked_down.png",
+        "bytes": 257675,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "ghislaine": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/idle.png",
-        "bytes": 884930,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/idle.png",
+        "bytes": 547254,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/walk_in_place.png",
-        "bytes": 867890,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/walk_in_place.png",
+        "bytes": 595862,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/task.png",
-        "bytes": 878577,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/task.png",
+        "bytes": 494444,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/ghislaine-dedoldia/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/knocked_down.png",
-        "bytes": 265631,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/ghislaine/ghislaine-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/ghislaine/knocked_down.png",
+        "bytes": 295197,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "elara": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/idle.png",
-        "bytes": 617341,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/elara/elara-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/elara/idle.png",
+        "bytes": 382522,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/walk_in_place.png",
-        "bytes": 612844,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/elara/elara-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/elara/walk_in_place.png",
+        "bytes": 407554,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/task.png",
-        "bytes": 609235,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/elara/elara-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/elara/task.png",
+        "bytes": 316296,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/elara-vellum/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/elara/knocked_down.png",
-        "bytes": 191003,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/elara/elara-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/elara/knocked_down.png",
+        "bytes": 203393,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "helda": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/idle.png",
-        "bytes": 817362,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/helda/helda-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/helda/idle.png",
+        "bytes": 497638,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/walk_in_place.png",
-        "bytes": 809791,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/helda/helda-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/helda/walk_in_place.png",
+        "bytes": 518140,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/task.png",
-        "bytes": 809672,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/helda/helda-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/helda/task.png",
+        "bytes": 435775,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/helda-frostmane/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/helda/knocked_down.png",
-        "bytes": 248068,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/helda/helda-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/helda/knocked_down.png",
+        "bytes": 266564,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "daisy": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/idle.png",
-        "bytes": 689185,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/daisy/daisy-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/daisy/idle.png",
+        "bytes": 354056,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/walk_in_place.png",
-        "bytes": 692877,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/daisy/daisy-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/daisy/walk_in_place.png",
+        "bytes": 382115,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/task.png",
-        "bytes": 682455,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/daisy/daisy-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/daisy/task.png",
+        "bytes": 294372,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/daisy-bonfire-wildheart/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/daisy/knocked_down.png",
-        "bytes": 214363,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/daisy/daisy-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/daisy/knocked_down.png",
+        "bytes": 194026,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "clarity": {
       "idle": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/idle.png",
-        "bytes": 596518,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/clarity/clarity-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/clarity/idle.png",
+        "bytes": 366674,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/walk_in_place.png",
-        "bytes": 595537,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/clarity/clarity-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/clarity/walk_in_place.png",
+        "bytes": 404125,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/task",
-        "source_clip": "task",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/task.png",
-        "bytes": 589143,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/clarity/clarity-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/clarity/task.png",
+        "bytes": 302074,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/chibi-roster-dual-look-v1/clarity-lockhart/civilian/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/clarity/knocked_down.png",
-        "bytes": 191306,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/clarity/clarity-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/clarity/knocked_down.png",
+        "bytes": 202521,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "amara": {
@@ -232,32 +256,36 @@
     },
     "body_short": {
       "idle": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/idle.png",
-        "bytes": 780300,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-short/celestium-short-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_short/idle.png",
+        "bytes": 516477,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/walk_in_place.png",
-        "bytes": 675539,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-short/celestium-short-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_short/walk_in_place.png",
+        "bytes": 542595,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/work_market",
-        "source_clip": "work_market",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/task.png",
-        "bytes": 485997,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-short/celestium-short-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_short/task.png",
+        "bytes": 449091,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/short/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_short/knocked_down.png",
-        "bytes": 206805,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/celestium-short/celestium-short-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_short/knocked_down.png",
+        "bytes": 279248,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "body_tall": {
@@ -292,32 +320,36 @@
     },
     "body_muscle": {
       "idle": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/idle.png",
-        "bytes": 907958,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-muscle/celestium-muscle-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/idle.png",
+        "bytes": 499898,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/walk_in_place.png",
-        "bytes": 784763,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-muscle/celestium-muscle-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/walk_in_place.png",
+        "bytes": 528993,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/work_warehouse",
-        "source_clip": "work_warehouse",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/task.png",
-        "bytes": 463237,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-muscle/celestium-muscle-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/task.png",
+        "bytes": 413017,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/muscle/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/knocked_down.png",
-        "bytes": 223017,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/celestium-muscle/celestium-muscle-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_muscle/knocked_down.png",
+        "bytes": 263844,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     },
     "body_hourglass": {
@@ -352,32 +384,36 @@
     },
     "body_normal": {
       "idle": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/idle",
-        "source_clip": "idle",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/idle.png",
-        "bytes": 765944,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-med/celestium-normal-battle.blend",
+        "source_clip": "procedural idle",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_normal/idle.png",
+        "bytes": 473148,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "walk_in_place": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/walk_in_place",
-        "source_clip": "walk_in_place",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/walk_in_place.png",
-        "bytes": 660945,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-med/celestium-normal-battle.blend",
+        "source_clip": "AH_walk",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_normal/walk_in_place.png",
+        "bytes": 501620,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "task": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/work_kitchen",
-        "source_clip": "work_kitchen",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/task.png",
-        "bytes": 471544,
-        "loop": true
+        "source": "MeshyJobs/anime-battle-v2/celestium-med/celestium-normal-battle.blend",
+        "source_clip": "procedural task",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_normal/task.png",
+        "bytes": 394950,
+        "loop": true,
+        "baker": "Tools/pack_tower_atlas.py"
       },
       "knocked_down": {
-        "source": "art/character_cards/celestium-chibi-bodies-v2/normal/clips/knocked_down",
-        "source_clip": "knocked_down",
-        "atlas": "unity-port/Assets/Resources/AdamsHaven/ChibiMotion/body_normal/knocked_down.png",
-        "bytes": 194030,
-        "loop": false
+        "source": "MeshyJobs/anime-battle-v2/celestium-med/celestium-normal-battle.blend",
+        "source_clip": "AH_knock_down",
+        "atlas": "Assets/Resources/AdamsHaven/ChibiMotion/body_normal/knocked_down.png",
+        "bytes": 252319,
+        "loop": false,
+        "baker": "Tools/pack_tower_atlas.py"
       }
     }
   }

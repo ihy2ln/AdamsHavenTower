@@ -13,7 +13,7 @@ public static class AndroidReleaseBuilder
 {
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
-    private const string Version = "0.6.0";
+    private const string Version = "0.7.0";
     private const string ApkName = "AdamsHavenTowerBattle-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }
@@ -82,7 +82,7 @@ public static class AndroidReleaseBuilder
         PlayerSettings.productName = "Adams Haven: Tower Battle";
         PlayerSettings.SetApplicationIdentifier(android, "com.adamshaven.tower");
         PlayerSettings.bundleVersion = Version;
-        PlayerSettings.Android.bundleVersionCode = 6;
+        PlayerSettings.Android.bundleVersionCode = 7;
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
