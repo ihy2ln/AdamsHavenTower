@@ -47,3 +47,22 @@ Heart upgrade cost in code: Celestium 8, 20, 45, 90, 160, 280, 450, 700 (total 1
 
 - Roster integration: summons now draw named heroes (4 per rank) and residents from `tower_roster.json`, with pools and ranks tested.
 - Rogue-lite Legacy: each fallen Heart earns points; the Legacy rank (0 to 10) grants a stacking start bonus (Gold, supplies, Tonics, Celestium). It deliberately leaves Sigils and Heart HP unchanged.
+
+## 6. Heart pacing pass (2026-10-01, later)
+
+Request: first runs climb slowly; Legacy makes later runs faster.
+
+- **Heart costs** (Celestium / Gold per rank-up, F to SSR): 10/200, 20/500, 130/1,000, 420/2,000, 1,250/4,000, 2,300/8,000, 3,800/12,000, 4,700/16,000. Total 12,630 Celestium and 43,700 Gold (was 1,753 and 18,000).
+- **Quarry yield** per collect: 1 Celestium per rank up to D, then half a rank's worth (F..SSR: 1, 2, 2, 3, 3, 4, 4, 5, 5; was 1..9).
+- **Legacy discount:** each Legacy rank cuts Heart upgrade costs by 6%, capped at 60% (Legacy rank 10). Shown on the Heart's Upgrade tab.
+- **Climb model** (goals about 8 Celestium a day, 0 to 5 quarries at the Heart's building cap, half of all Celestium to research). Founding's 45 Celestium covers E and D at once; the climb slows from C:
+
+| Legacy rank | C | B | A | S | SS | SSR |
+| --- | --- | --- | --- | --- | --- | --- |
+| GDD target (first run) | 7 | 14 | 25 | 40 | 60 | 80 |
+| 0 (first run) | 3.6 | 10.7 | 21.6 | 36.7 | 56.8 | **76.8** |
+| 3 | 2.3 | 8.1 | 17.0 | 29.5 | 45.9 | 62.3 |
+| 5 | 1.5 | 6.4 | 14.0 | 24.7 | 38.7 | 52.7 |
+| 10 | 0 | 2.5 | 6.8 | 12.9 | 21.0 | 28.9 |
+
+The test `FirstRunsClimbSlowlyAndLegacyRunsFaster` runs this model against the real cost tables (first run 60 to 95 days; Legacy 10 under 60% of that). It is a model, not a played run: a measured playthrough is still worth doing once the tower's early game settles.

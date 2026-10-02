@@ -22,11 +22,24 @@ namespace AdamsHaven.Tower
         private static readonly float[] HeartHp = { 1200, 1800, 2600, 3400, 4300, 5300, 6400, 7600, 9000 };
         public static float HeartMaxHp(int rank) { return HeartHp[Mathf.Clamp(rank, 1, HeartHp.Length) - 1]; }
 
-        // Celestium and gold to raise the Heart one rank (8.3). First-pass numbers for the 60-90 day pacing.
-        private static readonly int[] HeartCelestium = { 8, 20, 45, 90, 160, 280, 450, 700 };
-        public int HeartUpgradeCelestium()
-        { return State.heartRank >= TowerTiers.MaxRank ? 0 : HeartCelestium[State.heartRank - 1]; }
-        public int HeartUpgradeGold() { return State.heartRank >= TowerTiers.MaxRank ? 0 : 500 * State.heartRank; }
+        // Celestium and gold to raise the Heart one rank (8.3, 8.4). Tuned so a first run (Legacy rank 0) reaches SSR in
+        // about 75-80 days with half its Celestium going to research (TOWER_BALANCE_REPORT section 6). Every Legacy
+        // rank makes later runs 6% cheaper, up to 60% at Legacy rank 10, so veterans climb in about a month.
+        private static readonly int[] HeartCelestium = { 10, 20, 130, 420, 1250, 2300, 3800, 4700 };
+        private static readonly int[] HeartGold = { 200, 500, 1000, 2000, 4000, 8000, 12000, 16000 };
+        public const float LegacyDiscountPerRank = 0.06f, LegacyDiscountMax = 0.6f;
+
+        public static float LegacyHeartDiscount(int legacyRank)
+        { return Mathf.Min(LegacyDiscountMax, LegacyDiscountPerRank * Mathf.Max(0, legacyRank)); }
+
+        private int HeartCost(int[] table)
+        {
+            if (State.heartRank >= TowerTiers.MaxRank) return 0;
+            return Mathf.RoundToInt(table[State.heartRank - 1] * (1f - LegacyHeartDiscount(State.legacyRank)));
+        }
+
+        public int HeartUpgradeCelestium() { return HeartCost(HeartCelestium); }
+        public int HeartUpgradeGold() { return HeartCost(HeartGold); }
 
         public string UpgradeHeart()
         {

@@ -144,6 +144,8 @@ public sealed partial class TowerHud
         heartUpgradeText.text = top ? "The Heart is at its peak. Every building may reach rank SSR." :
             "Cost: " + rules.HeartUpgradeCelestium() + " Celestium and " + TowerRules.Compact(rules.HeartUpgradeGold()) + " gold" +
             "   (you have " + state.celestium + " C, " + TowerRules.Compact(state.gold) + " g)" +
+            (state.legacyRank > 0 ? "\nLegacy rank " + state.legacyRank + ": Heart upgrades cost " +
+                Mathf.RoundToInt(TowerRules.LegacyHeartDiscount(state.legacyRank) * 100) + "% less." : "") +
             "\n\nNow: buildings up to rank " + RankTag(rules.RankCap()) + ", Heart HP " +
             Mathf.RoundToInt(TowerRules.HeartMaxHp(state.heartRank)) +
             "\nNext: buildings up to rank " + RankTag(TowerTiers.BuildingCap(state.heartRank + 1)) + ", Heart HP " +

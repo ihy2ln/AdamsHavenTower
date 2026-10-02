@@ -2448,6 +2448,40 @@ public sealed class TowerSimulationTests
         Assert.IsTrue(next.legacyHeroes.Exists(h => h.unitId == "test_waiting_hero"));
     }
 
+    // The Heart climb model from TOWER_BALANCE_REPORT section 6: goals pay ~8 Celestium a day, the tower runs 0-5
+    // quarries at the Heart's building cap (18.5 collects a day), and half of all Celestium goes to research.
+    private static float DaysToSsr(int legacyRank)
+    {
+        int[] quarries = { 0, 0, 1, 2, 3, 4, 4, 5, 5 };
+        var rules = new TowerRules(TowerMilestones.Create(1));
+        rules.State.legacyRank = legacyRank;
+        rules.State.heartRank = 1;
+        float bank = 45 + TowerRules.LegacyBonusFor(legacyRank).celestium, day = 0;
+        while (rules.State.heartRank < TowerTiers.MaxRank && day < 400)
+        {
+            int rank = rules.State.heartRank;
+            int level = Mathf.Min(TowerTiers.MaxRank, TowerTiers.BuildingCap(rank));
+            bank += (8 + quarries[rank - 1] * 18.5f * TowerRules.QuarryCelestium(level)) * 0.5f * 0.05f;
+            day += 0.05f;
+            if (bank >= rules.HeartUpgradeCelestium()) { bank -= rules.HeartUpgradeCelestium(); rules.State.heartRank++; }
+        }
+        return day;
+    }
+
+    [Test]
+    public void FirstRunsClimbSlowlyAndLegacyRunsFaster()
+    {
+        float first = DaysToSsr(0), veteran = DaysToSsr(10);
+        Assert.That(first, Is.InRange(60f, 95f), "a first run reaches SSR in about 60-90 days");
+        Assert.Less(veteran, first * 0.6f, "Legacy rank 10 climbs much faster");
+        Assert.Less(DaysToSsr(5), first);
+        Assert.AreEqual(0.3f, TowerRules.LegacyHeartDiscount(5), 0.001f);
+        Assert.AreEqual(0.6f, TowerRules.LegacyHeartDiscount(12), 0.001f, "capped");
+        for (int level = 2; level <= TowerTiers.MaxRank; level++)
+            Assert.GreaterOrEqual(TowerRules.QuarryCelestium(level), TowerRules.QuarryCelestium(level - 1), "never drops with rank");
+        Assert.AreEqual(5, TowerRules.QuarryCelestium(9));
+    }
+
     [Test]
     public void GoldReadsAsACompactNumberFromOneThousand()
     {

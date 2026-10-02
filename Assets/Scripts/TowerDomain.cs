@@ -770,10 +770,13 @@ namespace AdamsHaven.Tower
             var def = TowerCatalog.Get(room.type);
             if (def == null) return 0;
             float mult = (1 + 0.5f * (room.level - 1)) * YieldBonus(def.produces);
-            return def.produces == "celestium" ? room.level :
+            // Quarries: one Celestium per collect per rank up to D, then half a rank's worth (slower Heart climb).
+            return def.produces == "celestium" ? QuarryCelestium(room.level) :
                 (def.produces == "firewood" ? 5 :
                     def.produces == "water" ? 6 : def.produces == "gold" ? 6 : 4) * OutputBays(room) * mult;
         }
+
+        public static int QuarryCelestium(int level) { return level <= 2 ? level : 2 + (level - 2) / 2; }
 
         // First-pass balance for GDD 5.2: rooms now open as one bay, but output and storage start from
         // the old fixed widths so a rank F room is no weaker than before. Extra bays only add beyond that.
