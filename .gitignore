@@ -28,3 +28,10 @@
 # Character pipeline run logs
 /BarnModels/*.log
 /BarnModels/*.err
+
+# 2D battle rig work files (Tools/build_2d_rig*.py): keep the chosen stance art, drop the debug renders
+/BattleRig2D/*/grid*.png
+/BattleRig2D/*/labels.png
+/BattleRig2D/*/assembled.png
+/BattleRig2D/*/compare.png
+/BattleRig2D/*/preview/

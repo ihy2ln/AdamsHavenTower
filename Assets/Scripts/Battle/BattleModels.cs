@@ -18,11 +18,12 @@ public sealed partial class BattleMode
         public string Action = "AH_battle_guard";
         public float Started, Rate = 1f, Offset;
         public bool Hold;   // knocked down: stay on the last frame instead of returning to guard
+        public bool Flat;   // a 2D anime cutout rig: drawn facing the enemy line, it cannot turn
         public readonly List<Material> Materials = new List<Material>();
 
         public void TurnTo(float yaw)
         {
-            Pivot.RotateAround(Stage.transform.position, Vector3.up, yaw - Yaw);
+            if (!Flat) Pivot.RotateAround(Stage.transform.position, Vector3.up, yaw - Yaw);
             Yaw = yaw;
         }
     }
@@ -107,6 +108,11 @@ public sealed partial class BattleMode
     // and a transparent orthographic camera rendering into its own image. Null when the unit has no usable model.
     FieldRig CreateRig(BattleUnit unit, string label, Vector3 at, int width, int height, float yaw)
     {
+        if (Prefer2DRigs)
+        {
+            var flat = CreateFlatRig(unit, label, at, width, height);
+            if (flat != null) return flat;
+        }
         string path = "AdamsHaven/BattleModels/" + unit.Id + "/model";
         var prefab = Resources.Load<GameObject>(path);
         if (!prefab) return null;
@@ -199,6 +205,51 @@ public sealed partial class BattleMode
                 rig.Materials.Add(mat);
             }
         }
+        AddRigCamera(rig, width, height);
+        var lightObject = new GameObject("Portrait light");
+        lightObject.transform.SetParent(rig.Stage.transform, false);
+        lightObject.transform.localPosition = new Vector3(-2, 3, -3);
+        var light = lightObject.AddComponent<Light>();
+        light.type = LightType.Point; light.range = 9; light.intensity = 35;
+        return rig;
+    }
+
+    // 2D anime cutout rigs (Assets/Editor/Battle2DRigBuilder.cs, Tools/build_2d_rig.py): sprites on a bone hierarchy,
+    // two units tall with the feet on the origin, facing the enemy line, with the same AH_* clip names as the 3D rigs.
+    // The 2D/3D choice is remembered (the character sheet has the switch); units without a 2D rig stay 3D.
+    public const string Rig2DKey = "AdamsHaven.Battle.Rig2D";
+    public static bool Prefer2DRigs
+    {
+        get { return PlayerPrefs.GetInt(Rig2DKey, 1) == 1; }
+        set { PlayerPrefs.SetInt(Rig2DKey, value ? 1 : 0); PlayerPrefs.Save(); }
+    }
+    static string Rig2DFolder(string id) { return "AdamsHaven/BattleRigs2D/" + id; }
+    public static bool Has2DRig(string id) { return Resources.Load<GameObject>(Rig2DFolder(id) + "/model") != null; }
+    public static bool Has3DRig(string id) { return Resources.Load<GameObject>("AdamsHaven/BattleModels/" + id + "/model") != null; }
+
+    FieldRig CreateFlatRig(BattleUnit unit, string label, Vector3 at, int width, int height)
+    {
+        string folder = Rig2DFolder(unit.Id);
+        var prefab = Resources.Load<GameObject>(folder + "/model");
+        if (!prefab) return null;
+        var rig = new FieldRig { Flat = true };
+        rig.Stage = new GameObject(label + unit.Id + " (2D)");
+        rig.Stage.transform.SetParent(transform, false);
+        rig.Stage.transform.position = at;
+        rig.Pivot = new GameObject("Model scale and facing").transform;
+        rig.Pivot.SetParent(rig.Stage.transform, false);
+        rig.Model = Instantiate(prefab, rig.Pivot);
+        foreach (var clip in Resources.LoadAll<AnimationClip>(folder))
+            if (clip.name.StartsWith("AH_", StringComparison.Ordinal)) rig.Clips[clip.name] = clip;
+        AnimationClip idle;
+        if (rig.Clips.TryGetValue("AH_battle_guard", out idle)) idle.SampleAnimation(rig.Model, 0);
+        // Painted detail survives better with a sharper target than the toon 3D models need.
+        AddRigCamera(rig, Mathf.RoundToInt(width * 1.5f), Mathf.RoundToInt(height * 1.5f));
+        return rig;
+    }
+
+    static void AddRigCamera(FieldRig rig, int width, int height)
+    {
         var cameraObject = new GameObject("Portrait camera");
         cameraObject.transform.SetParent(rig.Stage.transform, false);
         cameraObject.transform.localPosition = new Vector3(0, FieldCamCenter, -6);
@@ -211,12 +262,6 @@ public sealed partial class BattleMode
         rig.Camera.allowHDR = false;
         rig.Image = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         rig.Image.Create(); rig.Camera.targetTexture = rig.Image;
-        var lightObject = new GameObject("Portrait light");
-        lightObject.transform.SetParent(rig.Stage.transform, false);
-        lightObject.transform.localPosition = new Vector3(-2, 3, -3);
-        var light = lightObject.AddComponent<Light>();
-        light.type = LightType.Point; light.range = 9; light.intensity = 35;
-        return rig;
     }
 
     static void ReleaseRig(FieldRig rig)

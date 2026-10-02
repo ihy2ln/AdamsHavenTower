@@ -1,0 +1,42 @@
+{
+  "id": "kaela",
+  "stance": "stance_kaela_apose_7201.png",
+  "feet": [575, 1465],
+  "height": 2.0,
+  "bones": [
+    {"name": "root", "parent": "", "pivot": [575, 1465]},
+    {"name": "hips", "parent": "root", "pivot": [615, 610], "tip": [610, 520], "r": 120},
+    {"name": "torso", "parent": "hips", "pivot": [600, 525], "tip": [565, 240], "r": 115},
+    {"name": "head", "parent": "torso", "pivot": [560, 228], "tip": [550, 50], "r": 95},
+    {"name": "hair", "parent": "head", "pivot": [505, 210], "tip": [420, 520], "r": 70},
+    {"name": "arm_f_up", "parent": "torso", "pivot": [685, 322], "tip": [732, 485], "r": 42, "donor": "arm_n_up", "shade": 0.8, "thin": 0.72},
+    {"name": "arm_f_lo", "parent": "arm_f_up", "pivot": [732, 485], "tip": [785, 588], "r": 40},
+    {"name": "hand_f", "parent": "arm_f_lo", "pivot": [785, 588], "tip": [805, 668], "r": 48},
+    {"name": "leg_f_up", "parent": "hips", "pivot": [652, 705], "tip": [686, 962], "r": 78, "fill": true},
+    {"name": "leg_f_lo", "parent": "leg_f_up", "pivot": [686, 962], "tip": [616, 1196], "r": 58},
+    {"name": "foot_f", "parent": "leg_f_lo", "pivot": [616, 1196], "tip": [728, 1372], "r": 62},
+    {"name": "leg_n_up", "parent": "hips", "pivot": [492, 702], "tip": [474, 982], "r": 82, "fill": true},
+    {"name": "leg_n_lo", "parent": "leg_n_up", "pivot": [474, 982], "tip": [402, 1238], "r": 60},
+    {"name": "foot_n", "parent": "leg_n_lo", "pivot": [402, 1238], "tip": [418, 1445], "r": 66},
+    {"name": "tail1", "parent": "hips", "pivot": [392, 868], "tip": [215, 995], "r": 70, "fill": true},
+    {"name": "tail2", "parent": "tail1", "pivot": [215, 995], "tip": [55, 870], "r": 70},
+    {"name": "tail3", "parent": "tail2", "pivot": [55, 870], "tip": [195, 728], "r": 66},
+    {"name": "arm_n_up", "parent": "torso", "pivot": [440, 300], "tip": [336, 460], "r": 46},
+    {"name": "arm_n_lo", "parent": "arm_n_up", "pivot": [336, 460], "tip": [290, 595], "r": 42},
+    {"name": "hand_n", "parent": "arm_n_lo", "pivot": [290, 595], "tip": [285, 665], "r": 50}
+  ],
+  "order": ["tail3", "tail2", "tail1", "hair", "arm_f_up", "arm_f_lo", "hand_f", "gauntlet_f", "leg_f_up", "leg_f_lo", "foot_f",
+            "leg_n_up", "leg_n_lo", "foot_n", "hips", "torso", "head", "arm_n_up", "arm_n_lo", "hand_n", "gauntlet_n"],
+  "regions": {
+    "tail": {"box": [15, 675, 415, 1050], "pos": [[100, 760], [70, 900], [250, 985], [330, 935], [180, 735]], "neg": [[372, 780], [470, 800], [290, 650]]},
+    "hair": {"box": [360, 40, 560, 560], "pos": [[420, 300], [445, 430], [400, 230], [465, 180], [430, 500]], "neg": [[560, 160], [352, 420], [600, 330], [520, 470], [502, 300], [506, 420], [500, 360]]},
+    "cloth_n": {"box": [320, 590, 470, 1040], "pos": [[385, 700], [372, 820], [400, 640]], "neg": [[300, 900], [470, 760], [440, 900]]},
+    "cloth_f": {"box": [740, 590, 800, 900], "pos": [[772, 700], [778, 800]], "neg": [[700, 760]]},
+    "torso": {"box": [470, 225, 745, 560], "pos": [[600, 330], [690, 380], [560, 460], [620, 500], [640, 280], [720, 360]], "neg": [[745, 470], [440, 330], [470, 420], [600, 580]]},
+    "shorts": {"box": [440, 535, 790, 730], "pos": [[620, 560], [530, 640], [610, 690], [690, 640], [520, 580], [720, 580]], "neg": [[500, 820], [680, 820], [600, 470], [790, 640]]}
+  },
+  "gauntlets": {
+    "file": "S:/AI/Game/Game Assets/characters/Kaela/Celestium Weapons/kaela-ice-gauntlets.png",
+    "width": 150
+  }
+}

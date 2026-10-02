@@ -194,6 +194,17 @@ public sealed partial class BattleMode
         Outline(SheetBox, BattleGui.Alpha(accent, .85f), 2.2f, 22f);
         if (MiniButton(new Rect(SheetBox.xMax - 66f, SheetBox.y + 16f, 50f, 50f), "X", true, false, EnemyRed, -1f, 20))
         { CloseSheet(); modalDrawing = false; return; }
+        // 2D anime art or the 3D model, for fighters that have both (the choice applies to the whole field).
+        if (Has2DRig(u.Id) && Has3DRig(u.Id)
+            && MiniButton(new Rect(SheetView.xMax - 170f, SheetView.yMax - 52f, 158f, 40f), Prefer2DRigs ? "SHOW 3D MODEL" : "SHOW 2D ART", true, false, Ice, -1f, 12))
+        {
+            Prefer2DRigs = !Prefer2DRigs;
+            BuildFieldRigs();
+            OpenSheet(u);
+            used = true;
+            modalDrawing = false;
+            return;
+        }
         DrawSheetViewer(u, accent);
         DrawSheetInfo(u, accent);
         if (sheetUnit == null) { modalDrawing = false; return; }
@@ -208,7 +219,8 @@ public sealed partial class BattleMode
         bool paint = e.type == EventType.Repaint;
         Rect view = SheetView;
         Text(new Rect(view.x + 4f, SheetBox.y + 18f, 520f, 30f), "CHARACTER SHEET", 15, BattleGui.Alpha(accent, .9f), TextAnchor.MiddleLeft, true);
-        Text(new Rect(view.x + 4f, SheetBox.y + 44f, 640f, 26f), "Drag sideways to turn, up / down to move  -  scroll or + / - to zoom", 12, new Color(.68f, .76f, .86f));
+        Text(new Rect(view.x + 4f, SheetBox.y + 44f, 640f, 26f), sheetRig != null && sheetRig.Flat ? "2D anime art  -  drag up / down to move, scroll or + / - to zoom"
+            : "Drag sideways to turn, up / down to move  -  scroll or + / - to zoom", 12, new Color(.68f, .76f, .86f));
         Round(view, new Color(.03f, .05f, .085f, 1f), 16f);
         if (paint)
         {

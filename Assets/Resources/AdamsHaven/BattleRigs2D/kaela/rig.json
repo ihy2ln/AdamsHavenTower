@@ -1,0 +1,463 @@
+{
+ "id": "kaela",
+ "ppu": 723.5,
+ "image": [
+  1024,
+  1536
+ ],
+ "feet": [
+  575,
+  1465
+ ],
+ "bones": [
+  {
+   "name": "root",
+   "parent": "",
+   "pivot": [
+    575,
+    1465
+   ],
+   "tip": []
+  },
+  {
+   "name": "hips",
+   "parent": "root",
+   "pivot": [
+    615,
+    610
+   ],
+   "tip": [
+    610,
+    520
+   ]
+  },
+  {
+   "name": "torso",
+   "parent": "hips",
+   "pivot": [
+    600,
+    525
+   ],
+   "tip": [
+    565,
+    240
+   ]
+  },
+  {
+   "name": "head",
+   "parent": "torso",
+   "pivot": [
+    560,
+    228
+   ],
+   "tip": [
+    550,
+    50
+   ]
+  },
+  {
+   "name": "hair",
+   "parent": "head",
+   "pivot": [
+    505,
+    210
+   ],
+   "tip": [
+    420,
+    520
+   ]
+  },
+  {
+   "name": "arm_f_up",
+   "parent": "torso",
+   "pivot": [
+    685,
+    322
+   ],
+   "tip": [
+    732,
+    485
+   ]
+  },
+  {
+   "name": "arm_f_lo",
+   "parent": "arm_f_up",
+   "pivot": [
+    732,
+    485
+   ],
+   "tip": [
+    785,
+    588
+   ]
+  },
+  {
+   "name": "hand_f",
+   "parent": "arm_f_lo",
+   "pivot": [
+    785,
+    588
+   ],
+   "tip": [
+    805,
+    668
+   ]
+  },
+  {
+   "name": "leg_f_up",
+   "parent": "hips",
+   "pivot": [
+    652,
+    705
+   ],
+   "tip": [
+    686,
+    962
+   ]
+  },
+  {
+   "name": "leg_f_lo",
+   "parent": "leg_f_up",
+   "pivot": [
+    686,
+    962
+   ],
+   "tip": [
+    616,
+    1196
+   ]
+  },
+  {
+   "name": "foot_f",
+   "parent": "leg_f_lo",
+   "pivot": [
+    616,
+    1196
+   ],
+   "tip": [
+    728,
+    1372
+   ]
+  },
+  {
+   "name": "leg_n_up",
+   "parent": "hips",
+   "pivot": [
+    492,
+    702
+   ],
+   "tip": [
+    474,
+    982
+   ]
+  },
+  {
+   "name": "leg_n_lo",
+   "parent": "leg_n_up",
+   "pivot": [
+    474,
+    982
+   ],
+   "tip": [
+    402,
+    1238
+   ]
+  },
+  {
+   "name": "foot_n",
+   "parent": "leg_n_lo",
+   "pivot": [
+    402,
+    1238
+   ],
+   "tip": [
+    418,
+    1445
+   ]
+  },
+  {
+   "name": "tail1",
+   "parent": "hips",
+   "pivot": [
+    392,
+    868
+   ],
+   "tip": [
+    215,
+    995
+   ]
+  },
+  {
+   "name": "tail2",
+   "parent": "tail1",
+   "pivot": [
+    215,
+    995
+   ],
+   "tip": [
+    55,
+    870
+   ]
+  },
+  {
+   "name": "tail3",
+   "parent": "tail2",
+   "pivot": [
+    55,
+    870
+   ],
+   "tip": [
+    195,
+    728
+   ]
+  },
+  {
+   "name": "arm_n_up",
+   "parent": "torso",
+   "pivot": [
+    440,
+    300
+   ],
+   "tip": [
+    336,
+    460
+   ]
+  },
+  {
+   "name": "arm_n_lo",
+   "parent": "arm_n_up",
+   "pivot": [
+    336,
+    460
+   ],
+   "tip": [
+    290,
+    595
+   ]
+  },
+  {
+   "name": "hand_n",
+   "parent": "arm_n_lo",
+   "pivot": [
+    290,
+    595
+   ],
+   "tip": [
+    285,
+    665
+   ]
+  }
+ ],
+ "parts": [
+  {
+   "name": "tail3",
+   "bone": "tail3",
+   "file": "parts/tail3.png",
+   "x": 28,
+   "y": 700,
+   "w": 194,
+   "h": 208,
+   "order": 0
+  },
+  {
+   "name": "tail2",
+   "bone": "tail2",
+   "file": "parts/tail2.png",
+   "x": 28,
+   "y": 845,
+   "w": 227,
+   "h": 178,
+   "order": 1
+  },
+  {
+   "name": "tail1",
+   "bone": "tail1",
+   "file": "parts/tail1.png",
+   "x": 194,
+   "y": 791,
+   "w": 220,
+   "h": 233,
+   "order": 2
+  },
+  {
+   "name": "hair",
+   "bone": "hair",
+   "file": "parts/hair.png",
+   "x": 353,
+   "y": 211,
+   "w": 289,
+   "h": 354,
+   "order": 3
+  },
+  {
+   "name": "arm_f_up",
+   "bone": "arm_f_up",
+   "file": "parts/arm_f_up.png",
+   "x": 655,
+   "y": 282,
+   "w": 111,
+   "h": 212,
+   "order": 4
+  },
+  {
+   "name": "arm_f_lo",
+   "bone": "arm_f_lo",
+   "file": "parts/arm_f_lo.png",
+   "x": 693,
+   "y": 461,
+   "w": 111,
+   "h": 133,
+   "order": 5
+  },
+  {
+   "name": "hand_f",
+   "bone": "hand_f",
+   "file": "parts/hand_f.png",
+   "x": 752,
+   "y": 560,
+   "w": 93,
+   "h": 153,
+   "order": 6
+  },
+  {
+   "name": "gauntlet_f",
+   "bone": "hand_f",
+   "file": "parts/gauntlet_f.png",
+   "x": 727,
+   "y": 547,
+   "w": 141,
+   "h": 171,
+   "order": 7
+  },
+  {
+   "name": "leg_f_up",
+   "bone": "leg_f_up",
+   "file": "parts/leg_f_up.png",
+   "x": 569,
+   "y": 671,
+   "w": 191,
+   "h": 304,
+   "order": 8
+  },
+  {
+   "name": "leg_f_lo",
+   "bone": "leg_f_lo",
+   "file": "parts/leg_f_lo.png",
+   "x": 569,
+   "y": 929,
+   "w": 169,
+   "h": 268,
+   "order": 9
+  },
+  {
+   "name": "foot_f",
+   "bone": "foot_f",
+   "file": "parts/foot_f.png",
+   "x": 547,
+   "y": 1161,
+   "w": 219,
+   "h": 242,
+   "order": 10
+  },
+  {
+   "name": "leg_n_up",
+   "bone": "leg_n_up",
+   "file": "parts/leg_n_up.png",
+   "x": 404,
+   "y": 657,
+   "w": 177,
+   "h": 331,
+   "order": 11
+  },
+  {
+   "name": "leg_n_lo",
+   "bone": "leg_n_lo",
+   "file": "parts/leg_n_lo.png",
+   "x": 346,
+   "y": 948,
+   "w": 177,
+   "h": 293,
+   "order": 12
+  },
+  {
+   "name": "foot_n",
+   "bone": "foot_n",
+   "file": "parts/foot_n.png",
+   "x": 337,
+   "y": 1200,
+   "w": 145,
+   "h": 275,
+   "order": 13
+  },
+  {
+   "name": "hips",
+   "bone": "hips",
+   "file": "parts/hips.png",
+   "x": 324,
+   "y": 512,
+   "w": 449,
+   "h": 336,
+   "order": 14
+  },
+  {
+   "name": "torso",
+   "bone": "torso",
+   "file": "parts/torso.png",
+   "x": 421,
+   "y": 211,
+   "w": 333,
+   "h": 363,
+   "order": 15
+  },
+  {
+   "name": "head",
+   "bone": "head",
+   "file": "parts/head.png",
+   "x": 400,
+   "y": 14,
+   "w": 264,
+   "h": 220,
+   "order": 16
+  },
+  {
+   "name": "arm_n_up",
+   "bone": "arm_n_up",
+   "file": "parts/arm_n_up.png",
+   "x": 305,
+   "y": 250,
+   "w": 169,
+   "h": 235,
+   "order": 17
+  },
+  {
+   "name": "arm_n_lo",
+   "bone": "arm_n_lo",
+   "file": "parts/arm_n_lo.png",
+   "x": 258,
+   "y": 429,
+   "w": 128,
+   "h": 171,
+   "order": 18
+  },
+  {
+   "name": "hand_n",
+   "bone": "hand_n",
+   "file": "parts/hand_n.png",
+   "x": 230,
+   "y": 563,
+   "w": 104,
+   "h": 154,
+   "order": 19
+  },
+  {
+   "name": "gauntlet_n",
+   "bone": "hand_n",
+   "file": "parts/gauntlet_n.png",
+   "x": 202,
+   "y": 562,
+   "w": 194,
+   "h": 159,
+   "order": 20
+  }
+ ]
+}
