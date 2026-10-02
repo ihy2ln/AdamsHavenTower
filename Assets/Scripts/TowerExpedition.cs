@@ -75,6 +75,7 @@ namespace AdamsHaven.Tower
         public List<string> relics = new List<string>();
         public List<TowerCardLevel> cardLevels = new List<TowerCardLevel>();
         public List<int> stress = new List<int>();
+        public string conquest = "";        // a region conquered this run, until the player has seen the conquest card
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).
@@ -303,6 +304,61 @@ namespace AdamsHaven.Tower
             return null;
         }
 
+        // Camp: cook a meal (a ration for health and calm) or climb a tree and scout (time for sight).
+        public string CampCook()
+        {
+            var run = Run;
+            if (run == null) return "No expedition.";
+            var node = RunLayout.Node(run.at);
+            if (node == null || node.kind != "camp") return "Cook at a camp.";
+            if (EventBlock() != null) return EventBlock();
+            if (run.rations <= 0) return "No rations to cook.";
+            run.rations--;
+            HealParty(15, false);
+            EaseStress(25);
+            run.clock += DaySeconds / 24f;
+            Note("A hot meal by the fire: spirits lift.");
+            return null;
+        }
+
+        public string CampScout()
+        {
+            var run = Run;
+            if (run == null) return "No expedition.";
+            var node = RunLayout.Node(run.at);
+            if (node == null || node.kind != "camp") return "Scout from a camp.";
+            if (EventBlock() != null) return EventBlock();
+            if (!GridRun) return "There is nothing to climb here.";
+            RevealCells(run.cx, run.cy, CampScoutRadius);
+            run.clock += 2f * DaySeconds / 24f;
+            RaiseThreat(4);
+            Note("From the treetops the party maps the woods around the camp.");
+            return null;
+        }
+
+        public const int CampScoutRadius = 15;
+
+        // What a seen place promises, for the route bar and inspect card: danger and the reward it holds.
+        public string PlaceHint(TowerForestNode node)
+        {
+            if (node == null || node.kind == "camp") return "";
+            var region = RunRegion;
+            int depth = region == null ? 1 : region.depth;
+            switch (node.kind)
+            {
+                case "combat": return "Danger " + depth + "  •  loot and a reward pick";
+                case "elite": return "Danger " + (depth + 1) + "  •  an elite guards a relic";
+                case "lair": return "Danger " + (region == null ? 3 : region.bossDepth) + "  •  the lair boss: conquers the region";
+                case "treasure": return "A guarded vault  •  relic and hoard";
+                case "shrine": return "No fight  •  a blessing for a price";
+                case "merchant": return "No fight  •  supplies and relics for haul gold";
+                default: return "Unknown  •  anything could be inside";
+            }
+        }
+
+        public bool ConquestPending { get { var run = Run; return run != null && !string.IsNullOrEmpty(run.conquest); } }
+        public void DismissConquest() { var run = Run; if (run != null) run.conquest = ""; }
+
         public string UseTonic(string unitId)
         {
             var run = Run;
@@ -455,6 +511,7 @@ namespace AdamsHaven.Tower
                 if (open) { State.regionsUnlocked.Add(region.id); Note(region.name + " can now be explored."); }
             }
             Note(Region(id).name + " is conquered. +" + sigils + " Sigils.");
+            if (State.hasRun) State.run.conquest = id;
         }
 
         // Experience always survives: it is granted to the heroes the moment a fight is won.

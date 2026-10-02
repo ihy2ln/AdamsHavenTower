@@ -199,6 +199,147 @@ public sealed class ExpeditionReviewTests
         if (camp != null) { rules.Run.at = camp.id; Assert.IsNull(rules.CampRest()); Assert.AreEqual(20, rules.Stress(0)); Assert.AreEqual(0, rules.Stress(1)); }
     }
 
+    // ---- step 4: places and dungeons
+
+    private static TowerRules Inside(string kind)
+    {
+        TowerRules.GridMaps = true;   // every grid map holds a merchant, a shrine, a vault and elites
+        var rules = Expedition();
+        var poi = rules.RunLayout.nodes.Find(n => n.kind == kind);
+        Assert.IsNotNull(poi, "the map has a " + kind);
+        rules.Run.at = poi.id;
+        Assert.IsNull(rules.EnterPoi());
+        return rules;
+    }
+
+    private static void StandIn(TowerRules rules, int room)
+    {
+        var d = rules.Dungeon;
+        rules.Run.px = d.rooms[room].CenterX; rules.Run.py = d.rooms[room].CenterY;
+    }
+
+    [Test]
+    public void MerchantsAndShrinesAreAStepFromTheDoor()
+    {
+        foreach (var kind in new[] { "merchant", "shrine" })
+        {
+            var rules = Inside(kind);
+            Assert.AreEqual(2, rules.Dungeon.rooms.Count, kind + ": entrance and the goal only");
+            Assert.AreEqual(kind, rules.Dungeon.rooms[1].kind);
+        }
+    }
+
+    [Test]
+    public void TheMerchantSellsForHaulGold()
+    {
+        var rules = Inside("merchant");
+        StandIn(rules, 1);
+        rules.Run.haul.Add(new TowerLoot { name = "purse", gold = 200 });
+        int rations = rules.Run.rations;
+        Assert.IsNull(rules.ResolveRoom("buy_rations"));
+        Assert.AreEqual(rations + 2, rules.Run.rations);
+        Assert.IsNull(rules.ResolveRoom("buy_relic"));
+        Assert.AreEqual(1, rules.Run.relics.Count);
+        Assert.AreEqual(200 - TowerRules.MerchantPrice("rations") - TowerRules.MerchantPrice("relic"), rules.HaulGold);
+        Assert.IsNotNull(rules.ResolveRoom("buy_relic"), "not enough gold left");
+    }
+
+    [Test]
+    public void AShrineTradesBloodForARelic()
+    {
+        var rules = Inside("shrine");
+        StandIn(rules, 1);
+        Assert.IsNull(rules.ResolveRoom("offer"));
+        Assert.AreEqual(1, rules.Run.relics.Count);
+        Assert.AreEqual(85, rules.Run.hp[0]);
+    }
+
+    [Test]
+    public void VaultsOfferARelicAfterTheHoard()
+    {
+        var rules = Inside("treasure");
+        var d = rules.Dungeon;
+        StandIn(rules, d.rooms.FindIndex(r => r.goal));
+        Assert.IsNull(rules.ResolveRoom("take"));
+        Assert.IsTrue(rules.RewardPending);
+        Assert.IsTrue(rules.Run.rewardOffer.Exists(o => o.StartsWith("relic:")));
+    }
+
+    [Test]
+    public void NewRoomKindsShowUpAndResolve()
+    {
+        var seen = new HashSet<string>();
+        var node = new TowerForestNode { id = "p4", kind = "elite", theme = "ruin" };
+        for (int seed = 1; seed <= 60; seed++)
+            foreach (var room in TowerDungeon.Build("grid_edge", node, 0, seed * 977, 2).rooms) seen.Add(room.kind);
+        foreach (var kind in new[] { "trap", "skillcheck", "story", "keygate" }) Assert.IsTrue(seen.Contains(kind), kind + " appears");
+        var shapes = new HashSet<int>();
+        for (int seed = 1; seed <= 30; seed++) shapes.Add(TowerDungeon.Build("grid_edge", node, 0, seed * 977, 2).rooms.Count);
+        Assert.Greater(shapes.Count, 2, "dungeons come in more than one shape");
+
+        var rules = Inside("elite");
+        var d = rules.Dungeon;
+        foreach (var kind in new[] { "trap", "skillcheck", "story", "keygate" })
+        {
+            int i = d.rooms.FindIndex(r => !r.goal && r.kind != "entrance" && r.kind != "stairs" && !rules.Run.roomsDone.Contains(d.rooms.IndexOf(r)));
+            if (i < 0) break;
+            d.rooms[i].kind = kind;
+            StandIn(rules, i);
+            string choice = kind == "trap" ? "disarm" : kind == "skillcheck" ? "attempt" : kind == "story" ? "read" : "force";
+            Assert.IsNull(rules.ResolveRoom(choice), kind);
+            Assert.IsTrue(rules.Run.roomsDone.Contains(i), kind + " is finished either way");
+        }
+    }
+
+    [Test]
+    public void CampCookingAndScouting()
+    {
+        TowerRules.GridMaps = true;
+        var rules = Expedition();
+        rules.Run.hp[0] = 50;
+        rules.RecordStress(new List<int> { 50, 0, 0 });
+        int rations = rules.Run.rations;
+        Assert.IsNull(rules.CampCook());
+        Assert.AreEqual(rations - 1, rules.Run.rations);
+        Assert.AreEqual(65, rules.Run.hp[0]);
+        Assert.AreEqual(25, rules.Stress(0));
+        int seen = rules.Run.gridFog.Split('1').Length;
+        Assert.IsNull(rules.CampScout());
+        Assert.Greater(rules.Run.gridFog.Split('1').Length, seen, "scouting from camp lifts fog");
+    }
+
+    [Test]
+    public void ConqueringALairRaisesTheConquestCard()
+    {
+        var rules = Expedition();
+        var lair = rules.RunLayout.nodes.Find(n => n.kind == "lair");
+        rules.Run.at = lair.id;
+        Assert.IsNull(rules.EnterPoi());
+        for (int floor = 0; floor < 3; floor++)
+        {
+            var d = rules.Dungeon;
+            var goal = d.rooms.Find(r => r.goal || r.kind == "stairs");
+            rules.Run.px = goal.CenterX; rules.Run.py = goal.CenterY;
+            if (goal.kind == "stairs") Assert.IsNull(rules.ResolveRoom("descend"));
+            else Assert.IsNull(rules.ResolveBattle(true, null));
+        }
+        Assert.IsTrue(rules.ConquestPending);
+        rules.DismissConquest();
+        Assert.IsFalse(rules.ConquestPending);
+    }
+
+    [Test]
+    public void EveryDungeonThemeHasItsOwnEventsAndRegionsTheirBiome()
+    {
+        foreach (var theme in new[] { "mine", "heartwood", "blight", "marsh", "ruin" })
+            Assert.GreaterOrEqual(TowerEvents.All.FindAll(e => ("," + e.themes.Replace(" ", "") + ",").Contains("," + theme + ",")).Count, 3, theme);
+        var traits = new HashSet<string>(TowerRules.Traits) { "" };
+        foreach (var e in TowerEvents.All) foreach (var c in e.choices) Assert.IsTrue(traits.Contains(c.trait), e.id + " uses a real trait");
+        Assert.AreEqual("lakes", TowerOverworldGen.BiomeForRegion("shallow_ford"));
+        Assert.AreEqual("mountains", TowerOverworldGen.BiomeForRegion("watchpost_ruin"));
+        Assert.AreEqual("edge", TowerOverworldGen.BiomeForRegion("silverbrook_edge"));
+    }
+
     [Test]
     public void DockSkirmishesPayThreeTimesADay()
     {

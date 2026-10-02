@@ -155,15 +155,13 @@ namespace AdamsHaven.Tower
             return Mathf.Clamp01(chance);
         }
 
-        private int HaulGold() { int gold = 0; foreach (var loot in Run.haul) gold += loot.gold; return gold; }
-
         public string ChoiceBlocked(TowerEventChoice choice)
         {
             var run = Run;
             if (run.rations < choice.costRations) return "Not enough rations.";
             if (run.firewood < choice.costFirewood) return "Not enough firewood.";
             if (run.tonics < choice.costTonics) return "Not enough tonics.";
-            if (HaulGold() < choice.costGold) return "Not enough gold in the haul.";
+            if (HaulGold < choice.costGold) return "Not enough gold in the haul.";
             return null;
         }
 

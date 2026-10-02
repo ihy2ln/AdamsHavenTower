@@ -40,13 +40,14 @@ namespace AdamsHaven.Tower
                 case "lair": return "boss";
                 case "treasure": return "treasure";
                 case "merchant": return "merchant";
-                default: return "unknown";      // shrine, mystery
+                case "shrine": return "shrine";
+                default: return "unknown";      // mystery
             }
         }
 
         public static TowerDungeon Build(string layoutId, TowerForestNode node, int floor, int runSeed, int version = 1)
         {
-            if (version > 0) return BuildBranches(layoutId, node, floor, runSeed);
+            if (version > 0) return BuildBranches(layoutId, node, floor, runSeed, version >= 2);
             var d = new TowerDungeon { theme = node.theme, poiKind = node.kind, floor = floor,
                 floors = Mathf.Max(1, TowerForestLayouts.Floors(node.kind)) };
             for (int i = 0; i < d.room.Length; i++) d.room[i] = -1;
@@ -89,17 +90,38 @@ namespace AdamsHaven.Tower
             return d;
         }
 
-        private static TowerDungeon BuildBranches(string layoutId, TowerForestNode node, int floor, int runSeed)
+        // Room layouts on the 3x3 sector grid, entrance first. Version 2 dungeons pick one per visit from the run's seed
+        // (version 1 kept the plus shape and a seed without the run, so a place looked the same every expedition).
+        private static readonly int[][] Shapes =
+        {
+            new[] { 3, 4, 1, 5, 7 },                 // plus: a junction with three arms (corners added as detours)
+            new[] { 6, 3, 0, 1, 4, 7, 8, 5, 2 },     // serpent: one long winding way
+            new[] { 3, 0, 1, 2, 5, 8, 7, 6 },        // ring: a loop around a solid core
+            new[] { 3, 4, 1, 2, 7, 8, 5 },           // fork: two branches that meet again at the far side
+        };
+
+        private static TowerDungeon BuildBranches(string layoutId, TowerForestNode node, int floor, int runSeed, bool shaped = false)
         {
             var d = new TowerDungeon { theme = node.theme, poiKind = node.kind, floor = floor,
                 floors = Mathf.Max(1, TowerForestLayouts.Floors(node.kind)) };
             for (int i = 0; i < d.room.Length; i++) d.room[i] = -1;
-            var rng = new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id + ":branches", floor * 131 + 7));
-            // A central junction with three guaranteed arms; optional corner chambers are detours.
-            var slots = new List<int> { 3, 4, 1, 5, 7 };
-            var corners = new List<int> { 0, 2, 6, 8 };
-            int target = 6 + rng.Next(3);
-            while (slots.Count < target) { int pick = rng.Next(corners.Count); slots.Add(corners[pick]); corners.RemoveAt(pick); }
+            var rng = new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id + ":branches", floor * 131 + 7 + (shaped ? runSeed : 0)));
+            List<int> slots;
+            int shape = 0;
+            if (shaped && (node.kind == "merchant" || node.kind == "shrine")) slots = new List<int> { 3, 4 };   // walk straight in
+            else if (shaped && node.kind == "treasure") slots = new List<int> { 3, 4, 5, rng.Next(2) == 0 ? 1 : 7 };
+            else
+            {
+                shape = shaped ? rng.Next(Shapes.Length) : 0;
+                slots = new List<int>(Shapes[shape]);
+            }
+            if (shape == 0 && slots.Count == 5)
+            {
+                // A central junction with three guaranteed arms; optional corner chambers are detours.
+                var corners = new List<int> { 0, 2, 6, 8 };
+                int target = 6 + rng.Next(3);
+                while (slots.Count < target) { int pick = rng.Next(corners.Count); slots.Add(corners[pick]); corners.RemoveAt(pick); }
+            }
             foreach (int slot in slots)
             {
                 var r = new TowerDungeonRoom { x = 1 + slot % 3 * 6, y = 1 + slot / 3 * 6,
@@ -115,15 +137,24 @@ namespace AdamsHaven.Tower
                 var candidates = new List<int>();
                 for (int j = 0; j < i; j++)
                     if (Math.Abs(slots[i] % 3 - slots[j] % 3) + Math.Abs(slots[i] / 3 - slots[j] / 3) == 1) candidates.Add(j);
-                int parent = candidates[rng.Next(candidates.Count)];
+                // Serpent and ring follow their order exactly; the others pick any earlier neighbour.
+                int parent = shape == 1 || shape == 2 ? (candidates.Contains(i - 1) ? i - 1 : candidates[0]) : candidates[rng.Next(candidates.Count)];
                 connections[parent]++; connections[i]++;
                 var a = d.rooms[parent]; var b = d.rooms[i];
                 d.Carve(a.CenterX, a.CenterY, b.CenterX, b.CenterY, slots[parent] / 3 == slots[i] / 3);
             }
+            if (shape == 2 && slots.Count > 2)
+            {
+                // Close the ring: the last room joins the entrance again.
+                var a = d.rooms[slots.Count - 1]; var b = d.rooms[0];
+                d.Carve(a.CenterX, a.CenterY, b.CenterX, b.CenterY, false);
+                connections[slots.Count - 1]++; connections[0]++;
+            }
             for (int y = 0; y < Size; y++) for (int x = 0; x < Size; x++)
                 if (d.CellAt(x, y) == Corridor && (d.CellAt(x + 1, y) == Floor || d.CellAt(x - 1, y) == Floor ||
                     d.CellAt(x, y + 1) == Floor || d.CellAt(x, y - 1) == Floor)) d.cell[Index(x, y)] = Door;
-            d.AssignRooms(new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 7919 + runSeed)));
+            d.AssignRooms(new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 7919 + runSeed)), shaped);
+            if (d.rooms.Count <= 2) return d;   // merchant / shrine: entrance and the goal only
             // At least one non-goal branch rewards exploration.
             for (int i = d.rooms.Count - 1; i > 1; i--)
                 if (connections[i] == 1 && !d.rooms[i].goal && d.rooms[i].kind != "stairs" && d.rooms[i].kind != "elite")
@@ -162,7 +193,8 @@ namespace AdamsHaven.Tower
             return dist;
         }
 
-        private void AssignRooms(TowerRng rng)
+        // Version 2 dungeons also hold traps, skill checks, lore and a sealed door (at most one).
+        private void AssignRooms(TowerRng rng, bool rich = false)
         {
             if (rooms.Count == 0) return;
             rooms[0].kind = "entrance";
@@ -182,7 +214,10 @@ namespace AdamsHaven.Tower
             {
                 if (i == goal) continue;
                 float roll = rng.Value();
-                string kind = roll < 0.42f ? "enemy" : roll < 0.6f ? "treasure" : roll < 0.72f ? "rest" : roll < 0.88f ? "unknown" : "empty";
+                string kind = !rich ? (roll < 0.42f ? "enemy" : roll < 0.6f ? "treasure" : roll < 0.72f ? "rest" : roll < 0.88f ? "unknown" : "empty")
+                    : roll < 0.36f ? "enemy" : roll < 0.48f ? "treasure" : roll < 0.57f ? "rest" : roll < 0.65f ? "unknown" :
+                      roll < 0.74f ? "trap" : roll < 0.83f ? "skillcheck" : roll < 0.91f ? "story" : roll < 0.95f ? "keygate" : "empty";
+                if (kind == "keygate" && rooms.Exists(r => r.kind == "keygate")) kind = "treasure";
                 if (needElite && kind == "enemy") { kind = "elite"; needElite = false; }
                 if (kind == "enemy") anyEnemy = true;
                 rooms[i].kind = kind;
@@ -262,7 +297,7 @@ namespace AdamsHaven.Tower
         private void StartFloor(int floor)
         {
             var run = Run;
-            run.dungeonLayoutVersion = 1;
+            run.dungeonLayoutVersion = 2;
             run.floor = floor;
             run.fog = new string('0', TowerDungeon.Size * TowerDungeon.Size);
             run.roomsDone.Clear();
@@ -405,6 +440,7 @@ namespace AdamsHaven.Tower
                     var loot = RollLoot(rng, room.goal ? 3 : 1, room.goal ? "Vault hoard" : "Treasure");
                     run.haul.Add(loot);
                     Note("Found " + LootLine(loot) + ".");
+                    if (room.goal) { CompleteRoom(r); if (Run != null) OfferRewards("treasure", RoomRng(r + 2000)); return null; }
                     break;
                 }
                 case "rest":
@@ -422,15 +458,91 @@ namespace AdamsHaven.Tower
                     }
                     break;
                 case "merchant":
-                    if (choice == "buy")
+                    if (choice.StartsWith("buy", StringComparison.Ordinal))
                     {
-                        int gold = 0; foreach (var loot in run.haul) gold += loot.gold;
-                        if (gold < 40) return "The peddler wants 40 gold from your haul.";
-                        int owed = 40;
-                        foreach (var loot in run.haul) { int take = Mathf.Min(owed, loot.gold); loot.gold -= take; owed -= take; }
-                        run.tonics++;
-                        Note("Bought a tonic.");
+                        string item = choice == "buy" ? "tonic" : choice.Substring(4);
+                        int price = MerchantPrice(item);
+                        if (price <= 0) return "The peddler does not sell that.";
+                        if (HaulGold < price) return "The peddler wants " + price + " gold from your haul.";
+                        if (item == "relic" && UnownedRelics().Count == 0) return "You already carry every relic the peddler has.";
+                        SpendHaulGold(price);
+                        if (item == "tonic") run.tonics++;
+                        else if (item == "rations") run.rations += 2;
+                        else if (item == "firewood") run.firewood++;
+                        else { var relics = UnownedRelics(); var relic = relics[rng.Next(relics.Count)]; run.relics.Add(relic.id); Note("Bought the " + relic.name + "."); return null; }
+                        Note("Bought " + (item == "rations" ? "two rations" : "a " + item) + ".");
                         return null;          // keep trading
+                    }
+                    break;
+                case "shrine":
+                    if (choice == "offer")
+                    {
+                        // Blood for a blessing: every fighter gives 15% health for a relic.
+                        var relics = UnownedRelics();
+                        if (relics.Count == 0) { HealParty(25, false); EaseStress(30); Note("The shrine has nothing left to give; it soothes you instead."); break; }
+                        for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - 15);
+                        var relic = relics[rng.Next(relics.Count)];
+                        NormalizeRewards(run);
+                        run.relics.Add(relic.id);
+                        Note("The shrine takes its due and grants the " + relic.name + ".");
+                    }
+                    else if (choice == "pray") { HealParty(25, false); EaseStress(30); Note("A quiet prayer: wounds close and nerves settle."); }
+                    break;
+                case "trap":
+                    if (choice == "disarm" && rng.Value() < RoomChance("trap"))
+                    {
+                        var loot = RollLoot(rng, .6f, "Trap salvage");
+                        run.haul.Add(loot);
+                        Note("The trap is disarmed and stripped: " + LootLine(loot) + ".");
+                    }
+                    else
+                    {
+                        int hurt = choice == "disarm" ? 12 : 8;
+                        for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - hurt);
+                        Note(choice == "disarm" ? "The trap springs! Everyone is hurt." : "The party dashes through the trap and takes a few cuts.");
+                    }
+                    break;
+                case "skillcheck":
+                    if (choice == "attempt")
+                    {
+                        if (rng.Value() < RoomChance("skillcheck"))
+                        {
+                            var loot = RollLoot(rng, 1.5f, "Hard-won find");
+                            run.haul.Add(loot);
+                            AwardExpeditionXp(10);
+                            Note("The way is forced open: " + LootLine(loot) + ".");
+                        }
+                        else
+                        {
+                            for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - 10);
+                            Note("It gives way badly. Everyone is bruised.");
+                        }
+                    }
+                    break;
+                case "story":
+                    if (choice == "read")
+                    {
+                        AwardExpeditionXp(12);
+                        LowerThreat(5);
+                        NormalizeRewards(run);
+                        if (!run.flags.Contains("lore_" + d.theme)) run.flags.Add("lore_" + d.theme);
+                        Note("The party learns something of this place.");
+                    }
+                    break;
+                case "keygate":
+                    if (choice == "force")
+                    {
+                        if (rng.Value() < RoomChance("keygate"))
+                        {
+                            var loot = RollLoot(rng, 2.2f, "Sealed vault");
+                            run.haul.Add(loot);
+                            Note("The seal breaks. Behind it: " + LootLine(loot) + ".");
+                        }
+                        else
+                        {
+                            for (int i = 0; i < run.hp.Count; i++) if (run.hp[i] > 0) run.hp[i] = Mathf.Max(1, run.hp[i] - 15);
+                            Note("The seal lashes back. The door stays shut.");
+                        }
                     }
                     break;
                 case "stairs":
@@ -443,6 +555,39 @@ namespace AdamsHaven.Tower
             }
             CompleteRoom(r);
             return null;
+        }
+
+        // Odds for the trait-checked rooms, with the trait that helps (shown on the buttons).
+        public static string RoomTrait(string kind)
+        {
+            return kind == "trap" ? "Careful" : kind == "skillcheck" ? "Stout" : kind == "keygate" ? "Curious" : "";
+        }
+
+        public float RoomChance(string kind)
+        {
+            float chance = kind == "trap" ? .5f : kind == "skillcheck" ? .5f : kind == "keygate" ? .45f : 1f;
+            string trait = RoomTrait(kind);
+            if (trait.Length > 0 && PartyHasTrait(trait)) chance += .3f;
+            return Mathf.Clamp01(chance);
+        }
+
+        public static int MerchantPrice(string item)
+        {
+            return item == "tonic" ? 40 : item == "rations" ? 30 : item == "firewood" ? 20 : item == "relic" ? 160 : 0;
+        }
+
+        public int HaulGold { get { int gold = 0; var run = Run; if (run != null) foreach (var loot in run.haul) gold += loot.gold; return gold; } }
+
+        private void SpendHaulGold(int amount)
+        {
+            foreach (var loot in Run.haul) { int take = Mathf.Min(amount, loot.gold); loot.gold -= take; amount -= take; }
+        }
+
+        private List<TowerRelicDef> UnownedRelics()
+        {
+            var list = new List<TowerRelicDef>();
+            foreach (var r in Relics) if (!HasRelic(r.id)) list.Add(r);
+            return list;
         }
 
         // hp: percent per party member after the fight (same order as run.party).

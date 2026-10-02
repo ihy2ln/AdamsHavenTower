@@ -55,7 +55,7 @@ namespace AdamsHaven.Tower
                 string key = run.biome + ":" + run.gridSeed + ":" + run.shift + ":" + run.gridVersion;
                 if (key != overworldKey || overworldCache == null)
                 {
-                    overworldCache = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors);
+                    overworldCache = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors, version: run.gridVersion);
                     overworldLayout = LayoutFromOverworld(overworldCache, run.layout);
                     overworldKey = key;
                 }

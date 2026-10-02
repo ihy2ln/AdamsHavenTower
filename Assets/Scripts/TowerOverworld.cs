@@ -15,7 +15,7 @@ namespace AdamsHaven.Tower
 
     public sealed class TowerOverworld
     {
-        public const int Version = 2, Width = 64, Height = 40;
+        public const int Version = 3, Width = 64, Height = 40;   // 3: biome place mixes (TowerOverworldGen.KindsFor)
         public const float Blocked = float.PositiveInfinity;
 
         public readonly int width, height;

@@ -1653,6 +1653,459 @@
    "needsFlag": "warden_seen",
    "minDepth": 3,
    "weight": 30
+  },
+  {
+   "id": "mine_flooded_shaft",
+   "title": "Flooded Shaft",
+   "text": "An old shaft drops away beside the rails, half full of black water. Far below the surface something glints: a miner's lamp, still hooked to a belt.",
+   "choices": [
+    {
+     "label": "Dive for it",
+     "trait": "Brave",
+     "chance": 0.5,
+     "success": {
+      "text": "A breath, a plunge, a fist closing on cold metal. You surface gasping with the lamp and the purse that hung beside it.",
+      "gold": 40
+     },
+     "failure": {
+      "text": "The cold steals your breath and the dark steals your bearings. Hands haul you out coughing, bruised on the rock.",
+      "hp": -12
+     }
+    },
+    {
+     "label": "Drain it (1 wood)",
+     "trait": "Industrious",
+     "chance": 0.6,
+     "success": {
+      "text": "A makeshift sluice of planks and rope drops the water a hand at a time, until the floor of the shaft gives up its coins and ore.",
+      "gold": 30,
+      "ore": 2
+     },
+     "failure": {
+      "text": "The planks split and the water rushes back. Whatever is down there stays down there."
+     },
+     "costFirewood": 1
+    },
+    {
+     "label": "Leave it",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You leave the lamp to its water and walk on along the rails."
+     }
+    }
+   ],
+   "themes": "mine"
+  },
+  {
+   "id": "mine_runaway_cart",
+   "title": "Runaway Cart",
+   "text": "A rusted ore cart comes rattling out of the dark, picking up speed down the slope, sparks spitting from its wheels. It is coming straight for you.",
+   "choices": [
+    {
+     "label": "Stop it",
+     "trait": "Stout",
+     "chance": 0.55,
+     "success": {
+      "text": "Shoulders to the iron, heels dug into the sleepers, and the cart groans to a halt. It is still half full of good ore.",
+      "ore": 2,
+      "threat": -3
+     },
+     "failure": {
+      "text": "The cart wins. Someone is thrown against the wall and the cart clatters on into the dark.",
+      "hp": -15
+     }
+    },
+    {
+     "label": "Throw yourselves aside",
+     "trait": "Careful",
+     "chance": 0.7,
+     "success": {
+      "text": "Everyone flattens against the rock as the cart roars past and crashes somewhere far below. Nobody is hurt."
+     },
+     "failure": {
+      "text": "Not everyone moves fast enough. A wheel catches an ankle as it passes.",
+      "hp": -8
+     }
+    }
+   ],
+   "themes": "mine"
+  },
+  {
+   "id": "mine_glowing_seam",
+   "title": "Glowing Seam",
+   "text": "A seam of crystal-veined rock pulses in the tunnel wall, warm to the touch. The light breathes in and out as if the mountain itself were asleep.",
+   "choices": [
+    {
+     "label": "Chip it out",
+     "trait": "Industrious",
+     "chance": 0.5,
+     "success": {
+      "text": "Careful strikes free a fist of glowing crystal and a heap of ore. The pulse in the wall fades to a dull ember.",
+      "essence": 2,
+      "ore": 1,
+      "threat": 6
+     },
+     "partial": {
+      "text": "The crystal crumbles at the first blow, but the ore around it is good.",
+      "ore": 1,
+      "threat": 4
+     },
+     "failure": {
+      "text": "The seam shrieks as the first chip comes loose, and something deep in the tunnels shrieks back. You run.",
+      "threat": 12
+     }
+    },
+    {
+     "label": "Mark it and move on",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You scratch a sign on the wall and follow the warm draught deeper. It leads somewhere.",
+      "reveal": 2
+     }
+    }
+   ],
+   "themes": "mine"
+  },
+  {
+   "id": "mine_trapped_miners",
+   "title": "Voices in the Dark",
+   "text": "Tapping. Three knocks, a pause, three knocks. Behind a fall of rubble someone is still alive, and still hoping somebody will hear.",
+   "choices": [
+    {
+     "label": "Dig them out",
+     "trait": "Kind",
+     "chance": 0.55,
+     "success": {
+      "text": "An hour of bloodied hands later, two dust-grey miners crawl free. They press their last coins on you and swear to remember your faces.",
+      "gold": 25,
+      "threat": -8,
+      "flag": "miners_saved"
+     },
+     "failure": {
+      "text": "The rubble shifts the wrong way and comes down on your own arms. The tapping goes quiet.",
+      "hp": -10
+     }
+    },
+    {
+     "label": "Call out and listen",
+     "trait": "Curious",
+     "chance": 0.6,
+     "success": {
+      "text": "The voices shout back directions through the rock: a side passage, a way around, a place worth seeing.",
+      "reveal": 3
+     },
+     "failure": {
+      "text": "Your voice echoes and echoes. When it dies away, the tapping has stopped."
+     }
+    },
+    {
+     "label": "Walk on",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "The knocking follows you a long way down the tunnel.",
+      "threat": 4
+     }
+    }
+   ],
+   "themes": "mine"
+  },
+  {
+   "id": "heart_golden_sap",
+   "title": "Golden Sap",
+   "text": "An ancient tree weeps golden sap from a split in its bark. It smells of honey and rain, and the moss below it grows thick and bright.",
+   "choices": [
+    {
+     "label": "Gather it",
+     "trait": "Careful",
+     "chance": 0.6,
+     "success": {
+      "text": "A clean cut, a waiting flask, and the sap runs in slow and bright. It will mend a wound later.",
+      "tonics": 1
+     },
+     "failure": {
+      "text": "The bark is lined with thorns you did not see. Sticky, stinging hands are all you take away.",
+      "hp": -8
+     }
+    },
+    {
+     "label": "Drink from it",
+     "trait": "Brave",
+     "chance": 0.45,
+     "success": {
+      "text": "Sweet warmth spreads to the fingertips. Old aches fade, and the forest feels a little friendlier.",
+      "hp": 20,
+      "threat": -5
+     },
+     "partial": {
+      "text": "It tastes of nothing much, but tired legs feel lighter.",
+      "hp": 8
+     },
+     "failure": {
+      "text": "It is bitter as gall. Everyone who drank spends the next hour doubled over.",
+      "hp": -10
+     }
+    }
+   ],
+   "themes": "heartwood"
+  },
+  {
+   "id": "heart_singing_roots",
+   "title": "Singing Roots",
+   "text": "The great roots underfoot hum a low chord that you feel in your teeth more than hear. The whole wood seems to be listening for an answer.",
+   "choices": [
+    {
+     "label": "Sing along",
+     "trait": "Gregarious",
+     "chance": 0.5,
+     "success": {
+      "text": "Your voices find the chord and the roots answer, softer, warmer. Paths open ahead that were not there a moment ago.",
+      "threat": -15,
+      "reveal": 2
+     },
+     "failure": {
+      "text": "A wrong note. The humming stops dead, and the silence that follows is not friendly.",
+      "threat": 6
+     }
+    },
+    {
+     "label": "Pass in silence",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You walk on without a word. The humming follows politely, then fades."
+     }
+    }
+   ],
+   "themes": "heartwood"
+  },
+  {
+   "id": "heart_dryad_bargain",
+   "title": "The Dryad's Bargain",
+   "text": "A figure of bark and leaf steps out of an oak as if from a doorway. She offers safe passage through her wood, for something that was alive.",
+   "choices": [
+    {
+     "label": "Offer a ration",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "She takes the bread and the dried fruit and smiles with green eyes. The way ahead feels watched over.",
+      "threat": -20
+     },
+     "costRations": 1
+    },
+    {
+     "label": "Refuse politely",
+     "trait": "Kind",
+     "chance": 0.6,
+     "success": {
+      "text": "She laughs like wind in leaves and steps back into her tree. No harm done.",
+      "threat": -5
+     },
+     "failure": {
+      "text": "She does not laugh. The trees lean closer as you pass.",
+      "threat": 12
+     }
+    },
+    {
+     "label": "Walk past her",
+     "trait": "Brave",
+     "chance": 0.4,
+     "success": {
+      "text": "You hold her stare and keep walking. She lets you go, curious."
+     },
+     "failure": {
+      "text": "The wood does not like being ignored. Something comes out of the undergrowth to teach you manners.",
+      "ambush": true
+     }
+    }
+   ],
+   "themes": "heartwood"
+  },
+  {
+   "id": "heart_moon_pool",
+   "title": "Moon Pool",
+   "text": "A perfectly still pool lies in a ring of white roots. It reflects a night sky full of stars, though it is broad day above you.",
+   "choices": [
+    {
+     "label": "Look closer",
+     "trait": "Curious",
+     "chance": 0.55,
+     "success": {
+      "text": "In the reflected stars you see the shape of the land around you, and a glittering stone at the bottom of the pool.",
+      "reveal": 4,
+      "essence": 1
+     },
+     "failure": {
+      "text": "The stars in the water turn to look back at you. You leave quickly, feeling watched.",
+      "threat": 6
+     }
+    },
+    {
+     "label": "Bathe your wounds",
+     "trait": "Solitary",
+     "chance": 0.6,
+     "success": {
+      "text": "The water is cool and still. Cuts close, bruises fade, and for a while nobody speaks.",
+      "hp": 15
+     },
+     "failure": {
+      "text": "The water is cold as the grave and stings like it. You climb out shivering.",
+      "hp": -5
+     }
+    }
+   ],
+   "themes": "heartwood"
+  },
+  {
+   "id": "blight_rotting_grove",
+   "title": "Rotting Grove",
+   "text": "Trees slump under a crust of violet rot, their branches dripping. The air tastes of metal and every breath brings a cough.",
+   "choices": [
+    {
+     "label": "Burn a path (1 wood)",
+     "trait": "Industrious",
+     "chance": 0.6,
+     "success": {
+      "text": "Fire takes the rot fast and clean. The path you burn stays open behind you, and the wood feels a little less hungry.",
+      "threat": -10
+     },
+     "failure": {
+      "text": "The rot smothers the flames and the smoke turns violet. Something in the grove notices you.",
+      "threat": 5
+     },
+     "costFirewood": 1
+    },
+    {
+     "label": "Hold your breath and push through",
+     "trait": "Stout",
+     "chance": 0.5,
+     "success": {
+      "text": "Cloaks over mouths, eyes streaming, you push through and out the far side. Nothing follows."
+     },
+     "failure": {
+      "text": "The spores get in anyway. Everyone comes out coughing up violet dust.",
+      "hp": -15
+     }
+    }
+   ],
+   "themes": "blight"
+  },
+  {
+   "id": "blight_hollow_husk",
+   "title": "A Hollow Husk",
+   "text": "A blighted stag lies on its side, crystal growing from its ribs. It is surely dead. Then one milky eye rolls to look at you.",
+   "choices": [
+    {
+     "label": "End its suffering",
+     "trait": "Brave",
+     "chance": 0.6,
+     "success": {
+      "text": "One clean stroke and the light leaves its eye. Under the crystal on its ribs, something glitters loose.",
+      "gold": 15,
+      "essence": 1,
+      "threat": -5
+     },
+     "failure": {
+      "text": "It is not as weak as it looked. It rises screaming, and the blight answers from every side.",
+      "ambush": true
+     }
+    },
+    {
+     "label": "Back away slowly",
+     "trait": "Careful",
+     "chance": 0.7,
+     "success": {
+      "text": "Step by step you leave it behind. It watches you go and does not rise."
+     },
+     "failure": {
+      "text": "A branch snaps under someone's boot. The husk lurches up, and it is not alone.",
+      "ambush": true
+     }
+    }
+   ],
+   "themes": "blight"
+  },
+  {
+   "id": "blight_corrupt_cache",
+   "title": "Corrupted Cache",
+   "text": "A ranger's supply crate sits in the roots, crusted over with violet crystal. The lock is rusted through. Whatever is inside has been waiting a long time.",
+   "choices": [
+    {
+     "label": "Pry it open",
+     "trait": "Careful",
+     "chance": 0.5,
+     "success": {
+      "text": "The lid gives with a crack. Inside, wrapped in oilcloth, the ranger's pay and a shard of clean crystal.",
+      "gold": 50,
+      "essence": 1
+     },
+     "partial": {
+      "text": "Half the crate has rotted through, but a few coins rattle in the corner.",
+      "gold": 20
+     },
+     "failure": {
+      "text": "A puff of spores bursts from the crust as the lid moves. Everyone near it is left choking.",
+      "hp": -12
+     }
+    },
+    {
+     "label": "Leave it",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "Some things are better left buried in the rot."
+     }
+    }
+   ],
+   "themes": "blight"
+  },
+  {
+   "id": "blight_whispers",
+   "title": "Whispers from the Rot",
+   "text": "A voice rises from the violet roots, warm and patient. It knows your names. It offers strength, if only someone will come a little closer.",
+   "choices": [
+    {
+     "label": "Listen",
+     "trait": "Solitary",
+     "chance": 0.4,
+     "success": {
+      "text": "You listen, and take what it gives without giving anything back. Your pockets are heavy with dark crystal when you leave.",
+      "essence": 3,
+      "threat": 10
+     },
+     "failure": {
+      "text": "You listen too long. The voice takes more than it gives, and the forest stirs at what you let in.",
+      "threat": 20,
+      "hp": -10
+     }
+    },
+    {
+     "label": "Drown it out with song",
+     "trait": "Gregarious",
+     "chance": 0.7,
+     "success": {
+      "text": "Loud, cheerful and off-key, the party sings until the whispering gives up in disgust.",
+      "threat": -5
+     },
+     "failure": {
+      "text": "The song falters. In the gap the whispers come back, louder.",
+      "threat": 5
+     }
+    },
+    {
+     "label": "Walk away",
+     "trait": "",
+     "chance": 1.0,
+     "success": {
+      "text": "You walk away. The voice laughs softly behind you for a long time.",
+      "threat": 2
+     }
+    }
+   ],
+   "themes": "blight"
   }
  ]
 }

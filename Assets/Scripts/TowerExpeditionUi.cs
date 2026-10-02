@@ -909,6 +909,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         gridBar = panel.gameObject;
         string title = poi != null ? poi.name + (run.cleared.Contains(poi.id) ? "  (cleared)" : "") : GroundName(map.At(cell.x, cell.y));
         string kind = poi != null ? PlaceKind(R.RunLayout.Node(poi.id)) : R.CellIsRoad(cell.x, cell.y) ? "Worn road" : "Open country";
+        string hint = poi != null && !run.cleared.Contains(poi.id) ? R.PlaceHint(R.RunLayout.Node(poi.id)) : "";
+        if (hint.Length > 0) kind += "  •  " + hint;
         var icon = poi != null ? Icon(poi.kind) : null;
         float tx = 40, textW = w - tx - 200;
         if (icon != null)
@@ -1404,7 +1406,14 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 (TowerForestLayouts.Floors(node.kind) == 1 ? " floor" : " floors");
             TextAt(panel, "Kind", run.cleared.Contains(node.id) ? "Cleared." : kind, 16, y, Side - 32, 40, 13, Cream); y += 44;
             if (node.kind == "camp")
+            {
                 ButtonAt(panel, "Rest", "REST AT CAMP (1 firewood)", 16, y, Side - 32, 42, () => Act(R.CampRest()), Teal, 14, run.firewood > 0);
+                y += 48;
+                float half = (Side - 40) / 2;
+                ButtonAt(panel, "Cook", "COOK (1 ration)", 16, y, half, 38, () => Act(R.CampCook()), Teal, 12, run.rations > 0);
+                ButtonAt(panel, "Scout", "SCOUT (2 hours)", 24 + half, y, half, 38, () => Act(R.CampScout()), Teal, 12, R.GridRun);
+                y -= 8;
+            }
             else
                 ButtonAt(panel, "Enter", "ENTER " + (node.kind == "landmark" ? "LANDMARK" : "DUNGEON"), 16, y, Side - 32, 42,
                     () => { string e = R.EnterPoi(); if (e != null) Say(e); else { tower.SaveExpedition(); Go(View.Dungeon); } },
@@ -1532,7 +1541,6 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         BuildRunPanel(true);
         RefreshDungeon();
         if (lootOpen) BuildLoot();
-        else if (R.RewardPending) BuildRewardCard();
     }
 
     private void BuildBoard()
@@ -1769,7 +1777,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             badge.raycastTarget = false;
             string title = room.kind == "boss" ? "BOSS" : room.kind == "stairs" ? "DESCEND" :
                 room.kind == "treasure" ? "CACHE" : room.kind == "rest" ? "CAMP" :
-                room.kind == "merchant" ? "TRADE" : room.kind == "enemy" ? "BATTLE" : room.kind.ToUpperInvariant();
+                room.kind == "merchant" ? "TRADE" : room.kind == "enemy" ? "BATTLE" : room.kind == "skillcheck" ? "BLOCKED" :
+                room.kind == "keygate" ? "SEALED" : room.kind == "story" ? "LORE" : room.kind.ToUpperInvariant();
             TextAt(badge.transform, "Encounter", title, 2, 0, 74, 24, 11,
                 room.kind == "boss" ? Alert : room.kind == "stairs" ? Gold : new Color(0.65f, 0.94f, 1), TextAnchor.MiddleCenter);
             roomIcons.Add(badge.gameObject);
@@ -1783,6 +1792,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         int here = TowerDungeon.Index(run.px, run.py);
         if (pending >= 0 && dismissedAt != here) ShowRoom(pending);
         if (dismissedAt != here && pending < 0) dismissedAt = -1;
+        // A won fight's reward pick sits on top of the board until a reward is taken.
+        foreach (Transform child in content) if (child.name == "Reward shade") Destroy(child.gameObject);
+        if (R.RewardPending && !lootOpen) BuildRewardCard();
         if (toast != null) toast.transform.parent.SetAsLastSibling();
     }
 
@@ -1980,6 +1992,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             case "skillcheck": folder = "skill_check"; break;
             case "story": folder = "story"; break;
             case "keygate": folder = "key_gate"; break;
+            case "shrine": folder = "shrine"; break;
             default: folder = new[] { "secret", "shrine", "puzzle", "skill_check", "story" }[Mathf.Abs(seed) % 5]; break;
         }
         string path = Root + "Rooms/" + folder + "_" + (Mathf.Abs(seed) % 3);
@@ -1996,7 +2009,9 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         {
             case "enemy": return "Ambush"; case "elite": return "Guardian's Hall"; case "boss": return poiName;
             case "treasure": return "Forgotten Cache"; case "rest": return "Quiet Nook"; case "merchant": return "Wandering Peddler";
-            case "stairs": return "Descending Stair"; default: return "Strange Chamber";
+            case "stairs": return "Descending Stair"; case "shrine": return "Forest Shrine"; case "trap": return "Trapped Passage";
+            case "skillcheck": return "Blocked Way"; case "story": return "Old Inscription"; case "keygate": return "Sealed Door";
+            default: return "Strange Chamber";
         }
     }
 
@@ -2014,7 +2029,12 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             case "boss": return place + " The master of this place rises to meet you.";
             case "treasure": return place + " A cache lies half-buried here.";
             case "rest": return place + " A sheltered corner, safe enough for a fire.";
-            case "merchant": return place + " A hooded peddler grins: \"Tonics, 40 gold.\"";
+            case "merchant": return place + " A hooded peddler spreads out his wares: tonics, rations, firewood, and one or two curious trinkets.";
+            case "shrine": return place + " An old shrine hums with quiet power. It will bless you, but blessings here are paid in blood.";
+            case "trap": return place + " Tripwires and pressure plates line the floor. Someone careful could strip it for parts.";
+            case "skillcheck": return place + " Rubble and a fallen beam block a side passage. Strong arms could clear it.";
+            case "story": return place + " Words are carved deep into the wall, half lost to moss and time.";
+            case "keygate": return place + " A door sealed with old wards. Something valuable waits behind it.";
             case "stairs": return place + " Worn steps spiral down into deeper dark.";
             default: return place + " Carvings, a strange hum... investigate, or leave well alone?";
         }
@@ -2065,8 +2085,41 @@ public sealed class TowerExpeditionUi : MonoBehaviour
                 ButtonAt(panel, "Later", "NOT NOW", tx + bw + 12, by, bw, 56, Dismiss, Alert, 15);
                 break;
             case "merchant":
-                ButtonAt(panel, "Buy", "BUY TONIC (40g)", tx, by, bw, 56, () => Act(R.ResolveRoom("buy")), Teal, 15);
-                ButtonAt(panel, "Leave", "MOVE ON", tx + bw + 12, by, bw, 56, () => Act(R.ResolveRoom("leave")), Alert, 15);
+            {
+                // Haul gold pays; MOVE ON closes the stall.
+                TextAt(panel, "Purse", "Haul gold: " + R.HaulGold + "g", tx, by - 120, tw, 20, 14, Gold);
+                string[] items = { "tonic", "rations", "firewood", "relic" };
+                string[] labels = { "TONIC", "2 RATIONS", "FIREWOOD", "RELIC" };
+                float iw = (tw - 12) / 2;
+                for (int k = 0; k < items.Length; k++)
+                {
+                    string item = items[k];
+                    int price = TowerRules.MerchantPrice(item);
+                    ButtonAt(panel, "Buy " + item, labels[k] + " (" + price + "g)", tx + (k % 2) * (iw + 12), by - 96 + (k / 2) * 48, iw, 42,
+                        () => Act(R.ResolveRoom("buy_" + item)), Teal, 13, R.HaulGold >= price);
+                }
+                ButtonAt(panel, "Leave", "MOVE ON", tx, by, tw, 56, () => Act(R.ResolveRoom("leave")), Alert, 15);
+                break;
+            }
+            case "shrine":
+                ButtonAt(panel, "Offer", "OFFER BLOOD (-15% HP: relic)", tx, by - 64, tw, 52, () => Act(R.ResolveRoom("offer")), Gold, 14);
+                ButtonAt(panel, "Pray", "PRAY (heal, calm)", tx, by, bw, 56, () => Act(R.ResolveRoom("pray")), Teal, 14);
+                ButtonAt(panel, "Leave", "LEAVE", tx + bw + 12, by, bw, 56, () => Act(R.ResolveRoom("leave")), Alert, 15);
+                break;
+            case "trap": case "skillcheck": case "keygate":
+            {
+                string verb = room.kind == "trap" ? "DISARM" : room.kind == "skillcheck" ? "CLEAR IT" : "BREAK THE SEAL";
+                string choice = room.kind == "trap" ? "disarm" : room.kind == "skillcheck" ? "attempt" : "force";
+                string trait = TowerRules.RoomTrait(room.kind);
+                string odds = Mathf.RoundToInt(R.RoomChance(room.kind) * 100) + "%" + (trait.Length > 0 ? (R.PartyHasTrait(trait) ? "  (" + trait + " helps)" : "  (" + trait + " would help)") : "");
+                ButtonAt(panel, "Try", verb + "  •  " + odds, tx, by - 64, tw, 52, () => Act(R.ResolveRoom(choice)), Teal, 14);
+                ButtonAt(panel, "Other", room.kind == "trap" ? "RUSH THROUGH (-8% HP)" : "LEAVE IT", tx, by, tw, 56,
+                    () => Act(R.ResolveRoom(room.kind == "trap" ? "rush" : "leave")), Alert, 15);
+                break;
+            }
+            case "story":
+                ButtonAt(panel, "Read", "READ IT", tx, by, bw, 56, () => Act(R.ResolveRoom("read")), Teal, 16);
+                ButtonAt(panel, "Ignore", "MOVE ON", tx + bw + 12, by, bw, 56, () => Act(R.ResolveRoom("leave")), Alert, 15);
                 break;
             case "stairs":
                 ButtonAt(panel, "Descend", "DESCEND", tx, by, bw, 56, () => Act(R.ResolveRoom("descend")), Teal, 17);
@@ -2183,9 +2236,31 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
     }
 
+    // The lair is cleared: a proper moment for the conquest, then the reward pick behind it.
+    private void BuildConquestCard()
+    {
+        var run = R.Run;
+        var region = TowerRules.Region(run.conquest);
+        float width = root.rect.width, height = root.rect.height;
+        var shade = Stretch("Conquest shade", content, new Color(0, 0, 0, 0.7f));
+        float pw = Mathf.Min(760, width - Side - 60), ph = 300;
+        float px = (width - Side - pw) / 2, py = Top + (height - Top - ph) / 2;
+        var panel = PanelAt("Conquest", shade.transform, px, py, pw, ph).transform;
+        TextAt(panel, "Title", "REGION CONQUERED", 20, 18, pw - 40, 40, 30, Gold, TextAnchor.MiddleCenter);
+        TextAt(panel, "Name", region != null ? region.name.ToUpperInvariant() : "", 20, 62, pw - 40, 30, 22, Cream, TextAnchor.MiddleCenter);
+        var opened = new List<string>();
+        foreach (var r in TowerRules.Regions)
+            if (Array.IndexOf(r.requires, run.conquest) >= 0) opened.Add(r.name);
+        TextAt(panel, "Text", "The lair has fallen and the woods grow quiet. +" + TowerRules.ConquestSigils + " Sigils go home with you." +
+            (opened.Count > 0 ? "\n\nThe way now leads on to " + string.Join(" and ", opened.ToArray()) + "." : "\n\nThe last lair has fallen."),
+            30, 104, pw - 60, 110, 16, Cream, TextAnchor.UpperCenter);
+        ButtonAt(panel, "Continue", "CONTINUE", pw / 2 - 120, ph - 70, 240, 50, () => { R.DismissConquest(); Rebuild(); }, Gold, 18);
+    }
+
     private void BuildEventCard()
     {
         var run = R.Run; var def = R.PendingEvent;
+        if (R.ConquestPending) { BuildConquestCard(); return; }
         if (R.RewardPending) { BuildRewardCard(); return; }
         bool ambush = R.AmbushPending;
         if (def == null && !ambush && string.IsNullOrEmpty(run.eventResult)) return;

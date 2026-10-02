@@ -27,15 +27,34 @@ namespace AdamsHaven.Tower
 
         public static Biome BiomeFor(string id) { foreach (var b in Biomes) if (b.id == id) return b; return Biomes[0]; }
 
-        // Silverwood depth 1..5 -> its biome; Silverbrook regions use the forest edge.
+        // Silverwood depth 1..5 -> its biome; the Silverbrook regions each get the biome their name promises.
+        private static readonly Dictionary<string, string> RegionBiomes = new Dictionary<string, string>
+        {
+            { "shallow_ford", "lakes" }, { "old_bridge", "lakes" }, { "sunken_marsh", "lakes" },
+            { "moon_shrine", "ruins" }, { "silverwood_gate", "ruins" }, { "watchpost_ruin", "mountains" },
+        };
+
         public static string BiomeForRegion(string regionId)
         {
             int depth = TowerRules.SilverwoodDepth(regionId);
-            return depth > 0 ? Biomes[depth - 1].id : "edge";
+            if (depth > 0) return Biomes[depth - 1].id;
+            string biome;
+            return regionId != null && RegionBiomes.TryGetValue(regionId, out biome) ? biome : "edge";
         }
 
-        // How many places of each kind a map holds (camp and lair always one each).
+        // How many places of each kind a map holds (camp and lair always one each). Each biome leans its own way:
+        // the lakes hide more mysteries, the mountains more elites and vaults, the ruins shrines and treasure,
+        // the Heart fewer packs and more elites.
         private static readonly string[] Kinds = { "combat", "combat", "combat", "combat", "elite", "elite", "mystery", "mystery", "treasure", "shrine", "merchant" };
+        private static readonly Dictionary<string, string[]> BiomeKinds = new Dictionary<string, string[]>
+        {
+            { "lakes", new[] { "combat", "combat", "combat", "elite", "elite", "mystery", "mystery", "mystery", "treasure", "shrine", "merchant" } },
+            { "mountains", new[] { "combat", "combat", "combat", "elite", "elite", "elite", "mystery", "treasure", "treasure", "shrine", "merchant" } },
+            { "ruins", new[] { "combat", "combat", "combat", "elite", "elite", "mystery", "mystery", "treasure", "treasure", "shrine", "shrine", "merchant" } },
+            { "heart", new[] { "combat", "combat", "elite", "elite", "elite", "mystery", "mystery", "treasure", "shrine", "shrine", "merchant" } },
+        };
+
+        private static string[] KindsFor(string biome) { string[] kinds; return biome != null && BiomeKinds.TryGetValue(biome, out kinds) ? kinds : Kinds; }
 
         private static readonly Dictionary<string, string[]> Names = new Dictionary<string, string[]>
         {
@@ -52,7 +71,7 @@ namespace AdamsHaven.Tower
         // shift > 0 is the forest rearranging mid-run: the ground (rivers, lakes, hills, rocks) stays, the woods regrow
         // differently, and every place not in `anchors` moves. Anchors (camp, explored and cleared places) keep their spot.
         public static TowerOverworld Generate(string biomeId, uint seed, int shift = 0, List<TowerOverworldPoi> anchors = null,
-            int width = TowerOverworld.Width, int height = TowerOverworld.Height)
+            int width = TowerOverworld.Width, int height = TowerOverworld.Height, int version = TowerOverworld.Version)
         {
             var biome = BiomeFor(biomeId);
             var map = new TowerOverworld(width, height, biome.id, seed);
@@ -105,7 +124,8 @@ namespace AdamsHaven.Tower
                 if (a.kind != "camp") taken.Add(new Vector2Int(a.x, a.y));
             }
             // Kinds still to place: the full set minus what the anchors already hold.
-            var kinds = new List<string>(Kinds);
+            // Runs saved before version 3 keep the original mix so their places do not change kind.
+            var kinds = new List<string>(version >= 3 ? KindsFor(biome.id) : Kinds);
             bool needCamp = anchoredCamp == null, needLair = fixedPois.Find(p => p.kind == "lair") == null;
             foreach (var a in fixedPois) kinds.Remove(a.kind);
             int wanted = kinds.Count + (needLair ? 1 : 0);

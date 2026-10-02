@@ -98,7 +98,7 @@ namespace AdamsHaven.Tower
             }
             var relics = new List<TowerRelicDef>();
             foreach (var r in Relics) if (!HasRelic(r.id)) relics.Add(r);
-            bool relicDue = kind == "boss" || kind == "elite" || rng.Value() < .35f;
+            bool relicDue = kind == "boss" || kind == "elite" || kind == "treasure" || rng.Value() < .35f;
             if (relicDue && relics.Count > 0) offers.Add("relic:" + relics[rng.Next(relics.Count)].id);
             while (offers.Count < RewardChoices && cards.Count > 0)
             {

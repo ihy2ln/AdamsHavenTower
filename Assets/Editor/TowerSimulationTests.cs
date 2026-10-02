@@ -597,7 +597,7 @@ public sealed class TowerSimulationTests
         Assert.GreaterOrEqual(all.FindAll(e => e.weight > 0).Count, 20, "launch budget: 20 rolled events");
         Assert.IsNotNull(TowerEvents.Get(TowerEvents.AmbushId));
         Assert.IsNotNull(TowerEvents.Get(TowerEvents.RestId));
-        var themes = new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep" };
+        var themes = new[] { "ruin", "cave", "marsh", "crystal", "briar", "keep", "mine", "heartwood", "blight" };   // the grid map adds the last three
         foreach (var e in all)
         {
             Assert.IsNotEmpty(e.title, e.id); Assert.IsNotEmpty(e.text, e.id);
