@@ -23,13 +23,14 @@ namespace AdamsHaven.Tower
         public string error;
     }
 
-    // Expedition rules on the layered grid map (TowerOverworld). Plate runs (mapKind "") keep the node rules.
+    // Expedition rules on the layered grid map (TowerOverworld). Plate runs (mapKind "") keep the node rules: the game
+    // no longer draws them (their paintings are gone), but the rules tests walk them as a small fixed graph.
     // Walking a cell wears it into road; roads cost less, raise less threat and calm the event odds.
     // A full threat meter makes the forest stir, which wears down road away from camp, cleared places and the party.
     public sealed partial class TowerRules
     {
-        // New expeditions use the grid map once its renderer is in; tests switch it on.
-        public static bool GridMaps = false;
+        // New expeditions use the grid map. Rules tests switch it off to walk the plate graphs.
+        public static bool GridMaps = true;
 
         public const string GridKind = "grid";
         public const float RationCost = 20f;            // cost units per ration (about one old trail hop)
@@ -104,6 +105,25 @@ namespace AdamsHaven.Tower
             run.gridRoad = new string('0', map.width * map.height);
             run.targetX = run.targetY = -1;
             run.day = GameDay;
+        }
+
+        // A run saved on a painted plate (from before the grid map) moves onto the grid: the party makes a fresh camp in the
+        // same region and keeps its health, stress, supplies, haul, relics and upgrades. Places cleared on the plate are lost
+        // with it. True when the run changed and needs saving.
+        public bool MigratePlateRun()
+        {
+            var run = Run;
+            if (!GridMaps || run == null || run.mapKind == GridKind) return false;
+            run.dungeonPoi = ""; run.fog = ""; run.roomsDone.Clear(); run.roomsCleared.Clear();
+            run.eventId = ""; run.eventResult = ""; run.ambushDepth = 0; run.lastStepEvent = false;
+            run.visited.Clear(); run.cleared.Clear(); run.revealed.Clear(); run.road.Clear(); run.trails.Clear();
+            run.anchors.Clear();
+            run.roadSteps = 0; run.threat = 0;
+            StartGridRun(run, run.region);
+            run.visited.Add(run.at);
+            RevealFrom(run.at);
+            Note("The forest shifted while the guild was away. The party made a fresh camp.");
+            return true;
         }
 
         // ---------------------------------------------------------------- the forest shifts

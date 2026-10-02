@@ -159,6 +159,7 @@ namespace AdamsHaven.Tower
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
             if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();
             if (State.hasRun) NormalizeRewards(State.run);
+            MigratePlateRun();
             MarkPartyAway();
         }
 

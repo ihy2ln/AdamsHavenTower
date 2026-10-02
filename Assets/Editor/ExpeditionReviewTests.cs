@@ -10,7 +10,7 @@ public sealed class ExpeditionReviewTests
     [SetUp] public void Setup() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
     [TearDown] public void Teardown()
     {
-        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = false;
+        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true;
         TowerRules.Today = () => System.DateTime.Now.Date;
     }
 
@@ -28,6 +28,37 @@ public sealed class ExpeditionReviewTests
         var list = new List<string>(party.Length > 0 ? party : new[] { "kaela", "ghislaine", "elara" });
         Assert.IsNull(rules.StartExpedition("silverbrook_edge", list, 6, 2, 3));
         return rules;
+    }
+
+    [Test]
+    public void APlateRunMovesOntoTheGridAndKeepsItsHaul()
+    {
+        // A save from before the grid map: a plate run part way through a dungeon.
+        var rules = Expedition();
+        var run = rules.Run;
+        Assert.AreEqual("", run.mapKind);
+        var poi = rules.RunLayout.nodes.Find(n => n.kind == "combat");
+        run.at = poi.id;
+        Assert.IsNull(rules.EnterPoi());
+        run.haul.Add(new TowerLoot { name = "Test purse", gold = 120 });
+        run.hp[1] = 40;
+        run.relics.Add("war_drum");
+        var saved = JsonUtility.ToJson(rules.State);
+
+        // The game loads it with grid maps on.
+        TowerRules.GridMaps = true;
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(saved));
+        var moved = loaded.Run;
+        Assert.IsNotNull(moved, "the run survives");
+        Assert.IsTrue(loaded.GridRun);
+        Assert.AreEqual("", moved.dungeonPoi, "back out on the map");
+        Assert.AreEqual(loaded.Overworld.Camp.id, moved.at, "at the new camp");
+        Assert.IsTrue(loaded.AtSafeExit);
+        Assert.AreEqual(40, moved.hp[1]);
+        Assert.AreEqual(120, moved.haul.Find(l => l.name == "Test purse").gold);
+        Assert.IsTrue(loaded.HasRelic("war_drum"));
+        Assert.IsTrue(loaded.CellSeen(moved.cx, moved.cy), "the camp is in sight");
+        Assert.IsFalse(loaded.MigratePlateRun(), "only once");
     }
 
     [Test]

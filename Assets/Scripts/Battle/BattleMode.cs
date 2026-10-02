@@ -150,8 +150,9 @@ public sealed partial class BattleMode : MonoBehaviour
     public BattleEncounter Encounter;
     private string background = DefaultBackground;
     private const string DefaultBackground = "Battle/silverwood_battle_v1";
-    // Landscape scene art per dungeon theme (the other themes only have portrait vistas, so they keep the default).
-    private static readonly string[] ThemedBackgrounds = { "blight", "crystal", "heartwood", "mine", "cave" };
+    // Landscape scene art per dungeon theme, at least 1672 px wide (the cave vista is 1024 px and the other themes only
+    // have portrait vistas, so they keep the default).
+    private static readonly string[] ThemedBackgrounds = { "blight", "crystal", "heartwood", "mine" };
 
     public void Begin(int towerFloor, List<BattleUnit> field, List<BattleUnit> reserve, Action<bool, int> onLeave)
     {

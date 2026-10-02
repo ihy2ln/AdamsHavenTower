@@ -7,11 +7,12 @@ public sealed class TowerSimulationTests
 {
     // Most scenarios lay out a tower in one go; the construction tests switch timing back on.
     // Traversal events stay off unless a test is about them, so forest walks are predictable.
-    // Plate-map runs unless a test asks for the grid map (the game UI switches GridMaps on, and statics outlive Play mode).
+    // Plate-map runs unless a test asks for the grid map: the plate graphs are small and fixed, so walks are predictable.
+    // TearDown puts the game's default (grid) back, since statics outlive the test run.
     [SetUp] public void InstantBuilds() { TowerRules.InstantConstruction = true; TowerRules.TraversalEvents = false; TowerRules.GridMaps = false; }
     [TearDown] public void TimedBuilds()
     {
-        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true;
+        TowerRules.InstantConstruction = false; TowerRules.TraversalEvents = true; TowerRules.GridMaps = true;
         TowerRules.Today = () => System.DateTime.Now.Date;
         TowerRules.NowUnix = () => System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
@@ -341,38 +342,6 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
-    public void MapMaskPathsGoAroundBlockedGround()
-    {
-        // 10x10, a vertical wall at x=5 with a gap only at the bottom row.
-        var v = new byte[100];
-        for (int i = 0; i < 100; i++) v[i] = 255;
-        for (int y = 0; y < 9; y++) v[y * 10 + 5] = 0;
-        var mask = TowerMapMask.FromValues(10, 10, v);
-        var path = mask.FindPath(new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.05f));
-        Assert.IsNotNull(path);
-        Assert.Greater(path.Count, 2);
-        foreach (var p in path) Assert.IsTrue(mask.Walkable(p.x, p.y), "path must stay on walkable ground");
-        Assert.Greater(TowerMapMask.Length(path, 1f), 1.5f, "has to detour round the wall");
-        // A sealed target has no route.
-        for (int y = 0; y < 10; y++) v[y * 10 + 5] = 0;
-        Assert.IsNull(TowerMapMask.FromValues(10, 10, v).FindPath(new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.05f)));
-    }
-
-    [Test]
-    public void SilverwoodMasksLoadAndLinkCampToLair()
-    {
-        foreach (var id in TowerForestLayouts.SilverwoodIds)
-        {
-            var mask = TowerMapMask.Load(id);
-            Assert.IsNotNull(mask, id + " mask must import as a readable texture");
-            var layout = TowerForestLayouts.Get(id);
-            var camp = layout.Node(layout.entrance);
-            var lair = layout.nodes.Find(n => n.kind == "lair");
-            Assert.IsNotNull(mask.FindPath(new Vector2(camp.x, camp.y), new Vector2(lair.x, lair.y)), id + " camp to lair");
-        }
-    }
-
-    [Test]
     public void WalkedTrailsAreRemembered()
     {
         var rules = Expedition();
@@ -393,7 +362,6 @@ public sealed class TowerSimulationTests
         {
             var layout = TowerForestLayouts.Get(id);
             Assert.IsNotNull(layout, id);
-            Assert.IsNotNull(Resources.Load<Texture2D>(layout.backdrop), id + " backdrop");
             Assert.AreEqual(1, layout.nodes.FindAll(n => n.kind == "lair").Count, id);
             var seen = new System.Collections.Generic.HashSet<string> { layout.entrance };
             var queue = new System.Collections.Generic.Queue<string>(); queue.Enqueue(layout.entrance);
