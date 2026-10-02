@@ -60,7 +60,7 @@ namespace AdamsHaven.Tower
             moving = !downed && walkFrom.HasValue &&
                 Vector3.Distance(walkFrom.Value, target) > 0.04f && Load("walk_in_place") != null;
             transform.localPosition = moving ? walkFrom.Value : target;
-            transform.localScale = new Vector3(downed ? 1.15f : 0.85f, 1.30f, 1);
+            ApplyScale(target.z);
             SelectClip(downed ? "knocked_down" : moving ? "walk_in_place" : restingClip);
             return true;
         }
@@ -80,10 +80,17 @@ namespace AdamsHaven.Tower
             moving = false;
             downed = isDowned;
             transform.localPosition = sleeping ? position + new Vector3(0, -0.34f, 0.05f) : position;
+            ApplyScale(position.z);
             if (sleeping) { traveling = false; working = false; }
             string next = isDowned ? "knocked_down" : traveling ? "walk_in_place" :
                 working ? "task" : "idle";
             if (clip != next) SelectClip(next);
+        }
+
+        private void ApplyScale(float z)
+        {
+            float depth = TowerRoomDepth.ScaleFromZ(z);
+            transform.localScale = new Vector3((downed ? 1.15f : 0.85f) * depth, 1.30f * depth, 1);
         }
 
         private Texture2D Load(string name)

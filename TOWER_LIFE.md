@@ -96,3 +96,16 @@ All in `Assets/Scripts/TowerColony.cs` (partial `TowerRules`), hooked into the e
   room scenes per category, node icons. Importer rule in `TowerPresentationImporter` for `/AdamsHaven/Expedition/`.
 - Tests: 60 in `TowerSimulationTests` (layouts fixed and connected, dungeons deterministic and reachable, full crawl, wipe keeps pocket,
   region unlocks, save round trip). The old guild tier buttons are gone; `ExpeditionTiers/CanLaunchBattle` remain but are unused.
+
+## Oct 2: 3D chibi residents in the live Tower
+
+- `TowerResident3D` (Assets/Scripts) shows a resident as its rigged `TowerChibi3D` model instead of the 2D atlas quad.
+  `ModelFor()` picks it: roster heroes ghislaine/kaela/helda/elara/clarity use their own rig; Celestium bodies map
+  normal -> `celestium-med`, short -> `celestium-short`, muscle -> `celestium-muscle`. Tall/hourglass bodies and every other
+  unit (amara, daisy, villagers, children) keep the 2D `TowerChibiAnimator` / painted chibi path.
+- Clips: knocked down > sleep (futon) > walk > the room's work loop (`TowerChibi3D.RoomClips`, hauling plays the barn loop) > idle.
+  Walking turns the model 70 degrees toward its heading; idle settles at a 20 degree three-quarter view; work faces the camera.
+- Placement follows `TowerRoomDepth`: the transform sits at the quad centre, the model's feet on the floor, scaled by depth.
+- Rigs are pooled in "Tower 3D residents" across `RebuildScene` (off-screen ones parked inactive, removed when the resident
+  leaves) and hidden while Battle / expeditions own the screen.
+- Residents at work or resting in the same room now share it out in id order (`ResidentPosition`) instead of stacking.

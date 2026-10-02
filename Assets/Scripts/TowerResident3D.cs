@@ -1,0 +1,90 @@
+using System;
+using UnityEngine;
+
+namespace AdamsHaven.Tower
+{
+    // A resident shown as its rigged 3D chibi (TowerChibi3D) instead of the baked 2D atlas quad.
+    // Same calls as TowerChibiAnimator so the cutaway drives both alike: this transform sits where the
+    // quad's centre would (TowerRoomDepth.Project), the model hangs below it with its feet on the floor,
+    // and the room it works in picks the Fallout Shelter work loop (TowerChibi3D.RoomClips).
+    public sealed class TowerResident3D : MonoBehaviour
+    {
+        private const float FigureHeight = 1.22f;           // the 1.30 quad's figure, less its headroom
+        private const float BodyHalf = 0.65f;               // TowerRoomDepth's half quad height
+        private const float WalkYaw = 70f, RestYaw = 20f, TurnSpeed = 540f;
+
+        public string ModelId { get; private set; }
+        private TowerChibi3D chibi;
+        private bool sleeping;
+        private bool placed;
+        private Vector3 lastPosition;
+        private float yaw, facing = -1;                     // facing: -1 left, +1 right (last walk direction)
+
+        // Roster heroes use their own model; Celestium bodies use the one for their chassis. Null keeps the 2D atlas.
+        public static string ModelFor(TowerResident resident)
+        {
+            string id = resident.origin == "body" ? BodyModel(resident.chassisVariant) : resident.unitId;
+            return !string.IsNullOrEmpty(id) && Array.IndexOf(TowerChibi3D.Ids, id) >= 0 ? id : null;
+        }
+
+        private static string BodyModel(string variant)
+        {
+            switch (variant)
+            {
+                case "normal": return "celestium-med";
+                case "short": return "celestium-short";
+                case "muscle": return "celestium-muscle";
+                default: return null;                       // tall and hourglass have no 3D rig yet
+            }
+        }
+
+        public static TowerResident3D Create(string modelId, string name, Transform parent)
+        {
+            var go = new GameObject(name + " 3D");
+            go.transform.SetParent(parent, false);
+            var model = TowerChibi3D.Spawn(modelId, go.transform, FigureHeight);
+            if (model == null) { Destroy(go); return null; }
+            model.transform.localPosition = new Vector3(0, -BodyHalf, 0);
+            var actor = go.AddComponent<TowerResident3D>();
+            actor.ModelId = modelId;
+            actor.chibi = model;
+            return actor;
+        }
+
+        public void SetPlaybackSpeed(float value) { chibi.Speed = Mathf.Max(0, value); }
+
+        public void SetSleeping(bool value) { sleeping = value; }
+
+        // Shown again after being pooled off-screen: snap instead of turning or swinging springs across the tower.
+        public void Reveal()
+        {
+            placed = false;
+            if (chibi.Springs != null) chibi.Springs.ResetState();
+        }
+
+        // workRoom is the room type whose work loop plays while working.
+        public void SetPose(Vector3 position, bool traveling, bool working, bool isDowned, string workRoom)
+        {
+            float depth = TowerRoomDepth.ScaleFromZ(position.z);
+            transform.localPosition = position;
+            transform.localScale = Vector3.one * depth;
+
+            bool resting = isDowned || sleeping;
+            float dx = placed ? position.x - lastPosition.x : 0;
+            if (traveling && !resting && Mathf.Abs(dx) > 0.0005f) facing = Mathf.Sign(dx);
+            float target = resting ? 0 : traveling ? facing * -WalkYaw : working ? 0 : facing * -RestYaw;
+            yaw = placed ? Mathf.MoveTowardsAngle(yaw, target, TurnSpeed * Time.deltaTime) : target;
+            chibi.transform.localRotation = Quaternion.Euler(0, yaw, 0);
+            lastPosition = position;
+            placed = true;
+
+            string clip;
+            if (isDowned) clip = "AH_knocked_down";
+            else if (sleeping) clip = "AH_sleep";
+            else if (traveling) clip = "AH_walk";
+            else if (working && workRoom != null && TowerChibi3D.RoomClips.TryGetValue(workRoom, out clip)) { }
+            else clip = "AH_idle";
+            chibi.Play(clip);
+        }
+    }
+}

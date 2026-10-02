@@ -16,6 +16,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private readonly Dictionary<int, Transform> residentVisuals = new Dictionary<int, Transform>();
     private readonly Dictionary<int, TowerChibiAnimator> residentAnimators = new Dictionary<int, TowerChibiAnimator>();
     private readonly Dictionary<int, Vector3> residentVisualOffsets = new Dictionary<int, Vector3>();
+    // 3D chibis outlive RebuildScene (spawning a rig is costly); off-screen ones are parked inactive.
+    private readonly Dictionary<int, TowerResident3D> residents3D = new Dictionary<int, TowerResident3D>();
+    private Transform residents3DRoot;
     private TowerRules rules;
     private Camera view;
     private Transform towerRoot;
@@ -37,6 +40,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private int pendingWalkResident;
     private Vector3 pendingWalkFrom;
     private float speed = 1;
+    private float wanderClock;
+    private readonly Dictionary<int, Vector3> residentSmoothed = new Dictionary<int, Vector3>();
     private bool placing;
     private bool savesOpen;
     private TowerHud hud;
@@ -115,6 +120,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             backgroundVisual.localPosition = new Vector3(WorldX(22.5f), view.transform.position.y, 13);
         for (int i = 0; i < chibis.Count; i++)
             if (chibis[i] != null) chibis[i].SetPlaybackSpeed(Mathf.Min(speed, 3f));
+        foreach (var actor in residents3D.Values)
+            if (actor != null && actor.gameObject.activeSelf) actor.SetPlaybackSpeed(Mathf.Min(speed, 3f));
     }
 
     private void OnApplicationPause(bool paused) { if (paused) Save(); }
@@ -268,8 +275,33 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     private Vector3 ResidentPosition(TowerRoom room, TowerResident resident)
     {
-        float x = WorldX(room.x + 0.45f + resident.id % Math.Max(1, room.width) * 0.6f);
-        return new Vector3(x, WorldY(room.floor) - 0.17f, -0.30f);
+        float floorY = WorldY(room.floor);
+        if (AtStation(resident))
+        {
+            // Residents at work (or resting) in one room share it out in id order instead of stacking on one spot.
+            int slot = 0, count = 0;
+            foreach (TowerResident other in rules.State.residents)
+            {
+                if (other.away || other.exploring || other.currentRoom != room.uid || !AtStation(other)) continue;
+                if (other.id < resident.id) slot++;
+                count++;
+            }
+            if (resident.currentRoom != room.uid) { slot = count; count++; }   // still on the way in
+            float x = TowerRoomDepth.WorldXInRoom(WorldX(room.x), WorldX(room.x + room.width),
+                (slot + 0.5f) / Math.Max(1, count));
+            return TowerRoomDepth.Project(floorY, x, TowerRoomDepth.StationDepth(resident.id));
+        }
+        float x01, d;
+        TowerRoomDepth.Wander(resident.id, wanderClock, out x01, out d);
+        float wx = TowerRoomDepth.WorldXInRoom(WorldX(room.x), WorldX(room.x + room.width), x01);
+        return TowerRoomDepth.Project(floorY, wx, d);
+    }
+
+    private static bool AtStation(TowerResident resident)
+    {
+        string task = resident.currentTask;
+        return resident.downed || task == "production" || task == "repair" || task == "haul" ||
+            task == "rest" || (resident.targetRoom > 0 && resident.targetRoom != resident.currentRoom);
     }
 
     private void RebuildScene()
@@ -279,7 +311,9 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         residentVisuals.Clear();
         residentAnimators.Clear();
         residentVisualOffsets.Clear();
-        towerRoot = new GameObject("Celestium Tower Cutaway").transform;
+        residentSmoothed.Clear();
+        var shown3D = new HashSet<int>();
+        towerRoot =new GameObject("Celestium Tower Cutaway").transform;
         int middle = Mathf.RoundToInt(view.transform.position.y / Storey);
         int visibleFloors = Mathf.CeilToInt(view.orthographicSize / Storey) + 1;
         var background = Art("Environment/silverbrook_parallax_background_v1");
@@ -359,9 +393,30 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                     destinationRoom.floor > middle + visibleFloors)) continue;
             Vector3 position = ResidentPosition(room, resident);
             bool rendered = false;
+            string modelId = TowerResident3D.ModelFor(resident);
+            if (modelId != null)
+            {
+                TowerResident3D actor3D = Resident3D(resident, modelId);
+                if (actor3D != null)
+                {
+                    shown3D.Add(resident.id);
+                    if (actor3D.gameObject.activeSelf)
+                        residentSmoothed[resident.id] = actor3D.transform.localPosition; // keep walking, no snap
+                    else
+                    {
+                        actor3D.gameObject.SetActive(true);
+                        actor3D.Reveal();
+                        actor3D.SetPose(position, false, false, resident.downed || resident.hp <= 0 ||
+                            (resident.origin == "body" && resident.charge <= 0), room.type);
+                    }
+                    residentVisuals[resident.id] = actor3D.transform;
+                    residentVisualOffsets[resident.id] = Vector3.zero;
+                    rendered = true;
+                }
+            }
             string motionId = resident.origin == "body" ?
                 "body_" + resident.chassisVariant : resident.unitId;
-            if (!string.IsNullOrEmpty(motionId))
+            if (!rendered && !string.IsNullOrEmpty(motionId))
             {
                 var actor = new GameObject(resident.name + " civilian motion");
                 actor.transform.SetParent(towerRoot, false);
@@ -386,14 +441,20 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 Texture2D chibi = string.IsNullOrEmpty(resident.unitId) ?
                     Art(resident.ageStage == 1 ? "Chibi/child_generic_v1" :
                         "Chibi/villager_generic_v1") : Art("Chibi/" + resident.unitId);
-                // Roster units whose chibi art is not made yet stand in as a generic villager.
+                // Roster units use their generated chibi art; units without it stand in as a generic villager.
+                bool rosterArt = false;
                 if (chibi == null && TowerRoster.Unit(resident.unitId) != null)
-                    chibi = Art("Chibi/villager_generic_v1");
+                {
+                    chibi = TowerRoster.Portrait(resident.unitId, "chibi-work") ??
+                        TowerRoster.Portrait(resident.unitId, "chibi-casual");
+                    rosterArt = chibi != null;
+                    if (chibi == null) chibi = Art("Chibi/villager_generic_v1");
+                }
                 if (chibi != null)
                 {
-                    var sprite = Picture(resident.name, chibi, position,
-                        new Vector2(resident.ageStage == 1 ? 0.56f : 0.85f,
-                            resident.ageStage == 1 ? 0.85f : 1.30f), Color.white, towerRoot);
+                    var size = rosterArt ? new Vector2(1.15f * chibi.width / chibi.height, 1.15f) :
+                        new Vector2(resident.ageStage == 1 ? 0.56f : 0.85f, resident.ageStage == 1 ? 0.85f : 1.30f);
+                    var sprite = Picture(resident.name, chibi, position, size, Color.white, towerRoot);
                     if (sprite != null)
                     { residentVisuals[resident.id] = sprite.transform; residentVisualOffsets[resident.id] = Vector3.zero; }
                 }
@@ -409,6 +470,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 }
             }
         }
+        Park3DResidents(shown3D);
         pendingWalkResident = 0;
         shownResidents = rules.State.residents.Count;
         shownIncidents = rules.State.incidents.Count;
@@ -421,6 +483,42 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 room.floor <= middle + visibleFloors) shownReady++;
         lastBuiltCameraY = view.transform.position.y;
         lastBuiltZoom = view.orthographicSize;
+    }
+
+    private TowerResident3D Resident3D(TowerResident resident, string modelId)
+    {
+        TowerResident3D actor;
+        if (residents3D.TryGetValue(resident.id, out actor) && actor != null && actor.ModelId == modelId)
+            return actor;
+        if (actor != null) Destroy(actor.gameObject);
+        if (residents3DRoot == null) residents3DRoot = new GameObject("Tower 3D residents").transform;
+        actor = TowerResident3D.Create(modelId, resident.name, residents3DRoot);
+        if (actor != null) actor.gameObject.SetActive(false);   // the caller reveals it at its spot
+        residents3D[resident.id] = actor;
+        return actor;
+    }
+
+    // Off-screen residents keep their rig, inactive; residents who left the tower (or another save) lose it.
+    private void Park3DResidents(HashSet<int> shown)
+    {
+        var gone = new List<int>();
+        foreach (var pair in residents3D)
+        {
+            if (shown.Contains(pair.Key)) continue;
+            if (pair.Value != null && rules.State.residents.Exists(r => r.id == pair.Key))
+                pair.Value.gameObject.SetActive(false);
+            else gone.Add(pair.Key);
+        }
+        foreach (int id in gone)
+        {
+            if (residents3D[id] != null) Destroy(residents3D[id].gameObject);
+            residents3D.Remove(id);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (residents3DRoot != null) Destroy(residents3DRoot.gameObject);
     }
 
     // Things the cutaway draws that the simple counts miss: where incidents are, which rooms
@@ -780,6 +878,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         view.clearFlags = CameraClearFlags.SolidColor;
         view.backgroundColor = new Color(0.025f, 0.045f, 0.075f);
         if (hud != null) hud.gameObject.SetActive(false);
+        if (residents3DRoot != null) residents3DRoot.gameObject.SetActive(false);
         var director = GetComponent<TowerArtDirector>();
         if (director != null) director.enabled = false;
     }
@@ -794,6 +893,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         ignoreInputUntil = Time.unscaledTime + 0.3f;
         var director = GetComponent<TowerArtDirector>();
         if (director != null) director.enabled = true;
+        if (residents3DRoot != null) residents3DRoot.gameObject.SetActive(true);
         RebuildScene();
         if (hud != null) { hud.gameObject.SetActive(true); hud.Refresh(); }
         Save();
@@ -1116,6 +1216,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     private void UpdateResidentVisuals()
     {
+        wanderClock += Time.deltaTime * speed;
         foreach (var resident in rules.State.residents)
         {
             Transform visual;
@@ -1123,6 +1224,20 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             var fromRoom = rules.Room(resident.currentRoom) ?? rules.Room(resident.homeRoom);
             if (fromRoom == null) continue;
             Vector3 position = ResidentPosition(fromRoom, resident);
+            bool strolling = false;
+            if (!(resident.targetRoom > 0 && resident.targetRoom != resident.currentRoom &&
+                resident.travelDuration > 0))
+            {
+                // Glide toward the wander/station spot so state changes walk instead of snapping.
+                Vector3 shown;
+                if (!residentSmoothed.TryGetValue(resident.id, out shown)) shown = position;
+                float step = 1.4f * Time.deltaTime * Mathf.Max(1f, speed);
+                Vector3 next = Vector3.MoveTowards(shown, position, step);
+                strolling = (position - next).sqrMagnitude > 0.0009f;
+                residentSmoothed[resident.id] = next;
+                position = next;
+            }
+            else residentSmoothed[resident.id] = position;
             bool traveling = resident.targetRoom > 0 && resident.targetRoom != resident.currentRoom &&
                 resident.travelDuration > 0;
             if (traveling)
@@ -1146,14 +1261,23 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 position = new Vector3(pointer.x, pointer.y - 0.25f, -1f);
                 traveling = false;
             }
+            bool asleep = resident.origin != "body" && resident.currentTask == "rest" &&
+                resident.currentRoom == resident.targetRoom && !resident.downed;
+            bool working = resident.currentTask == "production" || resident.currentTask == "repair" ||
+                resident.currentTask == "haul";
+            bool down = resident.downed || (resident.origin == "body" && resident.charge <= 0);
+            TowerResident3D actor3D;
             TowerChibiAnimator animator;
-            if (residentAnimators.TryGetValue(resident.id, out animator) && animator != null)
+            if (residents3D.TryGetValue(resident.id, out actor3D) && actor3D != null && actor3D.transform == visual)
             {
-                animator.SetSleeping(resident.origin != "body" && resident.currentTask == "rest" &&
-                    resident.currentRoom == resident.targetRoom && !resident.downed);
-                animator.SetPose(position, traveling, resident.currentTask == "production" ||
-                    resident.currentTask == "repair" || resident.currentTask == "haul",
-                    resident.downed || (resident.origin == "body" && resident.charge <= 0));
+                actor3D.SetSleeping(asleep);
+                actor3D.SetPose(position, traveling || strolling, working, down,
+                    resident.currentTask == "haul" ? "barn" : fromRoom.type);
+            }
+            else if (residentAnimators.TryGetValue(resident.id, out animator) && animator != null)
+            {
+                animator.SetSleeping(asleep);
+                animator.SetPose(position, traveling || strolling, working, down);
             }
             else visual.localPosition = position + residentVisualOffsets[resident.id];
         }
