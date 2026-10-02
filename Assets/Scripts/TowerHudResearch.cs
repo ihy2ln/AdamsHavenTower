@@ -13,7 +13,9 @@ public sealed partial class TowerHud
     private string researchSelected = "CON-1";
 
     private static readonly Color ResearchDone = new Color(0.55f, 0.45f, 0.18f, 1f);
-    private static readonly Color ResearchLocked = new Color(0.2f, 0.23f, 0.27f, 1f);
+    // TowerUiSkin picks button art from the tint: a low-saturation dark grey reads as its muted (locked) style,
+    // gold as primary (known) and violet as the summon style (studying).
+    private static readonly Color ResearchLocked = new Color(0.3f, 0.3f, 0.31f, 1f);
     private static readonly Color ResearchActive = new Color(0.52f, 0.36f, 0.82f, 1f);
 
     private void BuildResearchTab(Transform heart)
@@ -82,11 +84,7 @@ public sealed partial class TowerHud
             bool open = !done && !active && rules.CanResearch(def.id) == null;
             string label = (def.id == researchSelected ? "> " : "") + def.index + "  " + def.name;
             if (active) label += "  " + Mathf.FloorToInt(rules.ResearchProgress() * 100) + "%";
-            // The skinned button art mutes the tint, so the label colour carries the state too.
-            var nodeLabel = LabelOf(researchNodes[i]);
-            nodeLabel.text = label;
-            nodeLabel.color = done ? new Color(1f, 0.84f, 0.4f) : active ? new Color(0.85f, 0.72f, 1f) :
-                open ? new Color(0.62f, 1f, 0.9f) : new Color(0.5f, 0.54f, 0.6f);
+            LabelOf(researchNodes[i]).text = label;
             researchNodes[i].GetComponent<Image>().color = done ? ResearchDone : active ? ResearchActive :
                 open ? Teal : ResearchLocked;
         }
@@ -115,7 +113,6 @@ public sealed partial class TowerHud
         researchStart.interactable = canStart;
         LabelOf(researchStart).text = rules.Researched(node.id) ? "KNOWN" : state.researching == node.id ? "STUDYING" :
             canStart ? "STUDY" : "LOCKED";
-        LabelOf(researchStart).color = canStart ? Cream : new Color(0.5f, 0.54f, 0.6f);
         int rush = rules.RushTonicCost();
         researchRush.gameObject.SetActive(rules.Researching);
         researchRush.interactable = rules.Researching && state.tonics >= rush;
