@@ -155,6 +155,9 @@ namespace AdamsHaven.Tower
             if (State.hasRun && RunLayout == null) State.hasRun = false;
             if (State.hasRun && State.run.dungeonPoi.Length > 0 && RunLayout.Node(State.run.dungeonPoi) == null)
                 State.run.dungeonPoi = "";
+            // Dungeons from the first generator (layout version 0) no longer exist: the party is back outside the door.
+            if (State.hasRun && State.run.dungeonPoi.Length > 0 && State.run.dungeonLayoutVersion == 0)
+            { State.run.dungeonPoi = ""; State.run.fog = ""; State.run.roomsDone.Clear(); }
             if (State.hasRun && State.run.revealed.Count == 0) RebuildFog();
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
             if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();

@@ -784,21 +784,15 @@ public sealed class TowerSimulationTests
     }
 
     [Test]
-    public void GuildHallUnlocksExpeditionsByLevel()
+    public void GuildHallUnlocksExpeditions()
     {
         var rules = Started();
         Assert.IsTrue(rules.State.blueprints.Contains("guild_hall"));
         Assert.IsNotNull(rules.GuildRequired());
-        Assert.IsNotNull(rules.CanLaunchBattle(0));
         var hall = rules.AddRoom("guild_hall", 1, TowerRules.CoreX + 1);
         Assert.IsNull(rules.GuildRequired());
-        Assert.IsNull(rules.CanLaunchBattle(0));
-        Assert.IsNotNull(rules.CanLaunchBattle(1));
-        hall.level = 2;
-        Assert.IsNull(rules.CanLaunchBattle(1));
-        Assert.IsNotNull(rules.CanLaunchBattle(2));
         hall.level = 3;
-        Assert.IsNull(rules.CanLaunchBattle(2));
+        Assert.AreEqual(3, rules.GuildLevel);
     }
 
     [Test]

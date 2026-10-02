@@ -104,8 +104,8 @@ public static class TowerDungeonValidation
         var loaded = JsonUtility.FromJson<TowerRun>(JsonUtility.ToJson(run));
         CollectionAssert.AreEqual(run.roomsDone, loaded.roomsDone);
         Assert.AreEqual(run.fog, loaded.fog); Assert.AreEqual(run.px, loaded.px); Assert.AreEqual(run.py, loaded.py);
-        run.dungeonLayoutVersion = 0;
-        var legacy = TowerDungeon.Build(run.layout, node, run.floor, run.seed, 0);
-        CollectionAssert.AreEqual(legacy.cell, rules.Dungeon.cell, "Legacy save layout retained");
+        run.dungeonLayoutVersion = 1;
+        var legacy = TowerDungeon.Build(run.layout, node, run.floor, run.seed, 1);
+        CollectionAssert.AreEqual(legacy.cell, rules.Dungeon.cell, "Version 1 save layout retained");
     }
 }

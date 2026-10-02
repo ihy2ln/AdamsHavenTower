@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace AdamsHaven.Tower
 {
-    // One of the fifteen predetermined forest maps. Nodes are POIs, objectives, landmarks and the camp.
+    // A forest map as a graph of places: POIs, objectives, landmarks and the camp. The grid map builds one from its places
+    // (TowerOverworldRules.LayoutFromOverworld); the fifteen plate graphs below remain as fixed maps for the rules tests.
     [Serializable] public sealed class TowerForestNode
     {
         public string id, kind, name, theme, prop = "";
@@ -132,12 +133,8 @@ namespace AdamsHaven.Tower
         {
             var rng = new TowerRng(Hash(id));
             string theme = Themes[Array.IndexOf(Ids, id)];
-            var layout = new TowerForestLayout { id = id, name = Pretty(id), backdrop = "AdamsHaven/Expedition/Maps/" + id,
-                theme = theme, entrance = "camp" };
-            string standIn = id == "silverfall_glen" ? "river_braid" : id == "thornwood_gate" ? "briar_tangle" :
-                id == "ashen_barrow" ? "lantern_ruins" : null;
-            if (standIn != null && Resources.Load<Texture2D>(layout.backdrop) == null)
-            { layout.backdrop = "AdamsHaven/Expedition/Maps/" + standIn; layout.mirror = true; }
+            // The painted plates are retired (the grid map replaced them); the graph stays for the rules tests.
+            var layout = new TowerForestLayout { id = id, name = Pretty(id), backdrop = "", theme = theme, entrance = "camp" };
             int[] perColumn = { 1, 3, 3, 3, 2, 1 };
             var columns = new List<List<TowerForestNode>>();
             var middle = new List<TowerForestNode>();

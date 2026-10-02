@@ -2,25 +2,9 @@ using UnityEngine;
 
 namespace AdamsHaven.Tower
 {
-    // The Silverbrook Adventure Guild is where expeditions are chosen. Its level unlocks deeper battle destinations.
-    public sealed class TowerExpeditionTier
-    {
-        public readonly string name, blurb;
-        public readonly int depth, reward, minLevel;
-        public TowerExpeditionTier(string name, string blurb, int depth, int reward, int minLevel)
-        { this.name = name; this.blurb = blurb; this.depth = depth; this.reward = reward; this.minLevel = minLevel; }
-    }
-
+    // The Silverbrook Adventure Guild is where expeditions are chosen; it must stand before any party sets out.
     public sealed partial class TowerRules
     {
-        // Rewards mirror BattleMode: depth >= 8 pays 300, >= 3 pays 160, otherwise 80.
-        public static readonly TowerExpeditionTier[] ExpeditionTiers =
-        {
-            new TowerExpeditionTier("OUTSKIRTS", "Forest edge skirmish", 1, 80, 1),
-            new TowerExpeditionTier("DEEP WOODS", "Elite patrols", 4, 160, 2),
-            new TowerExpeditionTier("BOSS LAIR", "Heartwood throne", 8, 300, 3),
-        };
-
         public TowerRoom GuildHall()
         {
             TowerRoom best = null;
@@ -40,16 +24,6 @@ namespace AdamsHaven.Tower
             if (DebugIgnoreGuild) return null;
             if (State.introPhase != "complete") return "Finish founding the Tower first.";
             if (GuildHall() == null) return "Build the Silverbrook Adventure Guild to send expeditions.";
-            return null;
-        }
-
-        public string CanLaunchBattle(int tier)
-        {
-            string error = GuildRequired();
-            if (error != null) return error;
-            if (tier < 0 || tier >= ExpeditionTiers.Length) return "Unknown expedition.";
-            if (GuildLevel < ExpeditionTiers[tier].minLevel)
-                return "Upgrade the Guild to level " + ExpeditionTiers[tier].minLevel + ".";
             return null;
         }
     }

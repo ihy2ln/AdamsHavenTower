@@ -45,49 +45,11 @@ namespace AdamsHaven.Tower
             }
         }
 
+        // Version 1 keeps the plus-shaped layouts of older saves; version 2 draws a shape per visit from the run seed.
+        // (Version 0, the scattered-rooms generator, is gone: NormalizeExpeditions walks such a save out of its dungeon.)
         public static TowerDungeon Build(string layoutId, TowerForestNode node, int floor, int runSeed, int version = 1)
         {
-            if (version > 0) return BuildBranches(layoutId, node, floor, runSeed, version >= 2);
-            var d = new TowerDungeon { theme = node.theme, poiKind = node.kind, floor = floor,
-                floors = Mathf.Max(1, TowerForestLayouts.Floors(node.kind)) };
-            for (int i = 0; i < d.room.Length; i++) d.room[i] = -1;
-            var rng = new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 131 + 7));
-            int target = 6 + rng.Next(3);
-            for (int attempt = 0; attempt < 200 && d.rooms.Count < target; attempt++)
-            {
-                int w = 3 + rng.Next(3), h = 3 + rng.Next(3);
-                int x = 1 + rng.Next(Size - w - 1), y = 1 + rng.Next(Size - h - 1);
-                bool clear = true;
-                foreach (var other in d.rooms)
-                    if (x - 1 < other.x + other.w && x + w + 1 > other.x && y - 1 < other.y + other.h && y + h + 1 > other.y)
-                    { clear = false; break; }
-                if (!clear) continue;
-                var r = new TowerDungeonRoom { x = x, y = y, w = w, h = h };
-                for (int yy = y; yy < y + h; yy++)
-                    for (int xx = x; xx < x + w; xx++) { d.cell[Index(xx, yy)] = Floor; d.room[Index(xx, yy)] = d.rooms.Count; }
-                d.rooms.Add(r);
-            }
-            // Each room joins the nearest earlier room with an L-shaped corridor.
-            for (int i = 1; i < d.rooms.Count; i++)
-            {
-                int best = 0, bestDist = int.MaxValue;
-                for (int j = 0; j < i; j++)
-                {
-                    int dist = Math.Abs(d.rooms[i].CenterX - d.rooms[j].CenterX) + Math.Abs(d.rooms[i].CenterY - d.rooms[j].CenterY);
-                    if (dist < bestDist) { bestDist = dist; best = j; }
-                }
-                d.Carve(d.rooms[i].CenterX, d.rooms[i].CenterY, d.rooms[best].CenterX, d.rooms[best].CenterY, rng.Next(2) == 0);
-            }
-            // Corridor cells touching a room become doors.
-            for (int y = 0; y < Size; y++)
-                for (int x = 0; x < Size; x++)
-                {
-                    if (d.CellAt(x, y) != Corridor) continue;
-                    if (d.CellAt(x + 1, y) == Floor || d.CellAt(x - 1, y) == Floor ||
-                        d.CellAt(x, y + 1) == Floor || d.CellAt(x, y - 1) == Floor) d.cell[Index(x, y)] = Door;
-                }
-            d.AssignRooms(new TowerRng(TowerForestLayouts.Hash(layoutId + ":" + node.id, floor * 7919 + runSeed)));
-            return d;
+            return BuildBranches(layoutId, node, floor, runSeed, version >= 2);
         }
 
         // Room layouts on the 3x3 sector grid, entrance first. Version 2 dungeons pick one per visit from the run's seed

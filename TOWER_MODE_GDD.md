@@ -191,7 +191,7 @@ Seven stats: **Might, Sight, Grit, Charm, Wit, Grace, Luck.** Room output scales
 ### 6.3 Needs and mood (v1 light)
 - Needs: **Food, Water, Rest** (plus injury/illness state).
 - **Satisfaction** 0 to 100 with five face states (angry, frown, blank, smiley, ecstatic at 0-19, 20-39, 40-59, 60-79, 80-100).
-- Low satisfaction lowers output and raises the chance of leaving. No mood-break minigame, no traits, no bonds in v1 (DLC, section 14).
+- Low satisfaction lowers output and raises the chance of leaving. No mood-break minigame, no traits, no bonds in v1 (DLC, section 14). **Exception (ruling 2026-10-02):** hero traits stay live in expedition event, trap and skill checks; bonds stay deferred.
 - **Schedules / day-night:** day/night is presentation plus lighting. **Canon for v1: no schedule gameplay** (the Unity build's schedule system is parked with Colony Depth; see 16).
 
 ### 6.4 Levels and health
@@ -445,15 +445,15 @@ Incidents that would start offline are handled by guards and idle dwellers with 
 
 ## 10. Expeditions
 
-Run from the **Silverbrook Adventure Guild** (and the Expeditions dock button). Built on the existing Unity systems: `TowerExpedition.cs` (regions, provisions, Safe Pocket), `TowerForestLayouts.cs` (15 forest maps), `TowerDungeon.cs` (20x20 crawl), `TowerGuild.cs`.
+Run from the **Silverbrook Adventure Guild** (and the Expeditions dock button). Built on the existing Unity systems: `TowerExpedition.cs` (regions, provisions, Safe Pocket), `TowerOverworldGen.cs` (a generated forest map per run), `TowerDungeon.cs` (20x20 crawl), `TowerGuild.cs`. The played run is specified in [BATTLE_MODE_GDD.md](BATTLE_MODE_GDD.md); its rulings (2026-10-02) win where this section disagrees.
 
 ### 10.1 Parties
-- **3 heroes per party.** Villagers never go on expeditions.
+- **A played run takes up to 6 heroes: 3 fight, 3 wait in reserve** (Battle Mode's field and reserve). Auto expeditions send 3. Villagers never go on expeditions. Heroes come from Sigil summons.
 - **Party slots:** 1 at the start, a 2nd from research (EXP-2), a 3rd from the Guild reaching rank A.
 - A hero is either staffing a room or away; sending a hero out empties their room slot (6.4). Injured heroes cannot be sent until healed.
 
 ### 10.2 Regions
-Eight regions in a branching unlock chain (existing build, region list from `TowerExpedition.cs`):
+Thirteen regions in a branching unlock chain (region list from `TowerExpedition.cs`): the eight Silverbrook regions below, then Silverwood depths 1 to 5 beyond the Gate, each opened by conquering the one before.
 
 | # | Region | Opens after | Research gate | Danger (draft) | Auto time (draft) |
 | --- | --- | --- | --- | --- | --- |
@@ -465,6 +465,7 @@ Eight regions in a branching unlock chain (existing build, region list from `Tow
 | 6 | Sunken Marsh | Shallow Ford | EXP-6 | 420 | 4 h |
 | 7 | Ruined Watchpost | Old Bridge | EXP-6 | 560 | 6 h |
 | 8 | Silverwood Gate | Watchpost | EXP-8 | 800 | 8 h |
+| 9-13 | Silverwood depths 1 to 5 | the previous depth (the Gate for depth 1) | none | **[TBD]** | **[TBD]** |
 
 A region unlocks when the previous region's lair boss is conquered **and** its research node is done. Each region has a creature element (**[TBD]**) that element counters apply against.
 
@@ -485,12 +486,13 @@ A region unlocks when the previous region's lair boss is conquered **and** its r
 - Auto expeditions **never conquer** a region.
 
 ### 10.4 Personal roguelite run
-Reuses the existing flow: **region map, plan provisions (rations), forest map (travel costs rations), POI dungeon (20x20, fog of war, room events, stairs, goal room), lair boss conquers the region.**
+Reuses the existing flow: **Atlas (region map), plan provisions, a forest map generated fresh for every run (walking costs rations by distance and ground; walked ground becomes road), POI dungeons (20x20, fog of war, room events, stairs, goal room), lair boss conquers the region.** Full rules: BATTLE_MODE_GDD.md sections 3 to 9.
 - **Length target: 10 to 15 minutes**, trimmed to about 2 to 3 floors per POI. The run **autosaves on every room**, so the player can quit and resume exactly where they left.
 - **Fights use Battle Mode** with the party's 3 heroes. HP and injuries carry through the run; Tonics heal.
-- **Rewards:** up to 2x the auto ceiling plus exclusive drops (Echoes from boss clears, Celestium, rare Sigil caches).
+- **Rewards:** the haul (Gold, Ore, Essence, Celestium, Tonics) is banked on return, plus Sigils for the return (capped per day). During the run each won fight offers a pick of a card upgrade, a relic or supplies; relics and upgrades last for that run. Target: up to 2x the auto ceiling plus exclusive drops (Echoes from boss clears, rare Sigil caches) **[TBD]**.
 - **First conquest of a region** grants a permanent passive (for example +10% auto rewards from that region) **[TBD]**.
-- **Wipe or abandon:** the player keeps the 2-slot **Safe Pocket** and loses everything else carried; heroes return injured. No hero is ever lost.
+- **Head home from camp:** the whole haul is banked. **Retreat from anywhere else:** 25% of each find is dropped (the Safe Pocket is never taxed).
+- **Wipe:** the player keeps the 2-slot **Safe Pocket** and loses everything else carried; heroes return injured. No hero is ever lost.
 
 ### 10.5 Battle Mode integration
 Heroes used in expeditions are the same units used in Battle Mode; injuries and level-ups carry back to the tower.
@@ -515,7 +517,7 @@ Heroes used in expeditions are the same units used in Battle Mode; injuries and 
 - **UI kit:** hand-painted anime-fantasy icons (`celestium_hud_v1` set) with a custom Celestium frame/button/font system. No default Unity UI styling in shipped screens.
 
 ### 12.2 Rotation and layout
-Free rotation in **both** modes.
+Free rotation in the Tower. **Expeditions and Battle Mode run in landscape** (ruling 2026-10-02: their UI is laid out for 16:9).
 
 | Element | Portrait | Landscape |
 | --- | --- | --- |
