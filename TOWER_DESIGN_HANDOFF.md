@@ -49,12 +49,12 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
 **Today** (`TowerTown.cs`, GDD 19.1): `VenueDefs` by room type, `EnsureVenues` cache (rebuilds on `LayoutStamp` / room count), `ConsiderErrand` in `PlanJob` (live ticks only, `townTick`), `TickErrand` (the single place stock is spent; `VenuePrice` returns 0), `TickJoy`, `FreeTime`, `AddTownThoughts`. Tests in `TowerManagementTests` "town life".
 
 **Ask the owner first** (also GDD 16 item 16):
-1. **Street:** a ground strip beyond both Gates, or a layer in front of the tower? Does it widen the camera? Can raiders damage stalls? Which street types first (stalls, inn, bathhouse, plaza, homes)?
+1. **Town view:** decided 2026-10-03: its own view, switched to from the Tower, surrounding the Tower in a circle or square and growing over time (GDD 19.2 has the recommended camera, layout and building approach). Still open: circle or square boundary, growth per Heart rank, whether raiders damage town buildings, which town types come first (stalls, inn, bathhouse, plaza, homes).
 2. **Economy:** a closed gold loop, or keep the Market minting? Wages and rent per resident or per room? Who sets prices: the player per venue, or district policy? Do venues need staff once wages exist?
 3. **Visitors and traders:** visible walkers that use venues and pay? Do traders replace or extend the caravan event? Can a good visit turn a visitor into a recruit?
 4. **Feel:** visible queues at full venues? Is the cold-rations penalty (-3) right?
 
-**Suggested order:** street types as new `TowerCatalog` rooms on floor 0 beyond the Gates (layout + floor bounds in `TowerDomain.cs` / `TowerLayoutTools.cs`), added to `VenueDefs`; then prices and wages through `TickErrand` / `VenuePrice` with a resident purse; then visitors as non-resident walkers (needs a visual hook, see 4.1).
+**Suggested order:** a greybox TOWN view first (orthographic isometric camera, square tile grid, ring boundary, the Tower as a centre block, placeholder lots) to settle the angle and shape with the owner; then town lots as rules data (a town grid in `TowerState`, lots feeding `VenueDefs` and homes, Gate-and-road travel in `TravelSeconds`); then prices and wages through `TickErrand` / `VenuePrice` with a resident purse; then visitors as non-resident walkers.
 
 ## 4. Other open work (offer these after, or instead of, the town)
 
