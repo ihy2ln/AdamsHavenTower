@@ -219,6 +219,7 @@ namespace AdamsHaven.Tower
         public string pickTarget = "";             // Pick-Your-Hero target (an SS or SSR hero's unit id)
         public bool pickMissed;      // the same guarantee for Pick-Your-Hero; it carries over when the target changes
         public int residentPity;     // Resident banner pulls since the last A or better
+        public List<TowerLot> townLots = new List<TowerLot>();   // TT 10.3.3 town lots (TowerTownLots.cs)
     }
 
     public sealed class TowerRoomDef

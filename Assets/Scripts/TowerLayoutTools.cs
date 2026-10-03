@@ -76,6 +76,7 @@ namespace AdamsHaven.Tower
             if (State.outpostSitesSeen == null) State.outpostSitesSeen = new List<string>();
             NormalizeSiege();
             NormalizeBanners();
+            NormalizeTown();
             foreach (var resident in State.residents)
             {
                 if (resident.trait2 == null) resident.trait2 = "";

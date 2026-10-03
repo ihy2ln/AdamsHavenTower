@@ -248,6 +248,7 @@ namespace AdamsHaven.Tower
             TickRooms(dt);
             TickVisitors(dt);
             TickDistricts(dt);
+            TickTown(dt);
             TickOutposts(dt, live);
             if (live) { TickSiege(dt); TickIncidents(dt); TickEvents(dt); }
             // DEF-8 Celestial aegis: a calm Heart chamber slowly mends the Heart.

@@ -37,39 +37,85 @@ public sealed class TowerTownView : MonoBehaviour
     private Vector2 lastPointer, pointerStart, lastPinchCenter;
     private float lastPinchDistance;
 
-    // The last tapped tile, for the HUD ("" when nothing is selected).
-    public string Selection { get; private set; } = "";
-    private GameObject selectionMarker;
+    // ---------------------------------------------------------------- selection
+
+    // Tiles the player has picked: one by a tap, a rectangle by a drag in box mode. The HUD acts on them.
+    public readonly List<Vector2Int> Selected = new List<Vector2Int>();
+    public int SelectionStamp { get; private set; }
+    public bool BoxMode { get; set; }
+    private readonly List<GameObject> markers = new List<GameObject>();
+    private Transform markerRoot;
+    private Vector2Int boxStart;
+
+    public bool TileAt(Vector2 screen, out Vector2Int tile)
+    {
+        tile = default;
+        var ray = cam.ScreenPointToRay(screen);
+        if (Mathf.Approximately(ray.direction.y, 0)) return false;
+        float t = (Origin.y - ray.origin.y) / ray.direction.y;
+        if (t < 0) return false;
+        var hit = ray.GetPoint(t) - Origin;
+        tile = new Vector2Int(Mathf.RoundToInt(hit.x), Mathf.RoundToInt(hit.z));
+        return true;
+    }
+
+    public string Describe(Vector2Int t)
+    {
+        var tile = TowerTownMap.At(t.x, t.y, ShownRank);
+        switch (tile)
+        {
+            case TowerTownMap.Tile.Tower: return "the Tower";
+            case TowerTownMap.Tile.Gate: return t.x < 0 ? "West Gate" : "East Gate";
+            case TowerTownMap.Tile.Plaza: return "Gate square";
+            case TowerTownMap.Tile.Road: return "road";
+            case TowerTownMap.Tile.Lot:
+                return PreviewRank > 0 ? "lot (preview)" : tower.Rules.LotLabel(tower.Rules.Lot(t.x, t.y));
+            default:
+                return ShownRank < TowerTiers.MaxRank && TowerTownMap.InRing(t.x, t.y, ShownRank + 1) ?
+                    "wild, opens at Heart rank " + TowerTiers.Tier(ShownRank + 1) : "Silverwood";
+        }
+    }
+
+    public void ClearSelection() { Selected.Clear(); SelectionStamp++; ShowMarkers(); }
 
     private void Tap(Vector2 screen)
     {
-        var ray = cam.ScreenPointToRay(screen);
-        if (Mathf.Approximately(ray.direction.y, 0)) return;
-        float t = (Origin.y - ray.origin.y) / ray.direction.y;
-        if (t < 0) return;
-        var hit = ray.GetPoint(t) - Origin;
-        int x = Mathf.RoundToInt(hit.x), z = Mathf.RoundToInt(hit.z);
-        var tile = TowerTownMap.At(x, z, ShownRank);
-        string what;
-        switch (tile)
+        Vector2Int t;
+        if (!TileAt(screen, out t)) return;
+        Selected.Clear();
+        Selected.Add(t);
+        SelectionStamp++;
+        ShowMarkers();
+    }
+
+    private void SelectBox(Vector2Int a, Vector2Int b)
+    {
+        Selected.Clear();
+        for (int x = Mathf.Min(a.x, b.x); x <= Mathf.Max(a.x, b.x); x++)
+            for (int z = Mathf.Min(a.y, b.y); z <= Mathf.Max(a.y, b.y); z++)
+                if (TowerTownMap.Buildable(x, z, ShownRank)) Selected.Add(new Vector2Int(x, z));
+        SelectionStamp++;
+        ShowMarkers();
+    }
+
+    private void ShowMarkers()
+    {
+        if (markerRoot == null) { markerRoot = new GameObject("Selection").transform; markerRoot.SetParent(transform, false); }
+        while (markers.Count < Selected.Count)
         {
-            case TowerTownMap.Tile.Tower: what = "the Tower"; break;
-            case TowerTownMap.Tile.Gate: what = x < 0 ? "West Gate" : "East Gate"; break;
-            case TowerTownMap.Tile.Plaza: what = "Gate square"; break;
-            case TowerTownMap.Tile.Road: what = "road"; break;
-            case TowerTownMap.Tile.Lot: what = TowerTownMap.Frontage(x, z, ShownRank) ? "lot, road frontage" : "lot"; break;
-            default: what = ShownRank < TowerTiers.MaxRank && TowerTownMap.InRing(x, z, ShownRank + 1) ?
-                "wild, opens at Heart rank " + TowerTiers.Tier(ShownRank + 1) : "Silverwood"; break;
+            var m = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Destroy(m.GetComponent<Collider>());
+            m.transform.SetParent(markerRoot, false);
+            m.transform.localScale = new Vector3(1.0f, 0.04f, 1.0f);
+            m.GetComponent<Renderer>().sharedMaterial = Mat(new Color(1f, 0.85f, 0.35f));
+            markers.Add(m);
         }
-        Selection = "(" + x + ", " + z + ")  " + what;
-        if (selectionMarker == null)
+        for (int i = 0; i < markers.Count; i++)
         {
-            selectionMarker = Block("Selection", PrimitiveType.Cube, Vector3.zero, new Vector3(1.04f, 0.05f, 1.04f),
-                new Color(1f, 0.92f, 0.5f, 1f));
-            selectionMarker.transform.SetParent(transform, false);
+            bool on = i < Selected.Count;
+            markers[i].SetActive(on);
+            if (on) markers[i].transform.position = Origin + new Vector3(Selected[i].x, 0.02f, Selected[i].y);
         }
-        selectionMarker.transform.position = Origin + new Vector3(x, 0.03f, z);
-        selectionMarker.SetActive(true);
     }
 
     public bool Active { get; private set; }
@@ -135,8 +181,8 @@ public sealed class TowerTownView : MonoBehaviour
         root.gameObject.SetActive(false);
         if (towerCam != null) towerCam.enabled = true;
         dragging = pinching = false;
-        Selection = "";
-        if (selectionMarker != null) selectionMarker.SetActive(false);
+        BoxMode = false;
+        ClearSelection();
     }
 
     public void CycleAngle()
@@ -168,7 +214,23 @@ public sealed class TowerTownView : MonoBehaviour
         checkTimer = 0;
         if (ShownRank != builtRank || tower.Rules.State.residents.Count != builtResidents || FloorsAbove() != builtFloors)
             Rebuild();
+        else if (PreviewRank == 0 && LotSignature() != builtLots) RebuildLots();
     }
+
+    // Changes whenever a lot is added, removed, re-typed, re-ranked or locked.
+    private int LotSignature()
+    {
+        unchecked
+        {
+            int h = tower.Rules.State.townLots.Count;
+            foreach (var lot in tower.Rules.State.townLots)
+                h = h * 31 + lot.x * 7919 + lot.z * 104729 + lot.type.GetHashCode() + lot.rank * 13 + (lot.manual ? 1 : 0);
+            return h;
+        }
+    }
+
+    // Call after a HUD command so the change shows at once rather than on the next 1 s check.
+    public void RefreshLots() { if (Active && PreviewRank == 0) RebuildLots(); }
 
     private int FloorsAbove()
     {
@@ -267,12 +329,18 @@ public sealed class TowerTownView : MonoBehaviour
         if (dragging && Mouse.current.leftButton.wasReleasedThisFrame) Release(position);
     }
 
-    private void Press(Vector2 at) { dragging = true; moved = false; pointerStart = lastPointer = at; }
+    private void Press(Vector2 at)
+    {
+        dragging = true; moved = false; pointerStart = lastPointer = at;
+        if (BoxMode) TileAt(at, out boxStart);
+    }
 
     private void Drag(Vector2 at)
     {
         if ((at - pointerStart).sqrMagnitude > 64) moved = true;
-        if (moved) Pan(at - lastPointer);
+        Vector2Int tile;
+        if (moved && BoxMode) { if (TileAt(at, out tile)) SelectBox(boxStart, tile); }
+        else if (moved) Pan(at - lastPointer);
         lastPointer = at;
     }
 
@@ -302,9 +370,105 @@ public sealed class TowerTownView : MonoBehaviour
         BuildRing(TowerTownMap.Radius(rank) + 0.5f, new Color(0.95f, 0.80f, 0.45f), 0.18f, "Ring");
         if (rank < TowerTiers.MaxRank)
             BuildRing(TowerTownMap.Radius(rank + 1) + 0.5f, new Color(1f, 1f, 1f, 0.5f), 0.08f, "Next ring");
-        BuildPlaceholderTown(rank, rules.State.residents.Count, rules.State.rooms.Count);
+        lotRoot = null;
+        if (PreviewRank > 0) BuildPlaceholderTown(rank, rules.State.residents.Count, rules.State.rooms.Count);
+        else RebuildLots();
         BuildForest(rank);
         BuildWalkers(rank);
+    }
+
+    // ---------------------------------------------------------------- the town's real lots
+
+    private Transform lotRoot;
+    private int builtLots;
+
+    // District colours (walls, roofs) until the modelled buildings replace the blocks.
+    private static readonly Dictionary<string, Color[]> DistrictLook = new Dictionary<string, Color[]> {
+        { "residential", new[] { new Color(0.82f, 0.72f, 0.56f), new Color(0.60f, 0.28f, 0.22f) } },
+        { "market", new[] { new Color(0.90f, 0.84f, 0.70f), new Color(0.85f, 0.62f, 0.20f) } },
+        { "industry", new[] { new Color(0.55f, 0.52f, 0.50f), new Color(0.32f, 0.30f, 0.30f) } },
+        { "arcane", new[] { new Color(0.80f, 0.82f, 0.90f), new Color(0.35f, 0.40f, 0.75f) } },
+        { "defence", new[] { new Color(0.50f, 0.50f, 0.55f), new Color(0.38f, 0.38f, 0.44f) } },
+    };
+
+    private void RebuildLots()
+    {
+        if (lotRoot != null) Destroy(lotRoot.gameObject);
+        lotRoot = new GameObject("Lots").transform;
+        lotRoot.SetParent(root, false);
+        builtLots = LotSignature();
+        int built = 0;
+        foreach (var lot in tower.Rules.State.townLots)
+        {
+            var def = TowerRules.TownBuilding(lot.type);
+            var at = new Vector3(lot.x, 0, lot.z);
+            if (def == null) { if (lot.manual) LotBlock("Vacant", PrimitiveType.Cube, at + Vector3.up * 0.02f, new Vector3(0.9f, 0.04f, 0.9f), new Color(0.55f, 0.47f, 0.34f)); continue; }
+            built++;
+            BuildLot(lot, def, at);
+            if (lot.manual)   // a small banner pole marks lots the player controls
+            {
+                LotBlock("Flag pole", PrimitiveType.Cube, at + new Vector3(0.38f, 0.75f, 0.38f), new Vector3(0.04f, 1.5f, 0.04f), new Color(0.3f, 0.25f, 0.2f));
+                LotBlock("Flag", PrimitiveType.Cube, at + new Vector3(0.38f, 1.38f, 0.28f), new Vector3(0.03f, 0.2f, 0.2f), new Color(0.95f, 0.78f, 0.3f));
+            }
+        }
+        Buildings = built;
+    }
+
+    private GameObject LotBlock(string name, PrimitiveType type, Vector3 local, Vector3 scale, Color color, Vector3 euler = default)
+    {
+        var go = Block(name, type, local, scale, color, euler);
+        go.transform.SetParent(lotRoot, false);
+        return go;
+    }
+
+    // A readable stand-in per type: band 0/1/2 (F-D, C-B, A-SSR) sets height and footprint fill.
+    private void BuildLot(TowerLot lot, TowerTownBuildingDef def, Vector3 at)
+    {
+        int band = TowerRules.RankBand(lot.rank);
+        var look = DistrictLook[def.district];
+        Color wall = look[0], roof = look[1];
+        float fill = 0.62f + band * 0.14f, h = 0.6f + band * 0.45f;
+        switch (def.id)
+        {
+            case "stall":
+                LotBlock("Counter", PrimitiveType.Cube, at + Vector3.up * 0.2f, new Vector3(fill, 0.4f, fill * 0.6f), wall);
+                LotBlock("Awning", PrimitiveType.Cube, at + new Vector3(0, 0.55f + band * 0.1f, 0), new Vector3(fill + 0.1f, 0.06f, fill), roof, new Vector3(12, 0, 0));
+                return;
+            case "watchtower":
+                LotBlock("Tower", PrimitiveType.Cube, at + Vector3.up * (h * 1.2f), new Vector3(0.38f + band * 0.08f, h * 2.4f, 0.38f + band * 0.08f), wall);
+                LotBlock("Lookout", PrimitiveType.Cube, at + Vector3.up * (h * 2.4f + 0.1f), new Vector3(0.6f + band * 0.1f, 0.2f, 0.6f + band * 0.1f), roof);
+                return;
+            case "wallsegment":
+                LotBlock("Wall", PrimitiveType.Cube, at + Vector3.up * (0.35f + band * 0.15f), new Vector3(1f, 0.7f + band * 0.3f, 0.35f), wall);
+                return;
+            case "gatehouse":
+                LotBlock("Gatehouse", PrimitiveType.Cube, at + Vector3.up * (h * 0.7f), new Vector3(fill, h * 1.4f, fill), wall);
+                LotBlock("Arch", PrimitiveType.Cube, at + Vector3.up * 0.25f, new Vector3(fill + 0.02f, 0.5f, 0.32f), new Color(0.15f, 0.13f, 0.12f));
+                return;
+            case "mill":
+            case "foundry":
+                LotBlock("Hall", PrimitiveType.Cube, at + Vector3.up * h / 2, new Vector3(fill, h, fill * 0.8f), wall);
+                LotBlock("Chimney", PrimitiveType.Cylinder, at + new Vector3(fill * 0.3f, h + 0.3f, -fill * 0.2f), new Vector3(0.14f, 0.5f + band * 0.15f, 0.14f), roof);
+                if (def.id == "mill") LotBlock("Wheel", PrimitiveType.Cylinder, at + new Vector3(-fill * 0.55f, h * 0.5f, 0), new Vector3(h * 0.9f, 0.05f, h * 0.9f), new Color(0.4f, 0.3f, 0.2f), new Vector3(0, 0, 90));
+                return;
+            case "shrine":
+                LotBlock("Plinth", PrimitiveType.Cube, at + Vector3.up * 0.15f, new Vector3(fill, 0.3f, fill), wall);
+                LotBlock("Crystal", PrimitiveType.Cube, at + Vector3.up * (0.6f + band * 0.2f), Vector3.one * (0.25f + band * 0.08f), new Color(0.55f, 0.85f, 1f), new Vector3(45, 45, 0));
+                return;
+            case "bathhouse":
+            case "library":
+            case "bazaar":
+                LotBlock("Hall", PrimitiveType.Cube, at + Vector3.up * h / 2, new Vector3(fill, h, fill), wall);
+                LotBlock("Dome", PrimitiveType.Sphere, at + Vector3.up * h, new Vector3(fill * 0.7f, fill * 0.5f, fill * 0.7f), roof);
+                return;
+            default:   // homes, inn, workshop: walls and a gable
+                bool alongX = ((lot.x * 7 + lot.z * 3) & 1) == 0;
+                float hh = def.id == "manor" ? h * 1.3f : def.id == "rowhouse" ? h * 1.1f : h;
+                LotBlock("Walls", PrimitiveType.Cube, at + Vector3.up * hh / 2, new Vector3(fill, hh, fill), wall);
+                LotBlock("Roof", PrimitiveType.Cube, at + Vector3.up * hh, new Vector3(alongX ? fill + 0.08f : fill * 0.72f, fill * 0.72f, alongX ? fill * 0.72f : fill + 0.08f),
+                    roof, alongX ? new Vector3(45, 0, 0) : new Vector3(0, 0, 45));
+                return;
+        }
     }
 
     // ---------------------------------------------------------------- townsfolk on the roads

@@ -1426,4 +1426,111 @@ public sealed class TowerManagementTests
         Assert.IsTrue(TowerTownMap.IsRingRoad(0, 32, TowerTiers.MaxRank));
         Assert.IsFalse(TowerTownMap.IsRingRoad(0, 16, 5), "radius 17: the 16 ring would hug the edge");
     }
+
+    // ---- TT 10.3.3: town lots - the town runs itself, the player can take over (GDD 19.2) -------------------------
+
+    [Test]
+    public void TownFillsItsLotsOnItsOwnFromTheGatesOut()
+    {
+        var rules = Quiet(Started());
+        rules.Advance(1, true);
+        int target = rules.TownTargetLots();
+        Assert.Greater(target, 0);
+        Assert.AreEqual(target, rules.TownBuiltLots(), "a fresh town fills to its target at once");
+        foreach (var lot in rules.State.townLots)
+        {
+            Assert.IsTrue(TowerTownMap.Buildable(lot.x, lot.z, rules.State.heartRank), "only on lots inside the ring");
+            Assert.IsFalse(lot.manual);
+            Assert.IsNotNull(TowerRules.TownBuilding(lot.type));
+        }
+        Assert.IsTrue(rules.State.townLots.All(l => TowerTownMap.Frontage(l.x, l.z, rules.State.heartRank)),
+            "a small village hugs the roads and Gate squares");
+        Assert.IsTrue(rules.State.townLots.Any(l => TowerRules.TownBuilding(l.type).district == "residential"));
+        Assert.AreEqual(rules.State.townLots.Count, rules.State.townLots.Select(l => l.x * 1000 + l.z).Distinct().Count(),
+            "one building per tile");
+
+        // More people: the town grows one lot every TownGrowSeconds, never past its target.
+        for (int i = 0; i < 6; i++) rules.AddResident("", "Settler " + i, "villager", 1);
+        int before = rules.TownBuiltLots();
+        rules.Advance(TowerRules.TownGrowSeconds * 3 + 1, true);
+        Assert.AreEqual(before + 3, rules.TownBuiltLots());
+        rules.Advance(TowerRules.TownGrowSeconds * 40, true);
+        Assert.AreEqual(rules.TownTargetLots(), rules.TownBuiltLots());
+    }
+
+    [Test]
+    public void AutoLotsRiseWithTheHeartButNeverPastIt()
+    {
+        var rules = Quiet(Started());
+        rules.Advance(1, true);
+        Assert.IsTrue(rules.State.townLots.All(l => l.rank == 1));
+        rules.State.heartRank = 3;
+        rules.Advance(TowerRules.TownUpgradeSeconds * 200, true);
+        Assert.IsTrue(rules.State.townLots.All(l => l.rank == 3), "every auto lot climbs to the Heart's rank");
+    }
+
+    [Test]
+    public void PlayerLotsAreNeverChangedByTheTown()
+    {
+        var rules = Quiet(Started());
+        rules.State.gold = 10000;
+        rules.Advance(1, true);
+        var auto = rules.State.townLots[0];
+        Assert.IsNull(rules.SetLot(auto.x, auto.z, "foundry"));
+        Assert.AreEqual("foundry", auto.type);
+        Assert.IsTrue(auto.manual, "swapping a lot makes it yours");
+        Assert.AreEqual(10000 - TowerRules.TownLotGold, rules.State.gold);
+        rules.State.heartRank = 4;
+        rules.Advance(TowerRules.TownUpgradeSeconds * 200, true);
+        Assert.AreEqual(1, auto.rank, "the town does not upgrade your lots");
+        Assert.AreEqual("foundry", auto.type);
+
+        // Clearing keeps the lot empty: the town does not build over it.
+        var other = rules.State.townLots[1];
+        Assert.IsNull(rules.SetLot(other.x, other.z, ""));
+        rules.Advance(TowerRules.TownGrowSeconds * 50, true);
+        Assert.AreEqual("", rules.Lot(other.x, other.z).type);
+
+        // Handing it back reopens it for the town.
+        Assert.AreEqual(1, rules.SetLotsAuto(new[] { new Vector2Int(other.x, other.z) }, true));
+        Assert.IsNull(rules.Lot(other.x, other.z));
+        Assert.IsNotNull(rules.SetLot(0, 0, "cottage"), "the Tower's tiles are not lots");
+        Assert.IsNotNull(rules.SetLot(auto.x, auto.z, "dragon_lair"));
+    }
+
+    [Test]
+    public void GroupCommandsRetypeAndLockMany()
+    {
+        var rules = Quiet(Started());
+        rules.State.gold = 100;
+        rules.Advance(1, true);
+        var tiles = rules.State.townLots.Take(4).Select(l => new Vector2Int(l.x, l.z)).ToList();
+        tiles.Add(new Vector2Int(0, 0));   // the Tower: skipped
+        StringAssert.Contains("gold", rules.SetLots(tiles, "library"), "all or nothing when gold is short");
+        Assert.IsFalse(rules.State.townLots.Any(l => l.type == "library"));
+        rules.State.gold = 10000;
+        Assert.IsNull(rules.SetLots(tiles, "library", 1));
+        Assert.AreEqual(4, rules.State.townLots.Count(l => l.type == "library" && l.manual));
+        Assert.AreEqual(4, rules.SetLotsAuto(tiles, true));
+        Assert.AreEqual(0, rules.State.townLots.Count(l => l.manual), "handed back to the town");
+        Assert.AreEqual(4, rules.SetLotsAuto(tiles, false), "LOCK freezes them as they are");
+        Assert.AreEqual(4, rules.State.townLots.Count(l => l.manual && l.type == "library"));
+    }
+
+    [Test]
+    public void TownLotsSurviveASave()
+    {
+        var rules = Quiet(Started());
+        rules.State.gold = 10000;
+        rules.Advance(1, true);
+        var lot = rules.State.townLots[2];
+        Assert.IsNull(rules.SetLot(lot.x, lot.z, "inn"));
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State)));
+        Assert.AreEqual(rules.State.townLots.Count, loaded.State.townLots.Count);
+        var back = loaded.Lot(lot.x, lot.z);
+        Assert.AreEqual("inn", back.type);
+        Assert.IsTrue(back.manual);
+        var old = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State).Replace("\"townLots\"", "\"oldLots\""));
+        Assert.IsNotNull(new TowerRules(old).State.townLots, "saves from before town lots load with an empty town");
+    }
 }
