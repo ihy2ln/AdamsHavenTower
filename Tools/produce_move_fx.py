@@ -97,13 +97,23 @@ def render(job, spec, d):
     return frames_of(d / 'h3_24.mp4', d / '_frames')
 
 
-def matte(rgb, floor, fade, fade_x=True):
-    """Colour with alpha from brightness: black is clear, the H3 noise floor is crushed, borders fade out."""
+def matte(rgb, floor, fade, fade_x=True, round_=False, ends=0.0):
+    """Colour with alpha from brightness: black is clear, the H3 noise floor is crushed, borders fade out.
+
+    `round_` (sheets, bolts, videos): an ellipse inscribed in the frame fades the light out before it can reach an
+    edge, so an effect that fills its frame (a light pillar, a mist sweep) never shows the frame's straight sides
+    as a box. `ends` (beam strips): a soft fade at both ends instead of a hard cut."""
     h, w = rgb.shape[:2]
     alpha = np.clip((rgb.max(axis=2) - floor) / (1 - floor), 0, 1) ** 0.85
     yy, xx = np.mgrid[0:h, 0:w]
     sides = [xx, w - 1 - xx, yy, h - 1 - yy] if fade_x else [yy, h - 1 - yy]
     border = np.clip(np.minimum.reduce(sides) / (min(w, h) * fade), 0, 1)
+    if round_:
+        r = np.hypot((xx + .5) / w * 2 - 1, (yy + .5) / h * 2 - 1)
+        k = np.clip((1.0 - r) / 0.62, 0, 1)                 # 1 inside r = .38, 0 at the inscribed ellipse
+        border = border * k * k * (3 - 2 * k)               # smoothstep: no line where the frame would show
+    if ends > 0:
+        border = border * np.clip(np.minimum(xx, w - 1 - xx) / (w * ends), 0, 1) ** 1.5
     alpha = alpha * border
     colour = np.clip(rgb / np.maximum(rgb.max(axis=2, keepdims=True), 1e-3), 0, 1)
     # Keep some of the real brightness so cores stay white-hot while the edges keep their hue.
@@ -117,9 +127,9 @@ def active_range(files):
     return (int(act[0]), int(act[-1])) if len(act) else (0, len(files) - 1)
 
 
-def cell(rgb_file, size, floor, fade, fade_x=True):
+def cell(rgb_file, size, floor, fade, fade_x=True, round_=False, ends=0.0):
     rgb = np.asarray(Image.open(rgb_file).convert('RGB').resize(size, Image.Resampling.LANCZOS), np.float32) / 255
-    colour, alpha = matte(rgb, floor, fade, fade_x)
+    colour, alpha = matte(rgb, floor, fade, fade_x, round_, ends)
     return Image.fromarray((np.dstack([colour, alpha]) * 255 + .5).astype(np.uint8), 'RGBA')
 
 
@@ -134,17 +144,17 @@ def sheet(job, spec, d, files):
     ch = round(cw * h / w)
     out = Image.new('RGBA', (cw * 4, ch * 4))
     for i, k in enumerate(pick):
-        out.paste(cell(files[k], (cw, ch), spec['floor'], 0.06), ((i % 4) * cw, (i // 4) * ch))
+        out.paste(cell(files[k], (cw, ch), spec['floor'], 0.06, round_=True), ((i % 4) * cw, (i // 4) * ch))
     return save(job, spec, d, out, 16, 4, 4)
 
 
 def strip(job, spec, d, files):
-    """A beam: 4 frames of the horizontal band, edge to edge (no fade at the ends), stacked in one texture."""
+    """A beam: 4 frames of the horizontal band, soft at both ends (not a hard cut), stacked in one texture."""
     a, b = active_range(files)
     pick = np.linspace(a + (b - a) * .25, a + (b - a) * .75, 4).round().astype(int)    # the steady middle
     out = Image.new('RGBA', (1024, 1024))
     for i, k in enumerate(pick):
-        band = cell(files[k], (1024, 289), spec['floor'], 0.12, fade_x=False)
+        band = cell(files[k], (1024, 289), spec['floor'], 0.12, fade_x=False, ends=0.05)
         out.paste(band.crop((0, 16, 1024, 272)), (0, i * 256))
     return save(job, spec, d, out, 4, 1, 4)
 
@@ -169,7 +179,7 @@ def video(job, spec, d, files):
     w2, h2 = 384, round(384 * h / w / 2) * 2
     for i, k in enumerate(range(a, b + 1)):
         rgb = np.asarray(Image.open(files[k]).convert('RGB').resize((w2, h2), Image.Resampling.LANCZOS), np.float32) / 255
-        colour, alpha = matte(rgb, spec['floor'], 0.05)
+        colour, alpha = matte(rgb, spec['floor'], 0.05, round_=True)
         frame = np.vstack([colour * alpha[..., None], np.dstack([alpha] * 3)])   # premultiplied colour over its matte
         Image.fromarray((frame * 255 + .5).astype(np.uint8), 'RGB').save(stack / f's_{i:04d}.png')
     OUT.mkdir(parents=True, exist_ok=True)

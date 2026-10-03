@@ -28,6 +28,7 @@ public sealed partial class BattleMode
     {
         public float TargetHp, ShownHp, GhostHp;
         public float LungeStart = -9f, LungeDur = 0.66f, Impact = 0.30f;
+        public float HoldTo = -1f;      // battle time a melee strike holds at the target until (a staged skill's pull-back)
         public Vector2 LungeTo;
         public bool Ranged;
         public float HurtStart = -9f, HurtDir = 1f;
@@ -548,6 +549,7 @@ public sealed partial class BattleMode
             }
         }
         v.LungeTo = dest; v.LungeStart = fx;
+        HoldForStage(actor, v);
         Color color = ElementColor(card.Element);
         if (ranged && damaging && !layered)
         {

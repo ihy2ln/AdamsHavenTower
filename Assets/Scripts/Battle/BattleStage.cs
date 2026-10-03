@@ -20,7 +20,7 @@ public sealed partial class BattleMode
     BattleUnit stageActor;
     BattleCard stageCard;
     string stageAction;
-    float stageEnd = -9f, stageRushUntil = -9f;
+    float stageEnd = -9f, stageRushUntil = -9f, stageHold = -9f;
     Vector2 camFocus = new Vector2(VW * .5f, VH * .5f);
     float camZoom = 1f;
     Vector2 camJolt;
@@ -109,7 +109,7 @@ public sealed partial class BattleMode
         camKeys.Add(hold);
         camKeys.Add(new CamKey { At = end + back, Focus = Center, Zoom = 1f });
         stageActor = actor; stageCard = card; stageTargets.Clear(); stageTargets.AddRange(targets);
-        stageEnd = end + back; stageRushUntil = -9f;
+        stageEnd = end + back; stageRushUntil = -9f; stageHold = end;
         var rig = ClipRig(actor);
         if (rig != null)
         {
@@ -119,6 +119,16 @@ public sealed partial class BattleMode
             At(stageEnd, () => set.UnloadHi(action));
         }
         return stageEnd;
+    }
+
+    // A staged melee strike stays at the target while the camera holds on it and goes home with the pull-back, so the
+    // fighter never leaves a frame that is still looking at the hit (and the camera never chases her home).
+    void HoldForStage(BattleUnit actor, UnitVis v)
+    {
+        v.HoldTo = -1f;
+        if (actor != stageActor || v.Ranged || v.LungeTo == Vector2.zero || stageHold <= fx) return;
+        v.HoldTo = stageHold;
+        v.LungeDur = Mathf.Max(v.LungeDur, stageEnd - v.LungeStart);
     }
 
     Vector2 Centroid(List<BattleUnit> units, BattleUnit fallback)
@@ -229,7 +239,7 @@ public sealed partial class BattleMode
     void ResetStage()
     {
         camKeys.Clear(); stageTargets.Clear(); stageActor = null; stageCard = null; stageAction = null;
-        stageEnd = -9f; stageRushUntil = -9f; camFocus = Center; camZoom = 1f; camJolt = Vector2.zero;
+        stageEnd = -9f; stageRushUntil = -9f; stageHold = -9f; camFocus = Center; camZoom = 1f; camJolt = Vector2.zero;
     }
 
 #if UNITY_EDITOR

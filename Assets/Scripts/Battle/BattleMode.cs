@@ -922,12 +922,14 @@ public sealed partial class BattleMode : MonoBehaviour
         if (t < 0f || t > v.LungeDur) return;
         float impact = v.Impact;
         float back = enemy ? 1f : -1f;
+        // The strike holds at the target a beat, or until a staged skill's camera pulls back (HoldTo), then goes home.
+        float hold = Mathf.Max(impact + 0.12f, v.HoldTo - v.LungeStart);
         if (v.Arrive && v.LungeTo != Vector2.zero)
         {
             // Picked up from a cinematic at the target: hold the strike there, then go home.
             float dir = Mathf.Sign(v.LungeTo.x);
-            if (t < impact + 0.12f) { off = v.LungeTo; lean = dir * 11f; return; }
-            float k = Ease((t - impact - 0.12f) / Mathf.Max(0.05f, v.LungeDur - impact - 0.12f));
+            if (t < hold) { off = v.LungeTo; lean = dir * 11f; return; }
+            float k = Ease((t - hold) / Mathf.Max(0.05f, v.LungeDur - hold));
             off = Vector2.Lerp(v.LungeTo, Vector2.zero, k); lean = dir * 11f * (1f - k);
             return;
         }
@@ -947,10 +949,10 @@ public sealed partial class BattleMode : MonoBehaviour
             float k = EaseOut((t - windEnd) / Mathf.Max(0.01f, impact - windEnd));
             off = Vector2.Lerp(wind, v.LungeTo, k); lean = Mathf.Lerp(-fwd * 7f, fwd * 11f, k);
         }
-        else if (t < impact + 0.12f) { off = v.LungeTo; lean = fwd * 11f; }
+        else if (t < hold) { off = v.LungeTo; lean = fwd * 11f; }
         else
         {
-            float k = Ease((t - impact - 0.12f) / Mathf.Max(0.05f, v.LungeDur - impact - 0.12f));
+            float k = Ease((t - hold) / Mathf.Max(0.05f, v.LungeDur - hold));
             off = Vector2.Lerp(v.LungeTo, Vector2.zero, k); lean = fwd * 11f * (1f - k);
         }
     }

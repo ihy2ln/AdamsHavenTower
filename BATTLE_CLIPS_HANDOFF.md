@@ -144,6 +144,19 @@ Skills are now **staged inside the live battle** from transparent layers.
   `segments/_takes/` per fighter, earlier videos in `BattleMotion/_cm1031/keep/`. Test
   `EveryUltimateAwakeningAndDecreeHasACutIn`.
 
+- **User report (borders + units moving), fixed:** effect sheets now fade through an oval inscribed in each frame
+  (`produce_move_fx.matte(round_=True)`, smoothstep from r .38 to 1) and beam strips fade at both ends, so a layer
+  that filled its H3 frame (Flare's light pillar, Rime Sweep's mist, Chilling Touch) no longer draws the frame as a
+  box; all 75 layers were rebuilt from their renders (old sheets in `BattleMotion/_cm1031/keep/Fx_Moves_v1/`).
+  A staged melee strike now holds at the target until the camera's pull-back (`UnitVis.HoldTo`,
+  `BattleStage.HoldForStage`) and goes home with it; before, the fighter left the shot 0.2 s after contact while the
+  camera still framed the hit, then the camera snapped after her. Measured: reaction clips still slide the feet
+  10-24% of body height (H3 shuffles the stance), idle loops 0-2%.
+- **Unresolved:** the user saw `KeyNotFoundException: The given key 'BattleCard'` once; the console was cleared on Play
+  and two minutes of autoplay plus staged probes did not reproduce it. The only BattleCard-keyed map is `cardVis`
+  (every lookup guarded). Note that the default scene now starts its own "Adams Haven Battle Sandbox" BattleMode;
+  probes must drive that instance (a second BattleMode draws under it).
+
 ## 5. Open items (priority order)
 
 1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.
