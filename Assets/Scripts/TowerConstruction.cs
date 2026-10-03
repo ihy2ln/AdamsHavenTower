@@ -114,12 +114,14 @@ namespace AdamsHaven.Tower
                 if (floor == null) return;
                 if (work.side < 0) floor.west++; else floor.east++;
                 if (work.floor == 0) PlaceGates();
+                TouchLayout();
                 Note("Finished the " + (work.side < 0 ? "west" : "east") + " foundation of floor " + work.floor + ".");
             }
             else if (work.kind == "floor")
             {
                 if (Floor(work.floor) != null) return;
                 State.floors.Add(new TowerFloor { number = work.floor });
+                TouchLayout();
                 Note("Floor " + work.floor + " is open.");
             }
         }

@@ -175,7 +175,7 @@ namespace AdamsHaven.Tower
         // ---- Temperament -----------------------------------------------------------
 
         public static bool HasTrait(TowerResident resident, string trait)
-        { return resident != null && resident.trait == trait; }
+        { return resident != null && (resident.trait == trait || resident.trait2 == trait); }
 
         public void RollTemperament(TowerResident resident)
         {
@@ -275,6 +275,9 @@ namespace AdamsHaven.Tower
             }
             if (State.festivalSeconds > 0) list.Add(new TowerThought("Harvest festival", 16));
             if (resident.ageStage == 0) AddSocialThoughts(resident, list);
+            AddDepthThoughts(resident, list);
+            AddDistrictThoughts(resident, list);
+            AddOutpostThoughts(resident, list);
             return list;
         }
 
@@ -302,6 +305,7 @@ namespace AdamsHaven.Tower
             float mult = 1;
             if (HasTrait(resident, "Industrious")) mult *= 1.10f;
             if (HasTrait(resident, "Night Owl") && !IsDaylight(Hour())) mult *= 1.08f;
+            mult *= InspirationBonus(resident, "work");
             if (resident.breakSeconds > 0) mult = 0;
             return mult;
         }
@@ -399,9 +403,9 @@ namespace AdamsHaven.Tower
             }
             foreach (var resident in State.residents)
             {
-                if (resident.origin == "body" || resident.away) continue;
+                if (resident.origin == "body" || resident.away || IsPosted(resident)) continue;
                 bool child = resident.ageStage == 1;
-                if (resource == "food") perSecond += (child ? 0.11f : 0.15f) * 2f / 28f;
+                if (resource == "food") perSecond += (child ? 0.11f : 0.15f) * 2f / 28f * MealFactor(resident);
                 else if (resource == "water") perSecond += (child ? 0.13f : 0.17f) * 2f / 30f;
             }
             return perSecond * 60f;
@@ -461,7 +465,7 @@ namespace AdamsHaven.Tower
         public float ThreatTarget()
         {
             float pressure = BiologicalPopulation() * 1.2f + State.rooms.Count * 0.25f +
-                Mathf.Max(0, State.day - 3) * 0.5f + State.heartRank * 3f;
+                Mathf.Max(0, State.day - 3) * 0.5f + State.heartRank * 3f + DistrictThreat();
             float defence = 0;
             foreach (var resident in State.residents)
                 if (resident.ageStage == 0 && !resident.downed && resident.priorityDefense > 0)
@@ -483,6 +487,7 @@ namespace AdamsHaven.Tower
             foreach (var resident in State.residents)
             {
                 if (resident.origin == "body" || resident.ageStage != 0) continue;
+                if (live) TickDepth(resident, dt);
                 if (resident.breakSeconds > 0)
                 {
                     ApplyBreak(resident, dt);
@@ -502,6 +507,7 @@ namespace AdamsHaven.Tower
                 }
                 else resident.moodLow = Mathf.Max(0, resident.moodLow - dt * 2);
             }
+            FlushDepartures();
         }
 
         // Chooses what the storyteller sends, weighted by threat so the early Tower stays kind.
@@ -511,8 +517,9 @@ namespace AdamsHaven.Tower
             float threat = State.threat;
             var pool = new List<string> { "fire", "pests" };
             if (State.residents.Count >= 5 && threat >= 20) pool.Add("illness");
-            if (threat >= 35) pool.Add("raiders");
-            if (threat >= 55) pool.Add("raiders");
+            var teller = Storyteller;
+            if (threat >= teller.raidThreat) pool.Add("raiders");
+            if (threat >= 55 && teller.doubleRaids) pool.Add("raiders");
             if (State.rooms.Exists(r => r.floor < 0 && r.type != "heart")) pool.Add("cave_in");
             return pool[Mathf.Min(pool.Count - 1, (int)(Random01() * pool.Count))];
         }
@@ -520,7 +527,8 @@ namespace AdamsHaven.Tower
         private bool TryPositiveEvent()
         {
             float roll = Random01();
-            if (roll < 0.13f)
+            float kind = Storyteller.positive;   // a calm storyteller sends friendlier visitors more often
+            if (roll < 0.13f * kind)
             {
                 int gift = 20 + Mathf.Min(100, State.residents.Count * 4);
                 State.food = Mathf.Min(StockCap(), State.food + gift);
@@ -529,14 +537,14 @@ namespace AdamsHaven.Tower
                 Emit("caravan", 0, 0, gift.ToString());
                 return true;
             }
-            if (roll < 0.20f && State.residents.Count >= 3)
+            if (roll < 0.20f * kind && State.residents.Count >= 3)
             {
                 State.festivalSeconds = 90;
                 Note("The Tower is holding a harvest festival. Spirits are high.");
                 Emit("festival", 0, 0, "");
                 return true;
             }
-            if (roll < 0.26f && BiologicalPopulation() + State.pendingVisitors < PopulationCap())
+            if (roll < 0.26f * kind && BiologicalPopulation() + State.pendingVisitors < PopulationCap())
             {
                 State.pendingVisitors = Mathf.Min(2, State.pendingVisitors + 1);
                 Note("A traveller has come to the Gate on their own.");
@@ -549,7 +557,7 @@ namespace AdamsHaven.Tower
         private float NextEventDelay()
         {
             float pace = Mathf.Lerp(1.2f, 0.65f, Mathf.Clamp01(State.threat / 100f));
-            return (190 + Random01() * 130 + State.incidents.Count * 50) * pace;
+            return (190 + Random01() * 130 + State.incidents.Count * 50) * pace * Storyteller.delay;
         }
     }
 }

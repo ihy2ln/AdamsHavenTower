@@ -87,18 +87,19 @@ namespace AdamsHaven.Tower
                         resident.charge = Mathf.Min(2160, resident.charge + 4 * dt);
                     continue;
                 }
-                if (resident.away) continue;
+                if (resident.away || IsPosted(resident)) continue;   // an outpost or the road feeds them
                 resident.hunger = Mathf.Max(0, resident.hunger - (resident.ageStage == 1 ? 0.11f : 0.15f) *
                     (HasTrait(resident, "Stout") ? 0.85f : 1f) * dt);
                 resident.thirst = Mathf.Max(0, resident.thirst - (resident.ageStage == 1 ? 0.13f : 0.17f) * dt);
                 resident.rest = Mathf.Max(0, resident.rest - (resident.ageStage == 1 ? 0.04f : 0.09f) * dt);
                 float ration = HasTrait(resident, "Frugal") ? 1.7f : 2f;
-                if (resident.hunger < 65 && State.food >= ration)
-                { State.food -= ration; resident.hunger = Mathf.Min(100, resident.hunger + 28); }
+                float meal = ration * MealFactor(resident);   // Rationing and nearby kitchens (TowerDistricts.cs)
+                if (resident.hunger < 65 && State.food >= meal)
+                { State.food -= meal; resident.hunger = Mathf.Min(100, resident.hunger + 28); }
                 if (resident.thirst < 65 && State.water >= ration)
                 { State.water -= ration; resident.thirst = Mathf.Min(100, resident.thirst + 30); }
                 if (resident.ageStage == 1 || resident.currentTask == "rest")
-                    resident.rest = Mathf.Min(100, resident.rest + 0.70f * dt);
+                    resident.rest = Mathf.Min(100, resident.rest + 0.70f * dt * RestFactor(resident));
                 bool shortage = resident.hunger < 15 || resident.thirst < 15 || State.firewood <= 0;
                 float moodTarget = MoodTarget(resident);
                 if (shortage) moodTarget = Mathf.Min(moodTarget, 28);
@@ -133,6 +134,7 @@ namespace AdamsHaven.Tower
                         resident.origin = "villager";
                         resident.name = "Silverbrook Youth " + resident.id;
                         resident.hunger = resident.thirst = resident.rest = 80;
+                        GiveDepth(resident);
                         Note(resident.name + " is ready to work.");
                     }
                     continue;
@@ -177,7 +179,7 @@ namespace AdamsHaven.Tower
         {
             foreach (var resident in State.residents.ToArray())
             {
-                if (!resident.exploring) continue;
+                if (!resident.exploring || IsPosted(resident)) continue;   // postings are not scavenging trips
                 resident.exploreSeconds += dt;
                 while (resident.exploreSeconds >= 60)
                 {
@@ -392,7 +394,8 @@ namespace AdamsHaven.Tower
                 }
                 else if (resident.currentTask == "care")
                 {
-                    float quality = (State.tonics > 0 ? 1f : 0.45f) * CareBonus();
+                    float quality = (State.tonics > 0 ? 1f : 0.45f) * CareBonus() * InspirationBonus(resident, "care") *
+                        CareFactor(room);
                     TowerResident patient = null;
                     foreach (var other in State.residents)
                         if (other.id != resident.id &&
@@ -468,7 +471,7 @@ namespace AdamsHaven.Tower
         private void TickVisitors(float dt)
         {
             if (!HasGate() || BiologicalPopulation() + State.pendingVisitors >= PopulationCap()) return;
-            State.gateTimer += dt;
+            State.gateTimer += dt * GateArrivalFactor();   // appealing floors and an Open Gate draw wanderers sooner
             if (State.gateTimer < 240) return;
             State.gateTimer -= 240;
             State.pendingVisitors = Mathf.Min(2, State.pendingVisitors + 1);
@@ -491,14 +494,16 @@ namespace AdamsHaven.Tower
                     if (incident.kind == "fire" && resident.currentTask == "fire")
                     { response += (0.45f + resident.sight * 0.16f + resident.tool * 0.2f) * brave; defenders++; }
                     else if (incident.kind == "illness" && resident.currentTask == "care" && State.tonics > 0)
-                    { response += (0.35f + resident.wit * 0.16f) * (HasTrait(resident, "Kind") ? 1.2f : 1f); defenders++; }
+                    { response += (0.35f + resident.wit * 0.16f) * (HasTrait(resident, "Kind") ? 1.2f : 1f) *
+                        InspirationBonus(resident, "care"); defenders++; }
                     else if (incident.kind == "cave_in" && resident.currentTask == "repair")
                     { response += 0.30f + resident.might * 0.15f + resident.tool * 0.25f; defenders++; }
                     else if ((incident.kind == "raiders" || incident.kind == "pests") &&
                         (resident.currentTask == "defense" || resident.currentTask == "guard"))
-                    { response += (0.35f + resident.might * 0.17f + resident.weapon * 0.42f) * brave; defenders++; }
+                    { response += (0.35f + resident.might * 0.17f + resident.weapon * 0.42f) * brave *
+                        InspirationBonus(resident, "guard"); defenders++; }
                 }
-                incident.hp -= response * dt;
+                incident.hp -= response * dt * SafetyFactor(room);
                 if (incident.hp <= 0)
                 {
                     State.incidents.Remove(incident);
@@ -518,7 +523,7 @@ namespace AdamsHaven.Tower
                 if (room.type != "heart" && room.type != "gate")
                     room.condition = Mathf.Max(0, room.condition -
                         (incident.kind == "cave_in" ? 0.03f : 0.015f) * incident.severity * dt *
-                        (incident.kind == "fire" ? FireDamageScale() : 1f));
+                        (incident.kind == "fire" ? FireDamageScale() : 1f) * HazardFactor(room, incident.kind));
                 if (incident.kind == "raiders" && defenders == 0)
                 {
                     // Undefended raiders loot, and in the Heart's own chamber they wound it.
@@ -568,7 +573,7 @@ namespace AdamsHaven.Tower
 
         private void TickEvents(float dt)
         {
-            if (State.incidents.Count >= 2) return;
+            if (State.incidents.Count >= Storyteller.maxIncidents) return;
             State.eventCooldown -= dt;
             if (State.eventCooldown > 0) return;
             bool guidedIncident = State.tutorialStep == 5;
@@ -577,6 +582,7 @@ namespace AdamsHaven.Tower
             var rooms = State.rooms.FindAll(r => r.type != "heart" && r.type != "gate" &&
                 !State.incidents.Exists(i => i.roomUid == r.uid));
             if (rooms.Count == 0) return;
+            if (!guidedIncident && TryStartSiege()) return;   // a Dire tower draws a siege instead (GDD 9.6)
             if (!guidedIncident && State.eventTimer > 1 && TryPositiveEvent()) return;
             string kind = ChooseIncident(guidedIncident);
             if (kind == "cave_in")

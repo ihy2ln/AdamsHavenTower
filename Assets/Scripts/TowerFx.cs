@@ -330,6 +330,23 @@ public sealed class TowerFx : MonoBehaviour
             }
             case "build": Burst(dustBurst, at + Vector3.down * 0.5f, 22); Burst(sparkleBurst, at, 10,
                 new Color(1, 0.9f, 0.55f)); Float("Built", at, new Color(1, 0.9f, 0.6f)); break;
+            case "leaving": Float(text + " wants to leave", at, new Color(1f, 0.55f, 0.45f)); break;
+            case "depart": Burst(smokeBurst, at, 10, new Color(0.6f, 0.6f, 0.7f, 0.8f)); Float(text + " left the Tower", at,
+                new Color(0.8f, 0.8f, 0.9f)); break;
+            case "inspired": Burst(sparkleBurst, at, 22, new Color(1f, 0.85f, 0.35f)); Float(text, at, new Color(1f, 0.88f, 0.45f)); break;
+            case "outpost": Burst(sparkleBurst, at, 24, new Color(0.6f, 0.95f, 0.7f)); Float("Outpost founded", at,
+                new Color(0.7f, 1f, 0.75f)); break;
+            case "outpost_site": Float("Outpost site: " + text, at, new Color(0.75f, 0.95f, 1f)); break;
+            case "caravan_home": Float("Caravan from " + text, at, new Color(1, 0.85f, 0.5f)); break;
+            case "outpost_raid": Pulse(at, IncidentColor("raiders"), 2f); Float(text + " raided", at, new Color(1f, 0.45f, 0.4f)); break;
+            case "auto_depart": Float("Party left for " + text, at, new Color(0.85f, 0.95f, 1f)); break;
+            case "district": Float(text + " zoned", at, new Color(0.8f, 0.9f, 1f)); break;
+            case "siege_warning": Float("A siege is gathering", at, new Color(1f, 0.45f, 0.35f)); break;
+            case "siege_won": Burst(sparkleBurst, at, 30, new Color(1f, 0.85f, 0.4f)); Float("Siege broken!", at,
+                new Color(1f, 0.9f, 0.5f)); break;
+            case "siege_lost": Burst(smokeBurst, at, 24); Float("LAST STAND", at, new Color(1f, 0.35f, 0.3f)); break;
+            case "move": Burst(dustBurst, at + Vector3.down * 0.5f, 16); Float("Moved", at, new Color(0.85f, 0.92f, 1f)); break;
+            case "demolish": Burst(dustBurst, at, 26); Float("Demolished", at, new Color(0.9f, 0.75f, 0.6f)); break;
             case "upgrade": Burst(sparkleBurst, at, 26, new Color(1, 0.85f, 0.4f)); Pulse(at, new Color(1, 0.85f, 0.4f), 2.4f);
                 Float("LEVEL " + text, at, new Color(1, 0.85f, 0.4f)); break;
             case "rush_ok": Burst(sparkleBurst, at, 30, new Color(1, 0.86f, 0.3f)); Pulse(at, new Color(1, 0.86f, 0.3f), 2.4f);

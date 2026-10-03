@@ -69,6 +69,15 @@ namespace AdamsHaven.Tower
         public string breakKind = "";
         public int xp;
         public float criticalSeconds;
+        // TT 10.30.0 colony depth (TowerColonyDepth.cs): newcomers carry a second trait and a backstory
+        public string trait2 = "";
+        public string backstory = "";          // TowerRules.Backstories id; may bar one job
+        public float leaveSeconds;             // villagers: time spent miserable, toward walking out of the Gate
+        public float contentSeconds;           // time spent delighted, toward an inspiration
+        public string inspiration = "";        // "work", "care" or "guard" while inspirationSeconds > 0
+        public float inspirationSeconds;
+        public string posting = "";            // "" at home, "auto" on an auto expedition, "outpost:<region>" stationed
+        public float postedSeconds;            // how long this posting has lasted
 
         public int Stat(string key)
         {
@@ -180,6 +189,24 @@ namespace AdamsHaven.Tower
         public TowerRun run = new TowerRun();
         public string lastLayout = "";
         public int layoutVersion;    // 1 = two Gates, wings both sides of the Heart (TowerRules.LayoutVersion)
+        // TT 10.30.0 colony layer (TowerLayoutTools.cs and the files it introduced)
+        public int colonyVersion;    // TowerRules.ColonyVersion that migrated this save
+        public int colonyRandom;     // the colony layer's own xorshift stream, so randomState sequences never shift
+        public string storyteller = "balanced";   // TowerRules.Storytellers id: calm, balanced or chaotic
+        public List<TowerDistrict> districts = new List<TowerDistrict>();   // zoned floor bands (TowerDistricts.cs)
+        public int nextDistrictId = 1;
+        public float policyCarry;    // district policy upkeep accrued but not yet paid
+        public bool policiesLapsed;  // true while the treasury cannot pay policy upkeep
+        public bool hasAutoRun;                                 // an auto expedition is out (TowerAutoExpedition.cs)
+        public TowerAutoRun autoRun = new TowerAutoRun();
+        public string autoReport = "";
+        public string autoSigilDate = "";
+        public int autoSigilsToday;
+        public List<TowerOutpost> outposts = new List<TowerOutpost>();   // staffed colonies in conquered regions
+        public List<string> outpostSitesSeen = new List<string>();
+        public float siegeCooldown;  // live seconds before Dire threat can draw a Gate siege (TowerSiege.cs)
+        public float siegeWarning;   // seconds until a gathering siege hits; 0 when none
+        public int siegesWon, siegesLost;
     }
 
     public sealed class TowerRoomDef
@@ -304,6 +331,7 @@ namespace AdamsHaven.Tower
             MigrateLayout();
             if (State.researching == null) State.researching = "";
             MigrateResearch();
+            MigrateColony();
             if (State.introPhase == "complete") { RefillGoals(); RefreshDaily(); }
             State.heartRank = Mathf.Clamp(State.heartRank, 1, TowerTiers.MaxRank);
             foreach (var room in State.rooms)
@@ -365,6 +393,7 @@ namespace AdamsHaven.Tower
             if (x > CoreX && type != "gate" && type != "heart") room.flip = true;
             State.rooms.Add(room);
             roomIndex = null;
+            TouchLayout();
             return room;
         }
 
@@ -562,6 +591,8 @@ namespace AdamsHaven.Tower
             if (Floor(number) != null) return "Floor already open.";
             if (FloorWork(number) != null) return "That floor is already being built.";
             if (Floor(number - 1) == null && Floor(number + 1) == null) return "Open floors outward from the Heart.";
+            string capped = FloorCapReason(number);   // GDD 8.4: the Heart's rank sets how far the tower reaches
+            if (capped != null) return capped;
             int cost = FloorOpenCost(number);
             if (State.celestium < cost) return "Not enough Celestium.";
             State.celestium -= cost;
@@ -891,7 +922,8 @@ namespace AdamsHaven.Tower
                 return "Upgrades need wood and stone.";
             State.gold -= cost; State.wood -= material; State.stone -= material; room.level++;
             room.x = newX; room.width = newWidth;
-            Note("Upgraded " + TowerCatalog.Get(room.type).displayName + " to rank " + TowerTiers.Tier(room.level) + ".");
+            TouchLayout();
+            Note("Upgraded" + TowerCatalog.Get(room.type).displayName + " to rank " + TowerTiers.Tier(room.level) + ".");
             Bump("upgrade");
             Emit("upgrade", room.uid, 0, room.level.ToString());
             return null;
@@ -902,9 +934,15 @@ namespace AdamsHaven.Tower
             var room = Room(roomUid);
             if (room == null || room.type == "heart" || room.type == "gate") return "The Heart and Gate stay.";
             if (State.incidents.Exists(i => i.roomUid == roomUid)) return "Resolve the incident first.";
-            foreach (var resident in State.residents)
-            { if (resident.homeRoom == roomUid) resident.homeRoom = 0; if (resident.jobRoom == roomUid) resident.jobRoom = 0; }
-            State.rooms.Remove(room); roomIndex = null; Note("Demolished " + room.type + "."); return null;
+            if (State.introPhase != "complete") return "Finish founding the Tower first.";
+            int refund = DemolishRefund(room);
+            State.rooms.Remove(room); roomIndex = null;
+            Evacuate(roomUid);
+            TouchLayout();
+            State.gold += refund;
+            Note("Demolished the " + TowerCatalog.Get(room.type).displayName + (refund > 0 ? " and recovered " + refund + " gold." : "."));
+            Emit("demolish", 0, 0, TowerCatalog.Get(room.type).displayName);
+            return null;
         }
 
         private float Random01()
@@ -920,6 +958,7 @@ namespace AdamsHaven.Tower
             if (State.introPhase != "complete" || State.defeated) return;
             RefreshDaily();
             TickResearch();
+            TickAutoExpedition();
             int dayBefore = State.day;
             float remaining = Mathf.Max(0, seconds);
             while (remaining > 0 && !State.defeated)
@@ -958,6 +997,8 @@ namespace AdamsHaven.Tower
 
         public string Recall(int residentId)
         {
+            var resident = Resident(residentId);
+            if (IsPosted(resident)) return resident.posting == "auto" ? RecallAuto() : Unstation(residentId);
             return ReturnExplorer(residentId);
         }
     }

@@ -533,7 +533,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     // are dark, and room layout changes such as upgrades.
     private int SceneSignature()
     {
-        int hash = rules.DarkRoomCount * 7919;
+        int hash = rules.DarkRoomCount * 7919 + rules.LayoutStamp * 15485863 +   // moves, demolitions, districts
+            TowerArtDirector.OverlaySignature(rules);
         foreach (var incident in rules.State.incidents) hash = hash * 31 + incident.roomUid;
         foreach (var room in rules.State.rooms) hash = hash * 17 + room.level + (rules.IsPowered(room) ? 0 : 3);
         foreach (var work in rules.State.works) hash = hash * 13 + work.floor * 101 + work.x + work.side * 7 + work.kind.Length;
@@ -791,7 +792,22 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
 
     // Building only happens while a room card is in hand (or during the founding Shack step).
     public bool Placing { get { return placing || (rules != null && rules.State.introPhase == "shack"); } }
-    public void CancelPlacing() { placing = false; }
+    public void CancelPlacing() { placing = false; movingRoom = 0; }
+
+    // Moving a placed room: the next tap on a floor picks where it goes (TowerRules.MoveRoom keeps everything in it).
+    private int movingRoom;
+    public bool Moving { get { return movingRoom > 0 && rules != null && rules.Room(movingRoom) != null; } }
+    public TowerRoom MovingRoom { get { return Moving ? rules.Room(movingRoom) : null; } }
+
+    public void BeginMove(int uid)
+    {
+        var room = rules == null ? null : rules.Room(uid);
+        if (room == null) return;
+        placing = false;
+        movingRoom = uid;
+        message = "Tap where the " + TowerCatalog.Get(room.type).displayName + " should go.";
+        if (hud != null) hud.Refresh();
+    }
     public string CurrentMessage { get { return message; } }
 
     public bool TryResidentPosition(int id, out Vector3 position)
@@ -1034,6 +1050,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         int number = Mathf.RoundToInt(world.y / Storey);
         int x = Mathf.FloorToInt(world.x / Cell + 17.5f);
         if (Mathf.Abs(world.y - number * Storey) > 1.05f) return;
+        if (Moving) { PlaceMovingRoom(number, x); return; }
         var room = rules.RoomAt(number, x);
         if (room != null) { SelectRoomById(room.uid); return; }
         var site = rules.WorkRoomAt(number, x);
@@ -1064,6 +1081,24 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             }
             Apply(error == null ? rules.Build(buildType, number, start) : error);
         }
+    }
+
+    // A multi-bay room may be tapped on any of its future cells: try the tapped cell as each bay in turn.
+    private void PlaceMovingRoom(int number, int x)
+    {
+        var moving = MovingRoom;
+        int start = x;
+        string error = rules.CanMoveRoom(moving.uid, number, start);
+        for (int offset = 1; error != null && offset < moving.width; offset++)
+        {
+            if (rules.CanMoveRoom(moving.uid, number, x - offset) != null) continue;
+            start = x - offset;
+            error = null;
+        }
+        if (error != null) { Apply(error); return; }
+        movingRoom = 0;
+        Apply(rules.MoveRoom(moving.uid, number, start));
+        selectedRoom = moving.uid;
     }
 
     private bool OverUI(Vector2 screen)

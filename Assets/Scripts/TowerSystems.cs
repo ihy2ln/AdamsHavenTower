@@ -28,7 +28,7 @@ namespace AdamsHaven.Tower
                     TraitWorkMultiplier(resident);
             }
             if (rate <= 0) return 0;   // nobody producing: skip the neighbour scan
-            return rate * Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room);
+            return rate * Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room) * DistrictBonus(room);
         }
 
         public float AssignmentImpact(TowerResident resident, TowerRoom room)
@@ -44,7 +44,7 @@ namespace AdamsHaven.Tower
             return (0.35f + MatchScore(resident, room) * 0.19f) *
                 Mathf.Lerp(0.65f, 1.15f, resident.happiness / 100f) * need *
                 TraitWorkMultiplier(resident) *
-                Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room);
+                Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room) * DistrictBonus(room);
         }
 
         public string TaskExplanation(TowerResident resident)
@@ -54,6 +54,7 @@ namespace AdamsHaven.Tower
             if (resident.downed) return "Downed: a resident with care priority and tonics must rescue them.";
             if (resident.breakSeconds > 0) return "Mood break: too unhappy to work for a moment.";
             if (resident.currentTask == "rest" && Sleeping(resident)) return "Asleep: keeping a " + resident.schedule + " schedule.";
+            if (IsPosted(resident)) return "Away: " + PostingLabel(resident) + ".";
             if (resident.exploring) return "Exploring for " + resident.exploreChoice + ".";
             if (resident.currentTask != "idle")
                 return resident.currentRoom != resident.targetRoom ? "Traveling to " + resident.currentTask + "." :
@@ -117,6 +118,8 @@ namespace AdamsHaven.Tower
             var resident = Resident(residentId);
             if (resident == null || resident.ageStage != 0) return "Choose an adult resident.";
             if (value < 0 || value > 3) return "Priority must be between 0 and 3.";
+            if (value > 0 && Incapable(resident) == job)
+                return resident.name + " will not do " + job + " work (" + Backstory(resident.backstory).name + ").";
             switch (job)
             {
                 case "production": resident.priorityProduction = value; break;
@@ -179,6 +182,7 @@ namespace AdamsHaven.Tower
             resident.wit = 2 + (int)(Random01() * 5);
             resident.grace = 2 + (int)(Random01() * 5);
             resident.luck = 2 + (int)(Random01() * 5);
+            GiveDepth(resident);
             State.pendingVisitors--;
             Note(resident.name + " joined the Tower (" + resident.trait + ").");
             Bump("recruit");
@@ -236,7 +240,9 @@ namespace AdamsHaven.Tower
             TickWork(dt, live);
             TickRooms(dt);
             TickVisitors(dt);
-            if (live) { TickIncidents(dt); TickEvents(dt); }
+            TickDistricts(dt);
+            TickOutposts(dt, live);
+            if (live) { TickSiege(dt); TickIncidents(dt); TickEvents(dt); }
             // DEF-8 Celestial aegis: a calm Heart chamber slowly mends the Heart.
             if (Researched("DEF-8") && State.heartHp > 0 && State.heartHp < HeartMaxHp(State.heartRank) &&
                 !State.incidents.Exists(i => i.roomUid == Room0("heart")))

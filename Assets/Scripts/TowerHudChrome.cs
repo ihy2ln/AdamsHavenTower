@@ -300,7 +300,8 @@ public sealed partial class TowerHud
         if (heartGlow.sprite != TowerUiSkin.Ring) heartGlow.rectTransform.sizeDelta = new Vector2(118, 98);
         dockHeart = IconButtonAt(t, "Dock heart", "icons_dock", "heart", "Heart", 186, 1, 68, OpenHeart, Violet);
         dockExpeditions = IconButtonAt(t, "Dock expeditions", "icons_dock", "map", "Expeditions", 288, 14, 52,
-            OpenGuildBoard, Teal);
+            null, Teal);
+        AttachHold(dockExpeditions, ExpeditionItems, true, OpenGuildBoard);   // hold: map, auto expedition, outposts
         dockBattle = IconButtonAt(t, "Dock battle", "icons_dock", "battle", "Battle", 374, 14, 52,
             () => { CloseAllPopups(); tower.LaunchBattleExpedition(); }, Alert);
     }

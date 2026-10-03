@@ -76,6 +76,9 @@ public sealed partial class TowerHud : MonoBehaviour
     private readonly Text[] rosterLabels = new Text[4], buildLabels = new Text[6], priorityLabels = new Text[6];
     private Button collect, rush, upgrade, assign, exploreSupplies, exploreRelics, explorePatrol, recall;
     private Button craftTool, craftWeapon, familyPair, tutorialAction, scheduleButton;
+    private Button moveRoom, demolishRoom;
+    private int demolishArmedRoom;
+    private float demolishArmedUntil;
     private Image tutorialPanel, saveOverlay, defeatOverlay, advicePanel;
     private Text defeatDetail;
     private Text tutorialTitle;
@@ -114,7 +117,8 @@ public sealed partial class TowerHud : MonoBehaviour
         safeRoot.GetComponent<Image>().raycastTarget = false;
         BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
         BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
-        BuildHeartPopup(); BuildAlertsPopup();
+        BuildHeartPopup(); BuildAlertsPopup(); BuildWorkPopup(); BuildDistrictsPopup();
+        BuildAutoPopup(); BuildOutpostsPopup();
         BuildSaves(); BuildDefeat(); BuildFlyout(); BuildDev();
         UpdateSafeArea();
         Refresh();
@@ -145,7 +149,7 @@ public sealed partial class TowerHud : MonoBehaviour
         {
             if (flyoutPanel.gameObject.activeSelf) CloseFlyout();
             else if (AnyPopupOpen()) CloseAllPopups();
-            else if (tower.Placing) { tower.CancelPlacing(); Refresh(); }
+            else if (tower.Placing || tower.Moving) { tower.CancelPlacing(); Refresh(); }
         }
     }
 
@@ -321,13 +325,15 @@ public sealed partial class TowerHud : MonoBehaviour
             new FlyItem("PRODUCTION", () => OpenBuild("produce")),
             new FlyItem("STORAGE", () => OpenBuild("store")),
             new FlyItem("SERVICES", () => OpenBuild("service")),
-            new FlyItem("FLOORS AND DIGGING", () => TogglePopup(popupFloors))
+            new FlyItem("FLOORS AND DIGGING", () => TogglePopup(popupFloors)),
+            new FlyItem("DISTRICTS AND ZONING", OpenDistricts)
         };
     }
 
     private FlyItem[] PeopleItems()
     {
         return new[] {
+            new FlyItem("WORK GRID (ALL)", OpenWorkGrid),
             new FlyItem("WORK PRIORITIES", () => OpenPeople("work")),
             new FlyItem("MOODS", () => OpenPeople("mood")),
             new FlyItem("GUILD EXPEDITIONS", OpenGuildBoard),
@@ -456,7 +462,9 @@ public sealed partial class TowerHud : MonoBehaviour
         return popupBuild.gameObject.activeSelf || popupFloors.gameObject.activeSelf ||
             popupTasks.gameObject.activeSelf || popupMenu.gameObject.activeSelf ||
             popupHeart.gameObject.activeSelf || popupAlerts.gameObject.activeSelf ||
-            popupGuild.gameObject.activeSelf;
+            popupGuild.gameObject.activeSelf || popupWork.gameObject.activeSelf ||
+            popupDistricts.gameObject.activeSelf || popupAuto.gameObject.activeSelf ||
+            popupOutposts.gameObject.activeSelf;
     }
 
     private void HidePopups()
@@ -464,7 +472,9 @@ public sealed partial class TowerHud : MonoBehaviour
         popupBuild.gameObject.SetActive(false); popupFloors.gameObject.SetActive(false);
         popupTasks.gameObject.SetActive(false); popupMenu.gameObject.SetActive(false);
         popupHeart.gameObject.SetActive(false); popupAlerts.gameObject.SetActive(false);
-        popupGuild.gameObject.SetActive(false);
+        popupGuild.gameObject.SetActive(false); popupWork.gameObject.SetActive(false);
+        popupDistricts.gameObject.SetActive(false); popupAuto.gameObject.SetActive(false);
+        popupOutposts.gameObject.SetActive(false);
     }
 
     private void CloseAllPopups()
@@ -519,7 +529,7 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildFloorsPopup()
     {
-        popupFloors = MakePopup("Floors popup", 470, 252, false);
+        popupFloors = MakePopup("Floors popup", 470, 296, false);
         TextAt(popupFloors.transform, "Floors title", "FLOORS AND FOUNDATIONS", 16, 10, 380, 28, 17, Gold);
         CloseButton(popupFloors.transform, 428, 10, CloseAllPopups);
         ButtonAt(popupFloors.transform, "Floor down", "FLOOR −", 14, 46, 130, 42,
@@ -540,6 +550,7 @@ public sealed partial class TowerHud : MonoBehaviour
             () => tower.FocusOnFloor(0), Teal, 13);
         ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 238, 206, 218, 36,
             () => tower.FocusOnFloor(HighestFloor()), Teal, 13);
+        ButtonAt(popupFloors.transform, "Districts", "DISTRICTS AND ZONING", 14, 250, 442, 36, OpenDistricts, Violet, 13);
     }
 
     private void BuildTasksPopup()
@@ -596,8 +607,10 @@ public sealed partial class TowerHud : MonoBehaviour
         CloseButton(t, 538, 10, CloseAllPopups);
         Divider(t, 12, 40, 556);
         guildInfo = TextAt(t, "Guild info", "", 16, 46, 548, 26, 14, Cream);
-        guildMap = ButtonAt(t, "Expedition map", "OPEN THE EXPEDITION MAP", 14, 76, 552, 74,
-            () => { CloseAllPopups(); tower.OpenExpedition(); }, Teal, 19);
+        guildMap = ButtonAt(t, "Expedition map", "OPEN THE EXPEDITION MAP", 14, 76, 360, 74,
+            () => { CloseAllPopups(); tower.OpenExpedition(); }, Teal, 17);
+        ButtonAt(t, "Auto expedition", "AUTO EXPEDITION", 382, 76, 184, 35, OpenAuto, Teal, 13);
+        ButtonAt(t, "Outposts", "OUTPOSTS", 382, 115, 184, 35, OpenOutposts, Violet, 13);
         TextAt(t, "Guild resident title", "SEND A RESIDENT", 16, 160, 300, 26, 16, Gold);
         guildPerson = TextAt(t, "Guild resident", "", 16, 186, 548, 24, 14, Cream);
         guildSupplies = ButtonAt(t, "Guild supplies", "SUPPLIES", 14, 220, 132, 46, () => Explore("supplies"), Teal, 15);
@@ -618,7 +631,8 @@ public sealed partial class TowerHud : MonoBehaviour
         LabelOf(guildMap).text = run != null ? "RESUME EXPEDITION" : "OPEN THE EXPEDITION MAP";
         var person = tower.SelectedPerson;
         guildPerson.text = person == null ? "Select a resident in PEOPLE first." :
-            person.name + (person.exploring ? " is away on an expedition." : person.ageStage != 0 ? " is too young." :
+            person.name + (TowerRules.IsPosted(person) ? " is " + TowerRules.PostingLabel(person) + "." :
+                person.exploring ? " is away on an expedition." : person.ageStage != 0 ? " is too young." :
                 person.downed ? " is down." : " is ready.");
         bool ready = person != null && person.ageStage == 0 && !person.exploring && !person.downed;
         guildSupplies.interactable = guildRelics.interactable = guildPatrol.interactable = ready;
@@ -726,6 +740,26 @@ public sealed partial class TowerHud : MonoBehaviour
         guildOpen = ButtonAt(right.transform, "Guild expeditions", "EXPEDITIONS", 15, 366, 270, 46,
             OpenGuildBoard, Teal, 16);
         guildOpen.gameObject.SetActive(false);
+        moveRoom = ButtonAt(right.transform, "Move room", "MOVE", 15, 418, 128, 40,
+            () => { if (tower.SelectedRoom != null) tower.BeginMove(tower.SelectedRoom.uid); }, Teal, 15);
+        demolishRoom = ButtonAt(right.transform, "Demolish room", "DEMOLISH", 155, 418, 130, 40,
+            ConfirmDemolish, Alert, 14);
+    }
+
+    // DEMOLISH asks for a second tap within three seconds, like NEW GAME.
+    private void ConfirmDemolish()
+    {
+        var room = tower.SelectedRoom;
+        if (room == null) return;
+        if (demolishArmedRoom != room.uid || Time.unscaledTime > demolishArmedUntil)
+        {
+            demolishArmedRoom = room.uid;
+            demolishArmedUntil = Time.unscaledTime + 3f;
+            LabelOf(demolishRoom).text = "TAP TO CONFIRM";
+            return;
+        }
+        demolishArmedRoom = 0;
+        tower.Apply(tower.Rules.Demolish(room.uid));
     }
 
     // ---------------------------------------------------------------- tutorial, overlays
@@ -949,6 +983,10 @@ public sealed partial class TowerHud : MonoBehaviour
         if (popupHeart.gameObject.activeSelf) RefreshHeart(state);
         if (popupAlerts.gameObject.activeSelf) RefreshAlerts(state);
         if (popupMenu.gameObject.activeSelf) RefreshMainMenu(state);
+        if (popupWork.gameObject.activeSelf) RefreshWork();
+        if (popupDistricts.gameObject.activeSelf) RefreshDistricts(state);
+        if (popupAuto.gameObject.activeSelf) RefreshAuto(state);
+        if (popupOutposts.gameObject.activeSelf) RefreshOutposts(state);
         RefreshDev();
         RefreshChip();
     }
@@ -966,10 +1004,17 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void RefreshChip()
     {
-        bool show = tower.Placing && !AnyPopupOpen() && tower.Rules.State.introPhase != "dormant" &&
+        bool show = (tower.Placing || tower.Moving) && !AnyPopupOpen() && tower.Rules.State.introPhase != "dormant" &&
             tower.Rules.State.introPhase != "gate" && tower.Rules.State.introPhase != "choose";
         chipPanel.gameObject.SetActive(show);
         if (!show) return;
+        var moving = tower.MovingRoom;
+        if (moving != null)
+        {
+            chipText.text = "MOVING  " + TowerCatalog.Get(moving.type).displayName.ToUpperInvariant() + "  " +
+                tower.Rules.MoveCost(moving) + "g   -  tap its new place";
+            return;
+        }
         var def = TowerCatalog.Get(tower.BuildType);
         chipText.text = "PLACING  " + (def == null ? "" : def.displayName.ToUpperInvariant() + "  " +
             tower.Rules.BuildCost(def.id) + "g " + tower.Rules.BuildWoodCost(def.id) + "w " +
@@ -986,7 +1031,8 @@ public sealed partial class TowerHud : MonoBehaviour
         threatFill.color = threat < 0.5f ? Color.Lerp(new Color(0.25f, 0.65f, 0.4f), Gold, threat * 2) :
             Color.Lerp(Gold, Alert, (threat - 0.5f) * 2);
         threatText.text = state.introPhase == "complete" ?
-            tower.Rules.ThreatLabel().ToUpperInvariant() + "  ·  HEART " + Mathf.CeilToInt(state.heartHp) :
+            tower.Rules.ThreatLabel().ToUpperInvariant() + "  ·  HEART " + Mathf.CeilToInt(state.heartHp) +
+                (state.siegeWarning > 0 ? "  ·  <color=#ff7060>SIEGE " + TowerRules.Clock(state.siegeWarning) + "</color>" : "") :
             "HEART " + Mathf.CeilToInt(state.heartHp);
         RefreshTopChrome(state);
     }
@@ -1023,11 +1069,12 @@ public sealed partial class TowerHud : MonoBehaviour
         alertsButton.GetComponent<Image>().color = danger ? Alert : Teal;
         stewardTop.GetComponent<Image>().color = state.steward ? Gold : Muted;
         LabelOf(stewardTop).text = state.steward ? "Steward" : "Steward off";
-        dockBuild.GetComponent<Image>().color = tower.Placing || popupBuild.gameObject.activeSelf ||
-            popupFloors.gameObject.activeSelf ? Gold : Teal;
+        dockBuild.GetComponent<Image>().color = tower.Placing || tower.Moving || popupBuild.gameObject.activeSelf ||
+            popupFloors.gameObject.activeSelf || popupDistricts.gameObject.activeSelf ? Gold : Teal;
         var director = tower.GetComponent<TowerArtDirector>();
         dockPeople.GetComponent<Image>().color = director != null && director.ResidentsOpen ? Gold : Teal;
-        dockExpeditions.GetComponent<Image>().color = popupGuild.gameObject.activeSelf ? Gold : Teal;
+        dockExpeditions.GetComponent<Image>().color = popupGuild.gameObject.activeSelf || popupAuto.gameObject.activeSelf ||
+            popupOutposts.gameObject.activeSelf ? Gold : Teal;
         // Gold switches the Heart emblem to its READY art (or a gold rim on the flat skin).
         dockHeart.GetComponent<Image>().color = HeartReady() ? Gold : Violet;
         bool started = state.introPhase != "dormant" && state.introPhase != "gate";
@@ -1047,8 +1094,15 @@ public sealed partial class TowerHud : MonoBehaviour
         var rules = tower.Rules;
         var above = rules.FloorWork(focus + 1);
         var below = rules.FloorWork(focus - 1);
-        floorOpenAbove.interactable = rules.Floor(focus + 1) == null && above == null && focus < TowerRules.FloorMax;
-        floorOpenBelow.interactable = rules.Floor(focus - 1) == null && below == null && focus > TowerRules.FloorMin;
+        floorOpenAbove.interactable = rules.Floor(focus + 1) == null && above == null && focus < TowerRules.FloorMax &&
+            rules.FloorCapReason(focus + 1) == null;
+        floorOpenBelow.interactable = rules.Floor(focus - 1) == null && below == null && focus > TowerRules.FloorMin &&
+            rules.FloorCapReason(focus - 1) == null;
+        // GDD 8.4: past the Heart's reach the button names the rank that opens the floor.
+        if (rules.Floor(focus + 1) == null && rules.FloorCapReason(focus + 1) != null && focus < TowerRules.FloorMax)
+            LabelOf(floorOpenAbove).text = "NEEDS HEART " + TowerTiers.Tier(TowerRules.HeartRankForFloor(focus + 1));
+        if (rules.Floor(focus - 1) == null && rules.FloorCapReason(focus - 1) != null && focus > TowerRules.FloorMin)
+            LabelOf(floorOpenBelow).text = "NEEDS HEART " + TowerTiers.Tier(TowerRules.HeartRankForFloor(focus - 1));
         if (above != null) LabelOf(floorOpenAbove).text = "BUILDING  " + TowerRules.Clock(above.remaining);
         if (below != null) LabelOf(floorOpenBelow).text = "BUILDING  " + TowerRules.Clock(below.remaining);
         var westWork = rules.WingWork(focus, -1);
@@ -1215,8 +1269,13 @@ public sealed partial class TowerHud : MonoBehaviour
         if (selected == null) { moodText.text = "Select a resident."; scheduleButton.interactable = false; return; }
         var thoughts = tower.Rules.Thoughts(selected);
         thoughts.Sort((a, b) => Mathf.Abs(b.value).CompareTo(Mathf.Abs(a.value)));
-        string text = (string.IsNullOrEmpty(selected.trait) ? "No trait" : selected.trait) + "   /   " +
+        string text = TowerRules.TraitLine(selected) + "   /   " +
             (selected.origin == "body" ? "never sleeps" : selected.schedule + " schedule");
+        if (selected.inspirationSeconds > 0)
+            text += "\n<color=#ffd45c>" + TowerRules.InspirationLabel(selected.inspiration) + " " +
+                Mathf.CeilToInt(selected.inspirationSeconds) + "s</color>";
+        else if (TowerRules.CanLeave(selected) && selected.leaveSeconds >= TowerRules.LeaveWarnSeconds)
+            text += "\n<color=#ff7060>Thinking of leaving the Tower</color>";
         int shown = 0;
         foreach (var thought in thoughts)
         {
@@ -1245,6 +1304,7 @@ public sealed partial class TowerHud : MonoBehaviour
             roomDetail.text = "Tap a room in the cutaway.";
             roomAdvice.text = "Drag a resident from the roster onto a room, or select both and press ASSIGN.";
             collect.interactable = rush.interactable = upgrade.interactable = assign.interactable = false;
+            moveRoom.interactable = demolishRoom.interactable = false;
             guildOpen.gameObject.SetActive(false);
             guildAutoOpened = 0;
             return;
@@ -1283,6 +1343,12 @@ public sealed partial class TowerHud : MonoBehaviour
             room.level >= tower.Rules.MaxLevel(room) ? "RANK SSR" :
             room.level >= tower.Rules.RankCap() ? "HEART " + TowerTiers.Tier(room.level + 1) + "+" :
             "TO " + TowerTiers.Tier(room.level + 1) + " " + tower.Rules.UpgradeGoldCost(room) + "g";
+        bool fixedRoom = room.type == "heart" || room.type == "gate";
+        moveRoom.interactable = !fixedRoom && !tower.Moving;
+        LabelOf(moveRoom).text = fixedRoom ? "MOVE" : tower.Moving ? "MOVING..." : "MOVE " + tower.Rules.MoveCost(room) + "g";
+        demolishRoom.interactable = !fixedRoom;
+        if (demolishArmedRoom != room.uid || Time.unscaledTime > demolishArmedUntil)
+            LabelOf(demolishRoom).text = fixedRoom ? "DEMOLISH" : "DEMOLISH +" + tower.Rules.DemolishRefund(room) + "g";
         assign.interactable = tower.SelectedPerson != null && tower.SelectedPerson.ageStage == 0 &&
             !tower.SelectedPerson.downed && !tower.SelectedPerson.exploring &&
             room.type != "heart";

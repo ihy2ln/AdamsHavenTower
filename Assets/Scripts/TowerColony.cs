@@ -309,7 +309,8 @@ namespace AdamsHaven.Tower
             if (!live) return;
             var room = Room(roomUid);
             string where = room == null ? "the Tower" : "the " + TowerCatalog.Get(room.type).displayName;
-            if (bond.opinion <= -35 && (a.happiness < 35 || b.happiness < 35) && Random01() < 0.03f * step / 5f)
+            if (bond.opinion <= -35 && (a.happiness < 35 || b.happiness < 35) && !CurfewAt(room) &&
+                Random01() < 0.03f * step / 5f)
             {
                 foreach (var hurt in new[] { a, b })
                 {
@@ -443,7 +444,7 @@ namespace AdamsHaven.Tower
         {
             return (0.35f + MatchScore(resident, room) * 0.19f) *
                 Mathf.Lerp(0.65f, 1.15f, resident.happiness / 100f) * TraitWorkMultiplier(resident) *
-                Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room);
+                Mathf.Clamp(room.condition / 100f, 0.2f, 1f) * AdjacencyBonus(room) * DistrictBonus(room);
         }
 
         private int AssignedTo(TowerRoom room, bool home)

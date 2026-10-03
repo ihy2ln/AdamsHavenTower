@@ -11,7 +11,7 @@ public static class TowerPerfProbe
     private static readonly string[] Subsystems = {
         "TickConstruction", "TickNeeds", "FlushDeaths", "TickLife", "TickFamilies", "TickExploration", "TickPower",
         "TickSocial", "TickSteward", "PlanJobs", "TickTravel", "TickWork", "TickRooms", "TickVisitors", "TickIncidents",
-        "TickEvents", "CheckHeartStage"
+        "TickEvents", "CheckHeartStage", "TickDistricts", "TickOutposts", "TickSiege"
     };
 
     [MenuItem("Tools/Adams Haven/Tower Perf Probe")]

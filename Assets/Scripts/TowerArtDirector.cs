@@ -51,6 +51,12 @@ public sealed class TowerArtDirector : MonoBehaviour
     public void SetRoomOpen(bool open) { roomOpen = open; }
     private static float X(float cell) { return (cell - 17.5f) * Cell; }
 
+    // Skylines-style info views over the cutaway (TowerHudDistricts.cs): off, districts, coverage or appeal.
+    public static string Overlay = "off";
+    public static int OverlaySignature(TowerRules rules)
+    { return Overlay == "off" || rules == null ? 0 : Overlay.Length * 7919 + rules.OverlayStamp * 31; }
+    private Sprite overlaySprite;
+
     private void LateUpdate()
     {
         if (tower == null || tower.Rules == null || Camera.main == null) return;
@@ -369,6 +375,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                     span, 0.30f, new Rect(0.05f, 0.90f, 0.27f, 0.09f));
             }
             Post(left, y); Post(right, y);
+            if (Overlay != "off") DrawOverlay(f, left, right, y);
             if (f.number != 0)
             {
                 Post(X(TowerRules.CoreX), y);
@@ -503,6 +510,61 @@ public sealed class TowerArtDirector : MonoBehaviour
         Art("Central crystal dormer", "Structure/crown_v1", center, y, -0.97f,
             naturalWidth * 0.40f, height, new Rect(0.30f, 0, 0.40f, 1));
     }
+    private static readonly Color Unzoned = new Color(0.55f, 0.6f, 0.68f, 0.10f);
+
+    private static Color SpecTint(string spec)
+    {
+        switch (spec)
+        {
+            case "residential": return new Color(0.45f, 0.90f, 0.55f, 0.24f);
+            case "industry": return new Color(1f, 0.62f, 0.25f, 0.24f);
+            case "market": return new Color(1f, 0.86f, 0.30f, 0.24f);
+            case "arcane": return new Color(0.70f, 0.50f, 1f, 0.24f);
+            default: return new Color(0.40f, 0.75f, 0.85f, 0.22f);
+        }
+    }
+
+    // One translucent band over the floor plus a name tag at its west end, under the room labels.
+    private void DrawOverlay(TowerFloor f, float left, float right, float y)
+    {
+        var rules = tower.Rules;
+        Color tint;
+        string text;
+        if (Overlay == "districts")
+        {
+            var district = rules.DistrictAt(f.number);
+            var spec = district == null ? null : TowerRules.SpecDef(district.spec);
+            tint = district == null ? Unzoned : SpecTint(district.spec);
+            text = district == null ? "UNZONED" : district.name.ToUpperInvariant() +
+                (spec == null ? "" : "  " + spec.name.ToUpperInvariant());
+        }
+        else if (Overlay == "coverage")
+        {
+            int mask = rules.CoverageMask(f.number), count = 0;
+            for (int bit = 1; bit <= 8; bit <<= 1) if ((mask & bit) != 0) count++;
+            tint = Color.Lerp(new Color(0.95f, 0.30f, 0.25f, 0.22f), new Color(0.30f, 0.90f, 0.45f, 0.22f), count / 4f);
+            text = ((mask & TowerRules.MedicalService) != 0 ? "MED " : "") + ((mask & TowerRules.SafetyService) != 0 ? "SAFE " : "") +
+                ((mask & TowerRules.FoodService) != 0 ? "FOOD " : "") + ((mask & TowerRules.LeisureService) != 0 ? "FUN" : "");
+            if (text.Length == 0) text = "NO SERVICES";
+        }
+        else
+        {
+            float appeal = rules.Appeal(f.number);
+            tint = Color.Lerp(new Color(0.45f, 0.45f, 0.5f, 0.16f), new Color(1f, 0.55f, 0.85f, 0.30f), appeal / 100f);
+            text = "APPEAL " + Mathf.RoundToInt(appeal);
+        }
+        if (overlaySprite == null)
+            overlaySprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4);
+        var band = new GameObject("Overlay floor " + f.number, typeof(SpriteRenderer));
+        band.transform.SetParent(artRoot, false);
+        band.transform.localPosition = new Vector3((left + right) / 2, y + 0.14f, 1.5f);
+        band.transform.localScale = new Vector3(right - left, 2.38f, 1);
+        var renderer = band.GetComponent<SpriteRenderer>();
+        renderer.sprite = overlaySprite;
+        renderer.color = tint;
+        Label(text, new Vector3(left + 2.1f, y + 0.92f, -1.4f), 3.8f);
+    }
+
     private void Label(string value, Vector3 position, float width)
     {
         if (worldFont == null) worldFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");

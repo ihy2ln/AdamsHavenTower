@@ -141,6 +141,7 @@ namespace AdamsHaven.Tower
             state.water = Mathf.Min(StartCap, state.water + bonus.supplies);
             state.firewood = Mathf.Min(StartCap, state.firewood + bonus.supplies);
             state.sigils = fallen.sigils;
+            state.storyteller = string.IsNullOrEmpty(fallen.storyteller) ? "balanced" : fallen.storyteller;
             state.summonPity = fallen.summonPity;
             state.freeSummonUsed = fallen.freeSummonUsed;
             // Research persists across runs (GDD 8.5), including a study still in progress.
@@ -173,6 +174,7 @@ namespace AdamsHaven.Tower
                 seen.Add(hero.unitId);
                 state.legacyHeroes.Add(new TowerResident { name = hero.name, unitId = hero.unitId, origin = "hero",
                     rank = hero.rank, level = hero.level, xp = hero.xp, trait = hero.trait,
+                    trait2 = hero.trait2 ?? "", backstory = hero.backstory ?? "",
                     might = hero.might, sight = hero.sight, grit = hero.grit, charm = hero.charm,
                     wit = hero.wit, grace = hero.grace, luck = hero.luck, weapon = hero.weapon, tool = hero.tool });
             }
@@ -196,6 +198,7 @@ namespace AdamsHaven.Tower
                 }
                 var back = AddResident(hero.unitId, hero.name, "hero", hero.level);
                 back.rank = hero.rank; back.xp = hero.xp; back.trait = hero.trait;
+                back.trait2 = hero.trait2 ?? ""; back.backstory = hero.backstory ?? "";
                 back.might = hero.might; back.sight = hero.sight; back.grit = hero.grit; back.charm = hero.charm;
                 back.wit = hero.wit; back.grace = hero.grace; back.luck = hero.luck;
                 back.weapon = hero.weapon; back.tool = hero.tool;

@@ -9,7 +9,7 @@ public sealed partial class TowerHud
 {
     private Image popupHeart, popupAlerts;
     private Image heartSummonTab, heartUpgradeTab, heartStatusTab, pityFill;
-    private Button tabSummon, tabUpgrade, tabStatus, summonOne, summonTen, heartUpgradeButton;
+    private Button tabSummon, tabUpgrade, tabStatus, summonOne, summonTen, heartUpgradeButton, storytellerButton;
     private Text sigilText, ratesText, summonResults, heartRankText, heartUpgradeText, heartStatusText;
     private string heartTab = "summon";
     private readonly Button[] alertJumps = new Button[4];
@@ -75,7 +75,10 @@ public sealed partial class TowerHud
 
         heartStatusTab = Rect("Status tab", t, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -58), Color.clear);
         heartStatusTab.raycastTarget = false;
-        heartStatusText = TextAt(heartStatusTab.transform, "Status", "", 16, 10, 688, 360, 15, Cream, TextAnchor.UpperLeft);
+        heartStatusText = TextAt(heartStatusTab.transform, "Status", "", 16, 10, 688, 300, 15, Cream, TextAnchor.UpperLeft);
+        // RimWorld's storyteller choice: who decides what the forest sends (TowerColonyDepth.cs).
+        storytellerButton = ButtonAt(heartStatusTab.transform, "Storyteller", "STORYTELLER", 16, 326, 688, 48,
+            () => tower.Apply(tower.Rules.CycleStoryteller()), Violet, 15);
         BuildResearchTab(t);
         popupHeart.gameObject.SetActive(false);
     }
@@ -163,7 +166,9 @@ public sealed partial class TowerHud
             "\nIncidents now: " + state.incidents.Count +
             "\nRun " + (state.runs + 1) + "   •   Legacy rank " + state.legacyRank + (returning > 0 ?"   •   " + returning + " heroes will return when the Tower is founded" : "") +
             "\n\nIf the Heart falls, this run ends. Heroes, research, Sigils and summon pity carry into the next run; " +
-            "the tower itself starts over. Keep guards at the Gate, Tonics in stock and fight incidents early.";
+            "the tower itself starts over. Keep guards at the Gate, Tonics in stock and fight incidents early." +
+            "\n\n<color=#e9b8ff>" + rules.Storyteller.name + "</color>: " + rules.Storyteller.blurb;
+        LabelOf(storytellerButton).text = "STORYTELLER: " + rules.Storyteller.name.ToUpperInvariant() + "   (tap to change)";
     }
 
     // ---------------------------------------------------------------- alert tray
