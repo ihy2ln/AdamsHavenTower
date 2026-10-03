@@ -56,6 +56,7 @@ namespace AdamsHaven.Tower
             if (resident.currentTask == "rest" && Sleeping(resident)) return "Asleep: keeping a " + resident.schedule + " schedule.";
             if (IsPosted(resident)) return "Away: " + PostingLabel(resident) + ".";
             if (resident.exploring) return "Exploring for " + resident.exploreChoice + ".";
+            if (IsErrand(resident.currentTask)) return ErrandLabel(resident);
             if (resident.currentTask != "idle")
                 return resident.currentRoom != resident.targetRoom ? "Traveling to " + resident.currentTask + "." :
                     "Working: " + resident.currentTask + ".";
@@ -225,8 +226,11 @@ namespace AdamsHaven.Tower
             return null;
         }
 
+        private bool townTick;   // residents run errands this tick (live play only, TowerTown.cs)
+
         private void Tick(float dt, bool live)
         {
+            townTick = live && TownErrands;
             State.clock += dt;
             TickConstruction(dt);
             TickNeeds(dt, live);

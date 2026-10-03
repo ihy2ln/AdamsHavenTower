@@ -78,6 +78,11 @@ namespace AdamsHaven.Tower
         public float inspirationSeconds;
         public string posting = "";            // "" at home, "auto" on an auto expedition, "outpost:<region>" stationed
         public float postedSeconds;            // how long this posting has lasted
+        // TT 10.3.1 town life (TowerTown.cs): errands to venues ("meal", "drink", "leisure" tasks)
+        public float joy = 70;                 // recreation need, refilled at leisure venues
+        public string mealMemory = "";         // venue type of the last meal, or "cold" for cold rations
+        public string funMemory = "";          // venue type of the last outing
+        public float mealMemorySeconds, funMemorySeconds;
 
         public int Stat(string key)
         {

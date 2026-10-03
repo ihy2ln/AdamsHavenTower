@@ -727,6 +727,13 @@ public sealed class TowerFx : MonoBehaviour
         if (resident.hunger < 25) { color = new Color(1, 0.6f, 0.25f); return "F"; }
         if (resident.thirst < 25) { color = new Color(0.4f, 0.75f, 1f); return "W"; }
         if (resident.injury > 30 || resident.illness > 30) { color = new Color(1, 0.5f, 0.6f); return "+"; }
+        if (TowerRules.IsErrand(resident.currentTask) && resident.currentRoom == resident.targetRoom)
+        {
+            // Out in town (TowerTown.cs): a meal, a drink or an outing.
+            if (resident.currentTask == "meal") { color = new Color(0.55f, 0.9f, 0.45f); return "F"; }
+            if (resident.currentTask == "drink") { color = new Color(0.55f, 0.9f, 0.45f); return "W"; }
+            color = new Color(1f, 0.83f, 0.36f); return "J";
+        }
         if (resident.happiness > 88) { color = new Color(1, 0.75f, 0.85f); return "*"; }
         return null;
     }

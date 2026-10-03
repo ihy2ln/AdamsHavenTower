@@ -1200,4 +1200,180 @@ public sealed class TowerManagementTests
         Assert.AreEqual("standard", repaired.State.summonBanner);
         Assert.AreEqual(9, TowerRoster.Unit(repaired.State.pickTarget).rank, "a bad target falls back to an SSR hero");
     }
+
+    // ---- TT 10.3.1: town life, slice 1 (GDD 19.1) ---------------------------------------------------------------
+
+    // Kaela works the Well at x18 (home x21); a Lumber Mill keeps the rooms lit.
+    private static TowerRules Town()
+    {
+        var rules = Quiet(Started());
+        var s = rules.State;
+        s.food = s.water = s.firewood = 100; s.steward = false;
+        var well = rules.AddRoom("well", 0, 18, 1);
+        rules.AddRoom("lumber_mill", 0, 15, 1);
+        rules.Assign(s.residents[0].id, well.uid);
+        return rules;
+    }
+
+    private static TowerResident Patron(TowerRules rules, int room, float hunger)
+    {
+        var patron = rules.AddResident("", "Patron " + rules.State.nextResidentId, "villager", 1);
+        patron.currentRoom = patron.targetRoom = room;
+        patron.hunger = hunger;
+        patron.thirst = 90;
+        return patron;
+    }
+
+    [Test]
+    public void HungryResidentWalksToTheKitchenAndEatsThere()
+    {
+        var rules = Town();
+        var kitchen = rules.AddRoom("kitchen", 0, 19, 1);
+        var kaela = rules.State.residents[0];
+        kaela.hunger = 45;
+        rules.Advance(1, true);
+        Assert.AreEqual("meal", kaela.currentTask);
+        Assert.AreEqual(kitchen.uid, kaela.targetRoom);
+        Assert.Greater(kaela.travelDuration, 0, "the cutaway slides them over");
+        Assert.AreEqual(100, rules.State.food, 0.01f, "nothing eaten from the stores on the way");
+        StringAssert.Contains("the Kitchen", rules.TaskExplanation(kaela));
+        for (int i = 0; i < 20 && kaela.hunger < 99; i++) rules.Advance(1, true);
+        Assert.AreEqual(kitchen.uid, kaela.currentRoom);
+        Assert.GreaterOrEqual(kaela.hunger, 98f);
+        Assert.Less(rules.State.food, 99f, "the meal came out of the stores at the Kitchen");
+        Assert.IsTrue(rules.Thoughts(kaela).Any(t => t.label == "Ate at the Kitchen"));
+        for (int i = 0; i < 5; i++) rules.Advance(1, true);
+        Assert.AreNotEqual("meal", kaela.currentTask, "fed, back to work");
+    }
+
+    [Test]
+    public void WithoutAVenueResidentsEatFromStockAsBefore()
+    {
+        var rules = Town();
+        var kaela = rules.State.residents[0];
+        kaela.hunger = 60;
+        rules.Advance(1, true);
+        Assert.Greater(kaela.hunger, 85f, "the old instant meal");
+        Assert.Less(rules.State.food, 99f);
+        Assert.AreNotEqual("cold", kaela.mealMemory, "no cold rations thought without a venue");
+        Assert.AreNotEqual("meal", kaela.currentTask);
+    }
+
+    [Test]
+    public void FullVenueSendsPatronsToTheNextOne()
+    {
+        var rules = Town();
+        var well = rules.State.rooms.First(r => r.type == "well");
+        var near = rules.AddRoom("kitchen", 0, 19, 1);
+        var far = rules.AddRoom("kitchen", 0, 13, 1);
+        Assert.AreEqual(2, rules.Capacity(near));
+        var a = Patron(rules, well.uid, 45); var b = Patron(rules, well.uid, 45); var c = Patron(rules, well.uid, 45);
+        rules.Advance(1, true);
+        var patrons = new[] { a, b, c };
+        Assert.IsTrue(patrons.All(p => p.currentTask == "meal"), "all three go out to eat");
+        Assert.AreEqual(near.uid, a.targetRoom, "the nearer Kitchen first");
+        Assert.LessOrEqual(patrons.Count(p => p.targetRoom == near.uid), rules.Capacity(near), "never past its seats");
+        Assert.IsTrue(patrons.Any(p => p.targetRoom == far.uid), "the rest spill over to the next Kitchen");
+
+        var crowded = Town();
+        var crowdedWell = crowded.State.rooms.First(r => r.type == "well");
+        crowded.AddRoom("kitchen", 0, 19, 1);
+        var x = Patron(crowded, crowdedWell.uid, 45); var y = Patron(crowded, crowdedWell.uid, 45);
+        var z = Patron(crowded, crowdedWell.uid, 45);
+        crowded.Advance(1, true);
+        Assert.AreNotEqual("meal", z.currentTask, "every seat taken: wait");
+        z.hunger = 34;
+        crowded.Advance(1, true);
+        Assert.Greater(z.hunger, 55f, "cold rations from the stores");
+        Assert.AreEqual("cold", z.mealMemory);
+        Assert.IsTrue(crowded.Thoughts(z).Any(t => t.label == "Ate cold rations"));
+        Assert.AreEqual("meal", x.currentTask); Assert.AreEqual("meal", y.currentTask);
+    }
+
+    [Test]
+    public void OfflineCatchUpKeepsInstantMeals()
+    {
+        var rules = Town();
+        rules.AddRoom("kitchen", 0, 19, 1);
+        rules.AddRoom("market", 0, 16, 1);
+        var kaela = rules.State.residents[0];
+        rules.CatchUp(3600);
+        Assert.IsFalse(TowerRules.IsErrand(kaela.currentTask), "nobody is left mid-trip by catch-up");
+        Assert.Greater(kaela.hunger, 35f);
+        Assert.Greater(kaela.thirst, 35f);
+    }
+
+    [Test]
+    public void FreeTimeSendsDayWorkersToTheMarket()
+    {
+        var rules = Town();
+        var market = rules.AddRoom("market", 0, 17, 1);
+        var kaela = rules.State.residents[0];
+        kaela.schedule = "day";
+        kaela.joy = 50;
+        rules.State.clock = (19.5f - 6f) / 24f * TowerRules.DaySeconds;   // 19:30
+        Assert.IsTrue(rules.FreeTime(kaela));
+        rules.Advance(1, true);
+        Assert.AreEqual("leisure", kaela.currentTask);
+        Assert.AreEqual(market.uid, kaela.targetRoom);
+        for (int i = 0; i < 20 && kaela.joy < 99; i++) rules.Advance(1, true);
+        Assert.GreaterOrEqual(kaela.joy, 98f);
+        Assert.IsTrue(rules.Thoughts(kaela).Any(t => t.label == "Browsed the Argent Market"));
+        Assert.IsTrue(rules.Thoughts(kaela).Any(t => t.label == "Well entertained"));
+        rules.Advance(2, true);
+        Assert.AreEqual("production", kaela.currentTask, "back to the Well");
+
+        kaela.joy = 50;
+        rules.State.clock = (12f - 6f) / 24f * TowerRules.DaySeconds;   // noon: working hours
+        rules.Advance(1, true);
+        Assert.AreEqual("production", kaela.currentTask, "outside free time joy 50 is not low enough");
+    }
+
+    [Test]
+    public void NoLeisureVenueNeverSoursMood()
+    {
+        var rules = Town();
+        rules.State.heartRank = 2;
+        var kaela = rules.State.residents[0];
+        kaela.joy = 10;
+        Assert.IsFalse(rules.Thoughts(kaela).Any(t => t.label == "No free time"));
+        rules.Advance(1, true);
+        Assert.GreaterOrEqual(kaela.joy, TowerRules.JoyFloorWithoutLeisure);
+        rules.AddRoom("market", 0, 17, 1);
+        kaela.joy = 10;
+        Assert.IsTrue(rules.Thoughts(kaela).Any(t => t.label == "No free time"), "a Market nobody visits");
+        rules.State.heartRank = 1;
+        Assert.IsFalse(rules.Thoughts(kaela).Any(t => t.label == "No free time"), "never in the first hour");
+    }
+
+    [Test]
+    public void VenueCacheRebuildsOnlyOnLayoutChange()
+    {
+        var rules = Town();
+        int before = rules.Venues().Count, stamp = rules.VenueStamp;
+        rules.Advance(3, true);
+        rules.Venues();
+        Assert.AreEqual(stamp, rules.VenueStamp, "ticks reuse the cache");
+        rules.AddRoom("kitchen", 0, 19, 1);
+        Assert.AreEqual(before + 1, rules.Venues().Count);
+        Assert.AreEqual(stamp + 1, rules.VenueStamp);
+    }
+
+    [Test]
+    public void OlderSavesStartTownLifeContent()
+    {
+        var rules = Started();
+        var fresh = rules.State;
+        fresh.colonyVersion = 1;
+        fresh.residents[0].joy = 0;
+        int seed = fresh.colonyRandom;
+        fresh.siegeCooldown = 5;
+        var old = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(fresh));
+        new TowerRules(old);
+        Assert.AreEqual(TowerRules.ColonyVersion, old.colonyVersion);
+        Assert.AreEqual(70, old.residents[0].joy, 0.01f);
+        Assert.AreEqual(seed, old.colonyRandom, "version 1 steps do not run again");
+        Assert.AreEqual(5, old.siegeCooldown, 0.01f);
+        Assert.AreEqual("", old.residents[0].mealMemory);
+    }
 }

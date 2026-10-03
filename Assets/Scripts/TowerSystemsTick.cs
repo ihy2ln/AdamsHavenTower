@@ -73,6 +73,7 @@ namespace AdamsHaven.Tower
             }
             cachedAmenities = -1;
             cachedAmenities = AmenityKinds();
+            RefreshVenueFlags();
             floorHeadcount = headcountBuffer;
         }
 
@@ -92,11 +93,20 @@ namespace AdamsHaven.Tower
                     (HasTrait(resident, "Stout") ? 0.85f : 1f) * dt);
                 resident.thirst = Mathf.Max(0, resident.thirst - (resident.ageStage == 1 ? 0.13f : 0.17f) * dt);
                 resident.rest = Mathf.Max(0, resident.rest - (resident.ageStage == 1 ? 0.04f : 0.09f) * dt);
+                TickJoy(resident, dt);
                 float ration = HasTrait(resident, "Frugal") ? 1.7f : 2f;
                 float meal = ration * MealFactor(resident);   // Rationing and nearby kitchens (TowerDistricts.cs)
-                if (resident.hunger < 65 && State.food >= meal)
-                { State.food -= meal; resident.hunger = Mathf.Min(100, resident.hunger + 28); }
-                if (resident.thirst < 65 && State.water >= ration)
+                // With an open venue, adults eat and drink out (TowerTown.cs); the stores only feed the desperate.
+                bool eatOut = EatsOut(resident, live, VenueMeal), drinkOut = EatsOut(resident, live, VenueDrink);
+                if (resident.hunger < (eatOut ? ColdRationsBelow : 65) && State.food >= meal &&
+                    !(eatOut && BeingServed(resident, "meal")))
+                {
+                    State.food -= meal; resident.hunger = Mathf.Min(100, resident.hunger + 28);
+                    if (eatOut && resident.currentTask != "rest")
+                    { resident.mealMemory = "cold"; resident.mealMemorySeconds = ErrandMemorySeconds; }
+                }
+                if (resident.thirst < (drinkOut ? ColdRationsBelow : 65) && State.water >= ration &&
+                    !(drinkOut && BeingServed(resident, "drink")))
                 { State.water -= ration; resident.thirst = Mathf.Min(100, resident.thirst + 30); }
                 if (resident.ageStage == 1 || resident.currentTask == "rest")
                     resident.rest = Mathf.Min(100, resident.rest + 0.70f * dt * RestFactor(resident));
@@ -345,6 +355,7 @@ namespace AdamsHaven.Tower
                         60 + resident.priorityHaul * 8 > best)
                     { best = 60 + resident.priorityHaul * 8; task = "haul"; target = workplace.uid; }
                 }
+                if (townTick && resident.origin != "body") ConsiderErrand(resident, ref best, ref task, ref target);
                 SetTask(resident, task, target);
             }
         }
@@ -354,11 +365,8 @@ namespace AdamsHaven.Tower
             if (roomUid == 0) { resident.currentTask = "idle"; resident.targetRoom = 0; return; }
             if (resident.targetRoom != roomUid)
             {
-                var from = Room(resident.currentRoom);
-                var to = Room(roomUid);
                 resident.travelSeconds = 0;
-                resident.travelDuration = from == null || to == null ? 0 :
-                    1.5f + Mathf.Abs(to.floor - from.floor) * 2.3f + Mathf.Abs(to.x - from.x) * 0.17f;
+                resident.travelDuration = TravelSeconds(Room(resident.currentRoom), Room(roomUid));
             }
             resident.currentTask = task;
             resident.targetRoom = roomUid;
@@ -384,7 +392,8 @@ namespace AdamsHaven.Tower
                     resident.currentRoom != resident.targetRoom) continue;
                 var room = Room(resident.currentRoom);
                 if (room == null) continue;
-                if (resident.currentTask == "haul" && room.ready) Collect(room.uid);
+                if (IsErrand(resident.currentTask)) TickErrand(resident, room, dt);
+                else if (resident.currentTask == "haul" && room.ready) Collect(room.uid);
                 else if (resident.currentTask == "repair" && State.wood > 0 && State.stone > 0)
                 {
                     room.condition = Mathf.Min(100, room.condition + (0.25f + resident.might * 0.05f) * dt);

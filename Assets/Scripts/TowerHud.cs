@@ -1229,6 +1229,7 @@ public sealed partial class TowerHud : MonoBehaviour
                 "   Mood " + Mathf.CeilToInt(selected.happiness) + " " + tower.Rules.MoodLabel(selected) +
                 "\nFood " + Mathf.CeilToInt(selected.hunger) + "  Water " +
                 Mathf.CeilToInt(selected.thirst) + "  Rest " + Mathf.CeilToInt(selected.rest) +
+                (selected.ageStage == 0 && selected.origin != "body" ? "  Joy " + Mathf.CeilToInt(selected.joy) : "") +
                 "\nM" + selected.might + " S" + selected.sight + " G" + selected.grit +
                 " C" + selected.charm + " W" + selected.wit + " A" + selected.grace +
                 " L" + selected.luck + "   T" + selected.tool + " B" + selected.weapon +
@@ -1282,7 +1283,8 @@ public sealed partial class TowerHud : MonoBehaviour
         var thoughts = tower.Rules.Thoughts(selected);
         thoughts.Sort((a, b) => Mathf.Abs(b.value).CompareTo(Mathf.Abs(a.value)));
         string text = TowerRules.TraitLine(selected) + "   /   " +
-            (selected.origin == "body" ? "never sleeps" : selected.schedule + " schedule");
+            (selected.origin == "body" ? "never sleeps" : selected.schedule + " schedule, free " +
+                TowerRules.FreeHours(selected.schedule));
         if (selected.inspirationSeconds > 0)
             text += "\n<color=#ffd45c>" + TowerRules.InspirationLabel(selected.inspiration) + " " +
                 Mathf.CeilToInt(selected.inspirationSeconds) + "s</color>";
@@ -1343,7 +1345,8 @@ public sealed partial class TowerHud : MonoBehaviour
         roomDetail.text = def.displayName + "   /   Floor " + room.floor +
             "\n" + tower.Rules.LevelLabel(room) + "   Condition " + Mathf.CeilToInt(room.condition) + "%" +
             "   Workers " + tower.Rules.WorkerCount(room.uid) +
-            "\n" + activity + (tower.Rules.AdjacencyNote(room).Length > 0 ?
+            "\n" + activity + (TowerRules.VenueDef(room.type) != null ? "   •   " + tower.Rules.VenueLine(room) : "") +
+            (tower.Rules.AdjacencyNote(room).Length > 0 ?
                 "\n" + tower.Rules.AdjacencyNote(room) : "");
         collect.interactable = room.ready;
         rush.interactable = !room.ready && !string.IsNullOrEmpty(def.produces) &&

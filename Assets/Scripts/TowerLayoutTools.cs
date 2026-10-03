@@ -7,7 +7,7 @@ namespace AdamsHaven.Tower
     // rooms, the colony layer's save version and its own random stream (so new systems never shift the old seeds).
     public sealed partial class TowerRules
     {
-        public const int ColonyVersion = 1;
+        public const int ColonyVersion = 2;   // 2 = town life: residents gain joy (TowerTown.cs)
 
         // How far up and down each Heart rank (F..SSR) lets the tower open floors. Floors already open stay open.
         private static readonly int[] FloorsUp = { 2, 3, 5, 7, 9, 12, 15, 19, 24 };
@@ -82,6 +82,8 @@ namespace AdamsHaven.Tower
                 if (resident.backstory == null) resident.backstory = "";
                 if (resident.inspiration == null) resident.inspiration = "";
                 if (resident.posting == null) resident.posting = "";
+                if (resident.mealMemory == null) resident.mealMemory = "";
+                if (resident.funMemory == null) resident.funMemory = "";
             }
         }
 
@@ -90,8 +92,17 @@ namespace AdamsHaven.Tower
         {
             NormalizeColony();
             if (State.colonyVersion >= ColonyVersion) return;
-            if (State.colonyRandom == 0) State.colonyRandom = 90001 + State.slot * 131;
-            State.siegeCooldown = Mathf.Max(State.siegeCooldown, FirstSiegeAfter);
+            if (State.colonyVersion < 1)
+            {
+                if (State.colonyRandom == 0) State.colonyRandom = 90001 + State.slot * 131;
+                State.siegeCooldown = Mathf.Max(State.siegeCooldown, FirstSiegeAfter);
+            }
+            if (State.colonyVersion < 2)
+            {
+                // Saves from before town life load joy as 0: start everyone content instead.
+                foreach (var list in new[] { State.residents, State.legacyHeroes, State.heartWaiting })
+                    if (list != null) foreach (var resident in list) resident.joy = 70;
+            }
             State.colonyVersion = ColonyVersion;
         }
 

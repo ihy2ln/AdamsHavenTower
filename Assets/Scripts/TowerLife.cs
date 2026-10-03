@@ -278,6 +278,7 @@ namespace AdamsHaven.Tower
             AddDepthThoughts(resident, list);
             AddDistrictThoughts(resident, list);
             AddOutpostThoughts(resident, list);
+            AddTownThoughts(resident, list);
             return list;
         }
 
