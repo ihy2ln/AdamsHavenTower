@@ -83,6 +83,8 @@ public sealed partial class TowerHud : MonoBehaviour
     private Text defeatDetail;
     private Text tutorialTitle;
     private readonly Button[] heroButtons = new Button[3];
+    private readonly Button[] storytellerButtons = new Button[3];   // founding panel, dormant Heart only
+    private Text storytellerHint;
     private int rosterPage, buildPage, familyFirstId;
     private string leftTab = "work";
     private int lastScreenWidth, lastScreenHeight;
@@ -118,7 +120,7 @@ public sealed partial class TowerHud : MonoBehaviour
         BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
         BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
         BuildHeartPopup(); BuildAlertsPopup(); BuildWorkPopup(); BuildDistrictsPopup();
-        BuildAutoPopup(); BuildOutpostsPopup();
+        BuildAutoPopup(); BuildOutpostsPopup(); BuildSiegeBanner();
         BuildSaves(); BuildDefeat(); BuildFlyout(); BuildDev();
         UpdateSafeArea();
         Refresh();
@@ -784,6 +786,15 @@ public sealed partial class TowerHud : MonoBehaviour
             heroButtons[i] = ButtonAt(tutorialPanel.transform, "Starter " + id, id.ToUpperInvariant(),
                 22 + i * 194, 44, 181, 44, () => tower.Apply(tower.Rules.ChooseStarter(id)), Teal, 15);
         }
+        // RimWorld's storyteller pick, offered with the dormant Heart (optional: AWAKEN HEART stays the only step).
+        for (int i = 0; i < storytellerButtons.Length; i++)
+        {
+            string id = TowerRules.Storytellers[i].id;
+            storytellerButtons[i] = ButtonAt(tutorialPanel.transform, "Storyteller " + id, id.ToUpperInvariant(),
+                22 + i * 194, 94, 181, 36, () => tower.Apply(tower.Rules.SetStoryteller(id)), Teal, 14);
+        }
+        storytellerHint = TextAt(tutorialPanel.transform, "Storyteller hint", "", 40, 132, 530, 22, 12, Cream,
+            TextAnchor.MiddleCenter);
         advicePanel = Box("Advice pill", safeRoot, new Vector2(0.5f, 1), new Vector2(0.5f, 1),
             new Vector2(0, -86), new Vector2(600, 28), new Color(0.10f, 0.06f, 0.03f, 0.88f));
         Pill(advicePanel, 0.88f).raycastTarget = false;
@@ -973,6 +984,7 @@ public sealed partial class TowerHud : MonoBehaviour
             defeatDetail.text = "This run has ended. Your heroes, Sigils and summon pity carry over; the tower starts again.\n" +
                 TowerRules.LegacyPreview(state);
         RefreshTop(state);
+        RefreshSiegeBanner(state);
         RefreshToast();
         RefreshResidents(); RefreshRoom(); RefreshTutorial(); RefreshAdvice(state);
         RefreshDock(state);
@@ -1419,6 +1431,17 @@ public sealed partial class TowerHud : MonoBehaviour
         string phase = tower.Rules.State.introPhase;
         int step = tower.Rules.State.tutorialStep;
         tutorialPanel.gameObject.SetActive(phase != "complete" || step < 7);
+        bool dormant = phase == "dormant";
+        foreach (var button in storytellerButtons) button.gameObject.SetActive(dormant);
+        storytellerHint.gameObject.SetActive(dormant);
+        tutorialPanel.rectTransform.offsetMin = new Vector2(tutorialPanel.rectTransform.offsetMin.x, dormant ? -258 : -178);
+        if (dormant)
+        {
+            var teller = tower.Rules.Storyteller;
+            for (int i = 0; i < storytellerButtons.Length; i++)
+                storytellerButtons[i].GetComponent<Image>().color = TowerRules.Storytellers[i].id == teller.id ? Gold : Teal;
+            storytellerHint.text = "Storyteller: " + teller.name + ". " + teller.blurb;
+        }
         if (phase == "complete")
         {
             tutorialAction.gameObject.SetActive(false);

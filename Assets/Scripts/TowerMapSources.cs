@@ -81,6 +81,7 @@ namespace AdamsHaven.Tower
             var map = Map;
             var sb = new System.Text.StringBuilder("atlas:");
             foreach (var r in TowerRules.Regions) sb.Append(rules.RegionConquered(r.id) ? 'C' : rules.RegionUnlocked(r.id) ? 'U' : '-');
+            foreach (var r in TowerRules.Regions) if (rules.Outpost(r.id) != null) sb.Append('O').Append(r.id.Length);   // TT outposts
             key = sb.ToString();
             seen = new bool[map.cells.Length];
             roads = new float[map.cells.Length];
@@ -166,6 +167,8 @@ namespace AdamsHaven.Tower
             width = 2.8f;
             if (p.id == TowerAtlas.HomeId) { width = 3.6f; return TowerMapArt.AtlasProp("atlas_tower_town", "camp"); }
             if (p.id == "silverwood_gate") { width = 3.4f; return TowerMapArt.AtlasProp("atlas_silverwood_gate", "elite"); }
+            // A Tower outpost (TowerOutposts.cs) stands in a conquered region as a camp.
+            if (rules.Outpost(p.id) != null) { width = 3.0f; return TowerMapArt.Prop("camp"); }
             if (rules.RegionConquered(p.id)) return TowerMapArt.AtlasProp("atlas_banner_conquered", "shrine");
             return TowerMapArt.Prop(rules.RegionUnlocked(p.id) ? "lair" : "mystery");
         }

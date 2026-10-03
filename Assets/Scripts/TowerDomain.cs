@@ -207,6 +207,7 @@ namespace AdamsHaven.Tower
         public float siegeCooldown;  // live seconds before Dire threat can draw a Gate siege (TowerSiege.cs)
         public float siegeWarning;   // seconds until a gathering siege hits; 0 when none
         public int siegesWon, siegesLost;
+        public bool siegeBattle;     // the heroes are meeting the siege in Battle Mode; the warning waits for them
     }
 
     public sealed class TowerRoomDef

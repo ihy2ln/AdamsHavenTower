@@ -60,6 +60,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     private float lastPinchDistance;
     private Vector2 lastPinchCenter;
     private bool pinching;
+    private float pointerDownAt;       // when the current press began, for long-press to move a room
+    private bool holdFired;
 
     private void Awake()
     {
@@ -156,6 +158,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         selectedResident = 0;
         pendingWalkResident = 0;
         placing = false;
+        movingRoom = 0;
         message = "Loaded slot " + slot + ": " + state.label + ", day " + state.day + ".";
         savesOpen = false;
         if (view != null) RebuildScene();
@@ -998,6 +1001,33 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         ShowTower();
     }
 
+    // GDD 9.6: lead the battle-ready heroes at home out against a gathering siege (TowerSiegeBattle.cs). Battle
+    // Mode decides it; the guards' auto-defend only runs if the warning expires without a fight.
+    public void LaunchSiegeBattle()
+    {
+        if (battleMode != null || expedition != null || rules == null || !rules.SiegeComing) return;
+        var ids = rules.SiegeFighters();
+        string error = rules.BeginSiegeBattle();
+        if (error != null) { Apply(error); return; }
+        List<BattleUnit> field, reserve;
+        TowerSiegeBattle.Party(rules, ids, out field, out reserve);
+        HideTower();
+        battleMode = gameObject.AddComponent<BattleMode>();
+        battleMode.Encounter = TowerSiegeBattle.Encounter(rules);
+        battleMode.ReturnLabel = "BACK TO THE TOWER";
+        battleMode.RewardLine = "The siege is broken: +" + 100 * rules.State.heartRank + " gold and +" +
+            2 * rules.State.heartRank + " Celestium.";
+        battleMode.WithdrawLine = "The heroes fall back and the siege reaches the Gates: Last Stand!";
+        battleMode.Begin(TowerSiegeBattle.Depth(rules), field, reserve, (won, gold) =>
+        {
+            rules.ResolveSiegeBattle(won, ids);
+            message = won ? "The siege is broken. The forest pulls back." : "Last Stand at the Gate: drive the raiders out!";
+            if (battleMode != null) Destroy(battleMode);
+            battleMode = null;
+            ShowTower();
+        });
+    }
+
     // NEW GAME: slot 0 always restarts from a dormant Heart, so the founding and the guided lessons can be replayed.
     public void NewGame()
     {
@@ -1188,7 +1218,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             if (wheel.y != 0 && !OverUI(position))
                 ZoomBy(Mathf.Exp(Mathf.Clamp(wheel.y / 700f, -0.3f, 0.3f)), position);
             if (Mouse.current.leftButton.wasPressedThisFrame && !OverUI(position) && !BeginDrag(position))
-            { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = position; }
+            { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = position; pointerDownAt = Time.unscaledTime; holdFired = false; }
             if (dragResident > 0)
             {
                 if (Mouse.current.leftButton.isPressed) UpdateDrag(position);
@@ -1198,11 +1228,11 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             {
                 Vector2 delta = position - lastPointer;
                 if ((position - pointerStart).sqrMagnitude > 64) pointerMoved = true;
-                if (pointerMoved) Pan(delta);
+                if (pointerMoved) { Pan(delta); HideHoldRing(); } else TickRoomHold();
                 lastPointer = position;
             }
             if (pointerDown && Mouse.current.leftButton.wasReleasedThisFrame)
-            { pointerDown = false; if (!pointerMoved) WorldTap(position); }
+            { pointerDown = false; HideHoldRing(); if (!pointerMoved) WorldTap(position); }
         }
         if (Touchscreen.current == null) return;
         var touches = Touchscreen.current.touches;
@@ -1224,6 +1254,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
             lastPinchCenter = (a + b) * 0.5f;
             pinching = true;
             pointerDown = false;
+            HideHoldRing();
             return;
         }
         lastPinchDistance = 0;
@@ -1231,7 +1262,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (pinching) { pinching = count > 0; pointerDown = false; return; }
         Vector2 finger = first.position.ReadValue();
         if (first.press.wasPressedThisFrame && !OverUI(finger) && !BeginDrag(finger))
-        { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = finger; }
+        { pointerDown = true; pointerMoved = false; pointerStart = lastPointer = finger; pointerDownAt = Time.unscaledTime; holdFired = false; }
         if (dragResident > 0)
         {
             if (first.press.isPressed) UpdateDrag(finger);
@@ -1240,11 +1271,40 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         else if (pointerDown && first.press.isPressed)
         {
             if ((finger - pointerStart).sqrMagnitude > 64) pointerMoved = true;
-            if (pointerMoved) Pan(finger - lastPointer);
+            if (pointerMoved) { Pan(finger - lastPointer); HideHoldRing(); } else TickRoomHold();
             lastPointer = finger;
         }
         if (pointerDown && first.press.wasReleasedThisFrame)
-        { pointerDown = false; if (!pointerMoved) WorldTap(finger); }
+        { pointerDown = false; HideHoldRing(); if (!pointerMoved) WorldTap(finger); }
+    }
+
+    // Press and hold a room without panning to pick it up and move it, like the room card's MOVE button. A ring
+    // closes in from 0.15 s; at 0.45 s the room lifts and the release no longer counts as a tap.
+    private const float HoldRingAfter = 0.15f, HoldToMove = 0.45f;
+
+    private void TickRoomHold()
+    {
+        if (holdFired || Moving || rules == null || rules.State.introPhase != "complete") return;
+        float held = Time.unscaledTime - pointerDownAt;
+        if (held < HoldRingAfter) return;
+        var room = RoomAtScreen(pointerStart);
+        if (room == null || room.type == "heart" || room.type == "gate") { HideHoldRing(); return; }
+        var fx = GetComponent<TowerFx>();
+        if (fx != null) fx.ShowHold(room, Mathf.InverseLerp(HoldRingAfter, HoldToMove, held));
+        if (held < HoldToMove) return;
+        holdFired = true;
+        pointerDown = false;
+        HideHoldRing();
+        string error = rules.CanStartMove(room.uid);
+        if (error != null) { Apply(error); return; }
+        selectedRoom = room.uid;
+        BeginMove(room.uid);
+    }
+
+    private void HideHoldRing()
+    {
+        var fx = GetComponent<TowerFx>();
+        if (fx != null) fx.HideHold();
     }
 
     // Pressing on a chibi picks them up instead of panning; releasing over a room sends them to work there.

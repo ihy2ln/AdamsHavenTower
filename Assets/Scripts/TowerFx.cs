@@ -412,6 +412,22 @@ public sealed class TowerFx : MonoBehaviour
         floaters.Add(floater);
     }
 
+    // Long-press feedback (AdamsHavenPrototype.TickRoomHold): a ring closes in on the room until it is picked up.
+    private SpriteRenderer holdRing;
+
+    public void ShowHold(TowerRoom room, float progress)
+    {
+        if (root == null || ring == null || room == null) return;
+        if (holdRing == null) holdRing = Quad("Hold ring", ring, Vector3.zero, new Vector2(1, 1), Color.white, 650);
+        holdRing.gameObject.SetActive(true);
+        holdRing.transform.localPosition = RoomTop(room) + Vector3.down * 0.6f;
+        float size = Mathf.Lerp(2.4f, 1.0f, Mathf.Clamp01(progress));
+        holdRing.transform.localScale = new Vector3(size / ring.bounds.size.x, size / ring.bounds.size.y, 1);
+        holdRing.color = new Color(1f, 0.86f, 0.5f, 0.3f + 0.65f * Mathf.Clamp01(progress));
+    }
+
+    public void HideHold() { if (holdRing != null) holdRing.gameObject.SetActive(false); }
+
     private void Pulse(Vector3 at, Color color, float size)
     {
         var renderer = Quad("Pulse ring", ring, at, new Vector2(0.3f, 0.3f), color, 640);

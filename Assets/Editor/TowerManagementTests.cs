@@ -792,6 +792,141 @@ public sealed class TowerManagementTests
         Assert.Greater(raid.hp, 100f);
     }
 
+    // ---- TT 10.30.1: sieges in Battle Mode, NEW GAME storyteller, long-press, Atlas outposts ----------------
+
+    private static TowerRules Besieged()
+    {
+        var rules = Lot();
+        rules.State.threat = 80;
+        rules.State.siegeWarning = 300;
+        return rules;
+    }
+
+    [Test]
+    public void SiegeBattleWinPaysLikeABrokenSiege()
+    {
+        var rules = Besieged();
+        var kaela = rules.State.residents[0];
+        int gold = rules.State.gold, xp = kaela.xp + kaela.level * 1000;
+        Assert.IsNull(rules.BeginSiegeBattle());
+        StringAssert.Contains("already", rules.BeginSiegeBattle());
+        rules.Advance(400, true);
+        Assert.IsTrue(rules.SiegeComing, "the warning waits while the heroes fight");
+        Assert.AreEqual(0, rules.State.siegesWon + rules.State.siegesLost);
+        rules.ResolveSiegeBattle(true, rules.SiegeFighters().Count > 0 ? rules.SiegeFighters() : new System.Collections.Generic.List<string> { "kaela" });
+        Assert.AreEqual(1, rules.State.siegesWon);
+        Assert.IsFalse(rules.SiegeComing);
+        Assert.IsFalse(rules.State.siegeBattle);
+        Assert.AreEqual(gold + 100 * rules.State.heartRank, rules.State.gold);
+        Assert.Greater(kaela.xp + kaela.level * 1000, xp, "the fighters learn from it");
+        Assert.Greater(rules.State.siegeCooldown, TowerRules.DaySeconds);
+    }
+
+    [Test]
+    public void SiegeBattleLossOpensTheLastStand()
+    {
+        var rules = Besieged();
+        Assert.IsNull(rules.BeginSiegeBattle());
+        rules.ResolveSiegeBattle(false, null);
+        Assert.AreEqual(1, rules.State.siegesLost);
+        var raid = rules.State.incidents.FirstOrDefault(i => i.kind == "raiders");
+        Assert.IsNotNull(raid);
+        Assert.AreEqual("gate", rules.Room(raid.roomUid).type);
+        Assert.Greater(raid.hp, 100f);
+    }
+
+    [Test]
+    public void InterruptedSiegeBattleOffersTheChoiceAgain()
+    {
+        var rules = Besieged();
+        Assert.IsNull(rules.BeginSiegeBattle());
+        rules.State.siegeWarning = 5;
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State)));
+        Assert.IsFalse(loaded.State.siegeBattle, "a fight cut short by closing the game is not left hanging");
+        Assert.GreaterOrEqual(loaded.State.siegeWarning, 60f);
+        Assert.IsTrue(loaded.SiegeComing);
+    }
+
+    [Test]
+    public void SiegeFightersAreBattleHeroesAtHome()
+    {
+        var rules = Lot();
+        var kaela = rules.State.residents[0];
+        var ghislaine = rules.AddResident("ghislaine", "Ghislaine", "hero", 30);
+        ghislaine.rank = 7;
+        var stranger = rules.AddResident("not_a_fighter", "Wanderer Hero", "hero", 30);
+        stranger.rank = 9;
+        var ids = rules.SiegeFighters();
+        CollectionAssert.AreEqual(new[] { "ghislaine", "kaela" }, ids, "strongest first, battle rigs only");
+        ghislaine.exploring = true;
+        CollectionAssert.AreEqual(new[] { "kaela" }, rules.SiegeFighters(), "heroes away cannot fight at the Gate");
+        kaela.injury = 60;
+        Assert.AreEqual(0, rules.SiegeFighters().Count);
+        rules.State.siegeWarning = 300;
+        StringAssert.Contains("No battle-ready hero", rules.BeginSiegeBattle());
+    }
+
+    [Test]
+    public void SiegeEncounterScalesWithTheHeart()
+    {
+        var rules = Lot();
+        Assert.AreEqual(1, TowerSiegeBattle.Depth(rules));
+        Assert.AreEqual("elite", TowerSiegeBattle.Spec(rules).Kind);
+        rules.State.heartRank = 6;
+        Assert.AreEqual(11, TowerSiegeBattle.Depth(rules));
+        Assert.AreEqual("boss", TowerSiegeBattle.Spec(rules).Kind, "from Heart rank B a lair-class foe leads the wave");
+        var encounter = TowerSiegeBattle.Encounter(rules);
+        Assert.IsNotNull(encounter);
+        Assert.AreEqual("GATE SIEGE", encounter.Title);
+        Assert.Greater(encounter.Enemies.Count, 0);
+        System.Collections.Generic.List<BattleUnit> field, reserve;
+        TowerSiegeBattle.Party(rules, new[] { "kaela" }, out field, out reserve);
+        Assert.AreEqual(1, field.Count);
+        Assert.AreEqual(0, reserve.Count);
+        Assert.AreEqual(field[0].MaxHp, field[0].Hp, "siege fighters start at full health");
+    }
+
+    [Test]
+    public void StorytellerCanBeChosenBeforeFounding()
+    {
+        var rules = TowerRules.New();
+        Assert.AreEqual("dormant", rules.State.introPhase);
+        Assert.IsNull(rules.SetStoryteller("chaotic"));
+        Assert.IsNull(rules.AwakenHeart());
+        Assert.IsNull(rules.PlaceIntroGate());
+        Assert.IsNull(rules.Build("house", 0, 21));
+        Assert.IsNull(rules.ChooseStarter("kaela"));
+        Assert.AreEqual("chaotic", rules.State.storyteller, "the founding keeps the pick");
+    }
+
+    [Test]
+    public void CanStartMoveMatchesTheMoveRules()
+    {
+        var rules = Lot();
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
+        var kitchen = rules.RoomAt(0, 20);
+        Assert.IsNull(rules.CanStartMove(kitchen.uid));
+        StringAssert.Contains("stay", rules.CanStartMove(rules.State.rooms.First(r => r.type == "heart").uid));
+        StringAssert.Contains("stay", rules.CanStartMove(rules.State.rooms.First(r => r.type == "gate").uid));
+        rules.State.gold = 0;
+        StringAssert.Contains("gold", rules.CanStartMove(kitchen.uid));
+        rules.State.gold = 999;
+        Assert.IsNull(rules.StartIncident("fire", kitchen.uid));
+        StringAssert.Contains("incident", rules.CanStartMove(kitchen.uid));
+        StringAssert.Contains("incident", rules.CanMoveRoom(kitchen.uid, 0, 19), "placing checks the same rules");
+    }
+
+    [Test]
+    public void AtlasRedrawsWhenAnOutpostIsFounded()
+    {
+        var rules = Lot();
+        rules.AddRoom("guild_hall", 1, TowerRules.CoreX + 1);
+        rules.State.regionsConquered.Add("silverbrook_edge");
+        string before = new TowerAtlasSource(rules).Key;
+        Assert.IsNull(rules.FoundOutpost("silverbrook_edge"));
+        Assert.AreNotEqual(before, new TowerAtlasSource(rules).Key, "the Atlas rebuilds to show the outpost");
+    }
+
     [Test]
     public void NoSiegesOfflineOrWhileEventsAreQuiet()
     {

@@ -437,7 +437,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         TextAt(panel.transform, "Name", region0.name.ToUpperInvariant(), 18, 14, Side - 36, 30, 20, Gold);
         TextAt(panel.transform, "Blurb", region0.blurb, 18, 46, Side - 36, 46, 15, Cream);
         TextAt(panel.transform, "Stats", "Danger " + region0.depth + "   •   Loot x" + region0.reward.ToString("0.0") +
-            "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" : isUnlocked ? "Open to explore" : R.RegionLockReason(region0.id)), 18, 96, Side - 36, 60, 15,
+            "\n" + (R.RegionConquered(region0.id) ? "CONQUERED" + OutpostLine(region0.id) : isUnlocked ? "Open to explore" : R.RegionLockReason(region0.id)), 18, 96, Side - 36, 60, 15,
             isUnlocked ? Cream : new Color(1f, 0.7f, 0.6f));
         TextAt(panel.transform, "Rule", "Every expedition finds this forest rearranged. Clear its lair to conquer the region and open the way beyond.",
             18, 160, Side - 36, 60, 13, new Color(0.8f, 0.85f, 0.9f));
@@ -487,7 +487,8 @@ public sealed class TowerExpeditionUi : MonoBehaviour
             if (!seen && !source.Known(p)) continue;
             var region = TowerRules.Region(p.id);
             bool open = region == null || R.RegionUnlocked(p.id);
-            string name = p.name.ToUpperInvariant() + (region != null && R.RegionConquered(p.id) ? "  (CONQUERED)" : open ? "" : "  (LOCKED)");
+            string name = p.name.ToUpperInvariant() + (region != null && R.Outpost(p.id) != null ? "  (OUTPOST)" :
+                region != null && R.RegionConquered(p.id) ? "  (CONQUERED)" : open ? "" : "  (LOCKED)");
             var label = TextAt(rect, "Atlas label " + p.id, name, 0, 0, 220, 22, p.id == selectedRegion ? 15 : 13,
                 p.id == selectedRegion ? Gold : open ? Cream : new Color(0.7f, 0.74f, 0.8f), TextAnchor.MiddleCenter);
             label.fontStyle = FontStyle.Bold;
@@ -499,6 +500,15 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         TopBar("THE SILVERWOOD ATLAS  •  GUILD EXPEDITIONS", "BACK TO TOWER", () => tower.CloseExpedition(null));
         BuildRegionPanel();
         AddMapStats(areaW);
+    }
+
+    // The Tower's outpost in a conquered region (TowerOutposts.cs), for the Atlas region panel.
+    private string OutpostLine(string region)
+    {
+        var outpost = R.Outpost(region);
+        if (outpost == null) return TowerRules.OutpostSpec(region) == null ? "" : "  •  outpost site open (found it from the Guild)";
+        return "  •  OUTPOST: " + TowerRules.OutpostSpec(region).name + " " + TowerTiers.Tier(outpost.level) + ", " +
+            outpost.staff.Count + " staff";
     }
 
     private void AddMapStats(float areaW)

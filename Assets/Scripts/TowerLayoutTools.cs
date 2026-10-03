@@ -74,6 +74,7 @@ namespace AdamsHaven.Tower
                 if (outpost.report == null) outpost.report = "";
             }
             if (State.outpostSitesSeen == null) State.outpostSitesSeen = new List<string>();
+            NormalizeSiege();
             foreach (var resident in State.residents)
             {
                 if (resident.trait2 == null) resident.trait2 = "";
@@ -97,13 +98,23 @@ namespace AdamsHaven.Tower
 
         public int MoveCost(TowerRoom room) { return room == null ? 0 : 20 + 10 * room.width * room.level; }
 
-        public string CanMoveRoom(int roomUid, int floor, int x)
+        // Whether this room can be picked up at all (MOVE button, long-press); where it may go is CanMoveRoom.
+        public string CanStartMove(int roomUid)
         {
             var room = Room(roomUid);
             if (room == null) return "Choose a room to move.";
             if (room.type == "heart" || room.type == "gate") return "The Heart and the Gates stay where they are.";
             if (State.introPhase != "complete") return "Finish founding the Tower first.";
             if (State.incidents.Exists(i => i.roomUid == roomUid)) return "Resolve the incident first.";
+            if (State.gold < MoveCost(room)) return "Moving needs " + MoveCost(room) + " gold.";
+            return null;
+        }
+
+        public string CanMoveRoom(int roomUid, int floor, int x)
+        {
+            string start = CanStartMove(roomUid);
+            if (start != null) return start;
+            var room = Room(roomUid);
             if (room.floor == floor && room.x == x) return "The room is already there.";
             var def = TowerCatalog.Get(room.type);
             if (floor < FloorMin || floor > FloorMax || Floor(floor) == null) return "Open that floor first.";
