@@ -12,6 +12,9 @@ public sealed partial class TowerHud
     private Button tabSummon, tabUpgrade, tabStatus, summonOne, summonTen, heartUpgradeButton, storytellerButton;
     private Text sigilText, ratesText, summonResults, heartRankText, heartUpgradeText, heartStatusText;
     private string heartTab = "summon";
+    private readonly Button[] bannerTabs = new Button[4];
+    private Button pickPrev, pickNext;
+    private Text bannerInfo;
     private readonly Button[] alertJumps = new Button[4];
     private readonly Text[] alertTexts = new Text[4];
     private Text alertsEmpty;
@@ -54,17 +57,28 @@ public sealed partial class TowerHud
         heartSummonTab = Rect("Summon tab", t, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -58), Color.clear);
         heartSummonTab.raycastTarget = false;
         var s = heartSummonTab.transform;
-        sigilText = TextAt(s, "Sigils", "", 16, 6, 688, 24, 16, Cream);
-        var pity = Rect("Pity bar", s, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -44), new Vector2(704, -34),
+        // Banner tabs (GDD 8.1): Standard, Featured, Pick-Your-Hero, Resident.
+        string[] bannerLabels = { "STANDARD", "FEATURED", "PICK-YOUR-HERO", "RESIDENT" };
+        for (int i = 0; i < bannerTabs.Length; i++)
+        {
+            string id = TowerRules.Banners[i].id;
+            bannerTabs[i] = ButtonAt(s, "Banner " + id, bannerLabels[i], 16 + i * 174, 4, 166, 32,
+                () => { tower.Rules.SetSummonBanner(id); Refresh(); }, Teal, 13);
+        }
+        bannerInfo = TextAt(s, "Banner info", "", 16, 40, 688, 28, 14, Cream);
+        pickPrev = ButtonAt(s, "Pick previous", "◀", 16, 40, 44, 28, () => { tower.Rules.CyclePickTarget(-1); Refresh(); }, Violet, 14);
+        pickNext = ButtonAt(s, "Pick next", "▶", 660, 40, 44, 28, () => { tower.Rules.CyclePickTarget(1); Refresh(); }, Violet, 14);
+        sigilText = TextAt(s, "Sigils", "", 16, 72, 688, 22, 15, Cream);
+        var pity = Rect("Pity bar", s, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -108), new Vector2(704, -98),
             new Color(0.13f, 0.16f, 0.2f, 1));
         pity.raycastTarget = false;
         pityFill = Rect("Pity fill", pity.transform, Vector2.zero, new Vector2(0, 1), Vector2.zero, Vector2.zero,
             new Color(0.82f, 0.62f, 1f));
         pityFill.raycastTarget = false;
-        ratesText = TextAt(s, "Rates", "", 16, 50, 688, 44, 12, Cream);
-        summonOne = ButtonAt(s, "Summon one", "SUMMON ×1", 16, 100, 336, 56, () => DoSummon(1), Teal, 18);
-        summonTen = ButtonAt(s, "Summon ten", "SUMMON ×10", 368, 100, 336, 56, () => DoSummon(10), Teal, 18);
-        summonResults = TextAt(s, "Results", "", 16, 166, 688, 214, 15, Cream, TextAnchor.UpperLeft);
+        ratesText = TextAt(s, "Rates", "", 16, 112, 688, 44, 12, Cream);
+        summonOne = ButtonAt(s, "Summon one", "SUMMON ×1", 16, 160, 336, 50, () => DoSummon(1), Teal, 18);
+        summonTen = ButtonAt(s, "Summon ten", "SUMMON ×10", 368, 160, 336, 50, () => DoSummon(10), Teal, 18);
+        summonResults = TextAt(s, "Results", "", 16, 218, 688, 170, 15, Cream, TextAnchor.UpperLeft);
 
         heartUpgradeTab = Rect("Upgrade tab", t, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -58), Color.clear);
         heartUpgradeTab.raycastTarget = false;
@@ -87,14 +101,61 @@ public sealed partial class TowerHud
     {
         if (tower.Rules.State.introPhase != "complete") { tower.Apply("Found the Tower first."); return; }
         heartTab = tower.Rules.FreeSummonReady || tower.Rules.State.sigils >= TowerRules.PullCost ? "summon" : heartTab;
+        if (tower.Rules.FreeSummonReady) tower.Rules.SetSummonBanner("standard");   // the free summon lives on Standard
         TogglePopup(popupHeart);
     }
 
     private void DoSummon(int count)
     {
-        string error = tower.Rules.Summon(count);
+        string error = tower.Rules.Summon(count, tower.Rules.State.summonBanner);
         tower.Apply(error);
         Refresh();
+    }
+
+    private static string UnitTag(RosterUnit unit)
+    { return unit == null ? "?" : RankTag(unit.rank) + " " + unit.name; }
+
+    // The line under the banner tabs: the featured pair and its end date, the Pick target, or the Resident pool.
+    private static string BannerInfoLine(TowerRules rules, TowerBannerDef banner)
+    {
+        var state = rules.State;
+        switch (banner.id)
+        {
+            case "featured":
+                return "★ " + UnitTag(TowerRules.FeaturedHero(9)) + "   ★ " + UnitTag(TowerRules.FeaturedHero(8)) +
+                    "   <color=#b7c7d6>ends " + TowerRules.FeaturedEnds().ToString("ddd d MMM") + "</color>" +
+                    (state.featuredMissed ? "   <color=#ffd45c>NEXT SS/SSR IS FEATURED</color>" : "");
+            case "pick":
+                var target = rules.PickTarget();
+                return target == null ? "No SS or SSR heroes in the roster." :
+                    "TARGET  " + UnitTag(target) + "   <color=#b7c7d6>" + target.element + " • " + target.role + "</color>" +
+                    (state.pickMissed ? "   <color=#ffd45c>GUARANTEED</color>" : "");
+            case "resident":
+                return "The 24 residents: specialists for every room. <color=#b7c7d6>Cheap way to fill the Tower.</color>";
+            default:
+                return "All heroes and residents, always open." +
+                    (rules.FreeSummonReady ? "   <color=#ffd45c>Your free summon is here.</color>" : "");
+        }
+    }
+
+    private static string BannerRulesLine(TowerRules rules, TowerBannerDef banner)
+    {
+        switch (banner.id)
+        {
+            case "featured":
+                return "Heroes only. Half of SS and SSR pulls are the featured hero of that rank; after a miss the next one is. " +
+                    "Shares SSR pity (" + TowerRules.HardPity + ") with Standard and Pick. Every 10-pull holds a B or better.";
+            case "pick":
+                return "Heroes only, double cost. Half of pulls at your target's rank are the target; after a miss the next " +
+                    "one is, even if you change target. Shares SSR pity. Every 10-pull holds a B or better.";
+            case "resident":
+                return "Residents only. SSR " + TowerRules.ResidentSsrRate.ToString("0.#") + "% with no ramp; an A or better at least " +
+                    "every " + TowerRules.ResidentPityAt + " pulls. Every 10-pull holds a B or better. Duplicates gain levels.";
+            default:
+                return "Soft pity from pull " + rules.SoftPityStart() + ", SSR guaranteed by pull " + TowerRules.HardPity +
+                    ". Every 10-pull holds a B or better. " + Mathf.RoundToInt(TowerRules.HeroShare * 100) +
+                    "% heroes, the rest residents. Duplicate heroes fuse to raise rank or level.";
+        }
     }
 
     private void RefreshHeart(TowerState state)
@@ -112,21 +173,37 @@ public sealed partial class TowerHud
         tabStatus.GetComponent<Image>().color = heartTab == "status" ? Gold : Teal;
 
         // Summon
-        sigilText.text = "SIGILS " + state.sigils + "     SSR PITY " + state.summonPity + " / " + TowerRules.HardPity +
-            "     NEXT SSR CHANCE " + rules.SsrChance().ToString("0.#") + "%" +
+        var banner = rules.CurrentBanner;
+        bool residentBanner = banner.pool == "residents";
+        for (int i = 0; i < bannerTabs.Length; i++)
+            bannerTabs[i].GetComponent<Image>().color = TowerRules.Banners[i] == banner ? Gold : Teal;
+        bool picking = banner.id == "pick";
+        pickPrev.gameObject.SetActive(picking);
+        pickNext.gameObject.SetActive(picking);
+        bannerInfo.rectTransform.anchoredPosition = new Vector2(picking ? 68 : 16, -40);
+        bannerInfo.rectTransform.sizeDelta = new Vector2(picking ? 584 : 688, 28);
+        bannerInfo.alignment = picking ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+        bannerInfo.text = BannerInfoLine(rules, banner);
+        string pityLine = residentBanner
+            ? "A OR BETTER IN " + rules.ResidentPullsToGuarantee() + " PULL" + (rules.ResidentPullsToGuarantee() == 1 ? "" : "S")
+            : "SSR PITY " + state.summonPity + " / " + TowerRules.HardPity + " (shared)     NEXT SSR CHANCE " +
+              rules.SsrChance().ToString("0.#") + "%";
+        sigilText.text = "SIGILS " + state.sigils + "     " + pityLine +
             (state.heartWaiting.Count > 0 ? "     WAITING IN HEART " + state.heartWaiting.Count : "");
-        pityFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(state.summonPity / (float)TowerRules.HardPity), 1);
+        pityFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(residentBanner
+            ? state.residentPity / (float)TowerRules.ResidentPityAt : state.summonPity / (float)TowerRules.HardPity), 1);
+        pityFill.color = residentBanner ? new Color(0.98f, 0.68f, 0.36f) : new Color(0.82f, 0.62f, 1f);
         string rates = "RATES  ";
-        for (int i = 0; i < TowerRules.SummonRates.Length; i++)
-            rates += RankTag(i + 1) + " " + TowerRules.SummonRates[i].ToString("0.#") + "%   ";
-        ratesText.text = rates + "\nSoft pity from pull " + rules.SoftPityStart() + ", SSR guaranteed by pull " +
-            TowerRules.HardPity + ". Every 10-pull holds a B or better. " + Mathf.RoundToInt(TowerRules.HeroShare * 100) +
-            "% heroes, the rest residents. Duplicate heroes fuse to raise rank or level.";
-        bool free = rules.FreeSummonReady;
-        LabelOf(summonOne).text = free ? "FREE SUMMON  (B or better)" : "SUMMON ×1   " + TowerRules.PullCost + " SIGILS";
-        LabelOf(summonTen).text = "SUMMON ×10   " + TowerRules.TenPullCost + " SIGILS";
-        summonOne.interactable = free || state.sigils >= TowerRules.PullCost;
-        summonTen.interactable = state.sigils >= TowerRules.TenPullCost;
+        var bannerRates = TowerRules.BannerRates(banner);
+        for (int i = 0; i < bannerRates.Length; i++)
+            rates += RankTag(i + 1) + " " + bannerRates[i].ToString("0.#") + "%   ";
+        ratesText.text = rates + "\n" + BannerRulesLine(rules, banner);
+        bool free = rules.FreeSummonReady && banner.id == "standard";
+        int one = TowerRules.BannerCost(banner, 1), ten = TowerRules.BannerCost(banner, 10);
+        LabelOf(summonOne).text = free ? "FREE SUMMON  (B or better)" : "SUMMON ×1   " + one + " SIGILS";
+        LabelOf(summonTen).text = "SUMMON ×10   " + ten + " SIGILS";
+        summonOne.interactable = free || state.sigils >= one;
+        summonTen.interactable = state.sigils >= ten;
         summonOne.GetComponent<Image>().color = free ? Gold : Teal;
         var pulls = rules.LastSummon;
         if (pulls == null || pulls.Count == 0)

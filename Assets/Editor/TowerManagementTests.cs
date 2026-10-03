@@ -1010,4 +1010,194 @@ public sealed class TowerManagementTests
         rules.CatchUp(3600);
         Assert.IsFalse(rules.SiegeComing, "never while the game is closed");
     }
+
+    // ---- TT 10.3.1: summon banners (GDD 8.1) ------------------------------------------------------------------
+
+    private static TowerRules Summoner()
+    {
+        TowerRules.Today = () => new System.DateTime(2026, 10, 5);   // a Monday
+        var rules = Quiet(Started());
+        rules.State.freeSummonUsed = true;
+        rules.State.sigils = 100000;
+        return rules;
+    }
+
+    [Test]
+    public void StandardBannerIsTheOriginalSummon()
+    {
+        var a = Summoner(); var b = Summoner();
+        for (int i = 0; i < 12; i++)
+        {
+            Assert.IsNull(a.Summon(10));
+            Assert.IsNull(b.Summon(10, "standard"));
+            CollectionAssert.AreEqual(a.LastSummon.Select(p => p.unitId + p.rank).ToList(),
+                b.LastSummon.Select(p => p.unitId + p.rank).ToList());
+        }
+        Assert.AreEqual(a.State.randomState, b.State.randomState);
+        Assert.AreEqual(a.State.sigils, b.State.sigils);
+        var fresh = Quiet(Started());
+        fresh.State.sigils = 0;
+        Assert.IsNotNull(fresh.Summon(1, "featured"), "the free summon is Standard's alone");
+        Assert.IsFalse(fresh.State.freeSummonUsed);
+        Assert.IsNull(fresh.Summon(1, "standard"));
+        Assert.IsTrue(fresh.State.freeSummonUsed);
+    }
+
+    [Test]
+    public void FeaturedBannerHalvesTopPullsAndGuaranteesAfterAMiss()
+    {
+        var rules = Summoner();
+        var ssr = TowerRules.FeaturedHero(9); var ss = TowerRules.FeaturedHero(8);
+        Assert.IsNotNull(ssr); Assert.IsNotNull(ss);
+        Assert.AreEqual(9, ssr.rank); Assert.AreEqual(8, ss.rank);
+        int sigils = rules.State.sigils;
+        Assert.IsNull(rules.Summon(1, "featured"));
+        Assert.IsNull(rules.Summon(10, "featured"));
+        Assert.AreEqual(sigils - 110, rules.State.sigils, "10 a pull, 100 a ten-pull");
+        int top = 0, hits = 0;
+        bool missed = rules.State.featuredMissed;
+        for (int n = 0; n < 300; n++)
+        {
+            Assert.IsNull(rules.Summon(10, "featured"));
+            foreach (var pull in rules.LastSummon)
+            {
+                Assert.AreEqual("hero", pull.kind, "Featured draws heroes only");
+                if (pull.rank < 8) continue;
+                bool hit = pull.unitId == (pull.rank == 9 ? ssr.id : ss.id);
+                if (missed) Assert.IsTrue(hit, "the SS/SSR after a miss is the featured hero");
+                missed = !hit;
+                top++; if (hit) hits++;
+            }
+            Assert.AreEqual(missed, rules.State.featuredMissed);
+        }
+        Assert.Greater(top, 60);
+        Assert.That(hits / (float)top, Is.InRange(0.55f, 0.8f), "a 50/50 with a guarantee lands near two thirds");
+    }
+
+    [Test]
+    public void FeaturedPairRotatesEveryMonday()
+    {
+        TowerRules.Today = () => new System.DateTime(2026, 10, 5);
+        string ssr = TowerRules.FeaturedHero(9).id, ss = TowerRules.FeaturedHero(8).id;
+        Assert.AreEqual(new System.DateTime(2026, 10, 12), TowerRules.FeaturedEnds());
+        TowerRules.Today = () => new System.DateTime(2026, 10, 11);
+        Assert.AreEqual(ssr, TowerRules.FeaturedHero(9).id, "the same week keeps the pair");
+        Assert.AreEqual(ss, TowerRules.FeaturedHero(8).id);
+        TowerRules.Today = () => new System.DateTime(2026, 10, 12);
+        Assert.AreNotEqual(ssr, TowerRules.FeaturedHero(9).id, "Monday brings a new SSR");
+        Assert.AreNotEqual(ss, TowerRules.FeaturedHero(8).id, "and a new SS");
+        var seen = new System.Collections.Generic.HashSet<string>();
+        for (int week = 0; week < 8; week++)
+        {
+            int w = week;
+            TowerRules.Today = () => new System.DateTime(2026, 10, 5).AddDays(7 * w);
+            seen.Add(TowerRules.FeaturedHero(9).id);
+        }
+        Assert.AreEqual(TowerRoster.OfRank(9, true).Count, seen.Count, "every SSR hero takes a turn");
+    }
+
+    [Test]
+    public void PickBannerCostsDoubleAndAimsAtTheTarget()
+    {
+        var rules = Summoner();
+        var target = TowerRoster.OfRank(8, true)[2];
+        Assert.IsNull(rules.SetPickTarget(target.id));
+        Assert.IsNotNull(rules.SetPickTarget(TowerRoster.OfRank(5, true)[0].id), "only SS or SSR heroes");
+        Assert.AreEqual(target.id, rules.PickTarget().id);
+        int sigils = rules.State.sigils;
+        Assert.IsNull(rules.Summon(1, "pick"));
+        Assert.IsNull(rules.Summon(10, "pick"));
+        Assert.AreEqual(sigils - 220, rules.State.sigils, "20 a pull, 200 a ten-pull");
+        int ssPulls = 0, hits = 0;
+        for (int n = 0; n < 300; n++)
+        {
+            Assert.IsNull(rules.Summon(10, "pick"));
+            foreach (var pull in rules.LastSummon)
+            {
+                Assert.AreEqual("hero", pull.kind);
+                if (pull.rank == 9) Assert.AreNotEqual(target.id, pull.unitId);
+                if (pull.rank != 8) continue;
+                ssPulls++; if (pull.unitId == target.id) hits++;
+            }
+        }
+        Assert.Greater(ssPulls, 40);
+        Assert.That(hits / (float)ssPulls, Is.InRange(0.55f, 0.8f));
+
+        // A pending guarantee follows the player to a new target.
+        var ssrTarget = TowerRoster.OfRank(9, true)[3];
+        rules.State.pickMissed = true;
+        Assert.IsNull(rules.SetPickTarget(ssrTarget.id));
+        rules.State.summonPity = TowerRules.HardPity - 1;
+        Assert.IsNull(rules.Summon(1, "pick"));
+        Assert.AreEqual(9, rules.LastSummon[0].rank);
+        Assert.AreEqual(ssrTarget.id, rules.LastSummon[0].unitId);
+        Assert.IsFalse(rules.State.pickMissed);
+    }
+
+    [Test]
+    public void ResidentBannerIsCheapAndGivesAnAEveryTwentyPulls()
+    {
+        var rules = Summoner();
+        int sigils = rules.State.sigils, pity = rules.State.summonPity;
+        Assert.IsNull(rules.Summon(1, "resident"));
+        Assert.IsNull(rules.Summon(10, "resident"));
+        Assert.AreEqual(sigils - 55, rules.State.sigils, "5 a pull, 50 a ten-pull");
+        int dry = 0, longest = 0, ssr = 0, pulls = 0;
+        for (int n = 0; n < 200; n++)
+        {
+            Assert.IsNull(rules.Summon(10, "resident"));
+            foreach (var pull in rules.LastSummon)
+            {
+                Assert.AreEqual("resident", pull.kind, "the Resident banner draws residents only");
+                pulls++;
+                if (pull.rank == 9) ssr++;
+                dry = pull.rank >= TowerRules.ResidentFloorRank ? 0 : dry + 1;
+                longest = Mathf.Max(longest, dry);
+            }
+        }
+        Assert.Less(longest, TowerRules.ResidentPityAt, "never twenty pulls without an A or better");
+        Assert.That(ssr / (float)pulls, Is.InRange(0.004f, 0.03f), "SSR about 1%");
+        Assert.AreEqual(pity, rules.State.summonPity, "the hero SSR pity is untouched");
+    }
+
+    [Test]
+    public void HeroBannersShareTheSsrPity()
+    {
+        var rules = Summoner();
+        rules.State.summonPity = TowerRules.HardPity - 1;
+        Assert.IsNull(rules.Summon(1, "featured"));
+        Assert.AreEqual(9, rules.LastSummon[0].rank, "Standard's pity pays out on Featured");
+        Assert.AreEqual(0, rules.State.summonPity);
+        rules.State.featuredMissed = true;
+        rules.State.summonPity = TowerRules.HardPity - 1;
+        Assert.IsNull(rules.Summon(1, "featured"));
+        Assert.AreEqual(TowerRules.FeaturedHero(9).id, rules.LastSummon[0].unitId, "a pending guarantee pays the featured SSR");
+        Assert.IsFalse(rules.State.featuredMissed);
+        foreach (string banner in new[] { "pick", "standard", "featured" })
+        {
+            int before = rules.State.summonPity;
+            Assert.IsNull(rules.Summon(1, banner));
+            int expected = rules.LastSummon[0].rank == 9 ? 0 : before + 1;
+            Assert.AreEqual(expected, rules.State.summonPity, banner + " advances the one shared counter");
+        }
+    }
+
+    [Test]
+    public void BannerStateSurvivesASave()
+    {
+        var rules = Summoner();
+        rules.SetSummonBanner("resident");
+        rules.CyclePickTarget(2);
+        rules.State.featuredMissed = true; rules.State.pickMissed = true; rules.State.residentPity = 7;
+        string pick = rules.State.pickTarget;
+        var loaded = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State)));
+        Assert.AreEqual("resident", loaded.State.summonBanner);
+        Assert.AreEqual(pick, loaded.State.pickTarget);
+        Assert.IsTrue(loaded.State.featuredMissed); Assert.IsTrue(loaded.State.pickMissed);
+        Assert.AreEqual(7, loaded.State.residentPity);
+        rules.State.summonBanner = "nonsense"; rules.State.pickTarget = "kaela";
+        var repaired = new TowerRules(JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State)));
+        Assert.AreEqual("standard", repaired.State.summonBanner);
+        Assert.AreEqual(9, TowerRoster.Unit(repaired.State.pickTarget).rank, "a bad target falls back to an SSR hero");
+    }
 }

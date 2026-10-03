@@ -144,6 +144,11 @@ namespace AdamsHaven.Tower
             state.storyteller = string.IsNullOrEmpty(fallen.storyteller) ? "balanced" : fallen.storyteller;
             state.summonPity = fallen.summonPity;
             state.freeSummonUsed = fallen.freeSummonUsed;
+            state.summonBanner = fallen.summonBanner ?? "standard";
+            state.featuredMissed = fallen.featuredMissed;
+            state.pickTarget = fallen.pickTarget ?? "";
+            state.pickMissed = fallen.pickMissed;
+            state.residentPity = fallen.residentPity;
             // Research persists across runs (GDD 8.5), including a study still in progress.
             state.research = new List<string>(fallen.research ?? new List<string>());
             state.researching = fallen.researching ?? "";
@@ -287,6 +292,12 @@ namespace AdamsHaven.Tower
             if (pool.Count > 0) unit = pool[PickIndex(pool.Count)];
             int pick = PickIndex(SummonHeroIds.Length);
             string unitId = unit != null ? unit.id : SummonHeroIds[pick], name = unit != null ? unit.name : SummonHeroNames[pick];
+            return GrantHero(unit, unitId, name, rank);
+        }
+
+        // Delivers one hero of `rank`: a duplicate fuses into the one already owned, a new hero takes a bed or waits.
+        private TowerSummon GrantHero(RosterUnit unit, string unitId, string name, int rank)
+        {
             var owned = Owned(r => r.origin == "hero" && r.unitId == unitId);
             if (owned != null)
             {

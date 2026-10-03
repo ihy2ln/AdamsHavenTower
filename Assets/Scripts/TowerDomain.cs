@@ -208,6 +208,12 @@ namespace AdamsHaven.Tower
         public float siegeWarning;   // seconds until a gathering siege hits; 0 when none
         public int siegesWon, siegesLost;
         public bool siegeBattle;     // the heroes are meeting the siege in Battle Mode; the warning waits for them
+        // TT 10.3.1 summon banners (TowerBanners.cs). SSR pity stays the shared summonPity above.
+        public string summonBanner = "standard";   // the banner the Heart hub last showed
+        public bool featuredMissed;  // the last SS/SSR on Featured was not the featured hero: the next one is
+        public string pickTarget = "";             // Pick-Your-Hero target (an SS or SSR hero's unit id)
+        public bool pickMissed;      // the same guarantee for Pick-Your-Hero; it carries over when the target changes
+        public int residentPity;     // Resident banner pulls since the last A or better
     }
 
     public sealed class TowerRoomDef
