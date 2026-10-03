@@ -806,7 +806,7 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 3. Validate the Heart rank table (8.4) and research costs (8.2) against income in a spreadsheet simulation; decide the second research queue slot.
 4. Per-node effect values in 8.2.1 are draft.
 5. Review the drafted 36 heroes and 24 residents in `CharacterPrompts/` (names, designs, abilities), then generate the art.
-6. Gacha: banner schedule cadence, Echoes rate, ascension Celestium cost, whether pity is shared across banners, final Sigil income.
+6. Gacha: banner schedule cadence, Echoes rate, ascension Celestium cost, whether pity is shared across banners, final Sigil income. **Banners are the next build (owner, 2026-10-03); the questions to settle first are listed in `TOWER_DESIGN_HANDOFF.md` section 3.**
 7. Rank-function tables per building; SSR buffs per building (only Barn named).
 8. Expeditions (section 10): final danger and reward tables, creature element per region, boss list, Echoes drop rates, region passives, rations cost curve, and trimming the existing 20x20 crawl to 10-15 minutes.
 9. Carry-over details after a hard fail (Gold, Celestium, building ranks).
@@ -815,7 +815,7 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 12. Tutorial reward amounts, step timing and the post-tutorial goal chain.
 13. Audio direction (music, SFX) and font selection.
 14. **TT 10.30.0 balance (all draft):** district specialisation strengths (15% / 20% / 20%), policy upkeep, coverage radius (1 + rank / 3 floors), appeal thresholds (50 / 75); outpost base yields, caravan interval (360 s), ambush and raid curves, founding cost (250 x region reward); auto-expedition danger and hours; siege defence and wave formulas; leaving (1,080 s) and inspiration (720 s) timers. Measure in a playthrough.
-15. **TT 10.30.0 follow-ups still open:** whether a district's appeal should also lower Threat. (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move. Built in TT 10.30.2: region elements and counters, the dweller cap by Heart rank, a third active incident from rank C.)
+15. **TT 10.30.0 follow-ups: all closed.** District appeal does **not** lower Threat (owner, 2026-10-03). (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move. Built in TT 10.30.2: region elements and counters, the dweller cap by Heart rank, a third active incident from rank C.)
 
 ---
 
@@ -854,7 +854,7 @@ A **district** is a band of consecutive floors the player zones (`TowerDistricts
 | Food | Kitchen, Farmstead | meals 10% smaller for residents housed there |
 | Leisure | Argent Market, Guild, Deck Hall | +3 mood ("Leisure nearby") |
 
-**Appeal** (0 to 100 per floor): each room scores up to 3 (well kept at 80%+ condition, rank, decorative types: Manor, Terrace Row, Frosted Mug, Market), plus Beautification and Residential purity. Residents housed on a floor at 50+ feel "Pleasant floor" (+2), at 75+ "Lovely district" (+5). The average appeal of the floors people live on speeds Gate arrivals by up to 40%.
+**Appeal** (0 to 100 per floor): each room scores up to 3 (well kept at 80%+ condition, rank, decorative types: Manor, Terrace Row, Frosted Mug, Market), plus Beautification and Residential purity. Residents housed on a floor at 50+ feel "Pleasant floor" (+2), at 75+ "Lovely district" (+5). The average appeal of the floors people live on speeds Gate arrivals by up to 40%. Appeal does not change Threat (owner, 2026-10-03).
 
 **Info views:** the Districts panel switches the cutaway between VIEW OFF, DISTRICTS (tinted by specialisation, named), COVERAGE (red to green by services reached, with MED / SAFE / FOOD / FUN tags) and APPEAL.
 

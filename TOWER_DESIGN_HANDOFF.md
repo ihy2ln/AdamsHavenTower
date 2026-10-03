@@ -1,85 +1,129 @@
-# Tower Mode design handoff (for the next TT session)
+# Tower Mode handoff (for the next TT session)
 
-Written 2026-10-01, updated 2026-10-03 (TT 10.30.0). Read this first, then `TOWER_MODE_GDD.md` (design authority) and `TOWER_BALANCE_REPORT.md` (measured numbers).
+Updated 2026-10-03 after TT 10.30.2. Read this first, then `TOWER_MODE_GDD.md` (design authority), `TOWER_LIFE.md` (build log, newest at the bottom) and `TOWER_BALANCE_REPORT.md` (measured numbers).
 
-## 0. TT 10.30.0 in one paragraph
+## 0. Start here
 
-The owner set the foundation: **Fallout Shelter x RimWorld**, with **Cities: Skylines-style management** on top. RimWorld depth is core (GDD 6.3): second traits, backstories, leaving, inspirations, storytellers, a work grid. New management layers: **districts** on floor bands (GDD 17) and **outposts** in conquered regions (GDD 18). Gap fixes: Heart-rank floor caps (stretched to +-24), MOVE / DEMOLISH, auto expeditions (GDD 10.3), Gate sieges (GDD 9.6, auto-defend). Build log: `TOWER_LIFE.md` "Oct 3". Tests: `TowerManagementTests` (47) + `TowerSimulationTests` (119) + `Expedition*` (40), all green on 2026-10-03.
+**Next job: summon banners (GDD 8.1). The owner approved them on 2026-10-03.** Ask the four questions in section 3 first, then build them as section 3 lays out.
 
-**TT 10.30.2:** the Heart's dweller cap (GDD 8.4; `PopulationCap` = min(beds, `DwellerCap`), newcomers only), one more active incident from rank C (`MaxActiveIncidents`), region elements and auto-expedition counters (`RegionElement`, `HeroElement` / `HeroRole` with a battle-definition fallback for the six founders). `TowerManagementTests` 51.
+Paste-ready prompt for the next session:
 
-**TT 10.30.1 (same day):** the four follow-ups. Sieges can be fought in Battle Mode (`TowerSiegeBattle.cs`, banner `TowerHudSiege.cs`, `AdamsHavenPrototype.LaunchSiegeBattle`); storyteller pick on the dormant founding panel; long-press a room to move it (`TickRoomHold` in `HandleCameraInput`, ring via `TowerFx.ShowHold`); outpost marker and panel line on the Atlas (my hunks in the Expedition session's `TowerMapSources.cs` / `TowerExpeditionUi.cs`).
+> TT <next version>. Tower Tycoon: build the summon banners from GDD 8.1 (Standard, Featured, Pick-Your-Hero, Resident). Read `TOWER_DESIGN_HANDOFF.md` section 0 and 3 first and ask me its open questions before coding.
 
 ## 1. Where things stand
 
-Tower Mode is a Fallout Shelter x RimWorld tower town in Unity (`S:\AI\Game\Unity AHCG\My project`). The player is the Summoner/Steward of the Celestium Heart. Tower tests: **170 pass** (`TowerSimulationTests` 119 + `TowerManagementTests` 51, EditMode).
+Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\Unity AHCG\My project`, branch master), with **Cities: Skylines-style management** on top. The player is the Summoner/Steward of the Celestium Heart.
+
+**Tests (2026-10-03):** `TowerManagementTests` 51 + `TowerSimulationTests` 119, all green (EditMode). The Expedition suites (owned by the other session) had one failure in its untracked, in-progress `ExpeditionAtlasTests.VaultsAlwaysHoldAFightFromLayoutVersionThree`. It is not a Tower test.
 
 | Area | State |
 | --- | --- |
-| GDD (`TOWER_MODE_GDD.md`) | Complete first draft: premise, loop, tower structure, buildings F to SSR with 1/2/3-bay growth, dwellers, economy model, Heart hub, threats, expeditions, UI wireframes, tutorial, Legacy restart. Many numbers are drafts marked **[TBD]** |
-| Code | Heart ranks, warning stages, hard fail with Legacy restart, summoning, roster, incidents, expeditions (other session), HUD chrome with art |
-| Characters | 36 heroes + 24 residents designed (`CharacterPrompts/`), prompts run, art generated (`CharacterPrompts/Generated`, 1.7 GB, **not** imported into the game) |
-| Saves | 10 slots in `AppData\LocalLow\DefaultCompany\My project\AdamsHavenTower`. All pinned, maxed (storage F to SSR, full stock, full conditions) for testing. Backups: `slot_NN.json.before-max-*.bak` |
+| Core loop | Rooms F to SSR with 1/2/3-bay growth, stat matching, collect / rush, adjacency, firewood brownouts, construction timers, MOVE / DEMOLISH (also long-press), floor caps by Heart rank (stretched to ±24) |
+| Heart | Ranks F to SSR with building and research caps, dweller cap (8 to 110), warning stages, hard fail with a rogue-lite Legacy restart, 40-node research tree, summons (one standard pool, pity 50/60), slow first-run climb |
+| Colony (RimWorld, core) | Needs, thought-based mood, 10 traits, a second trait and a backstory for newcomers, mood breaks, leaving, inspirations, bonds / families / grief, work priorities + WORK GRID, schedules, three storytellers (picked on the founding panel and the Heart STATUS tab) |
+| Threats | Fire, pests, illness, raiders, cave-ins; a third active incident from rank C; Gate sieges with auto-defend or DEFEND IN BATTLE (Battle Mode) and a Last Stand on a loss |
+| Management (Skylines) | Districts on floor bands (specialisation, 8 policies with upkeep, service coverage, appeal, info-view overlays); outposts as staffed colonies in conquered regions (caravans, raids, ranks F to SSR) with Atlas markers |
+| Expeditions | Played runs (other session); auto expeditions on the real clock with power vs danger, region elements and counters |
+| Sigils | About 30 a real day from goals, the daily board, expeditions and Heart rank-ups (`TowerSigils.cs`) |
+| Characters | 36 heroes + 24 residents designed (`CharacterPrompts/`); roster stats and names are in the game (`tower_roster.json`); the generated art (1.7 GB) is **not** imported |
+| Saves | 10 slots in `AppData\LocalLow\DefaultCompany\My project\AdamsHavenTower`. Slot 1 is the player's own; slots 2-10 are pinned checkpoints. Back them up before any Play check (Play autosaves). |
 
-## 2. Decisions the user has locked (do not re-ask)
+## 2. Decisions the owner has locked (do not re-ask)
 
-- Mobile-first, premium, no IAP. Free rotation in Tower and Battle. Sessions 5 to 10 minutes. **Keep the current offline catch-up behavior** (it runs on load even if the game was paused; capped at 4 h in code).
-- Buildings upgrade in place F, E, D, C, B, A, S, SS, SSR. Footprint 1 bay (F to D), 2 (C, B), 3 (A to SSR), growing left. Guild is 3 cells. Same-type adjacency bonus (+12%) kept.
-- Heart is the central shaft and the hub (Summon, Research, Upgrade, Status). **No death-spiral recovery: Heart falls = game over**, then a rogue-lite **Legacy restart** (harder start, stacking bonus per fallen run).
-- Heart damage only from breaches (raiders in the Heart's chamber) and unattended fire on the Heart's floor. Pests never hurt it.
-- 36 heroes (4 per rank), 24 residents with fixed ranks, 7 elements, 4 roles. All characters 21+. Female characters use deliberately exaggerated gacha proportions; costumes opaque and non-explicit.
-- Heart pacing target: SSR in about 60 to 90 days of play (E d1, D d3, C d7, B d14, A d25, S d40, SS d60, SSR d80).
-- First tutorial incident is a **fire** in the Shack. Dock: BUILD, PEOPLE, HEART (center), EXPEDITIONS, BATTLE.
-- Rank-specific building functions need a **deep-dive session with the user** (they said so). Ask questions first.
-- **(2026-10-03, TT 10.30.0)** Fallout Shelter x RimWorld is the foundation: colony depth is core, never "DLC". Skylines-style management is welcome: **districts are floor bands** (specialisation, policies, service coverage, appeal; bonuses only for unzoned floors) and **outposts are staffed colonies** in conquered regions. Floor caps follow the Heart, **stretched to +-24** (up 2,3,5,7,9,12,15,19,24 / down 1,3,5,7,9,12,15,19,24). The owner wants each TT batch to also look for gaps against the GDD.
+- Mobile-first, premium, no IAP. Free rotation in Tower and Battle. Sessions 5 to 10 minutes. Keep the current offline catch-up (runs on load, capped at 4 h).
+- **Fallout Shelter x RimWorld is the foundation.** Colony depth is core, never "DLC". Each TT batch also looks for gaps against the GDD ("always need to improve the mode").
+- **Skylines-style management:** districts are **floor bands** (specialisation, policies, service coverage, appeal; unzoned floors lose nothing); outposts are **staffed colonies** in conquered regions. **District appeal does not lower Threat** (owner, 2026-10-03).
+- Floor caps follow the Heart, stretched to ±24 (up 2,3,5,7,9,12,15,19,24 / down 1,3,5,7,9,12,15,19,24).
+- Buildings upgrade in place F, E, D, C, B, A, S, SS, SSR; footprint 1 bay (F-D), 2 (C-B), 3 (A-SSR), growing away from the shaft. Same-type adjacency +12%.
+- The Heart is the central shaft and hub (Summon, Research, Upgrade, Status). **Heart falls = run over**, then a Legacy restart. It is hurt only by breaches in its chamber and unattended fire on its floor.
+- 36 heroes (4 per rank), 24 residents with fixed ranks, 7 elements, 4 roles. All characters 21+; exaggerated gacha proportions, opaque non-explicit costumes.
+- Heart pacing target: SSR in about 60 to 90 days of play.
+- Rank-specific building functions need a **deep-dive session with the owner** first.
 
-## 3. Open work, in priority order
+## 3. Next: summon banners (GDD 8.1)
 
-1. ~~Sigil sources~~ **Done 2026-10-01** (`TowerSigils.cs`, GDD 8.1): about 30 per real day from goals, a daily board, expeditions and Heart rank-ups. Daily board lives in a DAILY tab of the Goals popup.
-2. ~~Summon economy~~ **Done 2026-10-01**: GDD adopted (10 per pull, 100 per 10-pull, GDD rates, 10-pull floor B, pity 50/60). Checkpoint save Sigils scaled x10 (pinned slots keep their old values).
-2b. **Done 2026-10-01 (later):** research tree (item 4) built, `TowerResearch.cs` + Heart RESEARCH tab, 40 nodes, real-time timers; summons with no bed wait in the Heart; compact gold (1.4k / 1mil); simulation 7.6x faster (`Tools > Adams Haven > Tower Perf Probe`); Android-only texture caps (`AndroidTextureCompression.cs`). APK is ~965 MB because the new Roster character art adds ~336 MB: decide what ships.
-2c. **Done 2026-10-03 (TT 10.30.0):** see section 0 and `TOWER_LIFE.md` "Oct 3". Follow-ups in GDD 16 item 15: outpost marker on the Atlas (Expedition session's `TowerMapSources.cs`), Battle Mode siege option (Battle session), region elements, storyteller picker on NEW GAME, dweller cap by Heart rank, long-press move, a measured balance pass of the new numbers (GDD 16 item 14).
-3. **Heart pacing.** Costs are far too low (three quarries finish all Heart upgrades in about 11 days). Needs the research tree first, then a second measurement pass. Starting idea in the balance report: Heart Celestium costs x 4, quarry output halved from rank C.
-4. **Research tree** (40 nodes in GDD 8.2.1). Only per-building blueprint research exists in code.
-5. **Banners:** Featured, Pick-Your-Hero (2x cost), Resident. Not built.
-6. **Rank-specific building functions and SSR buffs** (GDD 5.3, only the Barn buff is named). Design session needed.
-7. Import character art into the game (`CharacterPrompts/_source/import_roster_art.py`, subset or `--all`). Wire portraits into the People/Hero detail and summon reveal. Decide what ships in builds (Resources ships everything).
-8. Smaller TBDs listed in GDD section 16 (breach damage rates, siege waves, region passives, rations curve, Echoes, ascension cost).
+**Today:** one pool in `TowerHeart.cs` (`Summon(count)`, about line 230).
+- `RollRank` uses the GDD standard rates, with soft pity from pull 50 (45 with EXP-5) and hard pity at 60; EXP-8 adds +0.5% SSR.
+- A 10-pull guarantees one B or better. The free first summon is a hero of B or better.
+- `HeroShare` 0.6 picks hero vs resident per pull. Duplicate heroes fuse (rank up or +1 level).
+- With no free bed, a summon waits inside the Heart.
+- The HUD is the Heart hub's SUMMON tab (`TowerHudHeart.cs`: `BuildHeartPopup` and the "Summon" block of `RefreshHeart`).
 
-## 4. Where things live
+**The design (GDD 8.1, wireframe 12.14):**
+
+| Banner | Pool | Cost | Rules |
+| --- | --- | --- | --- |
+| Standard | all heroes | 10 / 100 Sigils | permanent |
+| Featured | all heroes, rate-up | 10 / 100 | rotating; one SSR and one SS hero featured; 50% of SSR/SS pulls are the featured one, and after a miss the next SSR/SS is guaranteed to be it |
+| Pick-Your-Hero | all heroes | 20 / 200 | the player picks one SSR or SS target; Featured's rules aimed at that hero |
+| Resident | the 24 residents | 5 / 50 | SSR about 1%; guaranteed A or better every 20 pulls |
+
+**Ask the owner first** (GDD 16 item 6 leaves these open):
+1. Should Standard become heroes only, as the GDD says, now that the Resident banner exists? Or keep today's 60/40 hero/resident mix?
+2. Is SSR pity shared across the hero banners (Standard, Featured, Pick) or kept per banner? The Resident banner keeps its own A-every-20 counter either way.
+3. What is the Featured rotation cadence (suggest: weekly by the local calendar, like the daily board's `TowerRules.Today`), and is the featured pair automatic or hand-authored?
+4. Pick-Your-Hero: can the target change mid-way, and does the "guaranteed after a miss" flag carry over when it does?
+
+**Suggested build:**
+- **Data:** a `TowerBannerDef` table (`id`, name, pool, pull and ten-pull cost, rate-up rule) in a new `TowerBanners.cs` (partial `TowerRules`).
+- **State, new fields** (defaults load fine; no schema bump):
+  - `summonBanner` (the UI's last choice)
+  - `featuredMissed`, `pickTarget`, `pickMissed`
+  - `residentPity`
+  - per-banner pity, only if the owner wants it
+- **Rolls:** keep `Summon(count)` as the Standard banner, so `SummonsSpendSigilsAndHardPityGivesAnSsr`, `SummonsCostTenSigilsAndEveryTenPullHoldsABOrBetter`, `SummonsDrawNamedUnitsOfTheRolledRankFromTheRoster` and `SummonsWithNoFreeBedWaitInsideTheHeartUntilOneOpens` (all in `TowerSimulationTests`) stay green. Add `Summon(count, bannerId)`.
+  - New banners may use `Random01()`, since summons already do. Do not add calls on the Standard path unless the owner changes its pool.
+  - Featured and Pick: on an SS/SSR result, roll 50/50 (or the guarantee) between the target and the rank pool, then set or clear the missed flag.
+  - Resident: the same `RollRank` ladder with SSR forced to 1%, and A+ forced on the 20th pull since the last A+.
+- **Featured pair:** a deterministic pick from `TowerRoster.OfRank(9, true)` and `OfRank(8, true)`, indexed by week number. It shows on the banner with its end date.
+- **HUD:**
+  - A banner tab row in the SUMMON tab (Standard / Featured / Pick-Your-Hero / Resident).
+  - Per-banner rates text, costs on the ×1 / ×10 buttons, and the pity meter for that banner.
+  - A target chooser for Pick-Your-Hero (cycle SSR and SS heroes; show the name, element and role from `TowerRoster`).
+  - Keep the GDD's mandatory rates screen (the existing rates text).
+- **Tests** (in `TowerManagementTests`):
+  - Standard is unchanged.
+  - Featured: half of the top pulls hit, a guarantee after a miss, weekly rotation.
+  - Pick: costs double and aims at the target.
+  - Resident: costs 5 and gives A+ every 20.
+  - Banner state survives a save.
+- **Docs:** GDD 8.1 "built" notes, `TOWER_LIFE.md` entry, this file.
+
+## 4. Other open work (offer these after banners)
+
+1. Import the generated character art (`CharacterPrompts/_source/import_roster_art.py`, subset or `--all`) and use it in the People panel, hero detail and the summon reveal. Decide what ships: Resources ships everything, and the APK is already about 965 MB.
+2. Rank-specific building functions and SSR buffs (GDD 5.3). This needs the owner deep-dive first.
+3. A measured balance playthrough of the TT 10.30.x numbers (GDD 16 item 14): districts, outposts, auto expeditions, sieges, leaving and inspiration timers.
+4. Smaller TBDs in GDD 16: breach damage rates, siege waves, region passives, rations curve, Echoes, ascension cost, a dedicated outpost / siege art pass.
+
+## 5. Where things live
 
 | What | Path (under `My project`) |
 | --- | --- |
-| Design authority | `TOWER_MODE_GDD.md` |
-| Measured balance | `TOWER_BALANCE_REPORT.md` |
-| Old build log | `TOWER_LIFE.md` (superseded as design) |
-| Rules and state | `Assets/Scripts/TowerDomain.cs`, `TowerSystems*.cs`, `TowerLife.cs`, `TowerColony.cs`, `TowerHeart.cs` (Heart, Legacy, summoning), `TowerThreat.cs`, `TowerMilestones.cs` (checkpoint saves, `MaxedForTesting`, `pinned`) |
-| Roster | `TowerRoster.cs`, `Assets/Resources/AdamsHaven/Roster/tower_roster.json` |
-| HUD and skin | `TowerHud*.cs`, `TowerUiSkin.cs`, `TowerSleekArt.cs` (loads `UI/Sleek` and `UI/Wuwa` art) |
-| Tests | `Assets/Editor/TowerSimulationTests.cs` (shared with the Expedition work), `Assets/Editor/TowerManagementTests.cs` (TT 10.30.0, Tower only) |
-| Colony depth, districts, outposts (TT 10.30.0) | `TowerLayoutTools.cs` (floor caps, move, demolish, `MigrateColony`), `TowerColonyDepth.cs`, `TowerDistricts.cs`, `TowerAutoExpedition.cs` (postings), `TowerOutposts.cs`, `TowerSiege.cs`; HUD `TowerHudWork.cs`, `TowerHudDistricts.cs`, `TowerHudExpeditions.cs`, `TowerHudOutposts.cs` |
-| Character pack | `CharacterPrompts/` (`roster.csv/json`, `heroes/`, `residents/`, `_source/*.py`, `Generated/` art) |
-| UI prompt packs and slicer | `UiPrompts/`, `UiSliced/slice_sheets.py`, mockup `UiWireframes/tower_ui_mockup.html` |
+| Design authority | `TOWER_MODE_GDD.md` (sections 17 Districts and 18 Outposts are new) |
+| Build log / balance | `TOWER_LIFE.md`, `TOWER_BALANCE_REPORT.md` |
+| Rules and state | `Assets/Scripts/TowerDomain.cs` (state, catalog, build / upgrade, dweller cap), `TowerSystems*.cs` (tick), `TowerLife.cs` (mood, goals, storyteller), `TowerColony.cs` (levels, raids, bonds, Steward), `TowerHeart.cs` (Heart, Legacy, summoning), `TowerResearch.cs`, `TowerSigils.cs`, `TowerMilestones.cs` (checkpoints) |
+| TT 10.30.x systems | `TowerLayoutTools.cs` (floor caps, move / demolish, `MigrateColony`, colony random), `TowerColonyDepth.cs` (traits, backstories, leaving, inspirations, storytellers), `TowerDistricts.cs`, `TowerAutoExpedition.cs` (postings, auto runs, elements), `TowerOutposts.cs`, `TowerSiege.cs`, `TowerSiegeBattle.cs` (Battle Mode bridge) |
+| HUD | `TowerHud.cs` (+ partials `TowerHudChrome`, `TowerHudHeart`, `TowerHudResearch`, `TowerHudWork`, `TowerHudDistricts`, `TowerHudExpeditions`, `TowerHudOutposts`, `TowerHudSiege`, `TowerHudDev`), `TowerUiSkin.cs`, `TowerArtDirector.cs` (cutaway art and info-view overlays), `TowerFx.cs` |
+| Roster | `TowerRoster.cs`, `Assets/Resources/AdamsHaven/Roster/tower_roster.json` (the six founding Fighters are not in it; their element and role come from `BattleCatalog`) |
+| Tests | `Assets/Editor/TowerManagementTests.cs` (Tower only, put new tests here), `TowerSimulationTests.cs` (shared with the Expedition work), `TowerPerfProbe.cs` (`Tools > Adams Haven > Tower Perf Probe`) |
+| Character pack | `CharacterPrompts/` (`roster.csv/json`, `_source/*.py`, `Generated/` art, never staged) |
 
-Regenerate the character pack: `python CharacterPrompts/_source/build_prompts.py`, then `export_game_roster.py` to refresh the game JSON.
+## 6. Working notes and traps
 
-## 5. Working notes and traps
-
-- Another session works on the Expedition/Atlas UI and Battle at the same time. The user said **this line of work is Tower mode only**: leave the Expedition UI to the other session. Commit only your own hunks; do not stage `CharacterPrompts/Generated`.
-- Run tests with the Unity MCP `Unity_RunCommand` + `TestRunnerApi` (EditMode, groups `^TowerSimulationTests`, `^TowerManagementTests`, `^Expedition`, `runSynchronously`). RunCommand's code fixer duplicates nested classes: declare the `ICallbacks` collector as a top-level `internal` class. Never edit scripts while in Play mode, not even your own Play check (Unity hot-reloads and the HUD's non-serialized fields go null); check `EditorApplication.isPlaying` first (the user sometimes leaves Play running for hours).
-- When the Editor is busy, work in a staging copy and typecheck offline with Unity's Roslyn against `Assembly-CSharp.csproj` / `Assembly-CSharp-Editor.csproj` (references from the csproj HintPaths, relative ones resolved against the project). TT 10.30.0 was built that way, then merged in with a 3-way `git merge-file`.
-- **Save versioning:** never bump `TowerState.schema` (`TowerSaveFiles.Load` only accepts 1 and 2). New data goes through `ColonyVersion` / `MigrateColony()` (and `NormalizeColony()` for list guards on every load). New random rolls use `ColonyRandom01()` (`State.colonyRandom`), never `Random01()`, so the seeded tests' main stream never shifts.
-- **Postings:** a resident away from the Tower for a Tower reason (auto expedition, outpost) has `posting` set and `exploring = true`. Do not reuse `away`: the expedition code rewrites it on every load (`MarkPartyAway`). Posted residents skip needs and upkeep and lose their job slot; `Recall` routes them home.
-- **Caches:** district, coverage and appeal arrays rebuild when `LayoutStamp` (or room / floor / resident counts) change, plus every 10 s. Anything that changes the tower's shape should call `TouchLayout()`.
-- **Committing next to the other session:** they edit `AdamsHavenPrototype.cs`, `TowerSimulationTests.cs` and the expedition files at the same time. Stage only your hunks (`git diff <file>`, trim the patch, `git apply --cached`) and put new Tower tests in `TowerManagementTests.cs`.
-- Bash heredocs turn `\n` inside Python strings into real newlines. Use the Edit tool for C# strings with `\n`.
-- Tower statics survive leaving Play mode in the editor. `TowerRules.DebugIgnoreGuild` is reset by `Assets/Editor/TowerDebugFlagReset.cs`.
-- Saves: `pinned = true` stops the checkpoint generator rebuilding a slot. Slot 1 is the player's own. Statics like `InstantConstruction` must be restored after experiments.
-- Time: `AdamsHavenPrototype.Update` uses `TowerRules.FrameSeconds(deltaTime, speed)`; paused = speed 0 advances nothing; speeds are proportional at 12 to 60 fps (tested).
-- A game day is 720 s. Production is about 18 to 19 collect cycles per day at every rank; rank raises the amount per collect, not the speed.
-
-## 6. Suggested first moves for the next session
-
-1. Ask the user to confirm the Sigil income numbers and the summon economy (item 2), then implement Sigil sources and align costs and rates, with tests.
-2. Draft the research tree in code against the GDD node list, then re-measure Heart pacing and tune costs.
-3. Run the rank-function design deep-dive with the user, then write it into GDD 5.3.
+- **The other session** works on Expedition / Atlas / Battle at the same time and leaves uncommitted edits. Today that includes `AdamsHavenPrototype.cs`, `TowerSimulationTests.cs`, `TowerExpedition*.cs`, `TowerDungeon.cs`, `TowerMap*.cs` and `Battle/*`, plus untracked `ExpeditionAtlasTests.cs`, `TowerAtlasNodes.cs` and `TowerMapWeb.cs`.
+  - Commit only your own hunks: write a patch from your pre-edit copy to your version, then `git apply --cached`.
+  - Then typecheck the **exported index** (`git ls-files 'Assets/*.cs' | git checkout-index --stdin --prefix=<dir>/` + Roslyn), so a commit never needs their unstaged or untracked work.
+- **Play mode:** check `EditorApplication.isPlaying` before any .cs edit. The Editor can sit in Play for hours. Never edit scripts during your own Play check either: Unity hot-reloads, the HUD's fields go null and you get an NRE in `RefreshTopChrome`. If Play is on, ask the owner to stop it; meanwhile stage edits in a scratch copy and typecheck offline with Unity's Roslyn from the csproj HintPaths (relative paths resolve against the project).
+- **Unity MCP `Unity_RunCommand`:**
+  - `System.Reflection` is forbidden, and nested classes get duplicated: declare `ICallbacks` collectors as top-level `internal` classes.
+  - Run tests with `TestRunnerApi`: EditMode, groups `^TowerManagementTests`, `^TowerSimulationTests`, `^Expedition`, `runSynchronously`.
+  - `SendMessage("Name")` reaches private no-arg HUD methods. With an int argument, 0 binds to `SendMessageOptions`; click buttons with `onClick.Invoke()` instead, and box other values: `SendMessage("TapAtlas", (object)vp)`.
+  - BattleMode is IMGUI: drive it with `DebugMouse(point on its 1600x900 virtual screen)` + `DebugClick()`.
+  - A screenshot taken the frame a popup opens shows unskinned buttons; capture one frame later.
+- **Play checks:** back up `LocalLow\DefaultCompany\My project\AdamsHavenTower` first; `AdamsHavenPrototype.LoadCheckpoint(n)` and `NewGame()` save the current slot. Afterwards restore the slots, move any slot 0 you created out of the folder, and set the PlayerPref `AdamsHaven.Tower.LastSlot` back to 1.
+- **Saves:** never bump `TowerState.schema` (`Load` accepts only 1 and 2). Migrate through `ColonyVersion` / `MigrateColony()`, and put list guards in `NormalizeColony()` (runs every load). New random rolls in Tower systems use `ColonyRandom01()`, not `Random01()`, so seeded tests keep their sequences.
+- **Postings:** a resident away for a Tower reason (auto expedition, outpost) has `posting` set and `exploring = true`. Never reuse `away`: the expedition code rewrites it on every load. `Recall` routes postings home.
+- **Caches:** district / coverage / appeal arrays rebuild when `LayoutStamp` (or room, floor or resident counts) change, and every 10 s. Anything that changes the tower's shape calls `TouchLayout()`.
+- Tower statics survive leaving Play (`TowerRules.DebugIgnoreGuild` is reset by `TowerDebugFlagReset.cs`; restore `InstantConstruction` after experiments). A game day is 720 s. Time uses `TowerRules.FrameSeconds(deltaTime, speed)`; speed 0 advances nothing.
+- Bash heredocs can mangle backslashes in Python strings: write Python helpers to files, or use the Edit tool for C# strings with `\n`.
