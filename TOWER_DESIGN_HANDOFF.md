@@ -4,17 +4,17 @@ Updated 2026-10-03 after TT 10.3.1. Read this first, then `TOWER_MODE_GDD.md` (d
 
 ## 0. Start here
 
-**TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1).** The next job is **town slices 2 to 4** (street outside the Gates, town economy, visitors and traders; GDD 19.2-19.4). Ask the owner the questions in section 3 first. If the owner prefers something else, section 4 lists the alternatives.
+**TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1). TT 10.3.2 shipped the TOWN view greybox (GDD 19.2).** The next jobs, in the owner's order: **real building assets for the town** (the blocks must go), then **town lots as rules data**, then the economy and visitors (GDD 19.3-19.4). Ask the owner the questions in section 3 first.
 
 Paste-ready prompt for the next session:
 
-> TT <next version>. Tower Tycoon: continue the town sim (GDD 19.2-19.4). Read `TOWER_DESIGN_HANDOFF.md` sections 0 and 3 first and ask me its open questions before coding.
+> TT <next version>. Tower Tycoon: town building assets and town lots (GDD 19.2). Read `TOWER_DESIGN_HANDOFF.md` sections 0 and 3 first and ask me its open questions before coding.
 
 ## 1. Where things stand
 
 Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\Unity AHCG\My project`, branch master), with **Cities: Skylines-style management** on top. The player is the Summoner/Steward of the Celestium Heart.
 
-**Tests (2026-10-03):** `TowerManagementTests` 66 + `TowerSimulationTests` 119, all green (EditMode). The `^Expedition` and `^Battle` groups were also green (253 in all four).
+**Tests (2026-10-03):** `TowerManagementTests` 68 + `TowerSimulationTests` 119, all green (EditMode). The `^Expedition` and `^Battle` groups were also green (253 in all four).
 
 | Area | State |
 | --- | --- |
@@ -48,13 +48,16 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
 
 **Today** (`TowerTown.cs`, GDD 19.1): `VenueDefs` by room type, `EnsureVenues` cache (rebuilds on `LayoutStamp` / room count), `ConsiderErrand` in `PlanJob` (live ticks only, `townTick`), `TickErrand` (the single place stock is spent; `VenuePrice` returns 0), `TickJoy`, `FreeTime`, `AddTownThoughts`. Tests in `TowerManagementTests` "town life".
 
-**Ask the owner first** (also GDD 16 item 16):
-1. **Town view:** decided 2026-10-03: its own view, switched to from the Tower, surrounding the Tower in a circle or square and growing over time (GDD 19.2 has the recommended camera, layout and building approach). Still open: circle or square boundary, growth per Heart rank, whether raiders damage town buildings, which town types come first (stalls, inn, bathhouse, plaza, homes).
-2. **Economy:** a closed gold loop, or keep the Market minting? Wages and rent per resident or per room? Who sets prices: the player per venue, or district policy? Do venues need staff once wages exist?
-3. **Visitors and traders:** visible walkers that use venues and pay? Do traders replace or extend the caravan event? Can a good visit turn a visitor into a recruit?
-4. **Feel:** visible queues at full venues? Is the cold-rations penalty (-3) right?
+**Town view greybox (TT 10.3.2):** `TowerTownMap.cs` (tiles, ring, roads; pure), `TowerTownView.cs` (camera, placeholder scene, input), `TowerHudTown.cs` (TOWN button, overlay). Decided: own view, circle-ish ring on a square grid, radius 7..35 by Heart rank, ring roads every 8 tiles, iso 35° default (the owner has seen all three angles).
 
-**Suggested order:** a greybox TOWN view first (orthographic isometric camera, square tile grid, ring boundary, the Tower as a centre block, placeholder lots) to settle the angle and shape with the owner; then town lots as rules data (a town grid in `TowerState`, lots feeding `VenueDefs` and homes, Gate-and-road travel in `TravelSeconds`); then prices and wages through `TickErrand` / `VenuePrice` with a resident purse; then visitors as non-resident walkers.
+**Ask the owner first** (also GDD 16 item 16):
+1. **Building assets:** which town types first (homes by rank band, inn, stalls, bathhouse, plaza fountain, walls and gatehouses)? Painted-then-3D via the barn pipeline, or straight 3D in Blender? How many rank looks per type (F-D / C-B / A-SSR is the Tower's split)? Is the Tower's own exterior a new model or a tall version of the keep block?
+2. **Town lots as rules:** does the player place town buildings by hand (Skylines) or do they grow on their own from population and appeal (SimCity zoning)? Do town homes count toward the dweller cap? Can raiders damage town buildings?
+3. **Economy:** a closed gold loop, or keep the Market minting? Wages and rent per resident or per room? Who sets prices: the player per venue, or district policy? Do venues need staff once wages exist?
+4. **Visitors and traders:** visible walkers that use venues and pay? Do traders replace or extend the caravan event? Can a good visit turn a visitor into a recruit?
+5. **Feel:** visible queues at full venues? Is the cold-rations penalty (-3) right?
+
+**Suggested order:** building assets (replace the blocks in `TowerTownView.BuildPlaceholderTown`; keep `TowerTownMap` as the ground truth); then town lots as rules data (a town grid in `TowerState`, lots feeding `VenueDefs` and homes, Gate-and-road travel in `TravelSeconds`); then prices and wages through `TickErrand` / `VenuePrice` with a resident purse; then visitors as non-resident walkers.
 
 ## 4. Other open work (offer these after, or instead of, the town)
 
@@ -70,6 +73,7 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
 | --- | --- |
 | Design authority | `TOWER_MODE_GDD.md` (17 Districts, 18 Outposts, 19 Town) |
 | Build log / balance | `TOWER_LIFE.md`, `TOWER_BALANCE_REPORT.md` |
+| Town view | `TowerTownMap.cs` (ground plan), `TowerTownView.cs` (scene, camera, input), `TowerHudTown.cs` (HUD) |
 | Rules and state | `Assets/Scripts/TowerDomain.cs` (state, catalog, build / upgrade, dweller cap), `TowerSystems*.cs` (tick), `TowerLife.cs` (mood, goals, storyteller), `TowerColony.cs` (levels, raids, bonds, Steward), `TowerHeart.cs` (Heart, Legacy, Standard summon), `TowerBanners.cs` (banners), `TowerTown.cs` (venues, errands, joy), `TowerResearch.cs`, `TowerSigils.cs`, `TowerMilestones.cs` (checkpoints) |
 | TT 10.30.x systems | `TowerLayoutTools.cs` (floor caps, move / demolish, `MigrateColony`, colony random), `TowerColonyDepth.cs` (traits, backstories, leaving, inspirations, storytellers), `TowerDistricts.cs`, `TowerAutoExpedition.cs` (postings, auto runs, elements), `TowerOutposts.cs`, `TowerSiege.cs`, `TowerSiegeBattle.cs` (Battle Mode bridge) |
 | HUD | `TowerHud.cs` (+ partials `TowerHudChrome`, `TowerHudHeart` (summon banners), `TowerHudResearch`, `TowerHudWork`, `TowerHudDistricts`, `TowerHudExpeditions`, `TowerHudOutposts`, `TowerHudSiege`, `TowerHudDev`), `TowerUiSkin.cs`, `TowerArtDirector.cs` (cutaway art and info-view overlays), `TowerFx.cs` (mood glyphs incl. errands) |
@@ -93,6 +97,8 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
   - BattleMode is IMGUI: drive it with `DebugMouse(point on its 1600x900 virtual screen)` + `DebugClick()`.
 - **Play checks:** back up `LocalLow\DefaultCompany\My project\AdamsHavenTower` first; `AdamsHavenPrototype.LoadCheckpoint(n)` and `NewGame()` save the current slot. Afterwards restore the slots, move any slot 0 you created out of the folder, and set the PlayerPref `AdamsHaven.Tower.LastSlot` back to 1.
 - **Saves:** never bump `TowerState.schema` (`Load` accepts only 1 and 2). Migrate through `ColonyVersion` (now 2) / `MigrateColony()` (steps gated per version), and put list guards in `NormalizeColony()` (runs every load). New random rolls in Tower systems use `ColonyRandom01()`, not `Random01()`, so seeded tests keep their sequences (summon banners use `Random01()` like Standard, off the Standard path).
+- **Offline typecheck:** no `Tools/typecheck.sh` here; a Roslyn driver that reads `Assembly-CSharp.csproj` HintPaths plus every `Assets/Scripts/**/*.cs` lived in the TT 10.3.2 session scratchpad (`typecheck.py`, ~40 lines: csc.dll under `Editor/Data/DotNetSdk/sdk/*/Roslyn/bincore`, `-nostdlib+`, the csproj defines and LangVersion). Rebuild it when Play is locked.
+- **TOWN view:** `TowerTownView` disables `Camera.main` and the scene's directional lights while active and restores them on Exit; its scene lives at x = 5000. The HUD overlay is the input catcher: the Tower's `OverUI` sees it, so no Tower code changed.
 - **Town life is live-only:** `townTick` is set at the top of `Tick` from `live && TownErrands`. Timing-sensitive tests (`GameSpeedKeepsStatsProportionalAtAnyFrameRate`, `IncomeForecastMatchesWhatTheKitchenReallyMakes`) are what errand gates and serving rates must keep green.
 - **Postings:** a resident away for a Tower reason (auto expedition, outpost) has `posting` set and `exploring = true`. Never reuse `away`: the expedition code rewrites it on every load. `Recall` routes postings home.
 - **Caches:** district / coverage / appeal arrays and the venue list rebuild when `LayoutStamp` (or room, floor or resident counts) change. Anything that changes the tower's shape calls `TouchLayout()`.

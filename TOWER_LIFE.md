@@ -196,3 +196,19 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
   to 99 and are committed once started; serving is 10 / 15 a second so `IncomeForecastMatchesWhatTheKitchenReallyMakes`
   keeps its margin.
 - Tests: `TowerManagementTests` 66 (+15: 7 banners, 8 town); all four suites green (253).
+
+## Oct 3 (5): TT 10.3.2 - TOWN view greybox
+
+- Owner direction: the town is its own view, surrounding the Tower in a circle-ish ring on a square grid, growing with
+  the Heart. `TowerTownMap.cs` (pure, tested): radius by rank, tiles Wild / Lot / Road / Plaza / Tower / Gate, Gate
+  roads, the rank-C cross road, ring roads every 8 tiles, `Frontage`, `LotCount`. `TowerTownView.cs`: own camera far
+  from the cutaway (origin x = 5000), iso 30 / 35 / perspective 45, pan, pinch, wheel, tap-to-inspect with a marker,
+  rank preview with auto zoom, ground texture per tile, Tower keep (height capped at 7.5 so it never hides the town),
+  placeholder houses filling road frontage first, forest band, townsfolk pacing the roads. `TowerHudTown.cs`: TOWN
+  button, full-screen input catcher (so the Tower's own pointer code sees UI), top info line, bottom controls.
+  `AdamsHavenPrototype.cs` untouched; the Tower camera is simply disabled while the town shows.
+- Screens taken at checkpoint 6 for all three angles; iso 35 reads best. SSR preview: ~2.7k buildings, 7k renderers,
+  fine in the Editor, not yet mobile-safe (chunking / LOD / instancing are the next perf jobs once real assets exist).
+- Owner: real building assets are needed to replace the blocks (plan in GDD 19.2).
+- Tests: `TowerManagementTests` 68 (+2 town map); 187 Tower tests green; full four-suite run 256 green before the
+  ring-road change.
