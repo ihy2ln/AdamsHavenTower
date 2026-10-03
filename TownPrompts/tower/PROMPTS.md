@@ -1,0 +1,21 @@
+# The Tower (town landmark)
+
+The Celestium Heart's tower as seen from the town, one picture per Heart rank band. Its footprint is the 5x5 tile centre of the ring; the gates face west and east (left and right).
+
+## F-D -> `tower_fd.png`
+
+Canvas 1152x1536 portrait. References: none.
+
+> High-end Korean fantasy RPG and gacha illustration, polished hand-painted anime rendering, crisp clean linework, rich dimensional cel shading, luminous material highlights, cohesive Adams Haven world palette of dark weathered timber, slate and stone with moonlit blue-silver and violet Celestium accents. Isometric three-quarter exterior view of a single tall tower, seen from above at about 35 degrees, turned 45 degrees so two walls show equally, orthographic look with parallel edges and no vanishing points, the whole building in frame with air around it, flat neutral pale-grey ground and a plain soft gradient background, soft daylight from the upper left, light shadow on the ground to the lower right. Subject: the Celestium Heart's tower at the centre of a fantasy tower town, a young tower: a squat five-storey stone keep of dark fitted stone with a timber top floor, two arched gates facing left and right, a small dim blue crystal at its crown. Dark weathered timber, slate and fitted stone; blue-silver and violet Celestium light. No text, no letters, no numbers, no signs with writing, no watermark, no logo, no frame or border, no UI, no people, no cropped walls or roofs, no photorealism, no fisheye, no extreme perspective.
+
+## C-B -> `tower_cb.png`
+
+Canvas 1152x1536 portrait. References: tower_fd.png.
+
+> High-end Korean fantasy RPG and gacha illustration, polished hand-painted anime rendering, crisp clean linework, rich dimensional cel shading, luminous material highlights, cohesive Adams Haven world palette of dark weathered timber, slate and stone with moonlit blue-silver and violet Celestium accents. Isometric three-quarter exterior view of a single tall tower, seen from above at about 35 degrees, turned 45 degrees so two walls show equally, orthographic look with parallel edges and no vanishing points, the whole building in frame with air around it, flat neutral pale-grey ground and a plain soft gradient background, soft daylight from the upper left, light shadow on the ground to the lower right. Subject: the Celestium Heart's tower at the centre of a fantasy tower town, a grown tower: a twelve-storey keep of dark dressed stone banded with timber galleries, two fortified gates with portcullises facing left and right, a bright blue-silver Celestium crystal shining at its crown. Dark weathered timber, slate and fitted stone; blue-silver and violet Celestium light. No text, no letters, no numbers, no signs with writing, no watermark, no logo, no frame or border, no UI, no people, no cropped walls or roofs, no photorealism, no fisheye, no extreme perspective.
+
+## A-SSR -> `tower_assr.png`
+
+Canvas 1152x1536 portrait. References: tower_fd.png.
+
+> High-end Korean fantasy RPG and gacha illustration, polished hand-painted anime rendering, crisp clean linework, rich dimensional cel shading, luminous material highlights, cohesive Adams Haven world palette of dark weathered timber, slate and stone with moonlit blue-silver and violet Celestium accents. Isometric three-quarter exterior view of a single tall tower, seen from above at about 35 degrees, turned 45 degrees so two walls show equally, orthographic look with parallel edges and no vanishing points, the whole building in frame with air around it, flat neutral pale-grey ground and a plain soft gradient background, soft daylight from the upper left, light shadow on the ground to the lower right. Subject: the Celestium Heart's tower at the centre of a fantasy tower town, a great tower: a soaring twenty-storey keep of dark stone and polished timber with buttresses and lantern galleries, grand twin gates facing left and right, a huge radiant blue-violet Celestium crystal at its crown with light spilling down the walls. Dark weathered timber, slate and fitted stone; blue-silver and violet Celestium light. No text, no letters, no numbers, no signs with writing, no watermark, no logo, no frame or border, no UI, no people, no cropped walls or roofs, no photorealism, no fisheye, no extreme perspective.
