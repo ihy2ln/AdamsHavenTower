@@ -1,0 +1,8 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer; keep her exact face, eyes, hair, ears and outfit from image 1. she hefts her crystal war hammer over her shoulder with a steady grin, frost gathering on its head. Dark background with ice energy and strong rim light. Sharp cel-shaded anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_helda\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Helda\\exec-09495746-06b2-44ce-8fcf-12e72dc9a306.png"
+  ],
+  "seed": 9132
+}

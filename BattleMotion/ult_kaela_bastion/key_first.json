@@ -1,0 +1,8 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the muscular snow-leopard beastfolk brawler woman with long sky-blue hair, snow-leopard ears and a spotted tail, a star-marked eyepatch, leopard-spot tattoos, white top, belt, black shorts, white side cloths, strapped sandals and glowing ice-crystal claw gauntlets on both hands; keep her exact face, eyes, hair, ears and outfit from image 1. she crosses her forearms in front of her face, frost spreading over her gloves, a determined grin. Dark background with ice energy and strong rim light. Sharp cel-shaded anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_kaela\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Kaela\\kaela_battle_tpose_front_v6.png"
+  ],
+  "seed": 9108
+}

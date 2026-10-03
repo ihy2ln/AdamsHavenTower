@@ -1,0 +1,8 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the elf mage-scholar with light brown hair in a bun, pointed ears, a navy cropped coat with gold trim, a white corseted blouse, a white pleated skirt, thigh-high stockings, tall brown boots, a spellbook and a glowing crystal fountain pen; keep her exact face, eyes, hair, ears and outfit from image 1. she points her glowing fountain pen forward, a spark gathering at its nib, her eyes glowing. Dark background with lightning energy and strong rim light. Sharp cel-shaded anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_elara\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Elara\\elara_battle_tpose_book_quill_v12.png"
+  ],
+  "seed": 9122
+}

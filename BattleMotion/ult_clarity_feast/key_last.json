@@ -1,0 +1,9 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai); keep her exact face, hair, outfit and weapon from images 1 and 3. she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, warm rays from above. Dynamic camera angle, speed lines, dramatic holy light lighting, sharp anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\Celestium Weapons\\clarity-kunai.png"
+  ],
+  "seed": 9153
+}

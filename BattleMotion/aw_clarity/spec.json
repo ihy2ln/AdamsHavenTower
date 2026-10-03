@@ -1,0 +1,31 @@
+{
+  "kind": "ult",
+  "unit": "clarity",
+  "out": "aw_clarity",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9153,
+  "keys": [
+    [
+      "first",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai; keep her exact face, eyes, hair, ears and outfit from image 1. she exhales slowly, eyes closed, soft golden light gathering around her face. Dark background with holy light energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\Celestium Weapons\\clarity-kunai.png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai); keep her exact face, hair, outfit and weapon from images 1 and 3. she stands in a calm centered stance as a pillar of warm golden light descends over her, healing rings spreading outward. Dynamic camera angle, speed lines, dramatic holy light lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai: she exhales slowly, eyes closed, soft golden light gathering around her face. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands in a calm centered stance as a pillar of warm golden light descends over her, healing rings spreading outward. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

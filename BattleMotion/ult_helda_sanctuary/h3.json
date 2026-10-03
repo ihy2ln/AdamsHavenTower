@@ -1,0 +1,24 @@
+{
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer: she hefts her crystal war hammer over her shoulder with a steady grin, frost gathering on its head. A white flash and fast speed lines, then the camera whips back to a wide shot: she slams her hammer down and a gleaming sanctuary of ice pillars and a crystal dome rises around the party, cold blue light. Punchy, fast, dramatic camera, consistent character, no text, no UI.",
+  "keys": [
+    {
+      "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer; keep her exact face, eyes, hair, ears and outfit from image 1. she hefts her crystal war hammer over her shoulder with a steady grin, frost gathering on its head. Dark background with ice energy and strong rim light. Sharp cel-shaded anime game illustration.",
+      "refs": [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_helda\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Helda\\exec-09495746-06b2-44ce-8fcf-12e72dc9a306.png"
+      ],
+      "seed": 9132
+    },
+    {
+      "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer); keep her exact face, hair, outfit and weapon from images 1 and 3. she slams her hammer down and a gleaming sanctuary of ice pillars and a crystal dome rises around the party, cold blue light. Dynamic camera angle, speed lines, dramatic ice lighting, sharp anime game illustration.",
+      "refs": [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_helda\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Helda\\exec-09495746-06b2-44ce-8fcf-12e72dc9a306.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Helda\\Celestium Weapons\\helda-dwarf-hammer-v2.png"
+      ],
+      "seed": 9133
+    }
+  ],
+  "length": 73,
+  "seed": 9132
+}

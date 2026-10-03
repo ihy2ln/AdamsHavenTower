@@ -12,18 +12,20 @@
     [
       "first",
       [
-        "daisy.webp"
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_daisy\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\daisy-bonfire-wildheart-short-skirt-v7.png"
       ],
-      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff; keep her exact face, eyes, hair, ears and outfit. her golden eyes blaze as she grips her staff with both hands, heart markings glowing hot pink. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
+      "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear; keep her exact face, eyes, hair, ears and outfit from image 1. her golden eyes blaze as she grips her fire spear with both hands, its crystal tip glowing hot. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
     ],
     [
       "last",
       [
-        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\daisy.png",
-        "daisy.webp"
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_daisy\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\daisy-bonfire-wildheart-short-skirt-v7.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\Celestium Weapons\\daisy-fire-spear.png"
       ],
-      "A wide 16:9 cinematic anime shot of the character from these images (the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff); keep her exact face, hair and outfit. she points her staff down and a towering pillar of flame erupts from the ground in front of her, a roaring spectral tiger of fire leaping out of it. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
+      "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear); keep her exact face, hair, outfit and weapon from images 1 and 3. she points her fire spear down and a towering pillar of flame erupts from the ground in front of her, a roaring spectral tiger of fire leaping out of it. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
     ]
   ],
-  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the tanned elf wild-woman: long curly auburn hair with a red hibiscus flower, golden eyes, glowing pink heart markings on her skin, red plaid tied top, denim shorts, cowboy boots, a feathered wooden staff: her golden eyes blaze as she grips her staff with both hands, heart markings glowing hot pink. A white flash and fast speed lines, then the camera whips back to a wide shot: she points her staff down and a towering pillar of flame erupts from the ground in front of her, a roaring spectral tiger of fire leaping out of it. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear: her golden eyes blaze as she grips her fire spear with both hands, its crystal tip glowing hot. A white flash and fast speed lines, then the camera whips back to a wide shot: she points her fire spear down and a towering pillar of flame erupts from the ground in front of her, a roaring spectral tiger of fire leaping out of it. Punchy, fast, dramatic camera, consistent character, no text, no UI."
 }

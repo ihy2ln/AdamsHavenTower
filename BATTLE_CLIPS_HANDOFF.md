@@ -1,7 +1,8 @@
-# Hand-off: anime clip fighters and in-battle staged skills (CM 10.30.0, 2026-10-03)
+# Hand-off: anime clip fighters and in-battle staged skills (CM 10.30.0 + CM 10.3.1, 2026-10-03)
 
 Read this before touching battle presentation. Design authority: `BATTLE_MODE_GDD.md` §8 ("Pre-rendered anime clips
-replace the rigs"). **Nothing below is committed**; see "Git state".
+replace the rigs"). Committed on master: `4de0a69` (clips, staging, layers, re-rolls) and the ultimate/awakening
+re-render commit after it. Latest batch: section 5a.
 
 ## 1. What and why
 
@@ -115,29 +116,39 @@ Skills are now **staged inside the live battle** from transparent layers.
    - Ultimates: `DebugUltimate(false, unit)`. The cut-in video runs on unscaled time, so it plays out between calls.
    - Finish with `ExitPlaymode`, then restore both backups (`robocopy /MIR`, `reg import`).
 
+## 5a. CM 10.3.1 (2026-10-03): what changed
+
+- **Committed** after BM 10.3.0 committed its side (`a0316fd`): the five shared battle files held only CM hunks
+  (verified: HEAD + `BattleMotion/_handoff/r*.patch` reproduces them exactly). Left out on purpose: matted `rgba/`
+  frames (regenerate with `matte`), the retired `cine_*` work and `_retired_cine/`, probe captures, logs.
+- **Every party skill probed in Play mode** (wind-up + contact): `BattleMotion/_cm1031/staged_<unit>.jpg`.
+- **Fixed `StageWeight`** (`BattleStage.cs`): it came from the camera zoom, so area hits that frame near 1x brought the
+  HUD and hand back at contact (Wand Sweep, Matriarch Pyre, Burning Circle). It now holds 1 from the push-in key to the
+  pull-back key by time; after tap-to-skip it still follows the zoom.
+- **`DebugPlayCardAny`** (`BattleStage.cs`): like `DebugPlayCard`, but ally heals/buffs land on an ally.
+- **Re-rolls:** Clarity `AH_block` (crossed-arm X); Ghislaine `AH_hit_react` (H3 drew fire bursts for "struck hard"
+  and for every negated effect noun; positive wording + a 3-seed sweep per segment scored by added hot pixels, seeds
+  8431/8434); Helda `he_chilling_touch` impact ("cold mist" filled the frame and read as a box; now ice shards).
+- **Ultimate and awakening videos re-rendered from the field look** (`produce_battle_motion.py`): refs are the field
+  guard cutout (`fighter_<unit>/keys/guard_hi.png`), the battle sheet and the Celestium weapon; the look text comes from
+  `Tools/fighter_clips/<unit>.json`. Keys and motion re-render when their prompt/refs change (`key_*.json`, `h3.json`).
+  v1 backups: `BattleMotion/_ults_v1/`.
+
 ## 5. Open items (priority order)
 
-1. **Commit decision (user).** My edits sit on top of the BM 10.3.0 session's uncommitted work in `BattleFx/BattleMode/BattleModels/BattleCinematics/BattleSheet.cs` and the docs. My hunks alone are in `BattleMotion/_handoff/`:
-   - `r1_*.patch`: clip fighters;
-   - `r2_*.patch`: staging and layers;
-   - `r3_*.patch`: match-cut removal.
-
-   All-mine new files:
-   - Runtime: `BattleClips.cs`, `BattleMoveFx.cs`, `BattleStage.cs`.
-   - Editor: `BattleClipImporter.cs`, `BattleClipTests.cs`.
-   - Tools: `Tools/produce_fighter_clips.py`, `move_specs.py`, `matte_frames.py`, `export_seedance_handoff.py`, `typecheck_unity.py`, `fighter_clips/*.json`.
-   - Assets: `Resources/AdamsHaven/BattleClips/`, the new `Fx/Moves/*`.
-
-   Modified tools: `produce_move_fx.py` (rewritten), `produce_cine.py` (now legacy), `produce_battle_motion.py` (path fix and `aw_*`), `build_battle_chibi_atlases.py` (path fix).
-2. **User review of the staged skills** across all 6 fighters (only Elara and Kaela were probed in Play mode). The four re-rolled effects (`gh_guard_stance`, `he_lend_strength`, `default_helda`, `ult_daisy`) were only checked as frames.
-3. **Weak takes to re-roll:**
-   - Ghislaine's `AH_hit_react`: H3 added fire slashes while she flinches.
-   - Clarity's `AH_block`: too close to her guard.
-4. **Ultimate and awakening videos** are built from portrait and card art (`produce_battle_motion.py ULTS`), so their outfits don't match the field clips. Offer to re-render them from the battle sheets (`fighter_clips/<unit>.json` refs).
-5. **Delete the fallbacks** now that all 6 fighters are covered: the 3D/2D rigs for party fighters, `MoveSets`, `Battle2DRigBuilder`/`Battle2DMoves`, `guard_hi` and the cine framing constants. Update `Battle2DPilotTests` to match. Ask the user first.
-6. **Android check:** memory with the hi-res pages and the effect LRU (there is no LRU cap yet; sheets are cached per battle and released on exit), ASTC banding on beams, and async hi-res page loading.
-7. **Seedance pass** on whatever the user flags: `export_seedance_handoff.py`.
-8. **Not done from the plan:** the hue check of effects against the retired videos (P2), and a per-card signature performance for cards that share a field action (Elara's 3 bolt cards share `AH_skill_cast`; the layers tell them apart).
+1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.
+2. **`ult_helda` re-roll:** its wide shot shows two Heldas side by side.
+3. **Reserve Tonic shows nothing** on the field: `BattleRules.Resolve` applies the ally's draw and +EP without recording
+   a fact, so `Ingest` never schedules a group (no stage, no layers). BM owns `BattleRules.cs`; it needs a fact (or
+   the presentation needs a hook) before the card can play its layers.
+4. **Delete the fallbacks** (ask the user first): party 3D/2D rigs, `MoveSets`, `Battle2DRigBuilder`/`Battle2DMoves`,
+   `guard_hi` and the cine framing constants; update `Battle2DPilotTests`.
+5. **Android check:** memory with the hi-res pages and the effect cache (no LRU cap yet), ASTC banding on beams, async
+   hi-res loading.
+6. **Seedance pass** on whatever the user flags: `export_seedance_handoff.py`.
+7. **Not done from the plan:** the hue check of effects against the retired videos, and a per-card signature for cards
+   that share a field action (Elara's three bolt cards share `AH_skill_cast`; at contact they look alike).
+8. Probe gaps: Glacier Guard's contact frame (no impact sheet, the stage ended first) and Helda's basic.
 
 ## 6. Paste to resume
 

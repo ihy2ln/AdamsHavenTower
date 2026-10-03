@@ -234,8 +234,9 @@ once the whole party is covered.
   segment (Seedance's shortest clip is longer than a field segment) and the clip is re-matted and re-packed.
 - **Status:** all six fighters have complete clip sets (9-10 actions, 3-4 pages each) and staged skills with effect
   layers; the 36 skill-insert videos are retired to `BattleMotion/_retired_cine/` (kept for reference / Seedance).
-  Ultimate and awakening videos are still built from the portrait and card art (`produce_battle_motion.py ULTS`), not
-  the battle sheets the field clips use. CM 10.3.1 re-rolled the weak takes (Ghislaine's hit reaction without fire, by
+  Ultimate and awakening videos are built from the field look since CM 10.3.1 (`produce_battle_motion.py ULTS`: the
+  field guard cutout, battle sheet and weapon from `Tools/fighter_clips/<unit>.json`), so the video's fighter wears the
+  same outfit as the clip it hands over to. CM 10.3.1 also re-rolled the weak takes (Ghislaine's hit reaction without fire, by
   a seed sweep scored for added fire pixels; Clarity's block as a crossed-arm X) and Helda's Chilling Touch impact
   (it filled its frame and read as a box), and probed every party skill in Play mode
   (`BattleMotion/_cm1031/staged_<unit>.jpg`). Open: Reserve Tonic records no fact (ally draw + EP only), so the field

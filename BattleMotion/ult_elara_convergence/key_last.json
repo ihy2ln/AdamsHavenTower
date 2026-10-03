@@ -1,0 +1,9 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the elf mage-scholar with light brown hair in a bun, pointed ears, a navy cropped coat with gold trim, a white corseted blouse, a white pleated skirt, thigh-high stockings, tall brown boots, a spellbook and a glowing crystal fountain pen); keep her exact face, hair, outfit and weapon from images 1 and 3. many rune circles line up in front of her outstretched pen and a single colossal blue-white lightning beam fires through them across the frame. Dynamic camera angle, speed lines, dramatic lightning lighting, sharp anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_elara\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Elara\\elara_battle_tpose_book_quill_v12.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Elara\\Celestium Weapons\\elara-magic-fountain-pen-v2.png"
+  ],
+  "seed": 9123
+}

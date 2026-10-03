@@ -1,0 +1,31 @@
+{
+  "kind": "ult",
+  "unit": "ghislaine",
+  "out": "aw_ghislaine",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9113,
+  "keys": [
+    [
+      "first",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_ghislaine\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Ghislaine\\Ghislaine (2).png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword; keep her exact face, eyes, hair, ears and outfit from image 1. her tiger eyes flare gold as embers swirl around her face and her silver hair lifts in a hot wind. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_ghislaine\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Ghislaine\\Ghislaine (2).png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Ghislaine\\Celestium Weapons\\ghislaine-fire-greatsword.png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword); keep her exact face, hair, outfit and weapon from images 1 and 3. she stands tall with her flaming greatsword raised as a great spectral white tiger of fire rises behind her and roars over her allies. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword: her tiger eyes flare gold as embers swirl around her face and her silver hair lifts in a hot wind. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands tall with her flaming greatsword raised as a great spectral white tiger of fire rises behind her and roars over her allies. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "ult",
+  "unit": "daisy",
+  "out": "aw_daisy",
+  "size": [
+    1248,
+    704
+  ],
+  "length": 73,
+  "seed": 9143,
+  "keys": [
+    [
+      "first",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_daisy\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\daisy-bonfire-wildheart-short-skirt-v7.png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear; keep her exact face, eyes, hair, ears and outfit from image 1. her golden eyes blaze and the hibiscus in her hair glows as she laughs, embers swirling. Dark background with fire energy and strong rim light. Sharp cel-shaded anime game illustration."
+    ],
+    [
+      "last",
+      [
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_daisy\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\daisy-bonfire-wildheart-short-skirt-v7.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\Celestium Weapons\\daisy-fire-spear.png"
+      ],
+      "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear); keep her exact face, hair, outfit and weapon from images 1 and 3. she throws her arms wide as a towering wildfire of pink and orange flame bursts up around her, petals and embers flying. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration."
+    ]
+  ],
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear: her golden eyes blaze and the hibiscus in her hair glows as she laughs, embers swirling. A white flash and fast speed lines, then the camera whips back to a wide shot: she throws her arms wide as a towering wildfire of pink and orange flame bursts up around her, petals and embers flying. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+}

@@ -12,18 +12,20 @@
     [
       "first",
       [
-        "clarity.webp"
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png"
       ],
-      "Recompose this character as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the martial artist: long dark-brown high ponytail tied with a red ribbon, green eyes, white and black sleeveless high-collar top, black fingerless gloves, gold bracers, red sash; keep her exact face, eyes, hair, ears and outfit. she presses her palms together in a calm bow, golden light blooming between her hands. Dark background with holy light energy and strong rim light. Sharp cel-shaded anime game illustration."
+      "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai; keep her exact face, eyes, hair, ears and outfit from image 1. she presses her palms together in a calm bow, golden light blooming between her hands. Dark background with holy light energy and strong rim light. Sharp cel-shaded anime game illustration."
     ],
     [
       "last",
       [
-        "S:\\AI\\Game\\Unity AHCG\\My project\\Assets\\Resources\\AdamsHaven\\FullCards\\clarity.png",
-        "clarity.webp"
+        "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png",
+        "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\Celestium Weapons\\clarity-kunai.png"
       ],
-      "A wide 16:9 cinematic anime shot of the character from these images (the martial artist: long dark-brown high ponytail tied with a red ribbon, green eyes, white and black sleeveless high-collar top, black fingerless gloves, gold bracers, red sash); keep her exact face, hair and outfit. she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, warm rays from above. Dynamic camera angle, speed lines, dramatic holy light lighting, sharp anime game illustration."
+      "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai); keep her exact face, hair, outfit and weapon from images 1 and 3. she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, warm rays from above. Dynamic camera angle, speed lines, dramatic holy light lighting, sharp anime game illustration."
     ]
   ],
-  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the martial artist: long dark-brown high ponytail tied with a red ribbon, green eyes, white and black sleeveless high-collar top, black fingerless gloves, gold bracers, red sash: she presses her palms together in a calm bow, golden light blooming between her hands. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, warm rays from above. Punchy, fast, dramatic camera, consistent character, no text, no UI."
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai: she presses her palms together in a calm bow, golden light blooming between her hands. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, warm rays from above. Punchy, fast, dramatic camera, consistent character, no text, no UI."
 }

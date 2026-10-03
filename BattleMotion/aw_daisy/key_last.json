@@ -1,0 +1,9 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet, image 3 her weapon. A wide 16:9 cinematic anime shot of her (the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear); keep her exact face, hair, outfit and weapon from images 1 and 3. she throws her arms wide as a towering wildfire of pink and orange flame bursts up around her, petals and embers flying. Dynamic camera angle, speed lines, dramatic fire lighting, sharp anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_daisy\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\daisy-bonfire-wildheart-short-skirt-v7.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Daisy\\Celestium Weapons\\daisy-fire-spear.png"
+  ],
+  "seed": 9144
+}

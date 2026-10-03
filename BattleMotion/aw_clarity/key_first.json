@@ -1,0 +1,8 @@
+{
+  "prompt": "Image 1 is the character as she looks in battle, image 2 her character sheet. Recompose her as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. She is the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai; keep her exact face, eyes, hair, ears and outfit from image 1. she exhales slowly, eyes closed, soft golden light gathering around her face. Dark background with holy light energy and strong rim light. Sharp cel-shaded anime game illustration.",
+  "refs": [
+    "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\fighter_clarity\\keys\\guard_hi.png",
+    "S:\\AI\\Game\\Game Assets\\characters\\Clarity\\exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png"
+  ],
+  "seed": 9153
+}
