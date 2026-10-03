@@ -98,11 +98,11 @@ ULTS = [
     ('ult_helda', 'helda', 'warm hearth light and gentle frost',
      'she smiles warmly and raises her glowing brass tankard in a toast, soft golden light on her face',
      'she stands with her hammer lifted as a warm golden hearth glow and swirling healing motes spread over the '
-     'whole field, snowflakes melting into sparkles', 9131),
+     'whole field, snowflakes melting into sparkles. She is the only person in the picture', 9161),
     ('ult_helda_sanctuary', 'helda', 'ice',
      'she hefts her crystal war hammer over her shoulder with a steady grin, frost gathering on its head',
-     'she slams her hammer down and a gleaming sanctuary of ice pillars and a crystal dome rises around the party, '
-     'cold blue light', 9132),
+     'she slams her hammer down and a gleaming sanctuary of ice pillars and a crystal dome rises around her, cold '
+     'blue light. She stands alone, the only figure in the picture', 9182),
     ('ult_daisy', 'daisy', 'fire',
      'she laughs wildly and twirls her fire spear beside her face, embers and petals swirling around her',
      'she spins her fire spear overhead as a volcanic firestorm sweeps across a tropical island battlefield, walls of '
@@ -120,6 +120,41 @@ ULTS = [
      'she stands in a centered stance as radiant golden rings and floating light motes pour over her allies, '
      'warm rays from above', 9152),
 ]
+# JD's decrees (BattleCatalog.SummonerUltimates). JD keeps his 3D field rig, so his look comes from the portrait art.
+JD_LOOK = ('the summoner JD: a tall dark-skinned man with short black hair, an open long silver brocade coat over a bare '
+           'chest, a silver chain necklace, black trousers and black shoes')
+JD_REFS = [ART / 'jd_side.webp', ART / 'jd.png']
+DECREES = [
+    ('ult_sum_a', 'arcane blue and warm gold',
+     'he fans a hand of glowing silver playing cards beside his face with a confident smile, blue arcane light on his '
+     'face',
+     'he throws the cards high and dozens of glowing playing cards spiral over the battlefield behind him, raining warm '
+     'golden light and rally sigils down on his allies. He is the only person in the picture', 9171),
+    ('ult_sum_b', 'dark violet arcane',
+     'his eyes narrow as he raises a single dark playing card between two fingers, violet energy crackling around it',
+     'he flicks the card forward and a giant spectral playing card slams down across the enemy line, a violet shockwave '
+     'cracking the ground and shattering their armor. He is the only person in the picture', 9172),
+]
+
+
+def decree_job(card, element, close, wide, seed):
+    refs = [str(r) for r in JD_REFS]
+    return {
+        'kind': 'ult', 'unit': 'jd', 'out': card, 'size': (1248, 704), 'length': 73, 'seed': seed,
+        'keys': [
+            ('first', refs,
+             f'Image 1 and image 2 show the character. Recompose him as a tight cinematic anime close-up for an ultimate '
+             f'skill cut-in, 16:9. He is {JD_LOOK}; keep his exact face, hair and outfit. {close}. Dark background with '
+             f'{element} energy and strong rim light. Sharp cel-shaded anime game illustration.'),
+            ('last', refs,
+             f'Image 1 and image 2 show the character. A wide 16:9 cinematic anime shot of him ({JD_LOOK}); keep his '
+             f'exact face, hair and outfit. {wide}. Dynamic camera angle, speed lines, dramatic {element} lighting, '
+             f'sharp anime game illustration.'),
+        ],
+        'prompt': (f'Anime game ultimate skill cinematic. Starting on a tight close-up of {JD_LOOK}: {close}. A white '
+                   f'flash and fast speed lines, then the camera whips back to a wide shot: {wide}. Punchy, fast, '
+                   f'dramatic camera, consistent character, no text, no UI.'),
+    }
 
 
 def ult_job(card, unit, element, close, wide, seed):
@@ -145,6 +180,7 @@ def ult_job(card, unit, element, close, wide, seed):
 
 
 JOBS = {card: ult_job(card, unit, el, close, wide, seed) for card, unit, el, close, wide, seed in ULTS}
+JOBS.update({card: decree_job(card, el, close, wide, seed) for card, el, close, wide, seed in DECREES})
 JOBS.update({
     'fx_slash': {
         'kind': 'fx', 'size': (704, 704), 'length': 56, 'seed': 311,

@@ -479,7 +479,7 @@ public sealed partial class BattleMode
                 if (clip != null) PlayUltClip(clip);
                 Signal(BattleAnimationPhase.Ultimate, who, null, which); });
             t += len;
-            payoff = IsUltimate(card);
+            payoff = IsUltimate(card) || IsDecree(card);
         }
         // Battle seconds from the action to its hit: a clip fighter's own contact frame, else the fixed beats.
         bool rangedAct = actor != null && card != null && Ranged(actor, card);

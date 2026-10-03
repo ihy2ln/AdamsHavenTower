@@ -134,10 +134,19 @@ Skills are now **staged inside the live battle** from transparent layers.
   `Tools/fighter_clips/<unit>.json`. Keys and motion re-render when their prompt/refs change (`key_*.json`, `h3.json`).
   v1 backups: `BattleMotion/_ults_v1/`.
 
+- **Redo pass (same day):** JD's decrees got cut-ins (`ult_sum_a` Rally, `ult_sum_b` Sunder; `IsDecree` in
+  `BattleCinematics.cs`, payoff handed over like an ultimate; refs from the portrait art, JD keeps his 3D rig).
+  `ult_helda` and `ult_helda_sanctuary` re-rolled (both drew a second Helda: "around the party" and multi-view sheets
+  invite clones; the wide beat now says she is alone). Clips re-rolled with `Tools/reroll_clip.py` (seed sweep, scored
+  for added effect light, penalised when a glowing weapon drops out): Kaela and Ghislaine `AH_block`, Helda
+  `AH_victory`, Daisy `AH_hit_react` (spear kept level) and Daisy `AH_block`, which is now a **snap**: a segment of 1
+  frame is a cut to its key with no H3 render (H3 flung her spear in every take). Previous takes are kept, not deleted:
+  `segments/_takes/` per fighter, earlier videos in `BattleMotion/_cm1031/keep/`. Test
+  `EveryUltimateAwakeningAndDecreeHasACutIn`.
+
 ## 5. Open items (priority order)
 
 1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.
-2. **`ult_helda` re-roll:** its wide shot shows two Heldas side by side.
 3. **Reserve Tonic shows nothing** on the field: `BattleRules.Resolve` applies the ally's draw and +EP without recording
    a fact, so `Ingest` never schedules a group (no stage, no layers). BM owns `BattleRules.cs`; it needs a fact (or
    the presentation needs a hook) before the card can play its layers.

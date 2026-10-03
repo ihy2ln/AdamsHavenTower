@@ -6,7 +6,8 @@
   python Tools/produce_fighter_clips.py kaela pack      # atlas pages + clips.json -> Resources/AdamsHaven/BattleClips/<unit>/
   python Tools/produce_fighter_clips.py kaela cine      # cine_frame.png: the guard at the match-cut framing (produce_cine.py)
   python Tools/produce_fighter_clips.py kaela clips     # motion + matte + pack, once the keys are approved
-An optional 3rd argument limits a stage to one key or action (e.g. `motion AH_attack_basic`).
+An optional 3rd argument limits a stage to one key or action (e.g. `motion AH_attack_basic`), or for motion and matte
+to one segment of an action (`motion AH_block:0`).
 
 Spec: Tools/fighter_clips/<unit>.json. Work files: BattleMotion/fighter_<unit>/ (outside Assets):
   keys/<key>.png (RGB on the flat background, canvas size) + keys/<key>_a.png (alpha), review/keys.jpg
@@ -412,15 +413,29 @@ def review_keys(spec, d):
 
 
 # ---------------------------------------------------------------- stage: motion -------------------
+def split_only(only):
+    """'AH_block' -> ('AH_block', None); 'AH_block:1' -> ('AH_block', 1)."""
+    if only and ':' in only:
+        action, i = only.split(':')
+        return action, int(i)
+    return only, None
+
+
 def motion(spec, d, only=None):
+    only, only_seg = split_only(only)
     for action, act in spec['actions'].items():
         if only and action != only:
             continue
         for i, (a, b, frames, seed, text) in enumerate(act['segments']):
+            if only_seg is not None and i != only_seg:
+                continue
             assert frames % 8 == 1, f'{action}[{i}]: H3 needs 8n+1 frames, got {frames}'
             sd = segment_dir(d, action, i)
             sd.mkdir(parents=True, exist_ok=True)
             first, last = d / f'keys/{a}.png', d / f'keys/{b}.png'
+            if frames == 1:
+                snap(spec, d, sd, b)
+                continue
             prompt = f"The character is {spec['look']}, facing the right side of the picture. {text} {MOTION_TAIL}"
             seg = dict(action=action, index=i, first=a, last=b, frames=frames, seed=seed, prompt=prompt,
                        size=spec['canvas'], fps=24, model='MiniMax H3 fl2va int8 + turbo 4-step',
@@ -442,14 +457,37 @@ def motion(spec, d, only=None):
             shutil.rmtree(sd / 'rgba', ignore_errors=True)
 
 
+def snap(spec, d, sd, key):
+    """A 1-frame segment is a cut straight to its key (blockstun snaps into the pose; H3 would fling a long weapon
+    on the way): two frames of the matted key, no H3 render, nothing to matte."""
+    sig = dict(snap=key, keys=digest(d / f'keys/{key}.png', d / f'keys/{key}_a.png'))
+    out = sd / 'rgba'
+    if (sd / 'snap.json').exists() and json.loads((sd / 'snap.json').read_text()) == sig and out.exists():
+        return
+    bg = np.array(spec['bg'], np.float32) / 255
+    rgb, al = f32(Image.open(d / f'keys/{key}.png').convert('RGB')), f32(Image.open(d / f'keys/{key}_a.png'))
+    shutil.rmtree(out, ignore_errors=True)
+    out.mkdir()
+    frame = Image.fromarray(np.dstack([u8(decontaminate(rgb, al, bg)), u8(al)]), 'RGBA')
+    for j in range(2):
+        frame.save(out / f'f_{j:04d}.png')
+    (sd / 'snap.json').write_text(json.dumps(sig, indent=2))
+    print('snap', sd.name, '->', key, flush=True)
+
+
 # ---------------------------------------------------------------- stage: matte --------------------
 def matte(spec, d, only=None):
+    only, only_seg = split_only(only)
     bg = np.array(spec['bg'], np.float32) / 255
     for action, act in spec['actions'].items():
         if only and action != only:
             continue
         contact = act.get('contact')
-        for i, (a, b, *_rest) in enumerate(act['segments']):
+        for i, (a, b, frames, *_rest) in enumerate(act['segments']):
+            if only_seg is not None and i != only_seg:
+                continue
+            if frames == 1:          # a snap: motion wrote its frames from the key
+                continue
             sd = segment_dir(d, action, i)
             mp4 = sd / 'h3_24.mp4'
             if not mp4.exists():

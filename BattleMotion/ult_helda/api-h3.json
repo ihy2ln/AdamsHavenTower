@@ -54,7 +54,7 @@
         "119",
         0
       ],
-      "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer: she smiles warmly and raises her glowing brass tankard in a toast, soft golden light on her face. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands with her hammer lifted as a warm golden hearth glow and swirling healing motes spread over the whole field, snowflakes melting into sparkles. Punchy, fast, dramatic camera, consistent character, no text, no UI.",
+      "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer: she smiles warmly and raises her glowing brass tankard in a toast, soft golden light on her face. A white flash and fast speed lines, then the camera whips back to a wide shot: she stands with her hammer lifted as a warm golden hearth glow and swirling healing motes spread over the whole field, snowflakes melting into sparkles. She is the only person in the picture. Punchy, fast, dramatic camera, consistent character, no text, no UI.",
       "width": 1248,
       "height": 704,
       "length": 73,
@@ -100,7 +100,7 @@
   "179": {
     "class_type": "RandomNoise",
     "inputs": {
-      "noise_seed": 9131
+      "noise_seed": 9161
     }
   },
   "125": {

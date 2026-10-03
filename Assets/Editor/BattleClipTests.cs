@@ -179,4 +179,18 @@ public sealed class BattleClipTests
         }
         if (checkedSets == 0) Assert.Ignore("no clip sets shipped yet");
     }
+
+    [Test]
+    public void EveryUltimateAwakeningAndDecreeHasACutIn()
+    {
+        var cards = new List<BattleCard>(BattleCatalog.SummonerUltimates());
+        foreach (BattleUnit unit in BattleCatalog.Party())
+        {
+            cards.AddRange(BattleCatalog.Ultimates(unit));
+            cards.Add(BattleCatalog.Awakening(unit));
+        }
+        var missing = cards.Where(c => c != null && Resources.Load<UnityEngine.Video.VideoClip>("AdamsHaven/UltCutIns/" + c.Id) == null)
+            .Select(c => c.Id).ToList();
+        Assert.IsEmpty(missing, "cards without a cut-in video: " + string.Join(", ", missing));
+    }
 }

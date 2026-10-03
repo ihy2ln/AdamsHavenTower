@@ -1,0 +1,23 @@
+{
+  "prompt": "Anime game ultimate skill cinematic. Starting on a tight close-up of the summoner JD: a tall dark-skinned man with short black hair, an open long silver brocade coat over a bare chest, a silver chain necklace, black trousers and black shoes: he fans a hand of glowing silver playing cards beside his face with a confident smile, blue arcane light on his face. A white flash and fast speed lines, then the camera whips back to a wide shot: he throws the cards high and dozens of glowing playing cards spiral over the battlefield behind him, raining warm golden light and rally sigils down on his allies. He is the only person in the picture. Punchy, fast, dramatic camera, consistent character, no text, no UI.",
+  "keys": [
+    {
+      "prompt": "Image 1 and image 2 show the character. Recompose him as a tight cinematic anime close-up for an ultimate skill cut-in, 16:9. He is the summoner JD: a tall dark-skinned man with short black hair, an open long silver brocade coat over a bare chest, a silver chain necklace, black trousers and black shoes; keep his exact face, hair and outfit. he fans a hand of glowing silver playing cards beside his face with a confident smile, blue arcane light on his face. Dark background with arcane blue and warm gold energy and strong rim light. Sharp cel-shaded anime game illustration.",
+      "refs": [
+        "S:\\AI\\Game\\Game Assets\\characters\\portrait\\jd_side.webp",
+        "S:\\AI\\Game\\Game Assets\\characters\\portrait\\jd.png"
+      ],
+      "seed": 9171
+    },
+    {
+      "prompt": "Image 1 and image 2 show the character. A wide 16:9 cinematic anime shot of him (the summoner JD: a tall dark-skinned man with short black hair, an open long silver brocade coat over a bare chest, a silver chain necklace, black trousers and black shoes); keep his exact face, hair and outfit. he throws the cards high and dozens of glowing playing cards spiral over the battlefield behind him, raining warm golden light and rally sigils down on his allies. He is the only person in the picture. Dynamic camera angle, speed lines, dramatic arcane blue and warm gold lighting, sharp anime game illustration.",
+      "refs": [
+        "S:\\AI\\Game\\Game Assets\\characters\\portrait\\jd_side.webp",
+        "S:\\AI\\Game\\Game Assets\\characters\\portrait\\jd.png"
+      ],
+      "seed": 9172
+    }
+  ],
+  "length": 73,
+  "seed": 9171
+}

@@ -4,13 +4,13 @@
   "first": "block",
   "last": "guard",
   "frames": 17,
-  "seed": 8504,
-  "prompt": "The character is the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear, facing the right side of the picture. She lowers her guard and returns to her fighting stance. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "seed": 8570,
+  "prompt": "The character is the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear, facing the right side of the picture. She straightens up into her fighting stance, the spear still level. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
   "size": [
     960,
     960
   ],
   "fps": 24,
   "model": "MiniMax H3 fl2va int8 + turbo 4-step",
-  "keys": "dfdfd6f49fa2d3eb"
+  "keys": "2e4a0bd4a6063ca2"
 }

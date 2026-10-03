@@ -31,6 +31,8 @@ public sealed partial class BattleMode
     readonly HashSet<string> cinematicsSeen = new HashSet<string>();
 
     static bool IsUltimate(BattleCard card) { return card.Kind == BattleCardKind.Ultimate || card.Kind == BattleCardKind.Awakening; }
+    // JD's decrees (BattleCatalog.SummonerUltimates) are his ultimates: they cut to video like the party's.
+    static bool IsDecree(BattleCard card) { return card.Kind == BattleCardKind.Summoner && card.Id.StartsWith("ult_sum_"); }
 
     // The clip to play for this action, or null for none (setting, first use, or no clip).
     VideoClip CinematicFor(BattleUnit actor, BattleCard card)
@@ -39,7 +41,7 @@ public sealed partial class BattleMode
         var mode = Cinematics;
         if (mode == CinematicMode.Off) return null;
         // Skills are staged in battle now (BattleStage.cs); only ultimates and awakenings cut to video.
-        return IsUltimate(card) ? UltClip(actor, card) : null;
+        return IsUltimate(card) || IsDecree(card) ? UltClip(actor, card) : null;
     }
 
 

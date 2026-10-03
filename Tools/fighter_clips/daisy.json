@@ -57,14 +57,14 @@
       "anchor_x": "torso"
     },
     "block": {
-      "seed": 8451,
-      "pose": "a braced block: the fire spear held horizontally across in front of her with both hands, knees bent, leaning into the block",
-      "height": 0.93
+      "seed": 8454,
+      "pose": "bracing for impact: she leans back onto her rear foot with knees deeply bent and shoulders hunched, chin tucked, holding the fire spear level in both hands exactly as in image 1, pointing forward to the right",
+      "height": 0.9
     },
     "hit": {
-      "seed": 8461,
-      "pose": "recoiling from a heavy hit: her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut in pain, arms flung open, her weight thrown onto her back foot",
-      "height": 0.95
+      "seed": 8463,
+      "pose": "recoiling from a hit: her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut, weight on her back foot, holding the fire spear level in both hands exactly as in image 1, pointing forward to the right",
+      "height": 1.0
     },
     "down": {
       "seed": 8471,
@@ -96,16 +96,16 @@
         [
           "guard",
           "hit",
-          9,
-          8501,
-          "She is struck hard and recoils backward to the left."
+          17,
+          8551,
+          "She rocks back onto her rear foot and winces with her eyes shut, keeping the spear level in both hands."
         ],
         [
           "hit",
           "guard",
           17,
-          8502,
-          "She shakes off the hit and recovers into her fighting stance."
+          8552,
+          "She opens her eyes and settles back into her fighting stance, the spear still level."
         ]
       ]
     },
@@ -114,16 +114,16 @@
         [
           "guard",
           "block",
-          9,
-          8503,
-          "She snaps her weapon up in front of her to block."
+          1,
+          0,
+          "Snap into the brace (blockstun): a cut to the block key, no H3 render."
         ],
         [
           "block",
           "guard",
           17,
-          8504,
-          "She lowers her guard and returns to her fighting stance."
+          8570,
+          "She straightens up into her fighting stance, the spear still level."
         ]
       ]
     },
