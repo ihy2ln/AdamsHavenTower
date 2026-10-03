@@ -1376,4 +1376,54 @@ public sealed class TowerManagementTests
         Assert.AreEqual(5, old.siegeCooldown, 0.01f);
         Assert.AreEqual("", old.residents[0].mealMemory);
     }
+
+    // ---- TT 10.3.2: the TOWN view's ground plan (GDD 19.2) -------------------------------------------------------
+
+    [Test]
+    public void TownRingGrowsWithTheHeartAndStaysRound()
+    {
+        int lastLots = 0;
+        for (int rank = 1; rank <= TowerTiers.MaxRank; rank++)
+        {
+            int r = TowerTownMap.Radius(rank);
+            Assert.Greater(TowerTownMap.LotCount(rank), lastLots, "every Heart rank opens more lots");
+            lastLots = TowerTownMap.LotCount(rank);
+            Assert.IsTrue(TowerTownMap.InRing(r, 0, rank), "the ring reaches its radius along the roads");
+            Assert.IsTrue(TowerTownMap.InRing(0, -r, rank));
+            Assert.IsFalse(TowerTownMap.InRing(r, r, rank), "corners stay outside: a circle on the square grid");
+            Assert.IsFalse(TowerTownMap.InRing(r + 1, 0, rank));
+        }
+        Assert.AreEqual(TowerTownMap.Radius(TowerTiers.MaxRank), TowerTownMap.MaxRadius);
+    }
+
+    [Test]
+    public void TownRoadsLeaveFromTheGatesAndTheTowerIsNeverALot()
+    {
+        for (int rank = 1; rank <= TowerTiers.MaxRank; rank++)
+        {
+            int r = TowerTownMap.Radius(rank);
+            for (int x = -TowerTownMap.TowerHalf; x <= TowerTownMap.TowerHalf; x++)
+                for (int z = -TowerTownMap.TowerHalf; z <= TowerTownMap.TowerHalf; z++)
+                    Assert.AreEqual(TowerTownMap.Tile.Tower, TowerTownMap.At(x, z, rank));
+            Assert.AreEqual(TowerTownMap.Tile.Gate, TowerTownMap.At(-TowerTownMap.TowerHalf - 1, 0, rank));
+            Assert.AreEqual(TowerTownMap.Tile.Gate, TowerTownMap.At(TowerTownMap.TowerHalf + 1, 0, rank));
+            for (int x = TowerTownMap.TowerHalf + 2; x <= r; x++)
+            {
+                Assert.AreNotEqual(TowerTownMap.Tile.Lot, TowerTownMap.At(x, 0, rank), "the east road runs to the ring");
+                Assert.AreNotEqual(TowerTownMap.Tile.Lot, TowerTownMap.At(-x, 0, rank), "and the west road");
+            }
+            var north = TowerTownMap.At(0, r, rank);
+            Assert.AreEqual(rank >= TowerTownMap.CrossRoadRank ? TowerTownMap.Tile.Road : TowerTownMap.Tile.Lot, north,
+                "the north-south road opens at rank C");
+            Assert.IsTrue(TowerTownMap.Frontage(TowerTownMap.TowerHalf + 3, 2, rank), "lots beside the plaza front it");
+            Assert.IsFalse(TowerTownMap.Buildable(r + 1, 0, rank));
+        }
+        // Ring roads cut a big city into blocks, and never run along the edge of the buildable ring.
+        Assert.IsFalse(TowerTownMap.IsRingRoad(8, 0, 1), "no ring road inside the F village (radius 7)");
+        Assert.IsTrue(TowerTownMap.IsRingRoad(0, 8, 4), "the first ring road at rank C (radius 14)");
+        Assert.AreEqual(TowerTownMap.Tile.Road, TowerTownMap.At(6, 5, 4), "sqrt(61) is about 7.8: on the ring road");
+        Assert.AreEqual(TowerTownMap.Tile.Lot, TowerTownMap.At(5, 5, 4), "sqrt(50) is about 7.1: a lot");
+        Assert.IsTrue(TowerTownMap.IsRingRoad(0, 32, TowerTiers.MaxRank));
+        Assert.IsFalse(TowerTownMap.IsRingRoad(0, 16, 5), "radius 17: the 16 ring would hug the edge");
+    }
 }

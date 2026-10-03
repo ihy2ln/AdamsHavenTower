@@ -122,6 +122,7 @@ public sealed partial class TowerHud : MonoBehaviour
         BuildHeartPopup(); BuildAlertsPopup(); BuildWorkPopup(); BuildDistrictsPopup();
         BuildAutoPopup(); BuildOutpostsPopup(); BuildSiegeBanner();
         BuildSaves(); BuildDefeat(); BuildFlyout(); BuildDev();
+        BuildTownOverlay();   // last, so it sits above the rest of the canvas
         UpdateSafeArea();
         Refresh();
     }
@@ -132,6 +133,7 @@ public sealed partial class TowerHud : MonoBehaviour
     {
         if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight) UpdateSafeArea();
         if (tower == null) return;
+        TickTown();
         TickNewGameConfirm();
         if (toastTimer > 0)
         {
@@ -978,6 +980,7 @@ public sealed partial class TowerHud : MonoBehaviour
     public void Refresh()
     {
         if (tower == null || tower.Rules == null) return;
+        RefreshTown();
         var state = tower.Rules.State;
         defeatOverlay.gameObject.SetActive(state.defeated && !saveOverlay.gameObject.activeSelf);
         if (state.defeated && defeatDetail != null)

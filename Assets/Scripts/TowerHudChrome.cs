@@ -217,6 +217,7 @@ public sealed partial class TowerHud
         AttachHold(timeButton, TimeItems, false, () => tower.SetSpeed(tower.Speed == 0 ? restoreSpeed : 0));
         var menu = IconButtonAt(t, "Menu", "icons_utility", "menu", "Menu", 205, 0, 40, null, Teal);
         AttachHold(menu, MenuItems, false, () => TogglePopup(popupMenu));
+        BuildTownButton(t);   // TOWN view (TowerHudTown.cs)
 
 #if UNITY_EDITOR || DEBUG
         // Debug shortcut (editor and development builds only): open the expedition map without a Guild.
