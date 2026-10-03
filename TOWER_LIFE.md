@@ -144,3 +144,21 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
   wave; a loss is a Last Stand raid at a Gate. First siege after 2,160 live s; live only.
 - `TowerPerfProbe` also times TickDistricts, TickOutposts and TickSiege.
 - Left for the Expedition / Battle sessions: an outpost marker on the Atlas (`TowerMapSources.cs`), the Battle Mode siege option.
+
+## Oct 3 (2): TT 10.30.1 - the four follow-ups
+
+- Gate sieges in Battle Mode (GDD 9.6): DEFEND IN BATTLE on a banner under the top bar (`TowerHudSiege.cs`) launches
+  `AdamsHavenPrototype.LaunchSiegeBattle`. `TowerSiegeBattle.cs` builds the party (`SiegeFighters`: battle-ready Fighters
+  at home, strongest first, Tower gear and levels applied, full HP) and the wave (`BattleEncounterSpec` depth
+  2 x Heart rank - 1, elite, boss from rank B, titled GATE SIEGE). `State.siegeBattle` holds the warning while they
+  fight; `ResolveSiegeBattle(won, fought)` pays like an auto win (+30 XP each) or opens the Last Stand. A fight cut short
+  by quitting hands the choice back (`NormalizeSiege`, at least 60 s).
+- Storyteller pick on the dormant founding panel (NEW GAME and Legacy restarts): three buttons and a blurb in
+  `BuildTutorial` / `RefreshTutorial`; optional, AWAKEN HEART is still the only step.
+- Long-press to move: `TickRoomHold` in `HandleCameraInput` (mouse and touch) lifts the room after 0.45 s without
+  panning, ring from 0.15 s (`TowerFx.ShowHold` / `HideHold`). `CanStartMove` is the shared pick-up check; `LoadSlot`
+  now clears a pending move.
+- Atlas outposts: `TowerAtlasSource` keys on outposts and draws a camp prop for them; region labels say (OUTPOST) and
+  the region panel names the outpost, rank and staff. Committed as my hunks only (the Expedition session's edits to
+  those files stay uncommitted for it).
+- Tests: `TowerManagementTests` 47 (+8).
