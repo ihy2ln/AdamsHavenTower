@@ -1,0 +1,270 @@
+{
+  "unit": "clarity",
+  "_doc": "Tools/produce_fighter_clips.py spec. Canvas px: the guard key is scaled so the figure is body_px tall, feet centred on (body_x, feet_y). Keys are Qwen Image Edit 2.1 edits of the guard key; every action is chained MiniMax H3 first/last-frame segments between keys, so the contact frame is a segment boundary. Segment frames must be 8n+1 (24 fps).",
+  "canvas": [
+    960,
+    960
+  ],
+  "bg": [
+    118,
+    118,
+    118
+  ],
+  "body_px": 640,
+  "body_x": 400,
+  "feet_y": 896,
+  "fps_out": 12,
+  "ppu_out": 160,
+  "look": "the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai",
+  "refs": {
+    "sheet": "Clarity/exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png",
+    "weapon": "Clarity/Celestium Weapons/clarity-kunai.png"
+  },
+  "guard": {
+    "seed": 8700,
+    "stance": "a martial arts ready stance, feet apart, knees bent, left fist forward and right fist at her chin, a kunai held in the right hand",
+    "source_bg": [
+      200,
+      200,
+      200
+    ]
+  },
+  "keys": {
+    "basic_hit": {
+      "seed": 8701,
+      "pose": "the follow-through of a kunai throw: her throwing arm extended forward to the right with the hand open, the other arm pulled back, weight on the front foot",
+      "height": 0.97
+    },
+    "palm_hit": {
+      "seed": 8711,
+      "pose": "a radiant palm strike: a deep low stance, her right palm thrust straight forward to the right, the other fist pulled back at her hip",
+      "height": 0.88
+    },
+    "flare_hit": {
+      "seed": 8721,
+      "pose": "casting a flare: both hands raised above her head with the palms together, pointing up, standing tall",
+      "height": 1.1
+    },
+    "support": {
+      "seed": 8731,
+      "pose": "a calm blessing: her palms pressed together in front of her chest, eyes closed, a gentle smile",
+      "height": 1.0
+    },
+    "slam": {
+      "seed": 8741,
+      "pose": "a final straight punch: her whole body behind a powerful right punch thrust fully forward to the right, the front knee bent, the back leg straight",
+      "height": 0.9
+    },
+    "block": {
+      "seed": 8752,
+      "pose": "a braced cross-arm block: she has stepped back onto her rear foot and leans back, both forearms crossed in an X high in front of her face with a kunai in each fist pointing up, elbows out wide, shoulders hunched, chin tucked behind her arms, back knee deeply bent",
+      "height": 0.9
+    },
+    "hit": {
+      "seed": 8761,
+      "pose": "recoiling from a heavy hit: her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut in pain, arms flung open, her weight thrown onto her back foot",
+      "height": 0.95
+    },
+    "down": {
+      "seed": 8771,
+      "pose": "knocked out: she lies collapsed on her side on the ground with her eyes closed and her limbs slack, her head toward the right side of the picture, the whole body lying along the same ground line",
+      "width": 1.05,
+      "anchor_x": "center"
+    },
+    "victory": {
+      "seed": 8781,
+      "pose": "a victory pose: a respectful bow with her right fist pressed into her left palm, a confident smile",
+      "height": 0.9
+    }
+  },
+  "actions": {
+    "AH_battle_guard": {
+      "loop": true,
+      "segments": [
+        [
+          "guard",
+          "guard",
+          49,
+          8800,
+          "She holds a light martial arts stance, bouncing slightly on her feet, ribbon and sash swaying. A subtle idle loop: she ends exactly as she began."
+        ]
+      ]
+    },
+    "AH_hit_react": {
+      "segments": [
+        [
+          "guard",
+          "hit",
+          9,
+          8801,
+          "She is struck hard and recoils backward to the left."
+        ],
+        [
+          "hit",
+          "guard",
+          17,
+          8802,
+          "She shakes off the hit and recovers into her fighting stance."
+        ]
+      ]
+    },
+    "AH_block": {
+      "segments": [
+        [
+          "guard",
+          "block",
+          9,
+          8805,
+          "She steps back onto her rear foot and throws both forearms up crossed in an X in front of her face to block."
+        ],
+        [
+          "block",
+          "guard",
+          17,
+          8806,
+          "She uncrosses her arms and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_knock_down": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "down",
+          25,
+          8805,
+          "She is knocked off her feet and collapses onto the ground, lying still."
+        ]
+      ]
+    },
+    "AH_victory": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "victory",
+          25,
+          8806,
+          "She straightens up and strikes a triumphant victory pose."
+        ]
+      ]
+    },
+    "AH_attack_basic": {
+      "release": true,
+      "flight": 4,
+      "attack": true,
+      "contact": "basic_hit",
+      "segments": [
+        [
+          "guard",
+          "basic_hit",
+          17,
+          8807,
+          "She whips her arm forward and throws a kunai to the right."
+        ],
+        [
+          "basic_hit",
+          "guard",
+          17,
+          8808,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_palm": {
+      "attack": true,
+      "contact": "palm_hit",
+      "segments": [
+        [
+          "guard",
+          "palm_hit",
+          25,
+          8809,
+          "She sinks into a deep stance and drives a powerful open palm strike forward to the right."
+        ],
+        [
+          "palm_hit",
+          "guard",
+          25,
+          8810,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_flare": {
+      "release": true,
+      "flight": 4,
+      "attack": true,
+      "contact": "flare_hit",
+      "segments": [
+        [
+          "guard",
+          "flare_hit",
+          25,
+          8811,
+          "She raises both hands high above her head, palms together, and calls down a flare of light."
+        ],
+        [
+          "flare_hit",
+          "guard",
+          25,
+          8812,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_support": {
+      "contact": "support",
+      "segments": [
+        [
+          "guard",
+          "support",
+          17,
+          8813,
+          "She presses her palms together in front of her chest and closes her eyes, glowing calmly."
+        ],
+        [
+          "support",
+          "guard",
+          25,
+          8814,
+          "She opens her eyes and returns to her stance."
+        ]
+      ]
+    },
+    "AH_ult_finish": {
+      "attack": true,
+      "contact": "slam",
+      "segments": [
+        [
+          "guard",
+          "slam",
+          25,
+          8815,
+          "She gathers herself, then throws a tremendous straight punch forward to the right with her whole body."
+        ],
+        [
+          "slam",
+          "guard",
+          25,
+          8816,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    }
+  },
+  "cards": {
+    "basic_clarity": "AH_attack_basic",
+    "guard_clarity": "AH_block",
+    "cy_radiant_palm": "AH_skill_palm",
+    "cy_smite": "AH_skill_palm",
+    "cy_flare": "AH_skill_flare",
+    "cy_barkeep_tonic": "AH_support",
+    "cy_uplift": "AH_support",
+    "cy_rejuvenating_draught": "AH_support",
+    "ult_clarity": "AH_ult_finish",
+    "ult_clarity_feast": "AH_support",
+    "aw_clarity": "AH_support"
+  }
+}

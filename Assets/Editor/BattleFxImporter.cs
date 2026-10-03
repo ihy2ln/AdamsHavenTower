@@ -7,15 +7,18 @@ public sealed class BattleFxImporter : AssetPostprocessor
 {
     private void OnPreprocessTexture()
     {
-        if (!assetPath.Replace('\\', '/').Contains("/Resources/AdamsHaven/Fx/")) return;
+        string path = assetPath.Replace('\\', '/');
+        if (!path.Contains("/Resources/AdamsHaven/Fx/")) return;
         TextureImporter importer = (TextureImporter)assetImporter;
         importer.textureType = TextureImporterType.Default;
         importer.alphaIsTransparency = true;
         importer.mipmapEnabled = false;
         importer.wrapMode = TextureWrapMode.Clamp;
         importer.filterMode = FilterMode.Bilinear;
-        importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.npotScale = TextureImporterNPOTScale.None;
-        importer.maxTextureSize = 4096;
+        // Per-card effect layers (Fx/Moves, Tools/produce_move_fx.py) are many and large: compressed, 2048 max.
+        bool moves = path.Contains("/Fx/Moves/");
+        importer.textureCompression = moves ? TextureImporterCompression.CompressedHQ : TextureImporterCompression.Uncompressed;
+        importer.maxTextureSize = moves ? 2048 : 4096;
     }
 }

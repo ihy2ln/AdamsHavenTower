@@ -1,5 +1,7 @@
 {
   "card": "mv_whiteout_counter",
+  "layer": "impact",
+  "file": "mv_whiteout_counter",
   "kind": "sheet",
   "size": [
     704,

@@ -26,27 +26,11 @@ public sealed partial class BattleMode
         return m == CinematicMode.Always ? "CINE: ALL" : m == CinematicMode.FirstUse ? "CINE: FIRST" : m == CinematicMode.UltimatesOnly ? "CINE: ULTS" : "CINE: OFF";
     }
 
-    // Cine framing shared with Battle2DRigBuilder.RenderCineFrame: an orthographic 16:9 view of the rig, centred here.
+    // Cine framing used by Battle2DRigBuilder.RenderCineFrame (the retired 2D-rig match cut).
     public const float CineCenterX = .55f, CineCenterY = 1.35f, CineHalf = .95f;
-    const float MatchZoom = .32f;                     // seconds (real time) for each zoom of the match cut
     readonly HashSet<string> cinematicsSeen = new HashSet<string>();
-    readonly Dictionary<string, VideoClip> cardClips = new Dictionary<string, VideoClip>();
-    BattleUnit matchUnit;                             // the 2D fighter of the current match cut, or null
-    float matchIn;                                    // zoom-in length in battle seconds (cutStart .. cutStart + matchIn)
 
     static bool IsUltimate(BattleCard card) { return card.Kind == BattleCardKind.Ultimate || card.Kind == BattleCardKind.Awakening; }
-
-    // A skill card's own clip (no fallback): having one is what makes it a cinematic card.
-    VideoClip CardClip(BattleCard card)
-    {
-        VideoClip clip;
-        if (!cardClips.TryGetValue(card.Id, out clip))
-        {
-            clip = Resources.Load<VideoClip>("AdamsHaven/UltCutIns/" + card.Id);
-            cardClips[card.Id] = clip;
-        }
-        return clip;
-    }
 
     // The clip to play for this action, or null for none (setting, first use, or no clip).
     VideoClip CinematicFor(BattleUnit actor, BattleCard card)
@@ -54,52 +38,10 @@ public sealed partial class BattleMode
         if (actor == null || card == null || actor.Enemy) return null;
         var mode = Cinematics;
         if (mode == CinematicMode.Off) return null;
-        if (IsUltimate(card)) return UltClip(actor, card);
-        if (mode == CinematicMode.UltimatesOnly) return null;
-        var clip = CardClip(card);
-        if (clip == null) return null;
-        if (mode == CinematicMode.FirstUse && cinematicsSeen.Contains(card.Id)) return null;
-        return clip;
+        // Skills are staged in battle now (BattleStage.cs); only ultimates and awakenings cut to video.
+        return IsUltimate(card) ? UltClip(actor, card) : null;
     }
 
-    // Field rect of a fighter's rig image and the rect that lines it up with the cine framing (virtual canvas).
-    Rect FieldRigRect(BattleUnit unit)
-    {
-        SlotInfo s = Slot(unit);
-        float size = s.H * FieldCamHalf;
-        return new Rect(s.Foot.x - size / 2, s.Foot.y - s.H * (FieldCamCenter + FieldCamHalf) / 2f, size, size);
-    }
-    static Rect CineRigRect()
-    {
-        float k = VH / (2f * CineHalf), halfW = CineHalf * VW / VH;
-        return new Rect((-FieldCamHalf - (CineCenterX - halfW)) * k, ((CineCenterY + CineHalf) - (FieldCamCenter + FieldCamHalf)) * k,
-            2f * FieldCamHalf * k, 2f * FieldCamHalf * k);
-    }
-
-    Texture2D cineBackdrop;
-    Texture2D CineBackdrop { get { if (!cineBackdrop) cineBackdrop = Resources.Load<Texture2D>("AdamsHaven/Fx/cine_bg"); return cineBackdrop; } }
-
-    // Zoom in (t from 0 to 1) or back out: the backdrop fades over the field while the rig image grows into place.
-    void DrawMatchZoom(float t)
-    {
-        FieldRig rig;
-        if (matchUnit == null || !fieldRigs.TryGetValue(matchUnit, out rig) || rig.Image == null) return;
-        float k = Ease(Mathf.Clamp01(t));
-        Rect from = FieldRigRect(matchUnit), to = CineRigRect();
-        Rect r = new Rect(Mathf.Lerp(from.x, to.x, k), Mathf.Lerp(from.y, to.y, k), Mathf.Lerp(from.width, to.width, k), Mathf.Lerp(from.height, to.height, k));
-        Color was = GUI.color;
-        Rect cover = new Rect(-VW, -VH, VW * 3f, VH * 3f);
-        if (CineBackdrop != null)
-        {
-            Fill(cover, new Color(0, 0, 0, k * .6f));
-            GUI.color = new Color(1, 1, 1, k);
-            GUI.DrawTexture(new Rect(0, 0, VW, VH), CineBackdrop, ScaleMode.ScaleAndCrop, false);
-        }
-        else Fill(cover, new Color(.02f, .03f, .07f, k));
-        GUI.color = Color.white;
-        GUI.DrawTexture(r, rig.Image, ScaleMode.StretchToFill, true);
-        GUI.color = was;
-    }
 
     // ---- per-move effects --------------------------------------------------------------------------------
 
@@ -259,13 +201,13 @@ public sealed partial class BattleMode
 
     void DrawMoveSheet(Effect e, float t)
     {
-        int frame = Mathf.Clamp(Mathf.FloorToInt(t * 16f), 0, 15);
-        float cellW = e.Sheet.width / 4f, cellH = e.Sheet.height / 4f;
+        int cols = e.Cols > 0 ? e.Cols : 4, rows = e.Rows > 0 ? e.Rows : 4, frames = e.Frames > 0 ? e.Frames : cols * rows;
+        int frame = Mathf.Clamp(Mathf.FloorToInt(t * frames), 0, frames - 1);
+        float cellW = e.Sheet.width / (float)cols, cellH = e.Sheet.height / (float)rows;
         float w = e.Size, h = w * cellH / cellW;
         Color was = GUI.color;
         GUI.color = new Color(1, 1, 1, t > .8f ? (1f - t) / .2f : 1f);
-        GUI.DrawTextureWithTexCoords(new Rect(e.Pos.x - w / 2, e.Pos.y - h / 2, w, h), e.Sheet,
-            new Rect((frame % 4) / 4f, 1f - (frame / 4 + 1) / 4f, .25f, .25f), true);
+        GUI.DrawTextureWithTexCoords(new Rect(e.Pos.x - w / 2, e.Pos.y - h / 2, w, h), e.Sheet, SheetUv(e.Sheet, cols, rows, frame), true);
         GUI.color = was;
     }
 
@@ -276,6 +218,7 @@ public sealed partial class BattleMode
         if (stackedAlpha != null) { Destroy(stackedAlpha); stackedAlpha = null; }
         if (fxAdditive != null) { Destroy(fxAdditive); fxAdditive = null; }
         fxVideoOn = false;
-        moveSheets.Clear(); moveVideos.Clear(); cardClips.Clear();
+        moveSheets.Clear(); moveVideos.Clear();
+        ReleaseLayerSheets();
     }
 }

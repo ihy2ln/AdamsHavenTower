@@ -1,5 +1,12 @@
 # Battle 3D model integration
 
+> **Oct 3: these rigs are now the FALLBACK.** A party fighter with a complete pre-rendered anime clip set
+> (`Assets/Resources/AdamsHaven/BattleClips/<id>/`, made by `Tools/produce_fighter_clips.py`) draws that instead; the
+> order in `CreateRig` is imported picture -> imported model -> clips -> 2D rig -> 3D rig. JD keeps his 3D rig.
+> The rigs and `MoveSets` will be deleted once all six fighters have clips. See BATTLE_MODE_GDD.md section 8.
+>
+> The note below (Sept 29) is out of date: the field went back to the anime 3D rigs, then to the 2D rig for Kaela.
+>
 > **Sept 29: the field now uses the anime 2D chibis, not these 3D rigs.**
 > Allies draw animated battle-outfit clips from `Assets/Resources/AdamsHaven/BattleChibi/<id>/{idle,walk_in_place}.png`
 > (6x4 atlases, 24 frames at 12 fps, packed by `Tools/build_battle_chibi_atlases.py` from

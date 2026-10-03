@@ -1,0 +1,272 @@
+{
+  "unit": "elara",
+  "_doc": "Tools/produce_fighter_clips.py spec. Canvas px: the guard key is scaled so the figure is body_px tall, feet centred on (body_x, feet_y). Keys are Qwen Image Edit 2.1 edits of the guard key; every action is chained MiniMax H3 first/last-frame segments between keys, so the contact frame is a segment boundary. Segment frames must be 8n+1 (24 fps).",
+  "canvas": [
+    960,
+    960
+  ],
+  "bg": [
+    118,
+    118,
+    118
+  ],
+  "body_px": 640,
+  "body_x": 400,
+  "feet_y": 896,
+  "fps_out": 12,
+  "ppu_out": 160,
+  "look": "the elf mage-scholar with light brown hair in a bun, pointed ears, a navy cropped coat with gold trim, a white corseted blouse, a white pleated skirt, thigh-high stockings, tall brown boots, a spellbook and a glowing crystal fountain pen",
+  "refs": {
+    "sheet": "Elara/elara_battle_tpose_book_quill_v12.png",
+    "weapon": "Elara/Celestium Weapons/elara-magic-fountain-pen-v2.png"
+  },
+  "guard": {
+    "seed": 8500,
+    "stance": "feet apart, the open spellbook held in her left hand and the glowing fountain pen raised in her right hand, ready to cast",
+    "source_bg": [
+      200,
+      200,
+      200
+    ]
+  },
+  "keys": {
+    "basic_hit": {
+      "seed": 8501,
+      "pose": "flicking the glowing fountain pen forward: her right arm extended to the right with the pen pointed at the enemy, the open spellbook held in her left hand",
+      "height": 0.98
+    },
+    "cast_hit": {
+      "seed": 8511,
+      "pose": "casting a spell: her right arm thrust straight forward to the right, the pen pointed like a wand, the spellbook open in her other hand, leaning forward with determined eyes",
+      "height": 0.95
+    },
+    "barrage_hit": {
+      "seed": 8521,
+      "pose": "calling down a storm: both arms raised high, the open spellbook held up above her head and the pen pointed at the sky, coat flaring",
+      "height": 1.1
+    },
+    "support": {
+      "seed": 8531,
+      "pose": "writing in the air: she holds the open spellbook up in front of her and writes on its page with the glowing pen, calm and focused",
+      "height": 1.0
+    },
+    "slam": {
+      "seed": 8541,
+      "pose": "unleashing her strongest spell: she leans forward with both arms thrust out to the right, the spellbook held open in front of her and the pen pointed past it",
+      "height": 0.95
+    },
+    "block": {
+      "seed": 8551,
+      "pose": "a defensive guard: she holds the closed spellbook up in front of her face like a shield with both hands, knees bent, flinching",
+      "height": 0.93
+    },
+    "hit": {
+      "seed": 8561,
+      "pose": "recoiling from a heavy hit: her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut in pain, arms flung open, her weight thrown onto her back foot",
+      "height": 0.95
+    },
+    "down": {
+      "seed": 8571,
+      "pose": "knocked out: she lies collapsed on her side on the ground with her eyes closed and her limbs slack, her head toward the right side of the picture, the whole body lying along the same ground line",
+      "width": 1.05,
+      "anchor_x": "center"
+    },
+    "victory": {
+      "seed": 8581,
+      "pose": "a victory pose: she hugs the spellbook to her chest and raises the glowing pen with a bright smile and a wink",
+      "height": 1.15
+    }
+  },
+  "actions": {
+    "AH_battle_guard": {
+      "loop": true,
+      "segments": [
+        [
+          "guard",
+          "guard",
+          49,
+          8600,
+          "She holds her stance with the book open, breathing calmly, pages fluttering, skirt swaying. A subtle idle loop: she ends exactly as she began."
+        ]
+      ]
+    },
+    "AH_hit_react": {
+      "segments": [
+        [
+          "guard",
+          "hit",
+          9,
+          8601,
+          "She is struck and recoils backward to the left."
+        ],
+        [
+          "hit",
+          "guard",
+          17,
+          8602,
+          "She shakes off the hit and recovers into her fighting stance."
+        ]
+      ]
+    },
+    "AH_block": {
+      "segments": [
+        [
+          "guard",
+          "block",
+          9,
+          8603,
+          "She snaps her weapon up in front of her to block."
+        ],
+        [
+          "block",
+          "guard",
+          17,
+          8604,
+          "She lowers her guard and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_knock_down": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "down",
+          25,
+          8605,
+          "She is knocked off her feet and collapses onto the ground, lying still."
+        ]
+      ]
+    },
+    "AH_victory": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "victory",
+          25,
+          8606,
+          "She straightens up and strikes a triumphant victory pose."
+        ]
+      ]
+    },
+    "AH_attack_basic": {
+      "release": true,
+      "flight": 4,
+      "attack": true,
+      "contact": "basic_hit",
+      "segments": [
+        [
+          "guard",
+          "basic_hit",
+          17,
+          8607,
+          "She flicks the glowing pen forward to the right as if throwing a spark."
+        ],
+        [
+          "basic_hit",
+          "guard",
+          17,
+          8608,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_cast": {
+      "release": true,
+      "flight": 4,
+      "attack": true,
+      "contact": "cast_hit",
+      "segments": [
+        [
+          "guard",
+          "cast_hit",
+          25,
+          8609,
+          "She draws back, then thrusts her arm forward to the right, pointing the pen like a wand to cast a spell."
+        ],
+        [
+          "cast_hit",
+          "guard",
+          25,
+          8610,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_barrage": {
+      "attack": true,
+      "contact": "barrage_hit",
+      "segments": [
+        [
+          "guard",
+          "barrage_hit",
+          25,
+          8611,
+          "She raises the spellbook and the pen high above her head, calling down a storm."
+        ],
+        [
+          "barrage_hit",
+          "guard",
+          25,
+          8612,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_support": {
+      "contact": "support",
+      "segments": [
+        [
+          "guard",
+          "support",
+          17,
+          8613,
+          "She lifts the spellbook and writes quickly on its page with the glowing pen."
+        ],
+        [
+          "support",
+          "guard",
+          25,
+          8614,
+          "She lowers the book and returns to her stance."
+        ]
+      ]
+    },
+    "AH_ult_finish": {
+      "release": true,
+      "flight": 4,
+      "attack": true,
+      "contact": "slam",
+      "segments": [
+        [
+          "guard",
+          "slam",
+          25,
+          8615,
+          "She leans forward and thrusts both arms out to the right, the book held open, unleashing a great spell."
+        ],
+        [
+          "slam",
+          "guard",
+          25,
+          8616,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    }
+  },
+  "cards": {
+    "basic_elara": "AH_attack_basic",
+    "guard_elara": "AH_block",
+    "el_arc_bolt": "AH_skill_cast",
+    "el_piercing_shot": "AH_skill_cast",
+    "el_sapping_volley": "AH_skill_cast",
+    "el_artillery_barrage": "AH_skill_barrage",
+    "el_storm_tally": "AH_skill_barrage",
+    "el_forest_scout": "AH_support",
+    "ult_elara": "AH_skill_barrage",
+    "ult_elara_convergence": "AH_ult_finish",
+    "aw_elara": "AH_support"
+  }
+}

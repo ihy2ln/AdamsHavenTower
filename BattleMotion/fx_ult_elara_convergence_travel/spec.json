@@ -1,0 +1,14 @@
+{
+  "card": "ult_elara_convergence",
+  "layer": "travel",
+  "file": "ult_elara_convergence_travel",
+  "kind": "beam",
+  "size": [
+    1248,
+    352
+  ],
+  "length": 33,
+  "seed": 9645,
+  "floor": 0.18,
+  "prompt": "A colossal beam of blue-white lightning passing through a row of glowing rune circles. It is perfectly horizontal and crosses the whole frame from the left edge to the right edge, centered vertically. The light is electric blue-white."
+}

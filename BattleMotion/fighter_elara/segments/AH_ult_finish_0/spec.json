@@ -1,0 +1,16 @@
+{
+  "action": "AH_ult_finish",
+  "index": 0,
+  "first": "guard",
+  "last": "slam",
+  "frames": 25,
+  "seed": 8615,
+  "prompt": "The character is the elf mage-scholar with light brown hair in a bun, pointed ears, a navy cropped coat with gold trim, a white corseted blouse, a white pleated skirt, thigh-high stockings, tall brown boots, a spellbook and a glowing crystal fountain pen, facing the right side of the picture. She leans forward and thrusts both arms out to the right, the book held open, unleashing a great spell. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "95bc7bda66d64c1d"
+}

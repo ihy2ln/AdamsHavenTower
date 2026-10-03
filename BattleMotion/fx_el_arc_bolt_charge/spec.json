@@ -1,0 +1,14 @@
+{
+  "card": "el_arc_bolt",
+  "layer": "charge",
+  "file": "el_arc_bolt_charge",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 33,
+  "seed": 9631,
+  "floor": 0.18,
+  "prompt": "A small crackling ball of electric blue-white lightning sparks in the center. The light is electric blue-white."
+}

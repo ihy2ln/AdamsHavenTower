@@ -1,5 +1,7 @@
 {
   "card": "mv_shatter_hook",
+  "layer": "impact",
+  "file": "mv_shatter_hook",
   "kind": "sheet",
   "size": [
     704,

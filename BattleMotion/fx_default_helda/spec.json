@@ -1,0 +1,14 @@
+{
+  "card": "default_helda",
+  "layer": "impact",
+  "file": "default_helda",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9762,
+  "floor": 0.18,
+  "prompt": "A small burst of frost and ice shards, then fading. It is small and stays in the middle of the frame with wide empty black space all around it, never touching the edges. The light is warm golden light and pale frost blue."
+}

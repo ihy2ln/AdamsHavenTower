@@ -1,0 +1,14 @@
+{
+  "card": "default_elara",
+  "layer": "impact",
+  "file": "default_elara",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9643,
+  "floor": 0.18,
+  "prompt": "A small spark burst of electric blue light, then fading. The light is electric blue-white."
+}

@@ -1,0 +1,14 @@
+{
+  "card": "el_piercing_shot",
+  "layer": "charge",
+  "file": "el_piercing_shot_charge",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 33,
+  "seed": 9634,
+  "floor": 0.18,
+  "prompt": "A glowing blue rune circle of magic symbols forms in the center, seen from the side as a vertical ring, spinning, with a bright white spark at its middle. The light is electric blue-white."
+}

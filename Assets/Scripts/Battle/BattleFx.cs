@@ -35,6 +35,10 @@ public sealed partial class BattleMode
         public float BannerStart = -9f;
         public string Banner = "";
         public bool IntentSpent, CollapseShown;
+        // Handed over from an ultimate's video: the clip starts on its key pose (ClipFrom >= 0) at ClipStart, and a
+        // melee fighter is already at the target (Arrive) instead of dashing in again.
+        public float ClipFrom = -1f, ClipStart;
+        public bool Arrive;
     }
 
     private struct Particle
@@ -49,11 +53,16 @@ public sealed partial class BattleMode
     {
         public byte Kind;              // 0 flash, 1 shockwave, 2 streak, 3 slash sheet, 4 burst sheet, 5 ground rune, 6 sparkle,
                                        // 7-8 painted slash/impact, 9 painted element sheet (Sheet), 10 full-screen warp,
-                                       // 11 per-move 4x4 colour sheet (BattleCinematics.MoveFx), 12 imported picture
+                                       // 11 per-move colour sheet (moves.json impact), 12 imported picture,
+                                       // 13 charge riding the muzzle, 14 beam, 15 bolt (BattleMoveFx.cs)
         public Vector2 Pos;
         public float Born, Life, Size, Angle;
         public Color Color;
         public Texture2D Sheet;
+        public BattleUnit Unit, Target;
+        public float Flight, Grow;
+        public int Cols, Rows, Frames;
+        public bool Under;             // drawn beneath the units (ground circles, walls of fire)
     }
 
     private sealed class Floater
@@ -193,7 +202,7 @@ public sealed partial class BattleMode
     {
         fx = cutStart + cutLen;
         hitStop = 0f;
-        matchUnit = null; cutClip = null; cutUrl = null;
+        cutClip = null; cutUrl = null;
         if (ultPlayer != null) ultPlayer.Stop();
     }
 
@@ -203,7 +212,8 @@ public sealed partial class BattleMode
         bolts.Clear(); flying.Clear(); banners.Clear();
         fx = 0f; queueEnd = 0f; shake = 0f; hitStop = 0f; cutStart = -9f;
         cutUnit = null; cutCard = null; cutClip = null; factsSeen = 0; announcedRound = 0;
-        matchUnit = null; matchIn = 0f; cinematicsSeen.Clear();
+        cinematicsSeen.Clear();
+        ResetStage();
     }
 
     private void Signal(BattleAnimationPhase phase, BattleUnit actor, BattleUnit target, BattleCard card, BattleFact fact = null)
@@ -263,7 +273,7 @@ public sealed partial class BattleMode
     private void TickFx(float realDt)
     {
         // A tiny freeze on contact gives the slash and hit number a readable impact.
-        float dt = hitStop > 0f ? 0f : realDt * speed;
+        float dt = hitStop > 0f ? 0f : realDt * speed * StageClock;
         hitStop = Mathf.Max(0f, hitStop - realDt);
         fx += dt;
         for (int i = 0; i < beats.Count; i++)
@@ -368,7 +378,8 @@ public sealed partial class BattleMode
         banners.Add(new BannerFx { Text = text, Color = color, Start = fx });
     }
 
-    private void Impact(Vector2 at, Color color, bool crit, float weight, BattleElement element = BattleElement.Neutral)
+    // painted: the generic painted slash / star / element sheet; off when the card brings its own impact layer.
+    private void Impact(Vector2 at, Color color, bool crit, float weight, BattleElement element = BattleElement.Neutral, bool painted = true)
     {
         hitStop = Mathf.Max(hitStop, crit ? 0.075f : Mathf.Lerp(0.025f, 0.055f, weight));
         Spawn(0, at, Color.white, 150f + weight * 130f, 0.20f);
@@ -381,9 +392,9 @@ public sealed partial class BattleMode
         Spawn(2, at, Color.white, 300f + weight * 160f, 0.24f, UnityEngine.Random.Range(-38f, -8f));
         // Painted H3 layers on top of the procedural ones (CZN-style white-core slash, star impact, crit warp).
         Color hot = Color.Lerp(color, Color.white, 0.5f); hot.a = 0.8f;
-        if (BattleGui.GenSlash != null) Spawn(7, at, hot, 290f + weight * 170f, 0.30f, tilt * 0.5f);
-        if (BattleGui.GenImpact != null) Spawn(8, at, hot, 210f + weight * 180f + (crit ? 100f : 0f), 0.34f, UnityEngine.Random.Range(-20f, 20f));
-        Texture2D burst = BattleGui.ElementSheet(element);
+        if (painted && BattleGui.GenSlash != null) Spawn(7, at, hot, 290f + weight * 170f, 0.30f, tilt * 0.5f);
+        if (painted && BattleGui.GenImpact != null) Spawn(8, at, hot, 210f + weight * 180f + (crit ? 100f : 0f), 0.34f, UnityEngine.Random.Range(-20f, 20f));
+        Texture2D burst = painted ? BattleGui.ElementSheet(element) : null;
         if (burst != null) effects.Add(new Effect { Kind = 9, Pos = at + new Vector2(0f, -30f), Born = fx, Life = 0.5f,
             Size = 260f + weight * 140f, Color = new Color(hot.r, hot.g, hot.b, 0.65f), Sheet = burst });
         if (BattleGui.GenWarp != null && crit) Spawn(10, new Vector2(800f, 450f), new Color(hot.r, hot.g, hot.b, 0.6f), 1700f, 0.32f);
@@ -443,6 +454,7 @@ public sealed partial class BattleMode
             queueEnd = t + .9f;
             return;
         }
+        bool payoff = false;      // an ultimate's video showed the wind-up: the field picks up on the pose it ended on
         MediaLibrary.Entry mediaCine = MediaCineFor(actor, card);
         VideoClip clip = mediaCine != null ? null : CinematicFor(actor, card);
         bool cine = actor != null && card != null && !actor.Enemy && (IsUltimate(card) || clip != null || mediaCine != null) && Cinematics != CinematicMode.Off;
@@ -453,7 +465,7 @@ public sealed partial class BattleMode
             string url = MediaLibrary.VideoUrl(mediaCine.key);
             float len = (mediaCine.length > .1f ? mediaCine.length : 3f) * speed;
             cinematicsSeen.Add(card.Id);
-            At(t, () => { cutUnit = who; cutCard = which; cutClip = null; cutUrl = url; cutStart = fx; cutLen = len; matchUnit = null; matchIn = 0f;
+            At(t, () => { cutUnit = who; cutCard = which; cutClip = null; cutUrl = url; cutStart = fx; cutLen = len;
                 PlayUltUrl(url, mediaCine.width, mediaCine.height); Signal(BattleAnimationPhase.Ultimate, who, null, which); });
             t += len;
         }
@@ -463,46 +475,64 @@ public sealed partial class BattleMode
             if (clip != null) cinematicsSeen.Add(card.Id);
             // Clips play at 1x whatever the battle speed: their length in battle time scales with the speed.
             float len = clip != null ? (float)clip.length * speed : CutLen;
-            FieldRig rig;
-            bool match = clip != null && fieldRigs.TryGetValue(actor, out rig) && rig.Flat && !IsUltimate(card);
-            float zoom = match ? MatchZoom * speed : 0f;
-            At(t, () => { cutUnit = who; cutCard = which; cutClip = clip; cutUrl = null; cutStart = fx; cutLen = len + 2f * zoom;
-                matchUnit = match ? who : null; matchIn = zoom;
-                if (clip != null && !match) PlayUltClip(clip);
+            At(t, () => { cutUnit = who; cutCard = which; cutClip = clip; cutUrl = null; cutStart = fx; cutLen = len;
+                if (clip != null) PlayUltClip(clip);
                 Signal(BattleAnimationPhase.Ultimate, who, null, which); });
-            if (match) At(t + zoom, () => { if (cutClip == clip) PlayUltClip(clip); });
-            t += len + 2f * zoom;
+            t += len;
+            payoff = IsUltimate(card);
         }
-        if (actor != null && card != null && !actor.Enemy)
+        // Battle seconds from the action to its hit: a clip fighter's own contact frame, else the fixed beats.
+        bool rangedAct = actor != null && card != null && Ranged(actor, card);
+        float lead = actor != null && card != null ? ImpactLead(actor, card, offense, rangedAct) : .34f;
+        MoveDef def = !tick ? MoveDefFor(card, actor) : null;
+        float staged = -1f;
+        if (payoff) lead = PayoffLead(actor, card);
+        else if (def != null && def.stage && !cine && StageWanted(card))
+        {
+            // A skill staged in battle (BattleStage.cs): the camera pushes in, the clip plays large, slightly slowed.
+            lead = StageLead(actor, card, lead);
+            float t0 = t;
+            t += Mathf.Max(.2f, .25f * speed) * .5f;
+            staged = BeginStage(actor, card, group, t0, t, t + (rangedAct ? ReleaseLead(actor, card, lead) : lead), t + lead, rangedAct);
+            cinematicsSeen.Add(card.Id);
+        }
+        if (def != null)
+            ScheduleMoveLayers(def, actor, card, group, t, t + (payoff ? 0f : rangedAct ? ReleaseLead(actor, card, lead) : lead), t + lead, rangedAct);
+        else if (actor != null && card != null && !actor.Enemy)
         {
             BattleUnit fxTarget = group[0].Target;
-            At(t + (offense ? (Ranged(actor, card) ? 0.50f : 0.30f) : 0.34f), () => SpawnMoveFx(card, actor, fxTarget));
+            At(t + lead, () => SpawnMoveFx(card, actor, fxTarget));
         }
         float impact = t + 0.05f;
         if (actor != null && card != null && !tick)
         {
-            bool ranged = Ranged(actor, card);
-            impact = t + (offense ? (ranged ? 0.50f : 0.30f) : 0.34f);
+            bool ranged = rangedAct, handed = payoff;
+            impact = t + lead;
             List<BattleFact> snapshot = group;
-            At(t, () => BeginAction(actor, card, snapshot, ranged));
+            At(t, () => BeginAction(actor, card, snapshot, ranged, lead, handed));
         }
         for (int i = 0; i < group.Count; i++)
         {
             BattleFact fact = group[i];
             At(impact + i * 0.085f, () => ApplyFact(fact));
         }
-        queueEnd = impact + group.Count * 0.085f + (offense ? 0.52f : tick ? 0.22f : 0.40f);
+        queueEnd = Mathf.Max(impact + group.Count * 0.085f + (offense ? 0.52f : tick ? 0.22f : 0.40f), staged);
     }
 
-    private void BeginAction(BattleUnit actor, BattleCard card, List<BattleFact> group, bool ranged)
+    // handed: picked up from an ultimate's video (the clip starts on its key pose, a melee fighter is already there).
+    private void BeginAction(BattleUnit actor, BattleCard card, List<BattleFact> group, bool ranged, float lead, bool handed = false)
     {
         UnitVis v = V(actor);
         v.Banner = card.Name; v.BannerStart = fx; v.IntentSpent = true;
         Vector2 from = Foot(actor);
         Vector2 dest = Vector2.zero;
         bool damaging = group.Exists(f => f.Kind == "damage" || f.Kind == "blocked");
-        v.Ranged = ranged; v.Impact = damaging ? (ranged ? 0.50f : 0.30f) : 0.34f;
+        v.Ranged = ranged; v.Impact = lead;
         v.LungeDur = v.Impact + 0.42f;
+        v.Arrive = handed && !ranged && damaging;
+        if (handed) { v.ClipFrom = 0f; v.ClipStart = fx; }
+        // A party card with its own layers (moves.json) draws them instead of the generic orb and glows.
+        bool layered = MoveDefFor(card, actor) != null;
         Signal(BattleAnimationPhase.Action, actor, group[0].Target, card);
         if (!ranged && damaging)
         {
@@ -519,17 +549,18 @@ public sealed partial class BattleMode
         }
         v.LungeTo = dest; v.LungeStart = fx;
         Color color = ElementColor(card.Element);
-        if (ranged && damaging)
+        if (ranged && damaging && !layered)
         {
             Vector2 origin = Chest(actor);
+            float release = ReleaseLead(actor, card, v.Impact);      // a clip fighter lets go on its release frame
             for (int i = 0; i < group.Count; i++)
                 if ((group[i].Kind == "damage" || group[i].Kind == "blocked") && group[i].Target != null)
-                    bolts.Add(new Bolt { From = origin, To = Chest(group[i].Target), Start = fx + 0.16f + i * 0.02f, Dur = v.Impact - 0.18f, Color = color });
+                    bolts.Add(new Bolt { From = origin, To = Chest(group[i].Target), Start = fx + release + i * 0.02f, Dur = v.Impact - release - 0.02f, Color = color });
             Spawn(0, origin, color, 210f, 0.36f);
             Spawn(1, origin, color, 150f, 0.38f);
             Spawn(5, Foot(actor), color, Slot(actor).W * 0.9f + 50f, 0.9f, UnityEngine.Random.Range(0f, 360f));
         }
-        else if (!damaging)
+        else if (!damaging && !layered)
         {
             Spawn(1, Foot(actor) + new Vector2(0f, -8f), color, 240f, 0.55f);
             Spawn(5, Foot(actor), color, Slot(actor).W * 0.95f + 60f, 1.05f, UnityEngine.Random.Range(0f, 360f));
@@ -548,7 +579,7 @@ public sealed partial class BattleMode
         UnitVis v = V(target);
         SlotInfo s = Slot(target);
         Vector2 chest = Chest(target), head = Head(target);
-        Color element = f.Card != null ? ElementColor(f.Card.Element) : Color.white;
+        Color element = f.Card != null ? CardColor(f.Card, f.Actor) : Color.white;
         float jitter = UnityEngine.Random.Range(-26f, 26f);
         switch (f.Kind)
         {
@@ -566,7 +597,7 @@ public sealed partial class BattleMode
                 else if (!poison && f.Element < 0.99f) Float(head + new Vector2(60f, 34f), "RESIST", 22, new Color(0.7f, 0.76f, 0.85f), 0.9f, 30f, 30f);
                 float weight = Mathf.Clamp01(f.Amount / Mathf.Max(1f, target.MaxHp * 0.35f));
                 if (poison) Burst(chest, new Color(0.78f, 0.5f, 1f), 8, 40f, 140f, 5f, 10f, 0.7f, -60f);
-                else Impact(chest, element, f.Crit, weight, f.Card != null ? f.Card.Element : BattleElement.Neutral);
+                else Impact(chest, element, f.Crit, weight, f.Card != null ? f.Card.Element : BattleElement.Neutral, !HasImpactLayer(f.Card, f.Actor));
                 if (!target.Enemy && target.CollapseRounds > 0 && !v.CollapseShown)
                 {
                     v.CollapseShown = true;
@@ -620,13 +651,17 @@ public sealed partial class BattleMode
         }
     }
 
-    private void DrawEffects()
+    // under: the layers drawn beneath the units (BattleMoveFx); everything else is drawn over them.
+    private void DrawEffects(bool under = false)
     {
         for (int i = 0; i < effects.Count; i++)
         {
             Effect e = effects[i];
+            if (e.Under != under || fx < e.Born) continue;
             float t = (fx - e.Born) / e.Life;
-            if (e.Kind == 3)
+            if (e.Kind == 13 && e.Sheet != null) DrawCharge(e, t);
+            else if ((e.Kind == 14 || e.Kind == 15) && e.Sheet != null) DrawTravel(e);
+            else if (e.Kind == 3)
                 BattleGui.DrawSheet(BattleGui.SlashSheet, 8, Mathf.FloorToInt(t * 8f), e.Pos, e.Size, e.Angle, e.Color);
             else if (e.Kind == 4)
                 BattleGui.DrawSheet(BattleGui.BurstSheet, 8, Mathf.FloorToInt(t * 8f), e.Pos, e.Size, e.Angle, e.Color);
@@ -663,7 +698,7 @@ public sealed partial class BattleMode
                 BattleGui.DrawStreak(e.Pos, e.Size * grow, 22f * (1f - t * 0.6f), e.Angle, new Color(e.Color.r, e.Color.g, e.Color.b, 1f - t * t));
             }
         }
-        for (int i = 0; i < bolts.Count; i++)
+        for (int i = 0; i < bolts.Count && !under; i++)
         {
             Bolt b = bolts[i];
             float t = (fx - b.Start) / Mathf.Max(0.05f, b.Dur);
@@ -690,7 +725,8 @@ public sealed partial class BattleMode
             float t = age / f.Life;
             float pop = age < 0.14f ? 1f + 0.55f * (1f - age / 0.14f) : 1f;
             float alpha = t < 0.7f ? 1f : 1f - (t - 0.7f) / 0.3f;
-            Vector2 pos = f.Pos + f.Vel * BattleGui.EaseOut(t) * 0.9f;
+            // Drawn on the screen matrix at the camera's position for it, so numbers stay crisp when it zooms.
+            Vector2 pos = FieldToScreen(f.Pos + f.Vel * BattleGui.EaseOut(t) * 0.9f);
             int size = Mathf.RoundToInt(f.Size * pop / 2f) * 2;
             Rect r = new Rect(pos.x - 200f, pos.y - size * 0.6f, 400f, size * 1.2f);
             BattleGui.Text(r, f.Text, size, BattleGui.Alpha(f.Color, alpha), TextAnchor.MiddleCenter, true, false, Mathf.Max(2f, size / 16f));

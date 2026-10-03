@@ -1,5 +1,7 @@
 {
   "card": "mv_permafrost_brace",
+  "layer": "impact",
+  "file": "mv_permafrost_brace",
   "kind": "sheet",
   "size": [
     704,

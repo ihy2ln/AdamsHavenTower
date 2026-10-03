@@ -1,0 +1,16 @@
+{
+  "action": "AH_support",
+  "index": 1,
+  "first": "support",
+  "last": "guard",
+  "frames": 25,
+  "seed": 8414,
+  "prompt": "The character is the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword, facing the right side of the picture. She pulls the greatsword up out of the ground and returns to her fighting stance. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "ba71997b9dce4241"
+}

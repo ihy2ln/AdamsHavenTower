@@ -1,0 +1,14 @@
+{
+  "card": "el_arc_bolt",
+  "layer": "travel",
+  "file": "el_arc_bolt_travel",
+  "kind": "beam",
+  "size": [
+    1248,
+    352
+  ],
+  "length": 33,
+  "seed": 9632,
+  "floor": 0.18,
+  "prompt": "A jagged crackling arc of electric blue-white lightning, flickering. It is perfectly horizontal and crosses the whole frame from the left edge to the right edge, centered vertically. The light is electric blue-white."
+}

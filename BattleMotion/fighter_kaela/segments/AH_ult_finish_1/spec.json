@@ -1,0 +1,16 @@
+{
+  "action": "AH_ult_finish",
+  "index": 1,
+  "first": "slam",
+  "last": "guard",
+  "frames": 25,
+  "seed": 8252,
+  "prompt": "The character is the muscular snow-leopard beastfolk brawler woman with long sky-blue hair, snow-leopard ears and a spotted tail, a star-marked eyepatch, leopard-spot tattoos, white top, belt, black shorts, white side cloths, strapped sandals and glowing ice-crystal claw gauntlets on both hands, facing the right side of the picture. She pushes up from the ground and returns to her fighting stance. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "39da9fe011489626"
+}

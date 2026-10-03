@@ -1,0 +1,14 @@
+{
+  "card": "el_piercing_shot",
+  "layer": "travel",
+  "file": "el_piercing_shot_travel",
+  "kind": "beam",
+  "size": [
+    1248,
+    352
+  ],
+  "length": 33,
+  "seed": 9635,
+  "floor": 0.18,
+  "prompt": "A single straight blinding spear of blue-white lightning with a white-hot core and crackling edges. It is perfectly horizontal and crosses the whole frame from the left edge to the right edge, centered vertically. The light is electric blue-white."
+}

@@ -1,0 +1,14 @@
+{
+  "card": "cy_barkeep_tonic",
+  "layer": "travel",
+  "file": "cy_barkeep_tonic_travel",
+  "kind": "bolt",
+  "size": [
+    704,
+    352
+  ],
+  "length": 33,
+  "seed": 9674,
+  "floor": 0.18,
+  "prompt": "A small cup of glowing golden tonic, sparkling. It points to the right and stays centered in the frame, flickering in place. The light is radiant golden holy light."
+}

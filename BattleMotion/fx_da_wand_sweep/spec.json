@@ -1,0 +1,14 @@
+{
+  "card": "da_wand_sweep",
+  "layer": "impact",
+  "file": "da_wand_sweep",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9622,
+  "floor": 0.18,
+  "prompt": "A ring of flames and red hibiscus petals sweeps around the center in a circle, then scatters and fades. The light is blazing orange fire with pink sparks."
+}

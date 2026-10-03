@@ -1,0 +1,14 @@
+{
+  "card": "cy_smite",
+  "layer": "impact",
+  "file": "cy_smite",
+  "kind": "sheet",
+  "size": [
+    704,
+    960
+  ],
+  "length": 41,
+  "seed": 9678,
+  "floor": 0.18,
+  "prompt": "A column of holy golden light smites down from the top of the frame into the bottom center with a burst and a shockwave, then fades. The light is radiant golden holy light."
+}

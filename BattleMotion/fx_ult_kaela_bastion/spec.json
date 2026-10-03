@@ -1,0 +1,14 @@
+{
+  "card": "ult_kaela_bastion",
+  "layer": "impact",
+  "file": "ult_kaela_bastion",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9602,
+  "floor": 0.18,
+  "prompt": "A translucent dome of glowing ice crystal walls rises from the bottom around the center, facets glinting, then it dissolves into sparkles. The light is icy blue-white."
+}

@@ -1,0 +1,14 @@
+{
+  "card": "el_arc_bolt",
+  "layer": "impact",
+  "file": "el_arc_bolt",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9633,
+  "floor": 0.18,
+  "prompt": "A burst of electric blue-white lightning: a bright flash with forking arcs crackling outward, then fading. The light is electric blue-white."
+}

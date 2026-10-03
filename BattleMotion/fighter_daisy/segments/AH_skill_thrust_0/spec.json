@@ -1,0 +1,16 @@
+{
+  "action": "AH_skill_thrust",
+  "index": 0,
+  "first": "guard",
+  "last": "thrust_hit",
+  "frames": 25,
+  "seed": 8509,
+  "prompt": "The character is the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear, facing the right side of the picture. She draws the spear back, then lunges forward in a deep powerful thrust to the right. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "1bfd9676e820b5a5"
+}

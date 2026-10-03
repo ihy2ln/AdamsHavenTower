@@ -1,0 +1,14 @@
+{
+  "card": "gh_guard_stance",
+  "layer": "impact",
+  "file": "gh_guard_stance",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9712,
+  "floor": 0.18,
+  "prompt": "A low curved wall of golden fire rises in a ring, flames rippling upward, then settles into floating embers. It is small and stays in the middle of the frame with wide empty black space all around it, never touching the edges. The light is orange-gold fire."
+}

@@ -1,0 +1,14 @@
+{
+  "card": "ult_helda",
+  "layer": "impact",
+  "file": "ult_helda",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9663,
+  "floor": 0.18,
+  "prompt": "A warm golden hearth glow spreads from the center with healing motes drifting upward, then fades. The light is warm golden light and pale frost blue."
+}

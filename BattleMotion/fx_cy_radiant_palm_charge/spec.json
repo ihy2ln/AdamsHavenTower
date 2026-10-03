@@ -1,0 +1,14 @@
+{
+  "card": "cy_radiant_palm",
+  "layer": "charge",
+  "file": "cy_radiant_palm_charge",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 33,
+  "seed": 9671,
+  "floor": 0.18,
+  "prompt": "A glowing golden palm print of light with radiant rays in the center. The light is radiant golden holy light."
+}

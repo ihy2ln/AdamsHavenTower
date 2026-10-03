@@ -1,0 +1,268 @@
+{
+  "unit": "ghislaine",
+  "_doc": "Tools/produce_fighter_clips.py spec. Canvas px: the guard key is scaled so the figure is body_px tall, feet centred on (body_x, feet_y). Keys are Qwen Image Edit 2.1 edits of the guard key; every action is chained MiniMax H3 first/last-frame segments between keys, so the contact frame is a segment boundary. Segment frames must be 8n+1 (24 fps).",
+  "canvas": [
+    960,
+    960
+  ],
+  "bg": [
+    118,
+    118,
+    118
+  ],
+  "body_px": 600,
+  "body_x": 340,
+  "feet_y": 896,
+  "fps_out": 12,
+  "ppu_out": 160,
+  "look": "the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword",
+  "refs": {
+    "sheet": "Ghislaine/Ghislaine (2).png",
+    "weapon": "Ghislaine/Celestium Weapons/ghislaine-fire-greatsword.png"
+  },
+  "guard": {
+    "seed": 8300,
+    "stance": "feet apart, knees bent, gripping the flaming greatsword in both hands with the blade angled up and forward to the right, her tail curving out behind her",
+    "source_bg": [
+      200,
+      200,
+      200
+    ]
+  },
+  "keys": {
+    "basic_hit": {
+      "seed": 8301,
+      "pose": "the end of a fast diagonal slash: the flaming greatsword swung down and forward to the right, the blade low in front of her, both hands on the hilt, front knee bent",
+      "height": 0.95
+    },
+    "cleave_hit": {
+      "seed": 8311,
+      "pose": "the end of a heavy overhead cleave: she has brought the flaming greatsword straight down in front of her to the right with both hands, the blade tip near the ground, leaning into the blow",
+      "height": 0.85,
+      "anchor_x": "torso"
+    },
+    "sweep_hit": {
+      "seed": 8321,
+      "pose": "a wide horizontal slash: her whole body twisted to the right, the flaming greatsword swung out level at waist height and fully extended to the right, cloak and tail flaring",
+      "height": 0.85
+    },
+    "support": {
+      "seed": 8331,
+      "pose": "a vow: the greatsword planted point-down in front of her with both hands resting on the pommel, standing tall, chin raised, eyes calm",
+      "height": 1.0
+    },
+    "slam": {
+      "seed": 8341,
+      "pose": "the landing of a leaping rend: she crouches low with one knee bent, the flaming greatsword driven down into the ground in front of her to the right, hair and tail whipping up",
+      "height": 0.7,
+      "anchor_x": "torso"
+    },
+    "block": {
+      "seed": 8351,
+      "pose": "a braced block: the greatsword held flat across in front of her body with one hand on the hilt and the other pressing the flat of the blade, knees bent, leaning into the block",
+      "height": 0.93
+    },
+    "hit": {
+      "seed": 8362,
+      "pose": "recoiling from a heavy hit: knocked back onto her back foot, her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut in pain, still gripping the greatsword in both hands close to her chest with the blade pointing straight up, the sword not swung",
+      "height": 0.95
+    },
+    "down": {
+      "seed": 8371,
+      "pose": "knocked out: she lies collapsed on her side on the ground with her eyes closed and her limbs slack, her head toward the right side of the picture, the whole body lying along the same ground line",
+      "width": 1.05,
+      "anchor_x": "center"
+    },
+    "victory": {
+      "seed": 8381,
+      "pose": "a victory pose: she rests the flaming greatsword on her shoulder with one hand, the other on her hip, a proud fierce smile, tail curled up behind her",
+      "height": 1.15
+    }
+  },
+  "actions": {
+    "AH_battle_guard": {
+      "loop": true,
+      "segments": [
+        [
+          "guard",
+          "guard",
+          49,
+          8400,
+          "She holds her stance with the greatsword ready, breathing slowly, shoulders rising and falling, tail swaying. A subtle idle loop: she ends exactly as she began."
+        ]
+      ]
+    },
+    "AH_hit_react": {
+      "segments": [
+        [
+          "guard",
+          "hit",
+          9,
+          8431,
+          "She leans back onto her rear foot and winces with her eyes shut, holding the greatsword upright close to her chest."
+        ],
+        [
+          "hit",
+          "guard",
+          17,
+          8434,
+          "She opens her eyes and settles back into her fighting stance, holding the greatsword steady."
+        ]
+      ]
+    },
+    "AH_block": {
+      "segments": [
+        [
+          "guard",
+          "block",
+          9,
+          8403,
+          "She snaps her weapon up in front of her to block."
+        ],
+        [
+          "block",
+          "guard",
+          17,
+          8404,
+          "She lowers her guard and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_knock_down": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "down",
+          25,
+          8405,
+          "She is knocked off her feet and collapses onto the ground, lying still."
+        ]
+      ]
+    },
+    "AH_victory": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "victory",
+          25,
+          8406,
+          "She straightens up and strikes a triumphant victory pose."
+        ]
+      ]
+    },
+    "AH_attack_basic": {
+      "attack": true,
+      "contact": "basic_hit",
+      "segments": [
+        [
+          "guard",
+          "basic_hit",
+          17,
+          8407,
+          "She swings the flaming greatsword in a fast diagonal slash down and forward to the right."
+        ],
+        [
+          "basic_hit",
+          "guard",
+          17,
+          8408,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_cleave": {
+      "attack": true,
+      "contact": "cleave_hit",
+      "segments": [
+        [
+          "guard",
+          "cleave_hit",
+          25,
+          8409,
+          "She heaves the greatsword up overhead with both hands, then brings it crashing straight down in a heavy cleave to the right."
+        ],
+        [
+          "cleave_hit",
+          "guard",
+          25,
+          8410,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_sweep": {
+      "attack": true,
+      "contact": "sweep_hit",
+      "segments": [
+        [
+          "guard",
+          "sweep_hit",
+          25,
+          8411,
+          "She winds back and swings the flaming greatsword in a wide horizontal slash across to the right."
+        ],
+        [
+          "sweep_hit",
+          "guard",
+          25,
+          8412,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_support": {
+      "contact": "support",
+      "segments": [
+        [
+          "guard",
+          "support",
+          17,
+          8413,
+          "She plants the greatsword point-down in front of her and rests both hands on the pommel, standing tall."
+        ],
+        [
+          "support",
+          "guard",
+          25,
+          8414,
+          "She pulls the greatsword up out of the ground and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_ult_finish": {
+      "attack": true,
+      "contact": "slam",
+      "segments": [
+        [
+          "guard",
+          "slam",
+          25,
+          8415,
+          "She leaps up with the greatsword raised and lands in a low crouch, driving the blade down into the ground in a huge rend."
+        ],
+        [
+          "slam",
+          "guard",
+          25,
+          8416,
+          "She wrenches the blade free, rises and returns to her fighting stance."
+        ]
+      ]
+    }
+  },
+  "cards": {
+    "basic_ghislaine": "AH_attack_basic",
+    "guard_ghislaine": "AH_block",
+    "gh_tiger_cleave": "AH_skill_cleave",
+    "gh_reckless_swing": "AH_skill_cleave",
+    "gh_tiger_riposte": "AH_skill_cleave",
+    "gh_ember_chain": "AH_attack_basic",
+    "gh_fireline_cut": "AH_skill_sweep",
+    "gh_guard_stance": "AH_support",
+    "ult_ghislaine": "AH_ult_finish",
+    "ult_ghislaine_oath": "AH_support",
+    "aw_ghislaine": "AH_support"
+  }
+}

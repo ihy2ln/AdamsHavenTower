@@ -122,6 +122,7 @@ public sealed partial class BattleMode : MonoBehaviour
         {
             TickFx(1f / 60f);
             LayoutField();
+            TickFieldRigs();
             UpdateHand(1f / 60f);
             if (!Busy) RefreshIntents();
         }
@@ -181,6 +182,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         BattleGui.Build();
         ResetFx();
+        victoryPlayed = false;
         cardVis.Clear(); handOrder.Clear(); slots.Clear(); drawOrder.Clear(); intents.Clear();
         ClearSelection();
         swapFrom = null; swapReserve = null; focusUnit = null; popupUnit = null;
@@ -404,7 +406,7 @@ public sealed partial class BattleMode : MonoBehaviour
             flying.Add(new FlyCard { Card = card, From = cv.Pos, Angle = cv.Angle, Scale = cv.Scale, Start = fx });
             queueEnd = fx + FlyLen;
         }
-        int chainBefore = battle.CardsThisTurn;
+        int chainBefore = battle.CardsThisTurn, factsBefore = battle.FactSerial;
         bool ok = ultimate >= 0 ? battle.TryUltimate(actor, ultimate, target) : battle.TryPlay(card, target);
         if (ok && battle.CardsThisTurn > chainBefore) { int chain = battle.CardsThisTurn; At(Mathf.Max(fx, queueEnd), () => { lastChain = chain; chainAt = fx; }); }
         if (!ok)
@@ -414,6 +416,10 @@ public sealed partial class BattleMode : MonoBehaviour
             return false;
         }
         if (fromHand) Signal(BattleAnimationPhase.PlayCard, battle.Summoner, target, card);
+        // A card that produced no facts (draw, EP transfer) would otherwise show nothing: give it a presentation-only
+        // cast so its owner still acts (and a skill cinematic can play). ApplyFact ignores the "cast" kind.
+        if (battle.FactSerial == factsBefore && actor != null && card.Kind != BattleCardKind.Summoner)
+            ScheduleGroup(new List<BattleFact> { new BattleFact { Kind = "cast", Actor = actor, Target = target, Card = card } });
         AfterAction();
         return true;
     }
@@ -429,6 +435,7 @@ public sealed partial class BattleMode : MonoBehaviour
             At(t, () => { ShowBanner(label, Gold); Sfx("Sfx/turn_start", "chime", .6f); });
             queueEnd = t + 0.95f;
         }
+        ScheduleVictory();
         SyncHand();
     }
 
@@ -513,6 +520,8 @@ public sealed partial class BattleMode : MonoBehaviour
         CloseSheet();
         ReleaseUltClip();
         ReleaseMoveFx();
+        ReleaseFieldRigs();
+        BattleClipSet.UnloadAll();
         // Silence the drums; an expedition puts its own ambience back when it redraws.
         AdamsHaven.Tower.TowerAudio.Ambience("");
         if (callback != null) callback(won, won ? reward : 0);
@@ -579,7 +588,7 @@ public sealed partial class BattleMode : MonoBehaviour
             if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
             float offset = i - mid;
             float x = 836f + offset * spacing;
-            float y = 790f + offset * offset * 2.2f;
+            float y = 790f + offset * offset * 2.2f + 260f * StageWeight;   // the hand ducks out of a staged skill
             float angle = Mathf.Clamp(offset * 3.3f, -17f, 17f);
             float scale = cardScale;
             cv.Rest = new Vector2(x, y); cv.RestAngle = angle;
@@ -765,6 +774,7 @@ public sealed partial class BattleMode : MonoBehaviour
         used = false; modalDrawing = false;
         if (MediaPanel.IsOpen) { pressed = rightPressed = false; }
         if (pressed && CutInShowing) { SkipCutIn(); pressed = false; used = true; }
+        else if (pressed && StageShowing) { SkipStage(); pressed = false; used = true; }
         TrackHold(e);
 
         Matrix4x4 old = GUI.matrix;
@@ -772,23 +782,31 @@ public sealed partial class BattleMode : MonoBehaviour
         Vector2 jolt = new Vector2(Mathf.Sin(fx * 93f), Mathf.Cos(fx * 71f)) * shake;
         bool paint = e.type == EventType.Repaint;
 
+        UpdateCamera();
+        camJolt = jolt;
         FindHover();
-        GUI.matrix = baseMatrix * Matrix4x4.Translate(new Vector3(jolt.x, jolt.y, 0f));
-        if (paint) { DrawBackground(); DrawAmbient(); }
+        // The field (background, units, effects) is seen through the stage camera; the HUD below is not.
+        GUI.matrix = baseMatrix * Matrix4x4.Translate(new Vector3(jolt.x, jolt.y, 0f)) * CamMatrix;
+        if (paint) { DrawBackground(); DrawAmbient(); DrawStageDim(); DrawEffects(true); }
         DrawField();
-        if (paint) { DrawParticles(); DrawEffects(); DrawFxVideo(); DrawFloaters(); }
+        if (paint) { DrawParticles(); DrawEffects(); DrawFxVideo(); }
         GUI.matrix = baseMatrix;
+        if (paint) DrawFloaters();
         if (paint) DrawVignette();
-        DrawTopBar();
-        DrawPartyTiles();
-        DrawReserves();
-        DrawPiles();
-        DrawEndTurn();
+        // A staged skill has the screen to itself: the panels step aside (the hand ducks below the frame).
+        if (StageWeight < .3f)
+        {
+            DrawTopBar();
+            DrawPartyTiles();
+            DrawReserves();
+            DrawPiles();
+            DrawEndTurn();
+        }
         DrawHand();
         if (chooseUltimateFor != null && chooseUltimateFor == popupUnit) DrawUltimateChoices(popupUnit, popupTile);
         else popupUnit = null;
         DrawHint();
-        if (paint) { DrawFlyingCards(); DrawCutIn(); DrawBanners(); DrawToast(); }
+        if (paint) { DrawStageOverlay(); DrawFlyingCards(); DrawCutIn(); DrawBanners(); DrawToast(); }
         DrawTooltip();
         if (battle.Finished && !Busy)
         {
@@ -827,7 +845,7 @@ public sealed partial class BattleMode : MonoBehaviour
             if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
             if (InsideCard(mouse, cv.Rest, cv.RestAngle, 1f)) { hoverCard = handOrder[i]; return; }
         }
-        for (int i = drawOrder.Count - 1; i >= 0; i--)
+        for (int i = drawOrder.Count - 1; i >= 0 && !StageShowing; i--)
         {
             BattleUnit u = drawOrder[i];
             if (!ShownAlive(u) && u.Enemy) continue;
@@ -904,6 +922,15 @@ public sealed partial class BattleMode : MonoBehaviour
         if (t < 0f || t > v.LungeDur) return;
         float impact = v.Impact;
         float back = enemy ? 1f : -1f;
+        if (v.Arrive && v.LungeTo != Vector2.zero)
+        {
+            // Picked up from a cinematic at the target: hold the strike there, then go home.
+            float dir = Mathf.Sign(v.LungeTo.x);
+            if (t < impact + 0.12f) { off = v.LungeTo; lean = dir * 11f; return; }
+            float k = Ease((t - impact - 0.12f) / Mathf.Max(0.05f, v.LungeDur - impact - 0.12f));
+            off = Vector2.Lerp(v.LungeTo, Vector2.zero, k); lean = dir * 11f * (1f - k);
+            return;
+        }
         if (v.Ranged || v.LungeTo == Vector2.zero)
         {
             float k = t < impact ? Ease(t / impact) : 1f - Ease((t - impact) / 0.32f);
@@ -936,19 +963,24 @@ public sealed partial class BattleMode : MonoBehaviour
     private void DrawField()
     {
         bool paint = Event.current.type == EventType.Repaint;
-        for (int i = 0; i < drawOrder.Count; i++)
+        // A staged skill draws its fighter last and its targets above the rest; the others fade back.
+        List<BattleUnit> order = StageOrder(drawOrder);
+        bool staging = StageWeight > .05f;
+        for (int i = 0; i < order.Count; i++)
         {
-            BattleUnit unit = drawOrder[i];
+            BattleUnit unit = order[i];
             SlotInfo s = slots[unit];
             if (paint) DrawUnitBody(unit, s);
         }
-        for (int i = 0; i < drawOrder.Count; i++)
+        for (int i = 0; i < order.Count; i++)
         {
-            BattleUnit unit = drawOrder[i];
+            BattleUnit unit = order[i];
             SlotInfo s = slots[unit];
             if (!ShownAlive(unit) && unit.Enemy) continue;
+            if (staging && !stageTargets.Contains(unit)) continue;
             if (paint) DrawUnitPlate(unit, s);
         }
+        if (staging) return;
         if (paint) { DrawIntents(); DrawPreviews(); }
         HandleFieldClicks();
         DrawFocusBar();
@@ -974,6 +1006,8 @@ public sealed partial class BattleMode : MonoBehaviour
         if (death >= 0f && u.Enemy) { alpha = 1f - death / 0.85f; off.y += death * 26f; off.x += Mathf.Sin(death * 60f) * 4f * (1f - death); }
         else if (!alive) { tint = new Color(.55f, .55f, .62f); alpha = .55f; }
         if (hurt > 0f) tint = Color.Lerp(tint, new Color(1f, .35f, .35f), Mathf.Clamp01(hurt * 1.4f));
+        float faded = StageFade(u);
+        if (faded > 0f) tint = Color.Lerp(tint, new Color(.42f, .43f, .52f), faded);
         bool offered = Offered(u);
         bool covered = selected != null && selected.Target == BattleTarget.Enemy && u.Enemy && alive && !offered && u != battle.EnemySummoner;
         Vector2 foot = s.Foot + off;
@@ -1001,9 +1035,10 @@ public sealed partial class BattleMode : MonoBehaviour
         Rect r = new Rect(foot.x - ww * 0.5f, foot.y - hh + bob, ww, hh);
         // Two faint earlier poses make the placeholder cutout read as a fast dash.
         float dashAge = fx - v.LungeStart;
-        if (!v.Ranged && v.LungeTo != Vector2.zero && dashAge > Mathf.Max(.05f, v.Impact - .10f)
-            && dashAge < v.Impact + .08f && s.Sprite.Valid && !fieldRigs.ContainsKey(u))
+        if (!v.Ranged && !v.Arrive && v.LungeTo != Vector2.zero && dashAge > Mathf.Max(.05f, v.Impact - .10f)
+            && dashAge < v.Impact + .08f && (ClipRig(u) != null || s.Sprite.Valid && !fieldRigs.ContainsKey(u)))
         {
+            FieldRig clipEcho = ClipRig(u);
             Color trail = ElementColor(u.Element);
             Color savedColor = GUI.color;
             for (int echo = 2; echo >= 1; echo--)
@@ -1013,12 +1048,13 @@ public sealed partial class BattleMode : MonoBehaviour
                 Vector2 priorFoot = s.Foot + older;
                 Rect prior = new Rect(priorFoot.x - ww * .5f, priorFoot.y - hh + bob, ww, hh);
                 GUI.color = new Color(trail.r, trail.g, trail.b, echo == 1 ? .27f : .13f);
-                DrawSprite(prior, s.Sprite);
+                if (clipEcho != null) DrawClipRig(clipEcho, priorFoot, s.H, echo * .035f);
+                else DrawSprite(prior, s.Sprite);
             }
             GUI.color = savedColor;
         }
         Matrix4x4 keep = GUI.matrix;
-        RotateAround(lean, new Vector2(foot.x, foot.y));
+        RotateAround(ClipRig(u) != null ? lean * .3f : lean, new Vector2(foot.x, foot.y));   // painted frames already lean
         Color before = GUI.color;
         GUI.color = new Color(tint.r, tint.g, tint.b, alpha * (covered ? 0.72f : 1f));
         if (!DrawFieldRig(u, foot, s.H) && s.Sprite.Valid) DrawSprite(r, s.Sprite);
@@ -1759,21 +1795,6 @@ public sealed partial class BattleMode : MonoBehaviour
         if (t < 0f || t > 1f) return;
         float a = t < 0.12f ? t / 0.12f : t > 0.86f ? (1f - t) / 0.14f : 1f;
         Color accent = ElementColor(cutUnit.Element);
-        if (matchUnit != null)
-        {
-            // Match cut: zoom in on the 2D fighter, the clip (it starts and ends on her stance), zoom back out.
-            float local = fx - cutStart, inner = cutLen - 2f * matchIn;
-            if (local < matchIn) { DrawMatchZoom(local / Mathf.Max(.001f, matchIn)); DrawSkipHint(1f); return; }
-            if (local > matchIn + inner) { DrawMatchZoom(1f - (local - matchIn - inner) / Mathf.Max(.001f, matchIn)); return; }
-            if (CineBackdrop != null) GUI.DrawTexture(new Rect(0, 0, VW, VH), CineBackdrop, ScaleMode.ScaleAndCrop, false);
-            if (ultTexture != null && ultPlayer != null && ultPlayer.clip == cutClip)
-                GUI.DrawTexture(new Rect(0, 0, VW, VH), ultTexture, ScaleMode.ScaleAndCrop, false);
-            float na = Mathf.Clamp01((local - matchIn) / .15f);
-            Text(new Rect(60f, VH - 120f, 900f, 60f), cutCard.Name.ToUpperInvariant(), 44, new Color(1, 1, 1, na), TextAnchor.MiddleLeft, true, false, 3f);
-            Text(new Rect(60f, VH - 70f, 900f, 28f), cutUnit.Name.ToUpperInvariant(), 18, BattleGui.Alpha(accent, na), TextAnchor.MiddleLeft, true, false, 2f);
-            DrawSkipHint(1f);
-            return;
-        }
         if (CutVideoReady)
         {
             // Cinematic ultimate: letterboxed video, quick white pop in/out, name plate bottom-left.

@@ -1,0 +1,14 @@
+{
+  "card": "cy_flare",
+  "layer": "impact",
+  "file": "cy_flare",
+  "kind": "sheet",
+  "size": [
+    704,
+    960
+  ],
+  "length": 41,
+  "seed": 9676,
+  "floor": 0.18,
+  "prompt": "A blazing flare of holy light bursts at the top of the frame and rains golden sparks down to the bottom, then fades. The light is radiant golden holy light."
+}

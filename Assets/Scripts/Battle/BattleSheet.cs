@@ -119,22 +119,31 @@ public sealed partial class BattleMode
         sheetZoom = Mathf.Clamp(sheetZoom, 0.6f, 4f);
         float half = 1.7f / sheetZoom;
         sheetLift = Mathf.Clamp(sheetLift, -1.6f, 1.8f);
+        if (sheetRig.Camera == null) return;   // a clip fighter is drawn with this framing, not filmed (DrawClipSheet)
         sheetRig.Camera.orthographicSize = half;
         sheetRig.Camera.transform.localPosition = new Vector3(0f, 1.4f + sheetLift, -6f);
     }
 
     // Non-looping moves hold their last frame briefly before repeating, so the follow-through can be read.
-    private float SheetLoopLength(AnimationClip clip)
+    private float SheetLoopLength(float length)
     {
         bool loops = sheetClip == "AH_battle_guard" || sheetClip == "AH_walk";
-        return clip.length + (loops ? 0f : 0.6f);
+        return length + (loops ? 0f : 0.6f);
+    }
+    // Length of the clip on show: a rig's AnimationClip or a clip fighter's action; -1 when the rig lacks it.
+    private float SheetClipLength()
+    {
+        if (sheetRig == null) return -1f;
+        if (sheetRig.Flip != null) return sheetRig.Flip.Has(sheetClip) ? sheetRig.Flip.Length(sheetClip) : -1f;
+        AnimationClip clip;
+        return sheetRig.Clips.TryGetValue(sheetClip, out clip) ? clip.length : -1f;
     }
 
     private void SampleSheet()
     {
         AnimationClip clip;
         if (sheetRig == null || !sheetRig.Clips.TryGetValue(sheetClip, out clip)) return;
-        float t = Mathf.Repeat(sheetTime, Mathf.Max(.01f, SheetLoopLength(clip)));
+        float t = Mathf.Repeat(sheetTime, Mathf.Max(.01f, SheetLoopLength(clip.length)));
         clip.SampleAnimation(sheetRig.Model, Mathf.Min(t, clip.length - .001f));
         if (Mathf.Abs(sheetRig.Yaw - sheetYaw) > .01f) sheetRig.TurnTo(sheetYaw);
     }
@@ -156,7 +165,7 @@ public sealed partial class BattleMode
     {
         var list = new List<KeyValuePair<string, string>>();
         if (sheetRig == null) return list;
-        var names = new List<string>(sheetRig.Clips.Keys);
+        var names = new List<string>(sheetRig.Flip != null ? sheetRig.Flip.Actions : sheetRig.Clips.Keys);
         names.Sort(StringComparer.Ordinal);
         var taken = new HashSet<string>();
         for (int i = 0; i < ClipLabels.GetLength(0); i++)
@@ -204,7 +213,17 @@ public sealed partial class BattleMode
             modalDrawing = false;
             return;
         }
-        if (Has2DRig(ModelId(u)) && Has3DRig(ModelId(u)) && !MediaLibrary.Has("unit." + u.Id + ".model")
+        if (HasClips(ModelId(u)) && (Has2DRig(ModelId(u)) || Has3DRig(ModelId(u))) && !MediaLibrary.Has("unit." + u.Id + ".model")
+            && MiniButton(new Rect(SheetView.xMax - 340f, SheetView.yMax - 52f, 162f, 40f), PreferClips ? "SHOW RIG" : "SHOW ANIME CLIPS", true, false, Ice, -1f, 12))
+        {
+            PreferClips = !PreferClips;
+            BuildFieldRigs();
+            OpenSheet(u);
+            used = true;
+            modalDrawing = false;
+            return;
+        }
+        if (Has2DRig(ModelId(u)) && Has3DRig(ModelId(u)) && !MediaLibrary.Has("unit." + u.Id + ".model") && (sheetRig == null || sheetRig.Flip == null)
             && MiniButton(new Rect(SheetView.xMax - 170f, SheetView.yMax - 52f, 158f, 40f), Prefer2DRigs ? "SHOW 3D MODEL" : "SHOW 2D ART", true, false, Ice, -1f, 12))
         {
             Prefer2DRigs = !Prefer2DRigs;
@@ -235,7 +254,8 @@ public sealed partial class BattleMode
         {
             DrawGlow(new Rect(view.x + 40f, view.y + 40f, view.width - 80f, view.height - 120f), BattleGui.Alpha(accent, .10f));
             DrawGlow(new Rect(view.x + 120f, view.yMax - 120f, view.width - 240f, 90f), BattleGui.Alpha(accent, .28f));
-            if (sheetRig != null && sheetRig.Image != null) GUI.DrawTexture(view, sheetRig.Image, ScaleMode.ScaleAndCrop, true);
+            if (sheetRig != null && sheetRig.Flip != null) DrawClipSheet(view);
+            else if (sheetRig != null && sheetRig.Image != null) GUI.DrawTexture(view, sheetRig.Image, ScaleMode.ScaleAndCrop, true);
             else
             {
                 Texture2D art = Art("FullCards/" + u.Id);
@@ -247,9 +267,8 @@ public sealed partial class BattleMode
         Outline(view, BattleGui.Alpha(accent, .5f), 1.6f, 16f);
         if (sheetRig == null) return;
 
-        AnimationClip clip;
-        sheetRig.Clips.TryGetValue(sheetClip, out clip);
-        if (clip != null)
+        float clipLen = SheetClipLength();
+        if (clipLen > 0f)
         {
             Text(new Rect(view.x + 18f, view.y + 12f, 400f, 28f), Pretty(sheetClip), 20, Color.white, TextAnchor.MiddleLeft, true, false, 1.5f);
             Text(new Rect(view.xMax - 220f, view.y + 12f, 200f, 28f), SpeedLabel2(sheetSpeed) + (sheetPaused ? "  -  PAUSED" : ""), 14, Gold, TextAnchor.MiddleRight, true, false, 1f);
@@ -283,22 +302,22 @@ public sealed partial class BattleMode
         // Row 2: play / pause, scrub bar, speed, zoom.
         y += 50f;
         float x = view.x;
-        if (MiniButton(new Rect(x, y, 64f, 40f), sheetPaused ? "PLAY" : "PAUSE", clip != null, sheetPaused, Gold, -1f, 11)) sheetPaused = !sheetPaused;
+        if (MiniButton(new Rect(x, y, 64f, 40f), sheetPaused ? "PLAY" : "PAUSE", clipLen > 0f, sheetPaused, Gold, -1f, 11)) sheetPaused = !sheetPaused;
         x += 72f;
         Rect scrub = new Rect(x, y + 13f, 236f, 14f);
-        if (clip != null)
+        if (clipLen > 0f)
         {
-            float len = SheetLoopLength(clip);
-            float now = Mathf.Min(Mathf.Repeat(sheetTime, Mathf.Max(.01f, len)), clip.length);
-            Bar(scrub, now / Mathf.Max(.01f, clip.length), 0f, accent, Color.clear);
-            Disc(new Vector2(scrub.x + scrub.width * Mathf.Clamp01(now / Mathf.Max(.01f, clip.length)), scrub.center.y), 9f, Color.white);
-            Text(new Rect(scrub.x, y - 8f, scrub.width, 16f), now.ToString("0.00") + " / " + clip.length.ToString("0.00") + " s", 10, new Color(.7f, .78f, .88f), TextAnchor.MiddleCenter);
+            float len = SheetLoopLength(clipLen);
+            float now = Mathf.Min(Mathf.Repeat(sheetTime, Mathf.Max(.01f, len)), clipLen);
+            Bar(scrub, now / Mathf.Max(.01f, clipLen), 0f, accent, Color.clear);
+            Disc(new Vector2(scrub.x + scrub.width * Mathf.Clamp01(now / Mathf.Max(.01f, clipLen)), scrub.center.y), 9f, Color.white);
+            Text(new Rect(scrub.x, y - 8f, scrub.width, 16f), now.ToString("0.00") + " / " + clipLen.ToString("0.00") + " s", 10, new Color(.7f, .78f, .88f), TextAnchor.MiddleCenter);
             Rect grab = new Rect(scrub.x - 8f, y, scrub.width + 16f, 40f);
             if (e.type == EventType.MouseDown && e.button == 0 && grab.Contains(mouse) && !used) { sheetScrubbing = true; used = true; }
             if (sheetScrubbing && (e.type == EventType.MouseDown || e.type == EventType.MouseDrag))
             {
                 sheetPaused = true;
-                sheetTime = Mathf.Clamp01((mouse.x - scrub.x) / scrub.width) * (clip.length - .001f);
+                sheetTime = Mathf.Clamp01((mouse.x - scrub.x) / scrub.width) * (clipLen - .001f);
                 SampleSheet();
                 if (e.type == EventType.MouseDrag) e.Use();
             }
@@ -456,7 +475,7 @@ public sealed partial class BattleMode
     public void DebugSheetPose(string clip, float time, float yaw, float zoom)
     {
         if (sheetRig == null) return;
-        if (sheetRig.Clips.ContainsKey(clip)) sheetClip = clip;
+        if (sheetRig.Flip != null ? sheetRig.Flip.Has(clip) : sheetRig.Clips.ContainsKey(clip)) sheetClip = clip;
         sheetTime = time; sheetPaused = true; sheetYaw = yaw; sheetZoom = zoom;
         FrameSheetCamera(); SampleSheet();
     }

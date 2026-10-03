@@ -1,0 +1,14 @@
+{
+  "card": "ult_helda_sanctuary",
+  "layer": "impact",
+  "file": "ult_helda_sanctuary",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9664,
+  "floor": 0.18,
+  "prompt": "A sanctuary of ice pillars and a crystal dome rise from the bottom around the center in cold blue light, then fade to sparkles. The light is warm golden light and pale frost blue."
+}

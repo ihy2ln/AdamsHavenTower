@@ -1,5 +1,7 @@
 {
   "card": "mv_frost_jab",
+  "layer": "impact",
+  "file": "mv_frost_jab",
   "kind": "sheet",
   "size": [
     704,

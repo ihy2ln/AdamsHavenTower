@@ -1,0 +1,14 @@
+{
+  "card": "default_clarity",
+  "layer": "impact",
+  "file": "default_clarity",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9681,
+  "floor": 0.18,
+  "prompt": "A small burst of golden light sparks, then fading. The light is radiant golden holy light."
+}

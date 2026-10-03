@@ -1,0 +1,2507 @@
+{
+ "version": 1,
+ "moves": [
+  {
+   "card": "mv_frost_jab",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_frost_jab",
+    "kind": "sheet",
+    "at": "target",
+    "size": 300,
+    "life": 0.5,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.659,
+    0.768,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "mv_rime_sweep",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_rime_sweep",
+    "kind": "sheet",
+    "at": "target",
+    "size": 470,
+    "life": 0.62,
+    "lift": 0.45,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.826,
+    0.887,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "mv_shatter_hook",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_shatter_hook",
+    "kind": "sheet",
+    "at": "target",
+    "size": 430,
+    "life": 0.7,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.627,
+    0.744,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "mv_whiteout_counter",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_whiteout_counter",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 380,
+    "life": 0.8,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.924,
+    0.927,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "mv_permafrost_brace",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_permafrost_brace",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 360,
+    "life": 0.8,
+    "lift": 0.2,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.627,
+    0.778,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "mv_glacier_guard",
+   "unit": "kaela",
+   "stage": true,
+   "impact": {
+    "sheet": "mv_glacier_guard",
+    "kind": "video",
+    "at": "actor",
+    "size": 380,
+    "life": 0,
+    "lift": 0.42,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": true,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 57,
+    "cols": 1,
+    "rows": 1
+   },
+   "tint": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "card": "ult_kaela_avalanche",
+   "unit": "kaela",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_kaela_avalanche",
+    "kind": "sheet",
+    "at": "target",
+    "size": 460,
+    "life": 0.8,
+    "lift": 0.1,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.656,
+    0.811,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_kaela_bastion",
+   "unit": "kaela",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_kaela_bastion",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.725,
+    0.841,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "aw_kaela",
+   "unit": "kaela",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_kaela",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 360,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.666,
+    0.805,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "gh_tiger_cleave",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_tiger_cleave",
+    "kind": "sheet",
+    "at": "target",
+    "size": 440,
+    "life": 0.6,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.412,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "gh_guard_stance",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_guard_stance",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 380,
+    "life": 0.8,
+    "lift": 0.2,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": true,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.468,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "gh_fireline_cut",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_fireline_cut",
+    "kind": "sheet",
+    "at": "target",
+    "size": 900,
+    "life": 0.7,
+    "lift": 0.4,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": false,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.456,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "gh_ember_chain",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_ember_chain",
+    "kind": "sheet",
+    "at": "target",
+    "size": 400,
+    "life": 0.6,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.465,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "gh_reckless_swing",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_reckless_swing",
+    "kind": "sheet",
+    "at": "target",
+    "size": 480,
+    "life": 0.7,
+    "lift": 0.45,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.554,
+    0.103,
+    1
+   ]
+  },
+  {
+   "card": "gh_tiger_riposte",
+   "unit": "ghislaine",
+   "stage": true,
+   "impact": {
+    "sheet": "gh_tiger_riposte",
+    "kind": "sheet",
+    "at": "target",
+    "size": 440,
+    "life": 0.7,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.6,
+    0.124,
+    1
+   ]
+  },
+  {
+   "card": "ult_ghislaine",
+   "unit": "ghislaine",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_ghislaine",
+    "kind": "sheet",
+    "at": "target",
+    "size": 520,
+    "life": 0.8,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.525,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_ghislaine_oath",
+   "unit": "ghislaine",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_ghislaine_oath",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.25,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.614,
+    0.033,
+    1
+   ]
+  },
+  {
+   "card": "aw_ghislaine",
+   "unit": "ghislaine",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_ghislaine",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.45,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.562,
+    0.044,
+    1
+   ]
+  },
+  {
+   "card": "da_bonfire_brand",
+   "unit": "daisy",
+   "stage": true,
+   "impact": {
+    "sheet": "da_bonfire_brand",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.6,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.351,
+    0.05,
+    1
+   ]
+  },
+  {
+   "card": "da_wand_sweep",
+   "unit": "daisy",
+   "stage": true,
+   "impact": {
+    "sheet": "da_wand_sweep",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.6,
+    "lift": 0.45,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.206,
+    0.007,
+    1
+   ]
+  },
+  {
+   "card": "da_ember_thrust",
+   "unit": "daisy",
+   "stage": true,
+   "impact": {
+    "sheet": "da_ember_thrust",
+    "kind": "sheet",
+    "at": "target",
+    "size": 400,
+    "life": 0.6,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.345,
+    0.012,
+    1
+   ]
+  },
+  {
+   "card": "da_matriarch_pyre",
+   "unit": "daisy",
+   "stage": true,
+   "impact": {
+    "sheet": "da_matriarch_pyre",
+    "kind": "sheet",
+    "at": "target",
+    "size": 360,
+    "life": 0.8,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.457,
+    0.039,
+    1
+   ]
+  },
+  {
+   "card": "da_spearflame_rush",
+   "unit": "daisy",
+   "stage": true,
+   "travel": {
+    "sheet": "da_spearflame_rush_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 220,
+    "life": 0,
+    "lift": 0.5,
+    "width": 220,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "da_spearflame_rush",
+    "kind": "sheet",
+    "at": "target",
+    "size": 420,
+    "life": 0.6,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.38,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "da_burning_circle",
+   "unit": "daisy",
+   "stage": true,
+   "impact": {
+    "sheet": "da_burning_circle",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.8,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": true,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.375,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_daisy",
+   "unit": "daisy",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_daisy",
+    "kind": "sheet",
+    "at": "target",
+    "size": 460,
+    "life": 0.9,
+    "lift": 0.2,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.386,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_daisy_inferno",
+   "unit": "daisy",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_daisy_inferno",
+    "kind": "sheet",
+    "at": "target",
+    "size": 480,
+    "life": 0.9,
+    "lift": 0.1,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.46,
+    0.017,
+    1
+   ]
+  },
+  {
+   "card": "aw_daisy",
+   "unit": "daisy",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_daisy",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.255,
+    0.27,
+    1
+   ]
+  },
+  {
+   "card": "el_arc_bolt",
+   "unit": "elara",
+   "stage": true,
+   "charge": {
+    "sheet": "el_arc_bolt_charge",
+    "kind": "sheet",
+    "at": "muzzle",
+    "size": 170,
+    "life": 0,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": true,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0.2,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "travel": {
+    "sheet": "el_arc_bolt_travel",
+    "kind": "beam",
+    "at": "target",
+    "size": 60,
+    "life": 0.3,
+    "lift": 0.5,
+    "width": 60,
+    "grow": 0.08,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 4,
+    "cols": 1,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "el_arc_bolt",
+    "kind": "sheet",
+    "at": "target",
+    "size": 340,
+    "life": 0.5,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.0,
+    0.224,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "el_piercing_shot",
+   "unit": "elara",
+   "stage": true,
+   "charge": {
+    "sheet": "el_piercing_shot_charge",
+    "kind": "sheet",
+    "at": "muzzle",
+    "size": 230,
+    "life": 0,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": true,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0.2,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "travel": {
+    "sheet": "el_piercing_shot_travel",
+    "kind": "beam",
+    "at": "target",
+    "size": 80,
+    "life": 0.3,
+    "lift": 0.5,
+    "width": 80,
+    "grow": 0.08,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 4,
+    "cols": 1,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "el_piercing_shot",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.5,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.0,
+    0.32,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "el_forest_scout",
+   "unit": "elara",
+   "stage": true,
+   "impact": {
+    "sheet": "el_forest_scout",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 360,
+    "life": 0.9,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.459,
+    0.604,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "el_sapping_volley",
+   "unit": "elara",
+   "stage": true,
+   "travel": {
+    "sheet": "el_sapping_volley_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 110,
+    "life": 0,
+    "lift": 0.5,
+    "width": 110,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.05,
+    "count": 4,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "el_sapping_volley",
+    "kind": "sheet",
+    "at": "target",
+    "size": 280,
+    "life": 0.45,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.511,
+    0.455,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "el_artillery_barrage",
+   "unit": "elara",
+   "stage": true,
+   "impact": {
+    "sheet": "el_artillery_barrage",
+    "kind": "sheet",
+    "at": "target",
+    "size": 360,
+    "life": 0.6,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.269,
+    0.442,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "el_storm_tally",
+   "unit": "elara",
+   "stage": true,
+   "impact": {
+    "sheet": "el_storm_tally",
+    "kind": "sheet",
+    "at": "target",
+    "size": 320,
+    "life": 0.6,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.245,
+    0.446,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "default_elara",
+   "unit": "elara",
+   "stage": false,
+   "travel": {
+    "sheet": "default_elara_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 90,
+    "life": 0,
+    "lift": 0.5,
+    "width": 90,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "default_elara",
+    "kind": "sheet",
+    "at": "target",
+    "size": 220,
+    "life": 0.4,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.21,
+    0.463,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_elara",
+   "unit": "elara",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_elara",
+    "kind": "sheet",
+    "at": "target",
+    "size": 420,
+    "life": 0.9,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.246,
+    0.434,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_elara_convergence",
+   "unit": "elara",
+   "stage": false,
+   "travel": {
+    "sheet": "ult_elara_convergence_travel",
+    "kind": "beam",
+    "at": "target",
+    "size": 130,
+    "life": 0.45,
+    "lift": 0.5,
+    "width": 130,
+    "grow": 0.08,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 4,
+    "cols": 1,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "ult_elara_convergence",
+    "kind": "sheet",
+    "at": "target",
+    "size": 520,
+    "life": 0.8,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.201,
+    0.372,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "aw_elara",
+   "unit": "elara",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_elara",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 360,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.116,
+    0.42,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "he_hearthfire_mend",
+   "unit": "helda",
+   "stage": true,
+   "travel": {
+    "sheet": "he_hearthfire_mend_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 140,
+    "life": 0,
+    "lift": 0.5,
+    "width": 140,
+    "grow": 0,
+    "arc": 60,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "he_hearthfire_mend",
+    "kind": "sheet",
+    "at": "target",
+    "size": 320,
+    "life": 0.7,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.774,
+    0.402,
+    1
+   ]
+  },
+  {
+   "card": "he_chilling_touch",
+   "unit": "helda",
+   "stage": true,
+   "travel": {
+    "sheet": "he_chilling_touch_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 170,
+    "life": 0,
+    "lift": 0.5,
+    "width": 170,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "he_chilling_touch",
+    "kind": "sheet",
+    "at": "target",
+    "size": 320,
+    "life": 0.5,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.954,
+    0.894,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "he_frosted_ward",
+   "unit": "helda",
+   "stage": true,
+   "impact": {
+    "sheet": "he_frosted_ward",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 340,
+    "life": 0.8,
+    "lift": 0.35,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.985,
+    0.997,
+    1
+   ]
+  },
+  {
+   "card": "he_reserve_tonic",
+   "unit": "helda",
+   "stage": true,
+   "travel": {
+    "sheet": "he_reserve_tonic_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 110,
+    "life": 0,
+    "lift": 0.5,
+    "width": 110,
+    "grow": 0,
+    "arc": 90,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "he_reserve_tonic",
+    "kind": "sheet",
+    "at": "target",
+    "size": 260,
+    "life": 0.5,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.613,
+    0.078,
+    1
+   ]
+  },
+  {
+   "card": "he_lend_strength",
+   "unit": "helda",
+   "stage": true,
+   "travel": {
+    "sheet": "he_lend_strength_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 160,
+    "life": 0,
+    "lift": 0.5,
+    "width": 160,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "he_lend_strength",
+    "kind": "sheet",
+    "at": "target",
+    "size": 300,
+    "life": 0.6,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.51,
+    0.177,
+    1
+   ]
+  },
+  {
+   "card": "he_bulwark_brew",
+   "unit": "helda",
+   "stage": true,
+   "impact": {
+    "sheet": "he_bulwark_brew",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 360,
+    "life": 0.8,
+    "lift": 0.35,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.886,
+    0.409,
+    1
+   ]
+  },
+  {
+   "card": "default_helda",
+   "unit": "helda",
+   "stage": false,
+   "travel": {
+    "sheet": "default_helda_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 160,
+    "life": 0,
+    "lift": 0.5,
+    "width": 160,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "default_helda",
+    "kind": "sheet",
+    "at": "target",
+    "size": 260,
+    "life": 0.45,
+    "lift": 0.45,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.798,
+    0.594,
+    1
+   ]
+  },
+  {
+   "card": "ult_helda",
+   "unit": "helda",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_helda",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.35,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.656,
+    0.343,
+    1
+   ]
+  },
+  {
+   "card": "ult_helda_sanctuary",
+   "unit": "helda",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_helda_sanctuary",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.25,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    0.442,
+    0.66,
+    1.0,
+    1
+   ]
+  },
+  {
+   "card": "aw_helda",
+   "unit": "helda",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_helda",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 360,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.802,
+    0.433,
+    1
+   ]
+  },
+  {
+   "card": "cy_radiant_palm",
+   "unit": "clarity",
+   "stage": true,
+   "charge": {
+    "sheet": "cy_radiant_palm_charge",
+    "kind": "sheet",
+    "at": "muzzle",
+    "size": 180,
+    "life": 0,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": true,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0.2,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "travel": {
+    "sheet": "cy_radiant_palm_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 170,
+    "life": 0,
+    "lift": 0.5,
+    "width": 170,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "cy_radiant_palm",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.55,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.752,
+    0.06,
+    1
+   ]
+  },
+  {
+   "card": "cy_barkeep_tonic",
+   "unit": "clarity",
+   "stage": true,
+   "travel": {
+    "sheet": "cy_barkeep_tonic_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 110,
+    "life": 0,
+    "lift": 0.5,
+    "width": 110,
+    "grow": 0,
+    "arc": 80,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "cy_barkeep_tonic",
+    "kind": "sheet",
+    "at": "target",
+    "size": 260,
+    "life": 0.6,
+    "lift": 0.5,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.719,
+    0.161,
+    1
+   ]
+  },
+  {
+   "card": "cy_flare",
+   "unit": "clarity",
+   "stage": true,
+   "impact": {
+    "sheet": "cy_flare",
+    "kind": "sheet",
+    "at": "target",
+    "size": 360,
+    "life": 0.7,
+    "lift": 0.1,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.809,
+    0.271,
+    1
+   ]
+  },
+  {
+   "card": "cy_uplift",
+   "unit": "clarity",
+   "stage": true,
+   "impact": {
+    "sheet": "cy_uplift",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 320,
+    "life": 0.8,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.791,
+    0.286,
+    1
+   ]
+  },
+  {
+   "card": "cy_smite",
+   "unit": "clarity",
+   "stage": true,
+   "impact": {
+    "sheet": "cy_smite",
+    "kind": "sheet",
+    "at": "target",
+    "size": 380,
+    "life": 0.7,
+    "lift": 0.05,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": true,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.828,
+    0.178,
+    1
+   ]
+  },
+  {
+   "card": "cy_rejuvenating_draught",
+   "unit": "clarity",
+   "stage": true,
+   "impact": {
+    "sheet": "cy_rejuvenating_draught",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 320,
+    "life": 0.8,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.92,
+    0.443,
+    1
+   ]
+  },
+  {
+   "card": "default_clarity",
+   "unit": "clarity",
+   "stage": false,
+   "travel": {
+    "sheet": "default_clarity_travel",
+    "kind": "bolt",
+    "at": "target",
+    "size": 110,
+    "life": 0,
+    "lift": 0.5,
+    "width": 110,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0.0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "default_clarity",
+    "kind": "sheet",
+    "at": "target",
+    "size": 220,
+    "life": 0.4,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.771,
+    0.262,
+    1
+   ]
+  },
+  {
+   "card": "ult_clarity",
+   "unit": "clarity",
+   "stage": false,
+   "travel": {
+    "sheet": "ult_clarity_travel",
+    "kind": "beam",
+    "at": "target",
+    "size": 120,
+    "life": 0.45,
+    "lift": 0.5,
+    "width": 120,
+    "grow": 0.08,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 4,
+    "cols": 1,
+    "rows": 4
+   },
+   "impact": {
+    "sheet": "ult_clarity",
+    "kind": "sheet",
+    "at": "target",
+    "size": 520,
+    "life": 0.8,
+    "lift": 0.55,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.672,
+    0.0,
+    1
+   ]
+  },
+  {
+   "card": "ult_clarity_feast",
+   "unit": "clarity",
+   "stage": false,
+   "impact": {
+    "sheet": "ult_clarity_feast",
+    "kind": "sheet",
+    "at": "allies",
+    "size": 380,
+    "life": 0.9,
+    "lift": 0.35,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.755,
+    0.149,
+    1
+   ]
+  },
+  {
+   "card": "aw_clarity",
+   "unit": "clarity",
+   "stage": false,
+   "impact": {
+    "sheet": "aw_clarity",
+    "kind": "sheet",
+    "at": "actor",
+    "size": 360,
+    "life": 0.9,
+    "lift": 0.3,
+    "width": 0,
+    "grow": 0,
+    "arc": 0,
+    "stagger": 0,
+    "count": 1,
+    "each": true,
+    "video": false,
+    "hold": false,
+    "under": false,
+    "bottom": false,
+    "offset": [
+     0,
+     0
+    ],
+    "frames": 16,
+    "cols": 4,
+    "rows": 4
+   },
+   "tint": [
+    1.0,
+    0.82,
+    0.301,
+    1
+   ]
+  }
+ ]
+}

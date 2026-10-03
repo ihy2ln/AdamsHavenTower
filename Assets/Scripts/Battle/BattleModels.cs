@@ -19,6 +19,8 @@ public sealed partial class BattleMode
         public float Started, Rate = 1f, Offset;
         public bool Hold;   // knocked down: stay on the last frame instead of returning to guard
         public bool Flat;   // a 2D anime cutout rig: drawn facing the enemy line, it cannot turn
+        // Pre-rendered anime clips (BattleClips.cs): no model, camera or image; frames drawn from the atlas at the foot.
+        public BattleClipSet Flip;
         // A model imported in the media library: no clips, so the battle animates it procedurally (idle sway, a
         // lunge lean when it acts, a recoil when hit, a fall when it goes down).
         public bool Imported;
@@ -122,6 +124,11 @@ public sealed partial class BattleMode
         GameObject imported = MediaLibrary.ModelFor("unit." + unit.Id + ".model", out loadError);
         if (loadError != null) Debug.LogWarning("Imported model for " + unit.Id + " not used: " + loadError);
         string model = ModelId(unit);
+        if (imported == null && PreferClips)
+        {
+            var clips = CreateClipRig(unit, model);
+            if (clips != null) return clips;
+        }
         if (imported == null && Prefer2DRigs)
         {
             var flat = CreateFlatRig(unit, model, label, at, width, height);
@@ -298,7 +305,7 @@ public sealed partial class BattleMode
     }
     void PlayRig(FieldRig rig, string clip, float start, float rate, bool hold = false)
     {
-        if (!rig.Clips.ContainsKey(clip)) return;
+        if (rig.Flip != null ? !rig.Flip.Has(clip) : !rig.Clips.ContainsKey(clip)) return;
         rig.Action = clip; rig.Started = fx; rig.Offset = start; rig.Rate = rate; rig.Hold = hold;
     }
     void AnimateFieldRig(BattleAnimationSignal signal)
@@ -312,7 +319,8 @@ public sealed partial class BattleMode
                 else if (signal.Phase == BattleAnimationPhase.Down) { hurt.Hold = true; hurt.HurtStart = fx; }
             }
             // Victim reactions: a flinch on damage, a held knockdown when the unit goes down.
-            if (signal.Phase == BattleAnimationPhase.Hit) PlayRig(hurt, "AH_hit_react", .35f, 1.6f);
+            if (hurt.Flip != null) ClipReaction(hurt, signal);
+            else if (signal.Phase == BattleAnimationPhase.Hit) PlayRig(hurt, "AH_hit_react", .35f, 1.6f);
             else if (signal.Phase == BattleAnimationPhase.Down) PlayRig(hurt, "AH_knock_down", .2f, 1.3f, true);
         }
         if (signal.Actor == null) return;
@@ -330,6 +338,7 @@ public sealed partial class BattleMode
         }
         if (signal.Phase != BattleAnimationPhase.Action) return;
         if (rig.Imported) { rig.KickStart = fx; return; }
+        if (rig.Flip != null) { ClipAction(rig, signal); return; }
         var c = signal.Card;
         float want = Mathf.Max(.15f, V(signal.Actor).Impact);
         Move[] set;
@@ -353,8 +362,9 @@ public sealed partial class BattleMode
         {
             var rig = entry.Value;
             bool visible = slots.ContainsKey(entry.Key);
-            rig.Stage.SetActive(visible);
+            if (rig.Stage) rig.Stage.SetActive(visible);
             if (!visible) continue;
+            if (rig.Flip != null) { TickClipRig(rig); continue; }
             if (rig.Imported) { PoseImported(rig, entry.Key); continue; }
             AnimationClip clip;
             if (!rig.Clips.TryGetValue(rig.Action, out clip)) continue;
@@ -388,6 +398,7 @@ public sealed partial class BattleMode
     {
         FieldRig rig;
         if (!fieldRigs.TryGetValue(unit, out rig)) return false;
+        if (rig.Flip != null) return DrawClipRig(rig, foot, height);
         // 1 model unit = height / 2 pixels; the image spans the camera's 2 * FieldCamHalf units.
         float size = height * FieldCamHalf;
         GUI.DrawTexture(new Rect(foot.x - size / 2, foot.y - height * (FieldCamCenter + FieldCamHalf) / 2f, size, size), rig.Image, ScaleMode.StretchToFill, true);
@@ -404,7 +415,7 @@ public sealed partial class BattleMode
     {
         Signal(BattleAnimationPhase.DrawCards, battle.Summoner, null, null);
         fx += .6f; TickFieldRigs();
-        foreach (var rig in fieldRigs.Values) rig.Stage.SetActive(true);
+        foreach (var rig in fieldRigs.Values) if (rig.Stage) rig.Stage.SetActive(true);
     }
     public void DebugRigAttack()
     {
@@ -412,7 +423,7 @@ public sealed partial class BattleMode
             Signal(unit.Id == "jd" ? BattleAnimationPhase.PlayCard : BattleAnimationPhase.Action, unit, null, BattleCatalog.Basic(unit));
         fx += .3f;
         TickFieldRigs();
-        foreach (var rig in fieldRigs.Values) rig.Stage.SetActive(true);
+        foreach (var rig in fieldRigs.Values) if (rig.Stage) rig.Stage.SetActive(true);
     }
     // Writes each rig's current render target to <dir>/rig-<id>-<clip>.png.
     public void DebugRigSnapshot(string dir)
@@ -420,6 +431,7 @@ public sealed partial class BattleMode
         foreach (var entry in fieldRigs)
         {
             var img = entry.Value.Image;
+            if (img == null) continue;          // clip fighters have no render target
             var previous = RenderTexture.active;
             RenderTexture.active = img;
             var tex = new Texture2D(img.width, img.height, TextureFormat.RGBA32, false);
@@ -435,10 +447,10 @@ public sealed partial class BattleMode
         var report = new System.Text.StringBuilder();
         foreach (var entry in fieldRigs)
         {
-            var renderer = entry.Value.Model.GetComponentInChildren<SkinnedMeshRenderer>();
+            var renderer = entry.Value.Model ? entry.Value.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
             report.AppendLine(entry.Key.Id + ": " + entry.Value.Clips.Count + " clips; size=" + (renderer ? renderer.bounds.size.ToString() : "no mesh"));
         }
-        foreach (var rig in fieldRigs.Values) rig.Stage.SetActive(true);
+        foreach (var rig in fieldRigs.Values) if (rig.Stage) rig.Stage.SetActive(true);
         return report.ToString();
     }
 #endif

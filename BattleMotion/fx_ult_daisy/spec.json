@@ -1,0 +1,14 @@
+{
+  "card": "ult_daisy",
+  "layer": "impact",
+  "file": "ult_daisy",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 9728,
+  "floor": 0.18,
+  "prompt": "A volcanic burst of flame erupts upward from the bottom center with flying embers, then dies down. It is small and stays in the middle of the frame with wide empty black space all around it, never touching the edges. The light is blazing orange fire with pink sparks."
+}

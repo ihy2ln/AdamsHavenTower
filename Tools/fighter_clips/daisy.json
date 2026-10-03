@@ -1,0 +1,267 @@
+{
+  "unit": "daisy",
+  "_doc": "Tools/produce_fighter_clips.py spec. Canvas px: the guard key is scaled so the figure is body_px tall, feet centred on (body_x, feet_y). Keys are Qwen Image Edit 2.1 edits of the guard key; every action is chained MiniMax H3 first/last-frame segments between keys, so the contact frame is a segment boundary. Segment frames must be 8n+1 (24 fps).",
+  "canvas": [
+    960,
+    960
+  ],
+  "bg": [
+    118,
+    118,
+    118
+  ],
+  "body_px": 600,
+  "body_x": 340,
+  "feet_y": 896,
+  "fps_out": 12,
+  "ppu_out": 160,
+  "look": "the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear",
+  "refs": {
+    "sheet": "Daisy/daisy-bonfire-wildheart-short-skirt-v7.png",
+    "weapon": "Daisy/Celestium Weapons/daisy-fire-spear.png"
+  },
+  "guard": {
+    "seed": 8400,
+    "stance": "feet apart, knees bent, holding the fire spear in both hands pointed forward to the right at chest height, its flaming tip toward the enemy",
+    "source_bg": [
+      200,
+      200,
+      200
+    ]
+  },
+  "keys": {
+    "basic_hit": {
+      "seed": 8401,
+      "pose": "a quick spear jab: the fire spear thrust forward to the right at chest height with both hands, arms extended, weight on the front leg",
+      "height": 0.95
+    },
+    "thrust_hit": {
+      "seed": 8411,
+      "pose": "a deep lunging thrust: the fire spear driven fully forward to the right, her front knee deeply bent and back leg straight, body stretched out along the spear",
+      "height": 0.85
+    },
+    "spin_hit": {
+      "seed": 8421,
+      "pose": "a wide spinning sweep: the fire spear swung horizontally out to the right at waist height in one hand, her body turned, hair and skirt flying out from the spin",
+      "height": 0.9
+    },
+    "support": {
+      "seed": 8431,
+      "pose": "rallying: she holds the fire spear upright beside her in one hand and throws the other fist up, laughing wildly",
+      "height": 1.0
+    },
+    "slam": {
+      "seed": 8441,
+      "pose": "she drives the fire spear point-first down into the ground in front of her to the right with both hands, crouched low, hair flying up",
+      "height": 0.75,
+      "anchor_x": "torso"
+    },
+    "block": {
+      "seed": 8451,
+      "pose": "a braced block: the fire spear held horizontally across in front of her with both hands, knees bent, leaning into the block",
+      "height": 0.93
+    },
+    "hit": {
+      "seed": 8461,
+      "pose": "recoiling from a heavy hit: her head and shoulders snapped back toward the left side of the picture, eyes squeezed shut in pain, arms flung open, her weight thrown onto her back foot",
+      "height": 0.95
+    },
+    "down": {
+      "seed": 8471,
+      "pose": "knocked out: she lies collapsed on her side on the ground with her eyes closed and her limbs slack, her head toward the right side of the picture, the whole body lying along the same ground line",
+      "width": 1.05,
+      "anchor_x": "center"
+    },
+    "victory": {
+      "seed": 8481,
+      "pose": "a victory pose: she twirls the fire spear above her head with one hand and winks with a big grin, the other hand on her hip",
+      "height": 1.15
+    }
+  },
+  "actions": {
+    "AH_battle_guard": {
+      "loop": true,
+      "segments": [
+        [
+          "guard",
+          "guard",
+          49,
+          8500,
+          "She bounces lightly in her stance with the fire spear ready, hair and skirt swaying. A subtle idle loop: she ends exactly as she began."
+        ]
+      ]
+    },
+    "AH_hit_react": {
+      "segments": [
+        [
+          "guard",
+          "hit",
+          9,
+          8501,
+          "She is struck hard and recoils backward to the left."
+        ],
+        [
+          "hit",
+          "guard",
+          17,
+          8502,
+          "She shakes off the hit and recovers into her fighting stance."
+        ]
+      ]
+    },
+    "AH_block": {
+      "segments": [
+        [
+          "guard",
+          "block",
+          9,
+          8503,
+          "She snaps her weapon up in front of her to block."
+        ],
+        [
+          "block",
+          "guard",
+          17,
+          8504,
+          "She lowers her guard and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_knock_down": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "down",
+          25,
+          8505,
+          "She is knocked off her feet and collapses onto the ground, lying still."
+        ]
+      ]
+    },
+    "AH_victory": {
+      "hold": true,
+      "segments": [
+        [
+          "guard",
+          "victory",
+          25,
+          8506,
+          "She straightens up and strikes a triumphant victory pose."
+        ]
+      ]
+    },
+    "AH_attack_basic": {
+      "attack": true,
+      "contact": "basic_hit",
+      "segments": [
+        [
+          "guard",
+          "basic_hit",
+          17,
+          8507,
+          "She snaps a quick spear jab forward to the right."
+        ],
+        [
+          "basic_hit",
+          "guard",
+          17,
+          8508,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_thrust": {
+      "attack": true,
+      "contact": "thrust_hit",
+      "segments": [
+        [
+          "guard",
+          "thrust_hit",
+          25,
+          8509,
+          "She draws the spear back, then lunges forward in a deep powerful thrust to the right."
+        ],
+        [
+          "thrust_hit",
+          "guard",
+          25,
+          8510,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_skill_spin": {
+      "attack": true,
+      "contact": "spin_hit",
+      "segments": [
+        [
+          "guard",
+          "spin_hit",
+          25,
+          8511,
+          "She spins and swings the fire spear in a wide horizontal sweep out to the right."
+        ],
+        [
+          "spin_hit",
+          "guard",
+          25,
+          8512,
+          "She recovers and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_support": {
+      "contact": "support",
+      "segments": [
+        [
+          "guard",
+          "support",
+          17,
+          8513,
+          "She plants the spear upright beside her and throws her fist up, laughing."
+        ],
+        [
+          "support",
+          "guard",
+          25,
+          8514,
+          "She lowers her fist and returns to her fighting stance."
+        ]
+      ]
+    },
+    "AH_ult_finish": {
+      "attack": true,
+      "contact": "slam",
+      "segments": [
+        [
+          "guard",
+          "slam",
+          25,
+          8515,
+          "She leaps and drives the fire spear point-first down into the ground in front of her with both hands."
+        ],
+        [
+          "slam",
+          "guard",
+          25,
+          8516,
+          "She pulls the spear free and returns to her fighting stance."
+        ]
+      ]
+    }
+  },
+  "cards": {
+    "basic_daisy": "AH_attack_basic",
+    "guard_daisy": "AH_block",
+    "da_bonfire_brand": "AH_skill_thrust",
+    "da_ember_thrust": "AH_skill_thrust",
+    "da_spearflame_rush": "AH_skill_thrust",
+    "da_wand_sweep": "AH_skill_spin",
+    "da_matriarch_pyre": "AH_skill_spin",
+    "da_burning_circle": "AH_skill_spin",
+    "ult_daisy": "AH_ult_finish",
+    "ult_daisy_inferno": "AH_ult_finish",
+    "aw_daisy": "AH_support"
+  }
+}

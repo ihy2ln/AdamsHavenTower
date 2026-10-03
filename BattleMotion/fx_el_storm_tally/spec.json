@@ -1,0 +1,14 @@
+{
+  "card": "el_storm_tally",
+  "layer": "impact",
+  "file": "el_storm_tally",
+  "kind": "sheet",
+  "size": [
+    704,
+    960
+  ],
+  "length": 41,
+  "seed": 9641,
+  "floor": 0.18,
+  "prompt": "A small dark storm cloud crackles at the top of the frame and a blue lightning bolt strikes down to the bottom center, then the cloud fades. The light is electric blue-white."
+}

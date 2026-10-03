@@ -1,5 +1,7 @@
 {
   "card": "mv_rime_sweep",
+  "layer": "impact",
+  "file": "mv_rime_sweep",
   "kind": "sheet",
   "size": [
     960,

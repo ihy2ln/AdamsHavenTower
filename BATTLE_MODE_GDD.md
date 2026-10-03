@@ -178,6 +178,69 @@ Authoritative detail: BATTLE_PORT.md and CHAOS_ZERO_REFERENCE.md.
   (`Fx/Moves/<card id>.png`), long ones H.264 video with the matte stacked under the colour (`Fx/Moves/<card id>.mp4`,
   drawn by `Fx/StackedAlpha.shader`, hardware-decoded on Android). Placement per card: `BattleCinematics.MoveFx`.
 
+### Pre-rendered anime clips replace the rigs (CM 10.30.0, 2026-10-03)
+
+Fighters are moving from rigs to authored anime animation generated in ComfyUI: MiniMax H3 now, with Seedance as an
+optional upgrade pass once a clip is reviewed. The 3D and 2D rigs stay as fallback; a fighter switches to clips when its
+set is complete (guard, basic, hit, block, knockdown, victory and at least one skill), and the rigs and `MoveSets` go
+once the whole party is covered.
+
+- **Presentation tiers:** basic attacks and every reaction play on the battlefield, reaction-based (the attacker's clip
+  and the target's hit / block / knockdown meet at contact). **Skills are staged in battle** (below), never cut to video.
+  Ultimates and awakenings keep a full-screen video, then hand straight over to the payoff on the field. The CINE
+  setting decides how often skills are staged and whether the ultimate videos play.
+- **Staged skills** (`BattleStage.cs`, user's call after the opaque skill videos showed box edges and replayed the
+  action with a generic orb): the camera pushes in on the live field (the field matrix gets a camera transform; the
+  HUD and hand stay on the screen matrix, panels step aside, the hand ducks, letterbox bars and the card's name are
+  drawn by the engine), the fighter's clip plays large from hi-res pages, slightly slowed, the card's effect layers
+  play over the field, and the camera follows the hit to the targets, who react on their own layer (non-participants
+  fade back, the actor is drawn last). Melee: the camera tracks the dash and frames fighter and target at the hit.
+  Driven by the battle clock, so hit-stop freezes the shot and the debug stepper replays it exactly. The HUD stays
+  away from the push-in to the pull-back by time, not by zoom, so a wide area framing (near 1x) never brings the
+  hand back mid-hit (CM 10.3.1). A tap returns
+  the camera at once and runs the rest of the action fast (nothing is skipped). Unstaged (CINE off / after first use)
+  the same layers play at field scale.
+- **Effect layers** (`BattleMoveFx.cs`, `Resources/AdamsHaven/Fx/Moves/moves.json`): every party card has up to three
+  transparent layers - charge at the fighter's muzzle (hand / weapon tip per frame, `clips.json` tips), travel (a
+  stretched beam strip or a projectile sprite) from the muzzle to each target, impact on the targets, the actor or the
+  allies. Wording comes from the retired skill videos (`Tools/move_specs.py`), so the field shows what the cinematic
+  showed; the colour is measured from the art (Elara's lightning is blue, not the element's yellow). Ranged fighters
+  have `default_<unit>` layers for unmapped cards, so no party card ever shows the generic lobbed orb (enemies keep it).
+- **Ultimate hand-over:** after the video's end flash the fighter's finish clip starts on its key pose (melee already at
+  the target), and the hit lands right away with the ultimate's impact layers - no wind-up replay.
+- **Clip fighter** (`BattleClips.cs`): a `FieldRig` whose `Flip` is set has no model, camera or render target; frames
+  are drawn straight from atlas pages at the unit's foot. `Resources/AdamsHaven/BattleClips/<model id>/clips.json` lists
+  each action's frames (page rect + foot anchor), its contact frame (and release frame for projectiles) and a card ->
+  action map; unmapped cards fall back by kind (basic, guard -> block, damage -> first skill, else support).
+  Clip time runs in display seconds (1x battle speed), so painted frames keep their rate at every speed and freeze
+  with hit-stop. Preference `AdamsHaven.Battle.Clips` (on); the character sheet shows SHOW RIG / SHOW ANIME CLIPS.
+- **Timing comes from the clip:** a clip fighter's hit lands on its own contact frame (`ImpactLead`, clamped
+  0.2-0.8 battle s); other fighters keep the fixed 0.30 / 0.50 / 0.34 beats. Projectiles leave on the release frame.
+- **Reactions:** a hit plays `AH_hit_react`, a hit a shield fully absorbs (`blocked`) plays `AH_block`, a fall holds
+  `AH_knock_down`. A won battle plays `AH_victory` on the standing fighters before the result panel.
+- **Pipeline** (`Tools/produce_fighter_clips.py`, spec `Tools/fighter_clips/<unit>.json`): a guard stance (approved art,
+  or Qwen Image Edit from the battle sheet + Celestium weapon) is matted with BiRefNet and placed on a 960x960 canvas;
+  every other pose key is a Qwen edit of it, re-registered to the guard's scale and ground line (`review/keys.jpg`).
+  Each action is chained H3 first/last-frame segments between keys starting and ending on the guard, so clips join
+  without a pop and the contact frame is a segment boundary. H3 holds its conditioning frames and lands the move early
+  then drifts into the key, so packing trims the holds and compresses the drift into a two-frame snap. Frames are
+  matted (server BiRefNet, or `Tools/matte_frames.py` when the server is down), decontaminated against the flat
+  background, packed 12 fps into pages of at most 2048 px (ASTC 6x6 on Android, `BattleClipImporter`), with GIFs and
+  strips in `BattleMotion/fighter_<unit>/review/` (yellow dots: the muzzle). Staged actions are packed again at ppu 240
+  (`hi_<action>_<n>.png`, loaded async only while staged). Effect layers: `Tools/produce_move_fx.py <card|all>` renders
+  each layer with H3 on black (sheets, 4-strip beams, bolt sprites) and rewrites `moves.json`.
+- **Seedance hand-off:** every segment keeps `key_first/key_last`, its prompt and `spec.json`.
+  `Tools/export_seedance_handoff.py` bundles them; its `import` / `import-cine` commands retime a Seedance render to the
+  segment (Seedance's shortest clip is longer than a field segment) and the clip is re-matted and re-packed.
+- **Status:** all six fighters have complete clip sets (9-10 actions, 3-4 pages each) and staged skills with effect
+  layers; the 36 skill-insert videos are retired to `BattleMotion/_retired_cine/` (kept for reference / Seedance).
+  Ultimate and awakening videos are still built from the portrait and card art (`produce_battle_motion.py ULTS`), not
+  the battle sheets the field clips use. CM 10.3.1 re-rolled the weak takes (Ghislaine's hit reaction without fire, by
+  a seed sweep scored for added fire pixels; Clarity's block as a crossed-arm X) and Helda's Chilling Touch impact
+  (it filled its frame and read as a box), and probed every party skill in Play mode
+  (`BattleMotion/_cm1031/staged_<unit>.jpg`). Open: Reserve Tonic records no fact (ally draw + EP only), so the field
+  shows nothing for it. The match-cut code is removed (`guard_hi` stays in each clip set; nothing draws it).
+
 Difficulty, measured by the headless sim (`ExpeditionBalanceTests`): normal fights cost about 5-10% party HP, elites 13-29%, bosses 21-71% (re-measured after the BM 10.3.0 combat rules and offence curve).
 
 ## 9. Regions and progression (Built)

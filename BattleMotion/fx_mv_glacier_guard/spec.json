@@ -1,5 +1,7 @@
 {
   "card": "mv_glacier_guard",
+  "layer": "impact",
+  "file": "mv_glacier_guard",
   "kind": "video",
   "size": [
     576,
@@ -8,5 +10,6 @@
   "length": 57,
   "seed": 616,
   "floor": 0.18,
+  "video": true,
   "prompt": "Translucent pale-blue ice crystal plates form one by one into a tall protective shell in the center, facets glinting with white light, the shell pulses once with blue light, then dissolves into drifting sparkles."
 }

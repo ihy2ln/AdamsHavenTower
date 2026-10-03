@@ -1,0 +1,73 @@
+{
+  "unit": "kaela",
+  "_doc": "Tools/produce_fighter_clips.py spec. Canvas px: the guard key is scaled so the figure is body_px tall, feet centred on (body_x, feet_y). Keys are Qwen Image Edit 2.1 edits of the guard key; every action is chained MiniMax H3 first/last-frame segments between keys, so the contact frame is a segment boundary. Segment frames must be 8n+1 (24 fps).",
+  "canvas": [960, 960],
+  "bg": [118, 118, 118],
+  "body_px": 640,
+  "body_x": 400,
+  "feet_y": 896,
+  "fps_out": 12,
+  "ppu_out": 160,
+  "look": "the muscular snow-leopard beastfolk brawler woman with long sky-blue hair, snow-leopard ears and a spotted tail, a star-marked eyepatch, leopard-spot tattoos, white top, belt, black shorts, white side cloths, strapped sandals and glowing ice-crystal claw gauntlets on both hands",
+  "refs": {
+    "sheet": "Kaela/kaela_battle_tpose_front_v6.png",
+    "weapon": "Kaela/Celestium Weapons/kaela-ice-gauntlets.png"
+  },
+  "guard": {
+    "source": "BattleRig2D/kaela/preview/stance_7101.png",
+    "source_bg": [200, 200, 200]
+  },
+  "keys": {
+    "basic_hit": {"height": 0.97, "seed": 8101, "pose": "a fast straight jab: her front fist punched fully forward to the right at shoulder height with the arm straight, the other fist guarding her chin, shoulders turned into the punch, weight shifted onto her front leg"},
+    "hook_hit": {"height": 0.97, "seed": 8111, "pose": "the peak of a rising hook punch: her rear fist has swung up and forward to the right at head height with the elbow bent, her body twisted hard into the punch, front knee bent, the other fist pulled back at her hip, tail flaring out behind her"},
+    "sweep_hit": {"height": 0.75, "seed": 8121, "pose": "a low claw sweep: she crouches low on bent legs and slashes one ice-claw gauntlet horizontally forward to the right just above knee height, the other arm swung back for balance, hair and tail flying out from the turn"},
+    "support": {"height": 1.02, "seed": 8131, "pose": "gathering cold power: she stands tall with both fists pulled down beside her hips and her elbows out, chest forward, chin raised, her hair lifting as if blown upward by freezing wind"},
+    "slam": {"height": 0.65, "seed": 8141, "pose": "she drops into a deep crouch and slams both ice-claw fists down onto the ground in front of her, one knee bent low, hair and tail whipping upward from the impact"},
+    "block": {"height": 0.93, "seed": 8151, "pose": "a braced block: both forearms raised and crossed in front of her face with the ice-claw gauntlets forming a shield, knees bent, leaning slightly forward into the block, teeth gritted"},
+    "hit": {"height": 0.95, "seed": 8161, "pose": "recoiling from a heavy hit: her head and shoulders snapped back toward the left side of the picture, her eye squeezed shut in pain, arms flung open, her weight thrown onto her back foot"},
+    "down": {"width": 1.05, "seed": 8171, "anchor_x": "center", "pose": "knocked out: she lies collapsed on her side on the ground with her eye closed and her limbs slack, her head toward the right side of the picture, the whole body lying along the same ground line"},
+    "victory": {"height": 1.2, "seed": 8181, "pose": "a victory pose: she stands tall with one ice-claw fist raised high above her head and the other on her hip, a fierce fanged grin, tail curled up behind her"}
+  },
+  "actions": {
+    "AH_battle_guard": {"loop": true, "segments": [
+      ["guard", "guard", 49, 8201, "She holds her fighting stance and breathes, bouncing lightly on the balls of her feet, shoulders rising and falling, tail swaying and hair drifting. A subtle idle loop: she ends exactly as she began."]]},
+    "AH_attack_basic": {"attack": true, "contact": "basic_hit", "segments": [
+      ["guard", "basic_hit", 17, 8211, "She snaps a fast straight jab forward to the right."],
+      ["basic_hit", "guard", 17, 8212, "She pulls the punch back and settles into her fighting stance."]]},
+    "AH_skill_hook": {"attack": true, "contact": "hook_hit", "segments": [
+      ["guard", "hook_hit", 25, 8221, "She coils back, then twists her whole body and drives a powerful rising hook punch up and forward to the right."],
+      ["hook_hit", "guard", 25, 8222, "She recovers from the hook, pulling her fist back and returning to her fighting stance."]]},
+    "AH_skill_sweep": {"attack": true, "contact": "sweep_hit", "segments": [
+      ["guard", "sweep_hit", 25, 8231, "She spins down into a low crouch and slashes one ice-claw gauntlet in a wide horizontal sweep forward to the right."],
+      ["sweep_hit", "guard", 25, 8232, "She rises out of the crouch and returns to her fighting stance."]]},
+    "AH_support": {"contact": "support", "segments": [
+      ["guard", "support", 17, 8241, "She pulls her fists down to her hips and draws in a deep breath as cold power gathers around her, hair lifting."],
+      ["support", "guard", 25, 8242, "She lets out the breath and settles back into her fighting stance."]]},
+    "AH_ult_finish": {"attack": true, "contact": "slam", "segments": [
+      ["guard", "slam", 25, 8251, "She leaps a little and drops into a deep crouch, slamming both ice-claw fists down onto the ground in front of her."],
+      ["slam", "guard", 25, 8252, "She pushes up from the ground and returns to her fighting stance."]]},
+    "AH_hit_react": {"segments": [
+      ["guard", "hit", 9, 8261, "She is struck hard and recoils backward to the left."],
+      ["hit", "guard", 17, 8262, "She shakes off the hit and recovers into her fighting stance."]]},
+    "AH_block": {"segments": [
+      ["guard", "block", 9, 8271, "She snaps both forearms up and crosses them in front of her face to block."],
+      ["block", "guard", 17, 8272, "She lowers her guard and returns to her fighting stance."]]},
+    "AH_knock_down": {"hold": true, "segments": [
+      ["guard", "down", 25, 8281, "She is knocked off her feet and collapses onto the ground, lying still."]]},
+    "AH_victory": {"hold": true, "segments": [
+      ["guard", "victory", 25, 8291, "She straightens up, grins and thrusts one ice-claw fist high into the air in triumph."]]}
+  },
+  "cards": {
+    "basic_kaela": "AH_attack_basic",
+    "guard_kaela": "AH_block",
+    "mv_frost_jab": "AH_attack_basic",
+    "mv_shatter_hook": "AH_skill_hook",
+    "mv_rime_sweep": "AH_skill_sweep",
+    "mv_glacier_guard": "AH_support",
+    "mv_permafrost_brace": "AH_support",
+    "mv_whiteout_counter": "AH_support",
+    "ult_kaela_avalanche": "AH_ult_finish",
+    "ult_kaela_bastion": "AH_support",
+    "aw_kaela": "AH_support"
+  }
+}

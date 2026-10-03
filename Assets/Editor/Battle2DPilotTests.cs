@@ -51,7 +51,7 @@ public sealed class Battle2DPilotTests
     }
 
     [Test]
-    public void KaelaMoveEffectsAndCinematicExist()
+    public void KaelaMoveEffectsExist()
     {
         foreach (var card in new[] { "mv_frost_jab", "mv_rime_sweep", "mv_shatter_hook", "mv_whiteout_counter", "mv_permafrost_brace" })
         {
@@ -61,7 +61,7 @@ public sealed class Battle2DPilotTests
         }
         Assert.IsNotNull(Resources.Load<VideoClip>("AdamsHaven/Fx/Moves/mv_glacier_guard"), "transparent effect video");
         Assert.IsNotNull(Shader.Find("AdamsHaven/StackedAlpha"), "stacked matte shader");
-        Assert.IsNotNull(Resources.Load<VideoClip>("AdamsHaven/UltCutIns/mv_shatter_hook"), "Shatter cinematic");
-        Assert.IsNotNull(Resources.Load<Texture2D>("AdamsHaven/Fx/cine_bg"), "match-cut backdrop");
+        // Skills are staged in battle now (BattleStage.cs): the old skill-insert video must not come back.
+        Assert.IsNull(Resources.Load<VideoClip>("AdamsHaven/UltCutIns/mv_shatter_hook"), "retired Shatter video");
     }
 }

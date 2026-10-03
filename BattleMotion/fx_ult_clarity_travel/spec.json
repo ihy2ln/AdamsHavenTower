@@ -1,0 +1,14 @@
+{
+  "card": "ult_clarity",
+  "layer": "travel",
+  "file": "ult_clarity_travel",
+  "kind": "beam",
+  "size": [
+    1248,
+    352
+  ],
+  "length": 33,
+  "seed": 9682,
+  "floor": 0.18,
+  "prompt": "A blinding beam of golden light with expanding shockwave rings along it. It is perfectly horizontal and crosses the whole frame from the left edge to the right edge, centered vertically. The light is radiant golden holy light."
+}

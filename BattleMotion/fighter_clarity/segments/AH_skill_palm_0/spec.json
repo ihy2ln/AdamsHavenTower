@@ -1,0 +1,16 @@
+{
+  "action": "AH_skill_palm",
+  "index": 0,
+  "first": "guard",
+  "last": "palm_hit",
+  "frames": 25,
+  "seed": 8809,
+  "prompt": "The character is the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai, facing the right side of the picture. She sinks into a deep stance and drives a powerful open palm strike forward to the right. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "48ebc7f820a52925"
+}

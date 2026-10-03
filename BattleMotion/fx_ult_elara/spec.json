@@ -1,0 +1,14 @@
+{
+  "card": "ult_elara",
+  "layer": "impact",
+  "file": "ult_elara",
+  "kind": "sheet",
+  "size": [
+    704,
+    960
+  ],
+  "length": 41,
+  "seed": 9644,
+  "floor": 0.18,
+  "prompt": "Many blue-white lightning bolts rain down from the top of the frame onto the bottom center with glowing rune circles flashing, then fade. The light is electric blue-white."
+}

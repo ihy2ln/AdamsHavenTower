@@ -1,0 +1,16 @@
+{
+  "action": "AH_block",
+  "index": 0,
+  "first": "guard",
+  "last": "block",
+  "frames": 9,
+  "seed": 8805,
+  "prompt": "The character is the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai, facing the right side of the picture. She steps back onto her rear foot and throws both forearms up crossed in an X in front of her face to block. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+  "size": [
+    960,
+    960
+  ],
+  "fps": 24,
+  "model": "MiniMax H3 fl2va int8 + turbo 4-step",
+  "keys": "37c3a07c6e4f11c4"
+}
