@@ -364,7 +364,7 @@ public sealed partial class BattleMode : MonoBehaviour
         TickSheet(dt);
         UpdateHand(dt);
         if (!Busy) { RefreshIntents(); CheckUltReady(); }
-        if (battle.Finished || !auto || showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || Busy) return;
+        if (battle.Finished || !auto || showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || CodexPanel.IsOpen || Busy) return;
         autoTimer -= dt;
         if (autoTimer > 0f) return;
         autoTimer = 0.3f;
@@ -608,19 +608,30 @@ public sealed partial class BattleMode : MonoBehaviour
 
     // ---- field layout ------------------------------------------------------------------------
 
-    private static float EnemyHeight(string species)
+    private static float EnemyHeight(string species, float aspect = .85f, bool boss = false)
     {
+        float h = 320f;
         switch (species)
         {
-            case "eclipse_core_golem": return 420f;
-            case "moonstone_ravager": return 390f;
-            case "amberhide_grazer": return 350f;
-            case "thorncrystal_stalker": return 345f;
-            case "obsidian_talon": return 330f;
-            case "flintjaw_skitterer": return 262f;
-            case "shardling_sprout": return 240f;
+            case "eclipse_core_golem": h = 420f; break;
+            case "moonstone_ravager": h = 390f; break;
+            case "amberhide_grazer": h = 350f; break;
+            case "thorncrystal_stalker": h = 345f; break;
+            case "obsidian_talon": h = 330f; break;
+            case "flintjaw_skitterer": h = 262f; break;
+            case "shardling_sprout": h = 240f; break;
+            default:
+            {
+                // Prompt-pack sprites (Tools/sync_codex_cards.py): large beasts stand tall, and a wide four-legged one
+                // is drawn lower so a pack of them still fits the field.
+                var form = BattleBestiary.Form(species);
+                h = form != null && form.large ? 400f : 320f;
+                if (aspect > 1.15f) h *= .8f;
+                break;
+            }
         }
-        return 320f;
+        // A lair boss towers over its court whatever its shape.
+        return boss ? Mathf.Max(h, 440f) : h;
     }
 
     private void AddSlot(BattleUnit unit, Vector2 foot, float height)
@@ -657,15 +668,18 @@ public sealed partial class BattleMode : MonoBehaviour
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
-            total += EnemyHeight(foes[i].Species) * (s.Valid ? s.Aspect : 0.85f) * 0.84f;
+            float aspect = s.Valid ? s.Aspect : 0.85f;
+            total += EnemyHeight(foes[i].Species, aspect, foes[i].Boss) * aspect * 0.84f;
         }
         float fit = Mathf.Min(1f, 640f / Mathf.Max(1f, total));
-        float cursor = 912f;
+        // A wide pack starts a little further left, so its last beast and intent badge stay clear of the edge.
+        float cursor = Mathf.Clamp(1210f - total * fit * .5f, 880f, 912f);
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
-            float h = EnemyHeight(foes[i].Species) * fit;
-            float w = h * (s.Valid ? s.Aspect : 0.85f);
+            float aspect = s.Valid ? s.Aspect : 0.85f;
+            float h = EnemyHeight(foes[i].Species, aspect, foes[i].Boss) * fit;
+            float w = h * aspect;
             AddSlot(foes[i], new Vector2(cursor + w * 0.5f, footY[i % footY.Length]), h);
             cursor += w * 0.84f;
         }
@@ -728,7 +742,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     // ---- input helpers -----------------------------------------------------------------------
 
-    private bool Modal { get { return showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || (battle != null && battle.EpiphanyCard != null && !Busy); } }
+    private bool Modal { get { return showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || CodexPanel.IsOpen || (battle != null && battle.EpiphanyCard != null && !Busy); } }
 
     private bool Press(Rect rect)
     {
@@ -772,7 +786,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (debugClick && e.type == EventType.Repaint) { pressed = true; debugClick = false; }
 #endif
         used = false; modalDrawing = false;
-        if (MediaPanel.IsOpen) { pressed = rightPressed = false; }
+        if (MediaPanel.IsOpen || CodexPanel.IsOpen) { pressed = rightPressed = false; }
         if (pressed && CutInShowing) { SkipCutIn(); pressed = false; used = true; }
         else if (pressed && StageShowing) { SkipStage(); pressed = false; used = true; }
         TrackHold(e);
@@ -1344,6 +1358,8 @@ public sealed partial class BattleMode : MonoBehaviour
         if (MiniButton(new Rect(1382f, 14f, 46f, 46f), "LOG", true, showLog, Ice, -1f, 12)) showLog = !showLog;
         if (MiniButton(new Rect(1376f, 66f, 54f, 30f), "MEDIA", true, false, Violet, -1f, 10))
         { ClearSelection(); auto = false; MediaPanel.Show(null, null, OnMediaChanged); }
+        if (MiniButton(new Rect(1316f, 66f, 54f, 30f), "CODEX", true, false, Gold, -1f, 10))
+        { ClearSelection(); auto = false; CodexPanel.Show("BESTIARY", null, CodexSeen()); }
         // Cinematics: every time, first use per battle, ultimates only, or none.
         if (MiniButton(new Rect(1436f, 66f, 154f, 30f), CinematicLabel(Cinematics), true, Cinematics != CinematicMode.Off, Ice, -1f, 11))
             Cinematics = (CinematicMode)(((int)Cinematics + 1) % 4);

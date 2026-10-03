@@ -104,6 +104,17 @@ public sealed partial class BattleMode
         if (sheetRig != null) { FrameSheetCamera(); SampleSheet(); }
     }
 
+    // What the codex shows from this battle: the guild journal (sandbox battles have none) plus every beast on the field.
+    private CodexContext CodexSeen()
+    {
+        var tower = GetComponent<AdamsHavenPrototype>();
+        var seen = tower != null ? CodexContext.From(tower.Rules) : CodexContext.Everything;
+        if (seen.Beasts == null || battle == null) return seen;
+        var beasts = new List<string>(seen.Beasts);
+        foreach (var e in battle.Enemies) if (!string.IsNullOrEmpty(e.Species) && !beasts.Contains(e.Species)) beasts.Add(e.Species);
+        return new CodexContext { Beasts = beasts, Regions = seen.Regions, Conquered = seen.Conquered, Recruited = seen.Recruited };
+    }
+
     private void CloseSheet()
     {
         if (sheetRig != null) ReleaseRig(sheetRig);
@@ -209,6 +220,15 @@ public sealed partial class BattleMode
         {
             BattleUnit keep = u;
             MediaPanel.Show(u.Enemy ? "MONSTERS" : "FIGHTERS", u.Enemy ? u.Species : u.Id, () => { OnMediaChanged(); if (battle != null) OpenSheet(keep); });
+            used = true;
+            modalDrawing = false;
+            return;
+        }
+        // The codex card: this fighter, beast or lair boss as a card (front art, back moves).
+        if (MiniButton(new Rect(SheetView.x + 212f, SheetView.yMax - 52f, 104f, 40f), "CODEX CARD", true, false, Gold, -1f, 11))
+        {
+            BattleUnit keep = u;
+            CodexPanel.ShowFor(u, CodexSeen(), () => { if (battle != null) OpenSheet(keep); });
             used = true;
             modalDrawing = false;
             return;

@@ -619,16 +619,11 @@ public static class BattleCatalog
         if (spec.Kind == "boss")
         {
             var lair = BattleBestiary.Boss(spec.Region);
-            var family = BattleBestiary.Family(lair != null ? lair.family : depth >= 8 ? "eclipse_golems" : "moonstone_ravagers");
             string title = lair != null ? lair.title : depth >= 8 ? "Eclipse Core Golem" : "Grove Tyrant";
             string theme = lair != null ? lair.theme : spec.Theme;
-            int bossRank = Math.Min(BattleBestiary.MaxRank, natural + 2);
-            BestiaryForm big = BattleBestiary.FormFor(family, bossRank);
             List<BestiaryForm> minions = BattleBestiary.Spawnable(natural, theme, true);
             e.Enemies.Add(Monster(minions[rng.Next(minions.Count)], natural, depth, 0, MinionPower, "minion"));
-            BattleUnit lord = Monster(big, Math.Max(big.minRank, Math.Min(bossRank, big.maxRank)), depth, 1, BossPower,
-                "boss_" + big.id, title, true, false);
-            lord.Boss = true; lord.Phase = 1;
+            BattleUnit lord = LairBoss(lair, depth);
             e.Enemies.Add(lord);
             e.Enemies.Add(Monster(minions[rng.Next(minions.Count)], natural, depth, 2, MinionPower, "minion"));
             e.Boss = lord;
@@ -662,6 +657,29 @@ public static class BattleCatalog
         }
         else e.Title = spec.Kind == "ambush" ? "AMBUSH" : "SILVERWOOD PACK";
         return e;
+    }
+
+    // A lair's boss at a depth: its family's form two ranks above the depth's natural rank (SSR only for the deepest
+    // lairs). No lair: the old stand-ins. Also the lair boss card in the codex (CodexCards).
+    public static BattleUnit LairBoss(BestiaryBoss lair, int depth, int lane = 1)
+    {
+        depth = Math.Max(1, depth);
+        var family = BattleBestiary.Family(lair != null ? lair.family : depth >= 8 ? "eclipse_golems" : "moonstone_ravagers");
+        string title = lair != null ? lair.title : depth >= 8 ? "Eclipse Core Golem" : "Grove Tyrant";
+        int bossRank = Math.Min(BattleBestiary.MaxRank, BattleBestiary.RankForDepth(depth) + 2);
+        BestiaryForm big = BattleBestiary.FormFor(family, bossRank);
+        BattleUnit lord = Monster(big, Math.Max(big.minRank, Math.Min(bossRank, big.maxRank)), depth, lane, BossPower,
+            "boss_" + big.id, title, true, false);
+        lord.Boss = true; lord.Phase = 1;
+        return lord;
+    }
+
+    // A bestiary form as a pack member at a rank inside its span, at the depth where that rank is natural: the numbers
+    // on its codex card.
+    public static BattleUnit Specimen(BestiaryForm form, int rank)
+    {
+        rank = Math.Max(form.minRank, Math.Min(form.maxRank, rank));
+        return Monster(form, rank, BattleBestiary.DepthForRank(rank), 0, 1f);
     }
 
     // Tower skirmishes (the dock BATTLE button) only know a floor: grove packs, elites from 3, a boss from 8.

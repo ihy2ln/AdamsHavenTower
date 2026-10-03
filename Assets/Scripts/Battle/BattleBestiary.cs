@@ -116,6 +116,13 @@ public static class BattleBestiary
         return depth <= 10 ? (depth + 1) / 2 : Math.Min(8, depth - 5);
     }
 
+    // The shallowest depth whose natural rank is this one (SSR, never natural, sits at the deepest depth).
+    public static int DepthForRank(int rank)
+    {
+        rank = Mathf.Clamp(rank, 1, MaxRank);
+        return rank <= 5 ? rank * 2 - 1 : Math.Min(14, rank + 5);
+    }
+
     // A pack's rank: one either side of the natural rank, weighted by how common each rank is (the natural rank
     // counts double). SSR never rolls for packs; it is reserved for the deepest lair bosses.
     public static int RollRank(int depth, System.Random rng)

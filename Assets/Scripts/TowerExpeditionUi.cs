@@ -45,7 +45,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     private readonly List<KeyValuePair<Text, Vector2Int>> mapLabels = new List<KeyValuePair<Text, Vector2Int>>();
     private int labelVersion = -1;
     private static readonly Color RingColor = new Color(0.62f, 0.86f, 1f, 0.7f);
-    private GameObject mediaBlocker;        // swallows uGUI clicks under the IMGUI media library while it is open
+    private GameObject mediaBlocker;        // swallows uGUI clicks under the IMGUI media library (or codex) while it is open
     // Phone test readout on the layered maps (frame rate, frame time, memory). Switch on for map tuning only.
     public static bool ShowMapStats = false;
     private Text mapStats;
@@ -260,7 +260,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         if (view == View.Dungeon && R != null && R.Run != null && R.Dungeon != null && board != null && viewport != null)
         {
             UpdateTravel();
-            if (!MediaPanel.IsOpen) DungeonInput();
+            if (!MediaPanel.IsOpen && !CodexPanel.IsOpen) DungeonInput();
         }
     }
 
@@ -278,7 +278,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
     // The media library (IMGUI) over the expedition: a clear uGUI blocker under it eats clicks meant for it.
     private void OpenMedia()
     {
-        if (MediaPanel.IsOpen) return;
+        if (MediaPanel.IsOpen || CodexPanel.IsOpen) return;
         if (mediaBlocker == null)
         {
             var blocker = Stretch("Media blocker", root, new Color(0, 0, 0, 0));
@@ -287,6 +287,25 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         }
         mediaBlocker.transform.SetAsLastSibling();
         MediaPanel.Show(null, null, () =>
+        {
+            if (mediaBlocker != null) Destroy(mediaBlocker);
+            mediaBlocker = null;
+            Rebuild();
+        });
+    }
+
+    // The card codex (IMGUI) over the expedition, behind the same click blocker as the media library.
+    private void OpenCodex(string tab)
+    {
+        if (MediaPanel.IsOpen || CodexPanel.IsOpen) return;
+        if (mediaBlocker == null)
+        {
+            var blocker = Stretch("Media blocker", root, new Color(0, 0, 0, 0));
+            blocker.raycastTarget = true;
+            mediaBlocker = blocker.gameObject;
+        }
+        mediaBlocker.transform.SetAsLastSibling();
+        CodexPanel.Show(tab, null, CodexContext.From(R), () =>
         {
             if (mediaBlocker != null) Destroy(mediaBlocker);
             mediaBlocker = null;
@@ -2329,6 +2348,7 @@ public sealed class TowerExpeditionUi : MonoBehaviour
         var panel = PanelAt("Journal", shade.transform, (width - pw) / 2, (height - ph) / 2 + 10, pw, ph).transform;
         TextAt(panel, "Title", "GUILD JOURNAL", 22, 12, 300, 32, 22, Gold);
         ButtonAt(panel, "Close", "CLOSE", pw - 124, 12, 104, 34, () => { journalOpen = false; Rebuild(); }, Alert, 14);
+        ButtonAt(panel, "Codex", "CARD CODEX", pw - 278, 12, 144, 34, () => OpenCodex(journalTab == 2 ? "LAIR BOSSES" : "BESTIARY"), Teal, 13);
         string[] tabs = { "BEASTS", "EVENTS", "REGIONS" };
         int[] counts = { journal.beasts.Count, journal.events.Count, journal.regions.Count };
         int[] totals = { BattleCatalog.SpeciesIds.Length, TowerEvents.All.Count, TowerRules.Regions.Length };

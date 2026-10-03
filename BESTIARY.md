@@ -75,7 +75,7 @@ Goblins whose dormant GKOM woke in the ash of burned camps. They hoard crystal c
 - **Drops:** F-rank Death Crystal, Ash-black goblin hide, GKOM Dust.
 
 ### Ashvein Hobgoblin  ·  D–C → evolves into **Ashvein Bugbrute** at B
-`ashvein_hobgoblin`  ·  Dark Guardian  ·  art owed (uses `ashvein_goblin_scavenger`)
+`ashvein_hobgoblin`  ·  Dark Guardian  ·  art ✓
 
 > Drilled and armoured, it fights in a shield line and never alone.
 
@@ -84,7 +84,7 @@ Goblins whose dormant GKOM woke in the ash of burned camps. They hoard crystal c
 - **Drops:** D-rank Death Crystal, Ash-black goblin hide, GKOM Dust.
 
 ### Ashvein Bugbrute  ·  B → evolves into **Ashvein Warlord** at A
-`ashvein_bugbrute`  ·  Dark Bruiser, large  ·  art owed (uses `ashvein_goblin_scavenger`)
+`ashvein_bugbrute`  ·  Dark Bruiser, large  ·  art ✓
 
 > A hulking ambusher that drags prey into the dark by the ankle.
 
@@ -93,7 +93,7 @@ Goblins whose dormant GKOM woke in the ash of burned camps. They hoard crystal c
 - **Drops:** B-rank Death Crystal, Ash-black goblin hide, Refined GKOM Essence.
 
 ### Ashvein Warlord  ·  A–S (apex form)
-`ashvein_warlord`  ·  Dark Bruiser, large  ·  art owed (uses `ashvein_goblin_scavenger`)
+`ashvein_warlord`  ·  Dark Bruiser, large  ·  art ✓
 
 > Crowned in grey quartz, it speaks for every goblin in the valley.
 
@@ -118,7 +118,7 @@ Saplings that took root over a buried GKOM orb. Each season they grow a ring of 
 - **Drops:** F-rank Death Crystal, Crystal sap, GKOM Dust.
 
 ### Shardling Thicket  ·  D–C → evolves into **Geode Treant** at B
-`shardling_thicket`  ·  Earth Guardian  ·  art owed (uses `shardling_sprout`)
+`shardling_thicket`  ·  Earth Guardian  ·  art ✓
 
 > A walking hedge of glassy thorns.
 
@@ -127,7 +127,7 @@ Saplings that took root over a buried GKOM orb. Each season they grow a ring of 
 - **Drops:** D-rank Death Crystal, Crystal sap, GKOM Dust.
 
 ### Geode Treant  ·  B–A (apex form)
-`geode_treant`  ·  Earth Guardian, large  ·  art owed (uses `shardling_sprout`)
+`geode_treant`  ·  Earth Guardian, large  ·  art ✓
 
 > An ancient oak split open to show a cavern of crystal inside.
 
@@ -152,7 +152,7 @@ Burrowing insects whose mandibles strike sparks. A hive grows around a queen fat
 - **Drops:** F-rank Death Crystal, Flint mandible, GKOM Dust.
 
 ### Flintjaw Ripper  ·  D–C → evolves into **Flintjaw Hive-Queen** at B
-`flintjaw_ripper`  ·  Fire Skirmisher  ·  art owed (uses `flintjaw_skitterer`)
+`flintjaw_ripper`  ·  Fire Skirmisher  ·  art ✓
 
 > A soldier caste with mandibles like flint axes.
 
@@ -161,7 +161,7 @@ Burrowing insects whose mandibles strike sparks. A hive grows around a queen fat
 - **Drops:** D-rank Death Crystal, Flint mandible, GKOM Dust.
 
 ### Flintjaw Hive-Queen  ·  B–A (apex form)
-`flintjaw_hive_queen`  ·  Fire Caster, large  ·  art owed (uses `flintjaw_skitterer`)
+`flintjaw_hive_queen`  ·  Fire Caster, large  ·  art ✓
 
 > A bloated queen that births burning larvae from her crystal sac.
 
@@ -186,7 +186,7 @@ Grazing beasts that lick crystal salt-licks until amber plates grow through thei
 - **Drops:** F-rank Death Crystal, Amber hide plate, GKOM Dust.
 
 ### Amberhide Bull  ·  C–B → evolves into **Amberhide Matriarch** at A
-`amberhide_bull`  ·  Earth Bruiser, large  ·  art owed (uses `amberhide_grazer`)
+`amberhide_bull`  ·  Earth Bruiser, large  ·  art ✓
 
 > Amber horns as long as spears.
 
@@ -195,7 +195,7 @@ Grazing beasts that lick crystal salt-licks until amber plates grow through thei
 - **Drops:** C-rank Death Crystal, Amber hide plate, GKOM Dust.
 
 ### Amberhide Matriarch  ·  A–S (apex form)
-`amberhide_matriarch`  ·  Earth Bruiser, large  ·  art owed (uses `amberhide_grazer`)
+`amberhide_matriarch`  ·  Earth Bruiser, large  ·  art ✓
 
 > The herd mother, her back a ridge of amber crystal.
 
@@ -220,7 +220,7 @@ Panthers that bend light through the crystal thorns on their backs, appearing a 
 - **Drops:** E-rank Death Crystal, Mirage thorn, GKOM Dust.
 
 ### Thornshade Prowler  ·  C–B → evolves into **Mirage Panther** at A
-`thornshade_prowler`  ·  Wind Skirmisher  ·  art owed (uses `thorncrystal_stalker`)
+`thornshade_prowler`  ·  Wind Skirmisher  ·  art ✓
 
 > Hunts in pairs, one real, one a reflection.
 
@@ -229,7 +229,7 @@ Panthers that bend light through the crystal thorns on their backs, appearing a 
 - **Drops:** C-rank Death Crystal, Mirage thorn, GKOM Dust.
 
 ### Mirage Panther  ·  A–S (apex form)
-`mirage_panther`  ·  Wind Skirmisher  ·  art owed (uses `thorncrystal_stalker`)
+`mirage_panther`  ·  Wind Skirmisher  ·  art ✓
 
 > A crystal-sheathed cat that leaves a trail of false copies.
 
@@ -245,7 +245,7 @@ Panthers that bend light through the crystal thorns on their backs, appearing a 
 Wolves with frost-quartz spines. The pack shares one rhythm, and the alpha howls the whole pack into a frenzy.
 
 ### Quartzback Pup  ·  F → evolves into **Quartzback Hound** at E
-`quartzback_pup`  ·  Water Bruiser  ·  art owed (uses `quartzback_hound`)
+`quartzback_pup`  ·  Water Bruiser  ·  art ✓
 
 > Its first quartz spines are still soft as ice.
 
@@ -263,7 +263,7 @@ Wolves with frost-quartz spines. The pack shares one rhythm, and the alpha howls
 - **Drops:** E-rank Death Crystal, Frost-quartz fang, GKOM Dust.
 
 ### Quartzback Direwolf  ·  C–B → evolves into **Moonfang Alpha** at A
-`quartzback_direwolf`  ·  Water Bruiser, large  ·  art owed (uses `quartzback_hound`)
+`quartzback_direwolf`  ·  Water Bruiser, large  ·  art ✓
 
 > Pony-sized, with a mane of frozen quartz.
 
@@ -272,7 +272,7 @@ Wolves with frost-quartz spines. The pack shares one rhythm, and the alpha howls
 - **Drops:** C-rank Death Crystal, Frost-quartz fang, GKOM Dust.
 
 ### Moonfang Alpha  ·  A (apex form)
-`moonfang_alpha`  ·  Water Bruiser, large  ·  art owed (uses `quartzback_hound`)
+`moonfang_alpha`  ·  Water Bruiser, large  ·  art ✓
 
 > The pack leader; its howl freezes rivers.
 
@@ -297,7 +297,7 @@ Insects with wings of beaten glass. One mite is a nuisance; the hive that follow
 - **Drops:** F-rank Death Crystal, Glass wing, GKOM Dust.
 
 ### Glasswing Stinger  ·  D → evolves into **Glasswing Hive Mother** at C
-`glasswing_stinger`  ·  Wind Skirmisher  ·  art owed (uses `glasswing_mite`)
+`glasswing_stinger`  ·  Wind Skirmisher  ·  art ✓
 
 > A fist-sized wasp with a stinger of green glass.
 
@@ -306,7 +306,7 @@ Insects with wings of beaten glass. One mite is a nuisance; the hive that follow
 - **Drops:** D-rank Death Crystal, Glass wing, GKOM Dust.
 
 ### Glasswing Hive Mother  ·  C–B (apex form)
-`glasswing_hive_mother`  ·  Wind Caster, large  ·  art owed (uses `glasswing_mite`)
+`glasswing_hive_mother`  ·  Wind Caster, large  ·  art ✓
 
 > A crystal hive that walks on a hundred legs.
 
@@ -331,7 +331,7 @@ Raptors whose feathers harden to obsidian blades. The greatest of them circle th
 - **Drops:** E-rank Death Crystal, Obsidian feather, GKOM Dust.
 
 ### Obsidian Roc  ·  C–A → evolves into **Ash Thunderbird** at S
-`obsidian_roc`  ·  Fire Skirmisher, large  ·  art owed (uses `obsidian_talon`)
+`obsidian_roc`  ·  Fire Skirmisher, large  ·  art ✓
 
 > Its shadow alone sends herds running.
 
@@ -340,7 +340,7 @@ Raptors whose feathers harden to obsidian blades. The greatest of them circle th
 - **Drops:** C-rank Death Crystal, Obsidian feather, GKOM Dust.
 
 ### Ash Thunderbird  ·  S (apex form)
-`ash_thunderbird`  ·  Fire Skirmisher, large  ·  art owed (uses `obsidian_talon`)
+`ash_thunderbird`  ·  Fire Skirmisher, large  ·  art ✓
 
 > A firestorm with wings, its crystal plumage glowing white-hot.
 
@@ -356,7 +356,7 @@ Raptors whose feathers harden to obsidian blades. The greatest of them circle th
 Lights that once guarded the moon shrine. GKOM bent their purpose: they still guard, but now they guard the corruption.
 
 ### Prism Wisp  ·  F–E → evolves into **Prism Warden** at D
-`prism_wisp`  ·  Light Caster  ·  art owed (uses `viridian_prism_warden`)
+`prism_wisp`  ·  Light Caster  ·  art ✓
 
 > A floating mote of green light that leads travellers astray.
 
@@ -374,7 +374,7 @@ Lights that once guarded the moon shrine. GKOM bent their purpose: they still gu
 - **Drops:** D-rank Death Crystal, Prism shard, GKOM Dust.
 
 ### Prism Archon  ·  B–A (apex form)
-`prism_archon`  ·  Light Caster, large  ·  art owed (uses `viridian_prism_warden`)
+`prism_archon`  ·  Light Caster, large  ·  art ✓
 
 > A crown of rotating prisms judging everything that enters.
 
@@ -390,7 +390,7 @@ Lights that once guarded the moon shrine. GKOM bent their purpose: they still gu
 Armoured worms that eat ore and excrete cobalt crystal. Miners know the tremor that means one is passing below.
 
 ### Cobalt Grub  ·  E → evolves into **Cobalt Burrower** at D
-`cobalt_grub`  ·  Earth Guardian  ·  art owed (uses `cobalt_burrower`)
+`cobalt_grub`  ·  Earth Guardian  ·  art ✓
 
 > A cart-sized larva gnawing through the mine walls.
 
@@ -408,7 +408,7 @@ Armoured worms that eat ore and excrete cobalt crystal. Miners know the tremor t
 - **Drops:** D-rank Death Crystal, Cobalt shell, GKOM Dust.
 
 ### Cobalt Wyrmworm  ·  B–S (apex form)
-`cobalt_wyrmworm`  ·  Earth Guardian, large  ·  art owed (uses `cobalt_burrower`)
+`cobalt_wyrmworm`  ·  Earth Guardian, large  ·  art ✓
 
 > A tunnel-wide worm whose maw is ringed in crystal teeth.
 
@@ -424,7 +424,7 @@ Armoured worms that eat ore and excrete cobalt crystal. Miners know the tremor t
 Bear-like predators that hunt by moonlight. Moonstone grows in their fur and drinks in the light around them.
 
 ### Moonstone Cub  ·  E → evolves into **Moonstone Ravager** at D
-`moonstone_cub`  ·  Water Bruiser  ·  art owed (uses `moonstone_ravager`)
+`moonstone_cub`  ·  Water Bruiser  ·  art ✓
 
 > Playful, until its mother answers its cry.
 
@@ -442,7 +442,7 @@ Bear-like predators that hunt by moonlight. Moonstone grows in their fur and dri
 - **Drops:** D-rank Death Crystal, Moonstone claw, GKOM Dust.
 
 ### Moonstone Ursine  ·  A (apex form)
-`moonstone_ursine`  ·  Water Bruiser, large  ·  art owed (uses `moonstone_ravager`)
+`moonstone_ursine`  ·  Water Bruiser, large  ·  art ✓
 
 > An ancient bear with a pale crystal crown.
 
@@ -458,7 +458,7 @@ Bear-like predators that hunt by moonlight. Moonstone grows in their fur and dri
 Dragons that nest in lightning-struck crystal spires. A drake becomes a wyvern, and a wyvern that survives a century of storms becomes a tempest dragon.
 
 ### Stormglass Drake  ·  D–C → evolves into **Stormglass Wyvern** at B
-`stormglass_drake`  ·  Lightning Skirmisher, large  ·  art owed (uses `stormglass_wyvern`)
+`stormglass_drake`  ·  Lightning Skirmisher, large  ·  art ✓
 
 > A young drake crackling with static.
 
@@ -476,7 +476,7 @@ Dragons that nest in lightning-struck crystal spires. A drake becomes a wyvern, 
 - **Drops:** B-rank Death Crystal, Stormglass scale, Refined GKOM Essence.
 
 ### Tempest Dragon  ·  S–SSR (apex form)
-`tempest_dragon`  ·  Lightning Skirmisher, large  ·  art owed (uses `stormglass_wyvern`)
+`tempest_dragon`  ·  Lightning Skirmisher, large  ·  art ✓
 
 > A living thunderhead, its crystal scales ringing with every bolt.
 
@@ -492,7 +492,7 @@ Dragons that nest in lightning-struck crystal spires. A drake becomes a wyvern, 
 Constructs of rubble and crystal that assemble themselves around a dark orb. The largest is the blight's heart made flesh.
 
 ### Shard Golem  ·  C → evolves into **Eclipse Core Golem** at B
-`shard_golem`  ·  Dark Bruiser, large  ·  art owed (uses `eclipse_core_golem`)
+`shard_golem`  ·  Dark Bruiser, large  ·  art ✓
 
 > Rubble held together by a pulsing orb.
 
@@ -510,7 +510,7 @@ Constructs of rubble and crystal that assemble themselves around a dark orb. The
 - **Drops:** B-rank Death Crystal, Eclipse stone, Refined GKOM Essence.
 
 ### Heartrot Colossus  ·  S–SSR (apex form)
-`heartrot_colossus`  ·  Dark Bruiser, large  ·  art owed (uses `eclipse_core_golem`)
+`heartrot_colossus`  ·  Dark Bruiser, large  ·  art ✓
 
 > The Silverwood's rotting heart, risen and walking.
 
@@ -526,7 +526,7 @@ Constructs of rubble and crystal that assemble themselves around a dark orb. The
 Jellies that dissolve everything but crystal. Swallowed shards drift inside them, and the oldest are cubes of living geode that fill a corridor wall to wall.
 
 ### Gloam Ooze  ·  F–E → evolves into **Crystal Jelly** at D
-`gloam_ooze`  ·  Water Guardian  ·  art owed (uses `shardling_sprout`)
+`gloam_ooze`  ·  Water Guardian  ·  art ✓
 
 > A puddle that glints with half-digested crystal.
 
@@ -535,7 +535,7 @@ Jellies that dissolve everything but crystal. Swallowed shards drift inside them
 - **Drops:** F-rank Death Crystal, Gloam gel, GKOM Dust.
 
 ### Crystal Jelly  ·  D–C → evolves into **Geode Cube** at B
-`crystal_jelly`  ·  Water Guardian  ·  art owed (uses `shardling_sprout`)
+`crystal_jelly`  ·  Water Guardian  ·  art ✓
 
 > A wobbling flan with a red orb at its centre.
 
@@ -544,7 +544,7 @@ Jellies that dissolve everything but crystal. Swallowed shards drift inside them
 - **Drops:** D-rank Death Crystal, Gloam gel, GKOM Dust.
 
 ### Geode Cube  ·  B → evolves into **Abyssal Gel** at A
-`geode_cube`  ·  Water Guardian, large  ·  art owed (uses `shardling_sprout`)
+`geode_cube`  ·  Water Guardian, large  ·  art ✓
 
 > A corridor-filling cube; skeletons hang inside it.
 
@@ -553,7 +553,7 @@ Jellies that dissolve everything but crystal. Swallowed shards drift inside them
 - **Drops:** B-rank Death Crystal, Gloam gel, Refined GKOM Essence.
 
 ### Abyssal Gel  ·  A (apex form)
-`abyssal_gel`  ·  Water Guardian, large  ·  art owed (uses `shardling_sprout`)
+`abyssal_gel`  ·  Water Guardian, large  ·  art ✓
 
 > A black tide that swallows light itself.
 
@@ -569,7 +569,7 @@ Jellies that dissolve everything but crystal. Swallowed shards drift inside them
 The men GKOM killed. Husks are what is left when the infection outlives the mind: they climb the rank ladder by devouring other orbs, and the oldest remember enough to cast.
 
 ### Hollow Husk  ·  F–E → evolves into **Crystal Ghoul** at D
-`hollow_husk`  ·  Dark Bruiser  ·  art owed (uses `enemy_summoner`)
+`hollow_husk`  ·  Dark Bruiser  ·  art ✓
 
 > A shambling corpse with a grey orb where its heart was.
 
@@ -578,7 +578,7 @@ The men GKOM killed. Husks are what is left when the infection outlives the mind
 - **Drops:** F-rank Death Crystal, Husk bone, GKOM Dust.
 
 ### Crystal Ghoul  ·  D–C → evolves into **Wight Knight** at B
-`crystal_ghoul`  ·  Dark Skirmisher  ·  art owed (uses `enemy_summoner`)
+`crystal_ghoul`  ·  Dark Skirmisher  ·  art ✓
 
 > A fast, starving husk with crystal teeth.
 
@@ -587,7 +587,7 @@ The men GKOM killed. Husks are what is left when the infection outlives the mind
 - **Drops:** D-rank Death Crystal, Husk bone, GKOM Dust.
 
 ### Wight Knight  ·  B–A → evolves into **Orb Lich** at S
-`wight_knight`  ·  Dark Guardian  ·  art owed (uses `enemy_summoner`)
+`wight_knight`  ·  Dark Guardian  ·  art ✓
 
 > A fallen soldier still wearing its rusted oath.
 
@@ -596,7 +596,7 @@ The men GKOM killed. Husks are what is left when the infection outlives the mind
 - **Drops:** B-rank Death Crystal, Husk bone, Refined GKOM Essence.
 
 ### Orb Lich  ·  S–SSR (apex form)
-`orb_lich`  ·  Dark Caster  ·  art owed (uses `enemy_summoner`)
+`orb_lich`  ·  Dark Caster  ·  art ✓
 
 > A husk that kept its mind; its orb floats above an open ribcage.
 
@@ -612,7 +612,7 @@ The men GKOM killed. Husks are what is left when the infection outlives the mind
 Spiders that spin crystal-fibre webs strung like black veins through the trees.
 
 ### Veinweb Spider  ·  E–D → evolves into **Crystalweb Broodmother** at C
-`veinweb_spider`  ·  Dark Skirmisher  ·  art owed (uses `flintjaw_skitterer`)
+`veinweb_spider`  ·  Dark Skirmisher  ·  art ✓
 
 > A dog-sized spider with crystal-tipped legs.
 
@@ -621,7 +621,7 @@ Spiders that spin crystal-fibre webs strung like black veins through the trees.
 - **Drops:** E-rank Death Crystal, Veinweb silk, GKOM Dust.
 
 ### Crystalweb Broodmother  ·  C–B → evolves into **Silkqueen Arachne** at A
-`crystalweb_broodmother`  ·  Dark Skirmisher, large  ·  art owed (uses `flintjaw_skitterer`)
+`crystalweb_broodmother`  ·  Dark Skirmisher, large  ·  art ✓
 
 > Her back is a nest of hatching crystal eggs.
 
@@ -630,7 +630,7 @@ Spiders that spin crystal-fibre webs strung like black veins through the trees.
 - **Drops:** C-rank Death Crystal, Veinweb silk, GKOM Dust.
 
 ### Silkqueen Arachne  ·  A–S (apex form)
-`silkqueen_arachne`  ·  Dark Caster, large  ·  art owed (uses `flintjaw_skitterer`)
+`silkqueen_arachne`  ·  Dark Caster, large  ·  art ✓
 
 > Half woman, half spider, wholly GKOM.
 
@@ -646,7 +646,7 @@ Spiders that spin crystal-fibre webs strung like black veins through the trees.
 Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the last of the line coils around mountains.
 
 ### Glint Adder  ·  F–E → evolves into **Gazestone Basilisk** at D
-`glint_adder`  ·  Earth Skirmisher  ·  art owed (uses `cobalt_burrower`)
+`glint_adder`  ·  Earth Skirmisher  ·  art ✓
 
 > A small snake with jewelled scales and a mean bite.
 
@@ -655,7 +655,7 @@ Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the
 - **Drops:** F-rank Death Crystal, Glint scale, GKOM Dust.
 
 ### Gazestone Basilisk  ·  D–C → evolves into **Coilqueen Naga** at B
-`gazestone_basilisk`  ·  Earth Bruiser  ·  art owed (uses `cobalt_burrower`)
+`gazestone_basilisk`  ·  Earth Bruiser  ·  art ✓
 
 > Look away: its gaze turns skin to quartz.
 
@@ -664,7 +664,7 @@ Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the
 - **Drops:** D-rank Death Crystal, Glint scale, GKOM Dust.
 
 ### Coilqueen Naga  ·  B–A → evolves into **Worldcoil Serpent** at S
-`coilqueen_naga`  ·  Earth Caster  ·  art owed (uses `cobalt_burrower`)
+`coilqueen_naga`  ·  Earth Caster  ·  art ✓
 
 > A serpent priestess guarding a drowned temple.
 
@@ -673,7 +673,7 @@ Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the
 - **Drops:** B-rank Death Crystal, Glint scale, Refined GKOM Essence.
 
 ### Worldcoil Serpent  ·  S–SSR (apex form)
-`worldcoil_serpent`  ·  Earth Caster, large  ·  art owed (uses `cobalt_burrower`)
+`worldcoil_serpent`  ·  Earth Caster, large  ·  art ✓
 
 > Its crystal coils are mistaken for mountain ridges.
 
@@ -689,7 +689,7 @@ Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the
 Winged singers of the drowned groves. Their opal throats carry a song that pulls travellers into the water.
 
 ### Opal Harpy  ·  E–D → evolves into **Blood Opal Siren** at C
-`opal_harpy`  ·  Water Skirmisher  ·  art owed (uses `blood_opal_siren`)
+`opal_harpy`  ·  Water Skirmisher  ·  art ✓
 
 > Screeching, opal-feathered and always hungry.
 
@@ -707,7 +707,7 @@ Winged singers of the drowned groves. Their opal throats carry a song that pulls
 - **Drops:** C-rank Death Crystal, Opal plume, GKOM Dust.
 
 ### Siren Matron  ·  A (apex form)
-`siren_matron`  ·  Water Caster  ·  art owed (uses `blood_opal_siren`)
+`siren_matron`  ·  Water Caster  ·  art ✓
 
 > The choir mistress of the sunken marsh.
 
@@ -723,7 +723,7 @@ Winged singers of the drowned groves. Their opal throats carry a song that pulls
 Many-headed swamp serpents. Each new head grows around a fresh crystal; the oldest hydra wears a cathedral of them.
 
 ### Fen Hydra  ·  C → evolves into **Marsh Hydra** at B
-`fen_hydra`  ·  Earth Bruiser, large  ·  art owed (uses `verdant_cathedral_hydra`)
+`fen_hydra`  ·  Earth Bruiser, large  ·  art ✓
 
 > Three heads, all of them angry.
 
@@ -732,7 +732,7 @@ Many-headed swamp serpents. Each new head grows around a fresh crystal; the olde
 - **Drops:** C-rank Death Crystal, Hydra crystal, GKOM Dust.
 
 ### Marsh Hydra  ·  B–A → evolves into **Verdant Cathedral Hydra** at S
-`marsh_hydra`  ·  Earth Bruiser, large  ·  art owed (uses `verdant_cathedral_hydra`)
+`marsh_hydra`  ·  Earth Bruiser, large  ·  art ✓
 
 > Cut one head and two crystal heads grow back.
 
@@ -757,7 +757,7 @@ Many-headed swamp serpents. Each new head grows around a fresh crystal; the olde
 Suits of armour filled with crystal instead of men. They still salute, still hold the gate, still challenge travellers.
 
 ### Geode Squire  ·  D → evolves into **Geode Knight** at C
-`geode_squire`  ·  Light Guardian  ·  art owed (uses `crowned_geode_knight`)
+`geode_squire`  ·  Light Guardian  ·  art ✓
 
 > An empty helmet glowing from within.
 
@@ -766,7 +766,7 @@ Suits of armour filled with crystal instead of men. They still salute, still hol
 - **Drops:** D-rank Death Crystal, Geode plate, GKOM Dust.
 
 ### Geode Knight  ·  C–B → evolves into **Crowned Geode Knight** at A
-`geode_knight`  ·  Light Guardian  ·  art owed (uses `crowned_geode_knight`)
+`geode_knight`  ·  Light Guardian  ·  art ✓
 
 > A full suit of plate grown together with quartz.
 
@@ -1195,57 +1195,8 @@ People who survived GKOM and chose to serve it. They command lower-rank variants
 
 ## Art status
 
-17 of 98 forms have their own art in `Resources/AdamsHaven/FieldModels`. The rest borrow the nearest family form's art until theirs is made:
+66 of 98 forms have their own art in `Resources/AdamsHaven/FieldModels`. The rest borrow the nearest family form's art until theirs is made:
 
-- Ashvein Hobgoblin (`ashvein_hobgoblin`) → uses `ashvein_goblin_scavenger`
-- Ashvein Bugbrute (`ashvein_bugbrute`) → uses `ashvein_goblin_scavenger`
-- Ashvein Warlord (`ashvein_warlord`) → uses `ashvein_goblin_scavenger`
-- Shardling Thicket (`shardling_thicket`) → uses `shardling_sprout`
-- Geode Treant (`geode_treant`) → uses `shardling_sprout`
-- Flintjaw Ripper (`flintjaw_ripper`) → uses `flintjaw_skitterer`
-- Flintjaw Hive-Queen (`flintjaw_hive_queen`) → uses `flintjaw_skitterer`
-- Amberhide Bull (`amberhide_bull`) → uses `amberhide_grazer`
-- Amberhide Matriarch (`amberhide_matriarch`) → uses `amberhide_grazer`
-- Thornshade Prowler (`thornshade_prowler`) → uses `thorncrystal_stalker`
-- Mirage Panther (`mirage_panther`) → uses `thorncrystal_stalker`
-- Quartzback Pup (`quartzback_pup`) → uses `quartzback_hound`
-- Quartzback Direwolf (`quartzback_direwolf`) → uses `quartzback_hound`
-- Moonfang Alpha (`moonfang_alpha`) → uses `quartzback_hound`
-- Glasswing Stinger (`glasswing_stinger`) → uses `glasswing_mite`
-- Glasswing Hive Mother (`glasswing_hive_mother`) → uses `glasswing_mite`
-- Obsidian Roc (`obsidian_roc`) → uses `obsidian_talon`
-- Ash Thunderbird (`ash_thunderbird`) → uses `obsidian_talon`
-- Prism Wisp (`prism_wisp`) → uses `viridian_prism_warden`
-- Prism Archon (`prism_archon`) → uses `viridian_prism_warden`
-- Cobalt Grub (`cobalt_grub`) → uses `cobalt_burrower`
-- Cobalt Wyrmworm (`cobalt_wyrmworm`) → uses `cobalt_burrower`
-- Moonstone Cub (`moonstone_cub`) → uses `moonstone_ravager`
-- Moonstone Ursine (`moonstone_ursine`) → uses `moonstone_ravager`
-- Stormglass Drake (`stormglass_drake`) → uses `stormglass_wyvern`
-- Tempest Dragon (`tempest_dragon`) → uses `stormglass_wyvern`
-- Shard Golem (`shard_golem`) → uses `eclipse_core_golem`
-- Heartrot Colossus (`heartrot_colossus`) → uses `eclipse_core_golem`
-- Gloam Ooze (`gloam_ooze`) → uses `shardling_sprout`
-- Crystal Jelly (`crystal_jelly`) → uses `shardling_sprout`
-- Geode Cube (`geode_cube`) → uses `shardling_sprout`
-- Abyssal Gel (`abyssal_gel`) → uses `shardling_sprout`
-- Hollow Husk (`hollow_husk`) → uses `enemy_summoner`
-- Crystal Ghoul (`crystal_ghoul`) → uses `enemy_summoner`
-- Wight Knight (`wight_knight`) → uses `enemy_summoner`
-- Orb Lich (`orb_lich`) → uses `enemy_summoner`
-- Veinweb Spider (`veinweb_spider`) → uses `flintjaw_skitterer`
-- Crystalweb Broodmother (`crystalweb_broodmother`) → uses `flintjaw_skitterer`
-- Silkqueen Arachne (`silkqueen_arachne`) → uses `flintjaw_skitterer`
-- Glint Adder (`glint_adder`) → uses `cobalt_burrower`
-- Gazestone Basilisk (`gazestone_basilisk`) → uses `cobalt_burrower`
-- Coilqueen Naga (`coilqueen_naga`) → uses `cobalt_burrower`
-- Worldcoil Serpent (`worldcoil_serpent`) → uses `cobalt_burrower`
-- Opal Harpy (`opal_harpy`) → uses `blood_opal_siren`
-- Siren Matron (`siren_matron`) → uses `blood_opal_siren`
-- Fen Hydra (`fen_hydra`) → uses `verdant_cathedral_hydra`
-- Marsh Hydra (`marsh_hydra`) → uses `verdant_cathedral_hydra`
-- Geode Squire (`geode_squire`) → uses `crowned_geode_knight`
-- Geode Knight (`geode_knight`) → uses `crowned_geode_knight`
 - Maw Cub (`maw_cub`) → uses `obsidian_maw_behemoth`
 - Maw Behemoth (`maw_behemoth`) → uses `obsidian_maw_behemoth`
 - Cragling Ogre (`cragling_ogre`) → uses `moonstone_ravager`
