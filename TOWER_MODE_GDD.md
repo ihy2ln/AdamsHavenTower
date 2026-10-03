@@ -190,7 +190,7 @@ Seven stats: **Might, Sight, Grit, Charm, Wit, Grace, Luck.** Room output scales
 
 ### 6.3 Needs, mood and the colony layer (core, revised 2026-10-03)
 RimWorld's colony depth is part of the core game, not DLC. All of it runs in the simulation today (`TowerLife.cs`, `TowerColony.cs`, `TowerColonyDepth.cs`).
-- **Needs:** Food, Water, Rest, plus injury and illness. Residents eat and drink from tower stock on their own.
+- **Needs:** Food, Water, Rest and **Joy**, plus injury and illness. Residents **walk to venues** to eat, drink and unwind (Kitchen, Frosted Mug, Well, Market, Guild Hall, Deck Hall; section 19.1). Without an open venue, and in offline catch-up, they eat and drink from tower stock on their own as before.
 - **Mood** = 50 + named **thoughts** (hunger, home quality, amenities, friends and rivals nearby, grief, danger, district life, inspiration...). The MOOD tab lists the strongest. **Satisfaction** shows the average on five faces (angry, frown, blank, smiley, ecstatic at 0-19, 20-39, 40-59, 60-79, 80-100) and scales output from x0.65 to x1.15.
 - **Traits (10)** shape work speed, rush odds, incident response, appetite, sociability and how a resident breaks. **Newcomers** (Gate recruits and children who grow up) carry **two traits** and a **backstory** (10, for example Hedge knight, Herbalist, Fallen noble): small stat bonuses and at most one job they will not do (never production). Founders, summons and checkpoint residents keep their single trait.
 - **Mood breaks:** under 18 mood for 25 seconds starts a 40-second break by temperament: sulk, food binge, tantrum (damages the workplace) or wander.
@@ -319,6 +319,14 @@ The Heart is tapped to open a **full-screen hub** with four tabs.
 - **Pity:** soft pity ramps SSR odds from about pull 50; **hard pity guarantees SSR at 60**.
 - **Featured and Pick-Your-Hero:** 50% of SSR/SS pulls are the featured or chosen hero; after a miss, the next SSR/SS is guaranteed to be it.
 - **Resident banner:** SSR about 1%, guaranteed A or better every 20 pulls.
+
+**Banners as built (TT 10.3.1, `TowerBanners.cs`; owner rulings 2026-10-03):**
+- **Standard** keeps today's pool: **60% heroes, 40% residents** (not heroes only). It is the original `Summon(count)`, free first summon included.
+- **SSR pity is shared** by Standard, Featured and Pick (`summonPity`, soft pity from 50, hard at 60). The Resident banner keeps its own counter (`residentPity`).
+- **Featured** rotates **weekly** (Monday, local calendar), automatically: this week's SSR and SS hero step through their four-hero pools at different strides, so every hero takes a turn. The banner shows the pair and the end date. One "missed" flag covers both ranks.
+- **Pick-Your-Hero:** any SS or SSR hero, changeable at any time; a pending guarantee **carries over** to the new target. Only pulls at the target's own rank roll for it (an SSR pull while aiming at an SS hero is a normal SSR).
+- **Resident:** 5 / 50 Sigils; F to SS keep the Standard weights scaled to 99%, SSR is a flat 1% (no ramp); the 20th pull since the last A+ is A or better (A, S, SS, SSR by weight). The 10-pull B+ floor applies on every banner.
+- **HUD:** banner tabs inside the SUMMON tab, a per-banner info line (featured pair, Pick target chooser with element and role, guarantee chip), the rates screen per banner, costs on the x1 / x10 buttons, and the pity bar for that banner.
 - **Income (built, `TowerSigils.cs`):** about **30 free Sigils per real day**, so an active player reaches hard pity (600 Sigils) about every 20 days and sees about 4 SSR by day 80 (plus lucky natural SSRs).
   - Goals: 2 to 4 Sigils each (about 8 a day).
   - Daily board: dealt each local calendar day; "Visit the Tower" plus 3 tasks picked by date (harvests, rush, build, level up, expedition once a Guild exists), 3 Sigils each, +4 for clearing the board (16 a day). Unclaimed tasks expire at midnight; a fallen Heart keeps the same day's board.
@@ -806,7 +814,7 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 3. Validate the Heart rank table (8.4) and research costs (8.2) against income in a spreadsheet simulation; decide the second research queue slot.
 4. Per-node effect values in 8.2.1 are draft.
 5. Review the drafted 36 heroes and 24 residents in `CharacterPrompts/` (names, designs, abilities), then generate the art.
-6. Gacha: banner schedule cadence, Echoes rate, ascension Celestium cost, whether pity is shared across banners, final Sigil income. **Banners are the next build (owner, 2026-10-03); the questions to settle first are listed in `TOWER_DESIGN_HANDOFF.md` section 3.**
+6. Gacha: Echoes rate, ascension Celestium cost, final Sigil income. **Banners built in TT 10.3.1** (8.1): weekly automatic Featured rotation, shared hero pity, Standard keeps its 60/40 mix, Pick guarantee carries over.
 7. Rank-function tables per building; SSR buffs per building (only Barn named).
 8. Expeditions (section 10): final danger and reward tables, creature element per region, boss list, Echoes drop rates, region passives, rations cost curve, and trimming the existing 20x20 crawl to 10-15 minutes.
 9. Carry-over details after a hard fail (Gold, Celestium, building ranks).
@@ -816,6 +824,8 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 13. Audio direction (music, SFX) and font selection.
 14. **TT 10.30.0 balance (all draft):** district specialisation strengths (15% / 20% / 20%), policy upkeep, coverage radius (1 + rank / 3 floors), appeal thresholds (50 / 75); outpost base yields, caravan interval (360 s), ambush and raid curves, founding cost (250 x region reward); auto-expedition danger and hours; siege defence and wave formulas; leaving (1,080 s) and inspiration (720 s) timers. Measure in a playthrough.
 15. **TT 10.30.0 follow-ups: all closed.** District appeal does **not** lower Threat (owner, 2026-10-03). (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move. Built in TT 10.30.2: region elements and counters, the dweller cap by Heart rank, a third active incident from rank C.)
+16. **Town (section 19), owner to decide before slices 2-4:** where the street sits (a ground strip beyond both Gates, or a layer in front) and whether it widens the camera; can raiders damage stalls; a closed gold loop or keep the Market minting; wages and rent per resident or per room; who sets prices (player or district policy); do visitors and traders replace or extend the caravan event; can a good visit turn a visitor into a recruit; visible queues at full venues; the cold-rations penalty (-3 today).
+17. **Town slice 1 balance (draft):** errands start below 50 and fill to 99; meal 10, drink 15, joy 5 points a second at a venue; joy drains 0.07 a second; free hours 19-22 (day) and 07-10 (night). Checkpoint 10 measured 58.4% to 52.7% of resident time on production (TOWER_BALANCE_REPORT section 7). Measure the Heart pacing again with it on.
 
 ---
 
@@ -887,3 +897,30 @@ Conquering a region on a played expedition (clearing its lair) opens an **outpos
 - **Upkeep-free by design:** outposts cost founding and upgrades, and the people they take out of the tower.
 - **On the Atlas (built TT 10.30.1):** a region with an outpost shows a camp marker and "(OUTPOST)" on its label, and the region panel reads "CONQUERED  •  OUTPOST: Brookside Farm F, 2 staff" (or "outpost site open" when unfounded).
 - **Later:** region passives from first conquest (10.4), and outposts reacting to Gate sieges.
+
+---
+
+## 19. Town (living town sim, slice 1 built 2026-10-03)
+
+The tower is a town, so its people should live in it, not only work in it. The owner wants four pillars: **residents live in the town**, a **street outside the Gates**, a **town economy**, and **visitors and traders**. Slice 1 is built (TT 10.3.1, `TowerTown.cs`); slices 2 to 4 are design only and wait on the questions in section 16 item 16.
+
+### 19.1 Residents live in the town (built)
+- **Venues** are rooms that serve the town. Kitchen: meals. Frosted Mug: meals, drinks and leisure. Stone Well: drinks. Argent Market, Guild Hall, Deck Hall: leisure. Seats = the room's capacity (2 per bay + rank - 1). A venue serves while it is lit, at 20%+ condition, free of incidents and, for meals and drinks, while the stores hold food or water. **Self-serve** for now (owner): staffing arrives with wages (19.3).
+- **Errands:** below 50 hunger or thirst an adult weighs a trip against their job: need, travel time and crowding. They walk there (the cutaway's shaft slide), are served (meal 10, drink 15 points a second, from the stores at the same food and water per point as before), and walk back. A full venue sends them to the next one; with all full they keep working, and below 35 they eat **cold rations** from the stores (-3 thought). Sleep, incidents and emergencies still come first; an errand is seen through once started.
+- **Joy** is the fourth need. It drains 0.07 a second and refills at leisure venues (5 a second x venue quality). **Free hours** (soft): day schedule 19:00-22:00, night schedule 07:00-10:00, when a resident goes out unless something urgent calls. **Flexible** residents (founders, summons, checkpoint villagers) go when joy runs low. Joy shows in the resident detail, not as a bar (owner).
+- **Thoughts:** "Ate at the Kitchen" +2, "Had a good meal at the Frosted Mug" +5, "A round at the Frosted Mug" +5, "Browsed the Argent Market" / "Swapped tales at the Guild" / "Card night at the Deck Hall" +4 (each for 240 s), "Well entertained" +3 at joy 75+, "No free time" -5 under 20 (only with a leisure venue built and the Heart at E or above). The global "Tower amenities" bonus stays on top (owner).
+- **Safety nets:** a tower with no open venue of a kind eats and drinks from stock exactly as before (no first-hour penalty; joy floors at 50 with no leisure venue). **Offline catch-up keeps the instant meals**, so nobody is stranded mid-trip. `TowerRules.TownErrands = false` turns the whole slice off for balance runs.
+- **On screen:** the roster and task line read "Eating at the Kitchen", "Heading to the Stone Well for a drink", "Free time at the Argent Market"; green F / W and gold J glyphs over residents at a venue; the room card shows "Patrons 2/3 • meals". Seated and drinking poses (`AH_sit`, `AH_task_tavern`, `AH_chat`) are a small follow-up in `AdamsHavenPrototype.cs`.
+
+### 19.2 The street outside the Gates (design)
+- Ground-level lots beyond both Gates: market stalls, an inn, a bathhouse, a fountain plaza, homes for those who would rather not live in the tower. They are rooms of new **street types** on floor 0, so the venue table, travel and the cutaway already handle them.
+- Street venues feed 19.1 (more seats, better quality) and floor-0 appeal (section 17). Raids cross the street before reaching a Gate.
+
+### 19.3 Town economy (design)
+- Resident purses: **wages** by job, **rent** by home, **prices** at venues (`VenuePrice`, 0 today), and a **tax** set per district policy. Every serving already flows through one place (`TickErrand`), so prices and wages plug in there.
+- Gold becomes partly circulating instead of only minted by the Market. Venues may need staff to serve once wages exist.
+
+### 19.4 Visitors and traders (design)
+- Visible non-resident walkers come in at the Gate, use venues (taking seats), pay prices and leave; appeal and the Open Gate draw more.
+- Travelling traders set up for a day with stock to buy (tools, weapons, blueprints, Tonics). Outpost caravans become visible arrivals at the Gate.
+- Ties to today's Gate wanderers (`pendingVisitors`), the caravan event and outpost caravans (section 18).

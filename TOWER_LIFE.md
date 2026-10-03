@@ -173,3 +173,26 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
   Founding Fighters take element and role from `BattleCatalog` (Ranger = Controller), so Kaela (Tank) + Helda (Support)
   now earn the pairing bonus. The Auto panel names the foes' element and marks heroes who counter them.
 - Tests: `TowerManagementTests` 51 (+4).
+
+## Oct 3 (4): TT 10.3.1 - summon banners, town life slice 1
+
+- Summon banners (GDD 8.1, `TowerBanners.cs`): Standard (the original `Summon(count)`, 60/40, free first summon),
+  Featured (weekly SSR + SS pair from `TowerRoster.OfRank`, `WeekIndex` off `TowerRules.Today`), Pick-Your-Hero (2x
+  cost, any SS/SSR target via `SetPickTarget` / `CyclePickTarget`) and Resident (5 / 50, SSR 1%, A+ every 20).
+  `Summon(count, bannerId)`; `SummonHero` now hands delivery to `GrantHero` with the Standard random order untouched.
+  Owner rulings: Standard keeps its mix, SSR pity shared by the hero banners, weekly automatic rotation, Pick guarantee
+  carries over. State: `summonBanner`, `featuredMissed`, `pickTarget`, `pickMissed`, `residentPity` (carried by a
+  Legacy restart; guarded in `NormalizeBanners`). HUD: banner tabs, info line, Pick chooser, per-banner rates, costs
+  and pity bar (`TowerHudHeart.cs`).
+- Town life slice 1 (GDD 19.1, `TowerTown.cs`): venues (`VenueDefs`, cached in `EnsureVenues` off `LayoutStamp`),
+  errand tasks `meal` / `drink` / `leisure` scored in `ConsiderErrand` at the end of `PlanJob`, served in
+  `TickErrand` from `TickWork`, joy need (`TickJoy`), soft free hours (`FreeTime`), venue thoughts
+  (`AddTownThoughts`), cold rations below 35 in `NeedsPass`. Live ticks only (`townTick`); offline keeps instant
+  meals. `SetTask` now uses `TravelSeconds`. `ColonyVersion` 2 (joy 70 for old saves; v1 steps gated). HUD: Joy in
+  the resident detail, free hours on the MOOD tab, patrons on venue room cards, F / W / J glyphs (`TowerFx`).
+  `AdamsHavenPrototype.cs` untouched (the other session's file): errand residents walk and wander at the venue.
+- Tuning found on the way: a 65 errand gate caught `GameSpeedKeepsStatsProportionalAtAnyFrameRate` (an idle Kitchen
+  worker crossed it inside the 120 s window), and replanning mid-trip churned trips; errands now start below 50, fill
+  to 99 and are committed once started; serving is 10 / 15 a second so `IncomeForecastMatchesWhatTheKitchenReallyMakes`
+  keeps its margin.
+- Tests: `TowerManagementTests` 66 (+15: 7 banners, 8 town); all four suites green (253).

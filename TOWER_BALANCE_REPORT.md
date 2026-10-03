@@ -78,3 +78,5 @@ The test `FirstRunsClimbSlowlyAndLegacyRunsFaster` runs this model against the r
 **Sieges.** Wave = 8 + 6 x Heart rank + 0.3 x day: about 15 at F on day 3, 36 at C on day 14, 86 at SSR on day 80. Defence: two Might-10, weapon-3 defenders already give 18.
 
 **Performance.** Checkpoint 10 (60 residents, 374 rooms): Advance about 0.95 to 1.0 ms/frame with or without districts; TickDistricts, TickOutposts and TickSiege about 0.001 ms each, DistrictBonus over all rooms 0.004 ms. The earlier 0.55 ms figure was measured on a smaller day-90 tower; the bulk of today's cost is PlanJobs (0.43 ms) and TickRooms (0.29 ms).
+
+**Town life slice 1 (TT 10.3.1).** Checkpoint 10 over two game days with no events: residents on production 58.4% of the time with errands off, 52.7% with them on (5.2% walking to venues, 1.4% eating, 1.1% drinking, 1.0% at leisure); average mood 100 either way, lowest hunger 39, no cold rations. Advance stays about 0.9 to 1.0 ms/frame. Venues near work floors are the lever.
