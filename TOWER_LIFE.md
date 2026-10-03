@@ -162,3 +162,14 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
   the region panel names the outpost, rank and staff. Committed as my hunks only (the Expedition session's edits to
   those files stay uncommitted for it).
 - Tests: `TowerManagementTests` 47 (+8).
+
+## Oct 3 (3): TT 10.30.2 - dweller cap, incidents from rank C, region elements
+
+- Dweller cap by Heart rank (GDD 8.4: 8, 14, 22, 32, 44, 58, 74, 92, 110): `PopulationCap()` is now the smaller of the
+  beds (`HousingCap()`) and `DwellerCap(rank)`, so Gate arrivals, births and summons leaving the Heart stop at it.
+  `RecruitVisitor` refuses past it and the advisor says to raise the Heart. Towers above it keep everyone.
+- `MaxActiveIncidents()`: the storyteller's limit plus one from Heart rank C (GDD 9.3).
+- Region elements (lair families) and auto-expedition counters: +10% per hero whose element beats the region's.
+  Founding Fighters take element and role from `BattleCatalog` (Ranger = Controller), so Kaela (Tank) + Helda (Support)
+  now earn the pairing bonus. The Auto panel names the foes' element and marks heroes who counter them.
+- Tests: `TowerManagementTests` 51 (+4).

@@ -6,11 +6,13 @@ Written 2026-10-01, updated 2026-10-03 (TT 10.30.0). Read this first, then `TOWE
 
 The owner set the foundation: **Fallout Shelter x RimWorld**, with **Cities: Skylines-style management** on top. RimWorld depth is core (GDD 6.3): second traits, backstories, leaving, inspirations, storytellers, a work grid. New management layers: **districts** on floor bands (GDD 17) and **outposts** in conquered regions (GDD 18). Gap fixes: Heart-rank floor caps (stretched to +-24), MOVE / DEMOLISH, auto expeditions (GDD 10.3), Gate sieges (GDD 9.6, auto-defend). Build log: `TOWER_LIFE.md` "Oct 3". Tests: `TowerManagementTests` (47) + `TowerSimulationTests` (119) + `Expedition*` (40), all green on 2026-10-03.
 
+**TT 10.30.2:** the Heart's dweller cap (GDD 8.4; `PopulationCap` = min(beds, `DwellerCap`), newcomers only), one more active incident from rank C (`MaxActiveIncidents`), region elements and auto-expedition counters (`RegionElement`, `HeroElement` / `HeroRole` with a battle-definition fallback for the six founders). `TowerManagementTests` 51.
+
 **TT 10.30.1 (same day):** the four follow-ups. Sieges can be fought in Battle Mode (`TowerSiegeBattle.cs`, banner `TowerHudSiege.cs`, `AdamsHavenPrototype.LaunchSiegeBattle`); storyteller pick on the dormant founding panel; long-press a room to move it (`TickRoomHold` in `HandleCameraInput`, ring via `TowerFx.ShowHold`); outpost marker and panel line on the Atlas (my hunks in the Expedition session's `TowerMapSources.cs` / `TowerExpeditionUi.cs`).
 
 ## 1. Where things stand
 
-Tower Mode is a Fallout Shelter x RimWorld tower town in Unity (`S:\AI\Game\Unity AHCG\My project`). The player is the Summoner/Steward of the Celestium Heart. Tower tests: **166 pass** (`TowerSimulationTests` 119 + `TowerManagementTests` 47, EditMode).
+Tower Mode is a Fallout Shelter x RimWorld tower town in Unity (`S:\AI\Game\Unity AHCG\My project`). The player is the Summoner/Steward of the Celestium Heart. Tower tests: **170 pass** (`TowerSimulationTests` 119 + `TowerManagementTests` 51, EditMode).
 
 | Area | State |
 | --- | --- |

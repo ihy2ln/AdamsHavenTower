@@ -383,7 +383,7 @@ Heart rank sets: maximum floors above and below ground, maximum building rank, r
 | SS | 60 | 19 / 19 | SSR | 4 | 92 | 5 | 6 | SSR building upgrades allowed (needs CON-7) |
 | SSR | 80 | 24 / 24 | SSR | 5 | 110 | 6 | 8 | Endgame |
 
-**Floors (built 2026-10-03, owner ruling):** the floor limits are stretched to the game world's +24 / -24 so the late tower has room for districts. `OpenFloor` refuses a floor past the Heart's reach and the Floors popup names the rank that opens it; floors already open (older saves, checkpoints) are never taken away. Building ranks, research tiers, districts and outposts already follow this table in code; the dweller cap does not yet.
+**Floors (built 2026-10-03, owner ruling):** the floor limits are stretched to the game world's +24 / -24 so the late tower has room for districts. `OpenFloor` refuses a floor past the Heart's reach and the Floors popup names the rank that opens it; floors already open (older saves, checkpoints) are never taken away. Building ranks, research tiers, districts, outposts and (TT 10.30.2) the dweller cap follow this table in code. The dweller cap limits newcomers only (Gate arrivals, births, summons stepping out of the Heart): a tower already above it keeps everyone and simply stops growing, and the advisor says to raise the Heart when the cap, not the beds, is what turns a wanderer away.
 
 ### 8.5 Status
 Heart HP, ward status, recent incidents. Heart damage sources are only breaches and unattended fires on its floor (section 9.4, 9.6).
@@ -432,7 +432,7 @@ Severity = 1 + min(2, residents / 20); incident HP scales with it.
 | The Silverbrook Chronicler (balanced, default) | x1 | 35 | yes | x1 | 2 |
 | The Briar's Whim (chaotic) | x0.75 | 25 | yes | x1 | 3 |
 
-  Balanced is exactly the pace the Tower always had. The GDD's "3 active incidents from Heart rank C" is not built; it is a balance item (16).
+  Balanced is exactly the pace the Tower always had, except that from Heart rank C one more incident may be active at once (2, then 3; chaotic 3, then 4), as listed above (built TT 10.30.2).
 - **Rush failure** remains a minor fire or pests incident, so rush is a decision.
 
 ### 9.4 Raids and the Gate
@@ -485,7 +485,7 @@ Thirteen regions in a branching unlock chain (region list from `TowerExpedition.
 | 8 | Silverwood Gate | Watchpost | EXP-8 | 800 | 8 h |
 | 9-13 | Silverwood depths 1 to 5 | the previous depth (the Gate for depth 1) | none | **[TBD]** | **[TBD]** |
 
-A region unlocks when the previous region's lair boss is conquered **and** its research node is done. Each region has a creature element (**[TBD]**) that element counters apply against.
+A region unlocks when the previous region's lair boss is conquered **and** its research node is done. Each region's creatures share its lair family's element (built TT 10.30.2): Brook Edge Earth, Rootside Wind, Ford Water, Moon Shrine Light, Old Bridge Fire, Marsh Water, Watchpost Earth, Wood Gate Lightning, depths 1-5 Water, Water, Earth, Dark, Dark.
 
 ### 10.3 Auto expeditions
 - **Hero power** = (sum of the 7 stats) x (1 + 0.08 x stars) x (0.5 + 0.5 x level / level cap). **Party power** = sum of the 3 heroes.
@@ -509,7 +509,7 @@ A region unlocks when the previous region's lair boss is conquered **and** its r
 | Danger | 45 | 55 | 65 | 80 | 95 | 115 | 135 | 160 | 180, 205, 230, 260, 290 |
 | Hours | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8 | 9, 10, 11, 12, 12 |
 
-  Rewards x region reward x tier: 80 gold, 12 firewood, 6 wood, 4 stone, a chance of a Tonic, 30 XP per hero; Celestium (1 + region reward) from region 4. 2 Sigils per return that is not a Fail, at most 6 a day. Heroes away on an auto run cannot staff rooms, join a played run or be stationed. Element counters (+10%) wait for region elements (16).
+  Rewards x region reward x tier: 80 gold, 12 firewood, 6 wood, 4 stone, a chance of a Tonic, 30 XP per hero; Celestium (1 + region reward) from region 4. 2 Sigils per return that is not a Fail, at most 6 a day. Heroes away on an auto run cannot staff rooms, join a played run or be stationed. Element counters are built (TT 10.30.2): +10% per hero whose element beats the region's (Fire > Wind > Earth > Lightning > Water > Fire; Light and Dark beat each other). The six founding heroes take their element and role from their battle definitions (Ranger counts as Controller).
 
 ### 10.4 Personal roguelite run
 Reuses the existing flow: **Atlas (region map), plan provisions, a forest map generated fresh for every run (walking costs rations by distance and ground; walked ground becomes road), POI dungeons (20x20, fog of war, room events, stairs, goal room), lair boss conquers the region.** Full rules: BATTLE_MODE_GDD.md sections 3 to 9.
@@ -815,7 +815,7 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 12. Tutorial reward amounts, step timing and the post-tutorial goal chain.
 13. Audio direction (music, SFX) and font selection.
 14. **TT 10.30.0 balance (all draft):** district specialisation strengths (15% / 20% / 20%), policy upkeep, coverage radius (1 + rank / 3 floors), appeal thresholds (50 / 75); outpost base yields, caravan interval (360 s), ambush and raid curves, founding cost (250 x region reward); auto-expedition danger and hours; siege defence and wave formulas; leaving (1,080 s) and inspiration (720 s) timers. Measure in a playthrough.
-15. **TT 10.30.0 follow-ups still open:** region elements (auto-expedition element counters, 10.2); the dweller cap by Heart rank (8.4); the GDD's 3 active incidents from Heart rank C; whether a district's appeal should also lower Threat. (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move.)
+15. **TT 10.30.0 follow-ups still open:** whether a district's appeal should also lower Threat. (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move. Built in TT 10.30.2: region elements and counters, the dweller cap by Heart rank, a third active incident from rank C.)
 
 ---
 
