@@ -573,7 +573,7 @@ namespace AdamsHaven.Tower
 
         private void TickEvents(float dt)
         {
-            if (State.incidents.Count >= Storyteller.maxIncidents) return;
+            if (State.incidents.Count >= MaxActiveIncidents()) return;
             State.eventCooldown -= dt;
             if (State.eventCooldown > 0) return;
             bool guidedIncident = State.tutorialStep == 5;

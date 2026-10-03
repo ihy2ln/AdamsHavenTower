@@ -169,6 +169,9 @@ namespace AdamsHaven.Tower
         public string RecruitVisitor()
         {
             if (State.pendingVisitors <= 0) return "No visitor is waiting at the Gate.";
+            if (BiologicalPopulation() >= DwellerCap(State.heartRank))
+                return "The Heart shelters " + DwellerCap(State.heartRank) + " people at rank " + TowerTiers.Tier(State.heartRank) +
+                    ". Raise it to take in more.";
             var home = AvailableHome();
             if (home == null) return "A visitor needs an open bed.";
             int id = State.nextResidentId;

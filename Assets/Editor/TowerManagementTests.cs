@@ -927,6 +927,77 @@ public sealed class TowerManagementTests
         Assert.AreNotEqual(before, new TowerAtlasSource(rules).Key, "the Atlas rebuilds to show the outpost");
     }
 
+    // ---- TT 10.30.2: the Heart's dweller cap, incidents from rank C, region elements -------------------------
+
+    [Test]
+    public void HeartRankCapsHowManyPeopleTheTowerHolds()
+    {
+        var rules = Lot();
+        for (int i = 0; i < 6; i++) rules.AddRoom("terrace_row", 1, 10 + i * 2, 9);   // far more beds than people
+        Assert.Greater(rules.HousingCap(), 20);
+        Assert.AreEqual(8, rules.PopulationCap(), "an F Heart shelters 8");
+        Assert.IsTrue(rules.HeartLimitsPopulation());
+        rules.State.heartRank = 2;
+        Assert.AreEqual(14, rules.PopulationCap());
+        rules.State.heartRank = 1;
+        for (int i = 0; i < 7; i++) rules.AddResident("", "Settler " + i, "villager", 1).homeRoom = rules.RoomAt(1, 10).uid;
+        Assert.AreEqual(8, rules.BiologicalPopulation());
+        rules.State.pendingVisitors = 1;
+        StringAssert.Contains("Heart shelters 8", rules.RecruitVisitor());
+        rules.State.tutorialStep = 7;
+        rules.State.food = rules.State.water = rules.State.firewood = 999;
+        StringAssert.Contains("Raise the Heart", rules.NeedsAdvice());
+        Assert.AreEqual(110, TowerRules.DwellerCap(9));
+    }
+
+    [Test]
+    public void CheckpointsAboveTheDwellerCapKeepTheirPeople()
+    {
+        var rules = Quiet(new TowerRules(TowerMilestones.Create(6)));
+        int people = rules.BiologicalPopulation();
+        Assert.Greater(people, TowerRules.DwellerCap(rules.State.heartRank), "this checkpoint predates the cap");
+        for (int i = 0; i < 600; i++) rules.Advance(1, true);
+        Assert.GreaterOrEqual(rules.BiologicalPopulation(), people, "nobody is turned out");
+        Assert.AreEqual(0, rules.State.pendingVisitors, "but nobody new is drawn in");
+    }
+
+    [Test]
+    public void IncidentsCanStackHigherFromHeartRankC()
+    {
+        var rules = Lot();
+        Assert.AreEqual(2, rules.MaxActiveIncidents());
+        rules.State.heartRank = 4;
+        Assert.AreEqual(3, rules.MaxActiveIncidents(), "GDD 9.3: three at once from rank C");
+        Assert.IsNull(rules.SetStoryteller("chaotic"));
+        Assert.AreEqual(4, rules.MaxActiveIncidents());
+    }
+
+    [Test]
+    public void HeroesWhoCounterTheRegionStrengthenAnAutoRun()
+    {
+        Assert.IsTrue(TowerRules.ElementBeats("Fire", "Wind"));
+        Assert.IsTrue(TowerRules.ElementBeats("Water", "Fire"));
+        Assert.IsTrue(TowerRules.ElementBeats("Light", "Dark"));
+        Assert.IsTrue(TowerRules.ElementBeats("Dark", "Light"));
+        Assert.IsFalse(TowerRules.ElementBeats("Wind", "Fire"));
+        Assert.AreEqual("Wind", TowerRules.RegionElement("rootside_camp"));
+        foreach (var region in TowerRules.Regions) Assert.IsNotEmpty(TowerRules.RegionElement(region.id), region.id);
+        var rules = Lot();
+        var ghislaine = rules.AddResident("ghislaine", "Ghislaine", "hero", 10);
+        Assert.AreEqual("Fire", TowerRules.HeroElement(ghislaine), "founding Fighters take their battle element");
+        Assert.AreEqual("Tank", TowerRules.HeroRole(ghislaine));
+        var party = new System.Collections.Generic.List<int> { ghislaine.id };
+        float plain = rules.PartyPower(party);
+        Assert.AreEqual(1, rules.ElementCounters(party, "rootside_camp"));
+        Assert.AreEqual(plain * 1.10f, rules.PartyPower(party, "rootside_camp"), 0.01f, "Fire counters Rootside's Wind");
+        Assert.AreEqual(plain, rules.PartyPower(party, "shallow_ford"), 0.01f, "Fire does not counter Water");
+        var kaela = rules.State.residents[0];
+        var helda = rules.AddResident("helda", "Helda", "hero", 10);
+        var pair = new System.Collections.Generic.List<int> { kaela.id, helda.id };
+        Assert.AreEqual((TowerRules.HeroPower(kaela) + TowerRules.HeroPower(helda)) * 1.10f, rules.PartyPower(pair), 0.01f,
+            "Kaela (Tank) and Helda (Support) earn the pairing bonus");
+    }
+
     [Test]
     public void NoSiegesOfflineOrWhileEventsAreQuiet()
     {

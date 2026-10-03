@@ -132,7 +132,8 @@ public sealed partial class TowerHud
         autoRegionIndex = (autoRegionIndex % regions.Count + regions.Count) % regions.Count;
         var chosen = regions[autoRegionIndex];
         autoRegion.text = chosen.name.ToUpperInvariant() + "   (" + (autoRegionIndex + 1) + " / " + regions.Count + ")";
-        autoInfo.text = "Danger " + Mathf.RoundToInt(TowerRules.AutoDangerOf(chosen.id)) + "   •   " +
+        autoInfo.text = "Danger " + Mathf.RoundToInt(TowerRules.AutoDangerOf(chosen.id)) + "   •   foes: " +
+            TowerRules.RegionElement(chosen.id) + "   •   " +
             TowerRules.AutoHoursOf(chosen.id).ToString("0.#") + " h   •   rewards x" + chosen.reward.ToString("0.0") +
             "\nCosts " + TowerRules.AutoFood + " food and " + TowerRules.AutoWater + " water per hero. Auto runs never conquer a region.";
         var heroes = AutoHeroes();
@@ -151,14 +152,16 @@ public sealed partial class TowerHud
             button.interactable = ready || picked;
             button.GetComponent<Image>().color = picked ? Gold : ready ? Teal : Muted;
             LabelOf(button).text = hero.name + "  " + TowerTiers.Tier(Mathf.Max(1, hero.rank)) + "\n" +
-                (ready ? "power " + Mathf.RoundToInt(TowerRules.HeroPower(hero)) :
+                (ready ? TowerRules.HeroElement(hero) + "  power " + Mathf.RoundToInt(TowerRules.HeroPower(hero)) +
+                    (TowerRules.ElementBeats(TowerRules.HeroElement(hero), TowerRules.RegionElement(chosen.id)) ? "  +10%" : "") :
                     TowerRules.IsPosted(hero) ? "away" : hero.away ? "on the map" : hero.downed ? "down" : "injured");
         }
         string prediction = rules.AutoPrediction(chosen.id, autoParty);
         autoPrediction.text = autoParty.Count == 0 ? "Pick heroes to see the expected result." :
-            "Party power " + Mathf.RoundToInt(rules.PartyPower(autoParty)) + " vs danger " +
+            "Party power " + Mathf.RoundToInt(rules.PartyPower(autoParty, chosen.id)) + " vs danger " +
             Mathf.RoundToInt(TowerRules.AutoDangerOf(chosen.id)) + "   →   " + prediction.ToUpperInvariant() +
-            "   (Tank + Support +10%, Controller +5%)";
+            "\n" + rules.ElementCounters(autoParty, chosen.id) + " of them counter " + TowerRules.RegionElement(chosen.id) +
+            " (+10% each)  •  Tank + Support +10%  •  Controller +5%";
         autoSend.interactable = rules.CanSendAuto(chosen.id, autoParty) == null;
         LabelOf(autoSend).text = "SEND " + autoParty.Count + " TO " + chosen.name.ToUpperInvariant();
     }

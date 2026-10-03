@@ -704,13 +704,24 @@ namespace AdamsHaven.Tower
             return places;
         }
 
-        public int PopulationCap()
+        // GDD 8.4: how many people the Heart can shelter at each rank (F..SSR), whatever the housing.
+        private static readonly int[] DwellerCaps = { 8, 14, 22, 32, 44, 58, 74, 92, 110 };
+        public static int DwellerCap(int heartRank) { return DwellerCaps[Mathf.Clamp(heartRank, 1, TowerTiers.MaxRank) - 1]; }
+
+        // Beds in every home.
+        public int HousingCap()
         {
             int total = 0;
             foreach (var room in State.rooms)
                 if (TowerCatalog.Get(room.type).kind == "living") total += Capacity(room);
             return total;
         }
+
+        // Newcomers (Gate arrivals, births, summons leaving the Heart) need a bed and room under the Heart's cap.
+        // A tower already above the cap (older saves, checkpoints) keeps everyone; it just stops growing.
+        public int PopulationCap() { return Mathf.Min(HousingCap(), DwellerCap(State.heartRank)); }
+
+        public bool HeartLimitsPopulation() { return DwellerCap(State.heartRank) < HousingCap(); }
 
         public int BiologicalPopulation()
         {

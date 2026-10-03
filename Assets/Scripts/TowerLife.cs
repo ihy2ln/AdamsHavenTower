@@ -448,6 +448,9 @@ namespace AdamsHaven.Tower
                 }
                 return label + " " + when + ". Staff the " + ProducerName(worst) + " (drag a resident onto it).";
             }
+            if (State.pendingVisitors > 0 && BiologicalPopulation() >= PopulationCap() && HeartLimitsPopulation())
+                return "A wanderer waits at the Gate, but the Heart shelters only " + DwellerCap(State.heartRank) +
+                    " people at rank " + TowerTiers.Tier(State.heartRank) + ". Raise the Heart.";
             if (State.pendingVisitors > 0 && BiologicalPopulation() >= PopulationCap())
                 return "A wanderer waits at the Gate. " + (State.blueprints.Contains("cottage") ?
                     "Build a Cottage for a free bed." : State.blueprints.Contains("nursery") ?

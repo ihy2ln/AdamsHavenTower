@@ -74,6 +74,9 @@ namespace AdamsHaven.Tower
 
         public TowerStorytellerDef Storyteller { get { return StorytellerDef(State.storyteller); } }
 
+        // GDD 9.3: two incidents at once until Heart rank C, three from C; a chaotic storyteller allows one more.
+        public int MaxActiveIncidents() { return Storyteller.maxIncidents + (State.heartRank >= 4 ? 1 : 0); }
+
         public string SetStoryteller(string id)
         {
             var def = System.Array.Find(Storytellers, s => s.id == id);

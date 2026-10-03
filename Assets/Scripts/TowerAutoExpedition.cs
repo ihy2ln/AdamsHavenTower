@@ -73,6 +73,71 @@ namespace AdamsHaven.Tower
         public static float AutoDangerOf(string region) { int i = RegionIndex(region); return i < 0 ? 0 : AutoDanger[i]; }
         public static float AutoHoursOf(string region) { int i = RegionIndex(region); return i < 0 ? 0 : AutoHours[i]; }
 
+        // ---- Elements (GDD 6.6 / 10.3): the region's lair family, and who counters it ----------------------------
+
+        // The element of each region's creatures, matching its lair family in the bestiary.
+        private static readonly string[] RegionElements = {
+            "Earth", "Wind", "Water", "Light", "Fire", "Water", "Earth", "Lightning", "Water", "Water", "Earth", "Dark", "Dark"
+        };
+        public static string RegionElement(string region) { int i = RegionIndex(region); return i < 0 ? "" : RegionElements[i]; }
+
+        // Fire > Wind > Earth > Lightning > Water > Fire; Light and Dark oppose each other.
+        private static readonly string[] ElementCycle = { "Fire", "Wind", "Earth", "Lightning", "Water" };
+        public static bool ElementBeats(string attack, string defend)
+        {
+            if (string.IsNullOrEmpty(attack) || string.IsNullOrEmpty(defend)) return false;
+            if (attack == "Light" || attack == "Dark") return defend == (attack == "Light" ? "Dark" : "Light");
+            int a = Array.IndexOf(ElementCycle, attack), d = Array.IndexOf(ElementCycle, defend);
+            return a >= 0 && d >= 0 && (a + 1) % ElementCycle.Length == d;
+        }
+
+        // A hero's element and role: the roster first; the six founding Fighters come from their battle definitions.
+        private static readonly Dictionary<string, BattleUnit> fighterUnits = new Dictionary<string, BattleUnit>();
+
+        private static BattleUnit FighterUnit(string unitId)
+        {
+            if (string.IsNullOrEmpty(unitId) || Array.IndexOf(Fighters, unitId) < 0) return null;
+            BattleUnit unit;
+            if (!fighterUnits.TryGetValue(unitId, out unit))
+            {
+                var party = BattleCatalog.Party(new[] { unitId });
+                unit = party.Count > 0 ? party[0] : null;
+                fighterUnits[unitId] = unit;
+            }
+            return unit;
+        }
+
+        public static string HeroElement(TowerResident hero)
+        {
+            var unit = hero == null ? null : TowerRoster.Unit(hero.unitId);
+            if (unit != null && !string.IsNullOrEmpty(unit.element)) return unit.element;
+            var fighter = hero == null ? null : FighterUnit(hero.unitId);
+            return fighter == null || fighter.Element == BattleElement.Neutral ? "" : fighter.Element.ToString();
+        }
+
+        public static string HeroRole(TowerResident hero)
+        {
+            var unit = hero == null ? null : TowerRoster.Unit(hero.unitId);
+            if (unit != null && !string.IsNullOrEmpty(unit.role)) return unit.role;
+            var fighter = hero == null ? null : FighterUnit(hero.unitId);
+            if (fighter == null) return "";
+            switch (fighter.Role)
+            {
+                case BattleRole.Tank: return "Tank";
+                case BattleRole.Support: return "Support";
+                case BattleRole.Ranger: return "Controller";
+                default: return "Striker";
+            }
+        }
+
+        public int ElementCounters(List<int> party, string region)
+        {
+            string foe = RegionElement(region);
+            int count = 0;
+            foreach (int id in party) if (ElementBeats(HeroElement(Resident(id)), foe)) count++;
+            return count;
+        }
+
         public static float HeroPower(TowerResident hero)
         {
             if (hero == null) return 0;
@@ -80,7 +145,11 @@ namespace AdamsHaven.Tower
             return stats * (1f + 0.08f * Mathf.Max(1, hero.rank)) * (0.5f + 0.5f * Mathf.Clamp(hero.level, 1, LevelCap) / (float)LevelCap);
         }
 
-        public float PartyPower(List<int> party)
+        public float PartyPower(List<int> party) { return PartyPower(party, null); }
+
+        // GDD 10.3: +10% for a Tank and a Support together, +5% with a Controller, +10% per hero whose element
+        // counters the region's creatures.
+        public float PartyPower(List<int> party, string region)
         {
             float power = 0;
             bool tank = false, support = false, controller = false;
@@ -88,11 +157,11 @@ namespace AdamsHaven.Tower
             {
                 var hero = Resident(id);
                 power += HeroPower(hero);
-                var unit = hero == null ? null : TowerRoster.Unit(hero.unitId);
-                string role = unit == null ? "" : unit.role;
+                string role = HeroRole(hero);
                 tank |= role == "Tank"; support |= role == "Support"; controller |= role == "Controller";
             }
-            return power * (1f + (tank && support ? 0.10f : 0f) + (controller ? 0.05f : 0f));
+            int counters = string.IsNullOrEmpty(region) ? 0 : ElementCounters(party, region);
+            return power * (1f + (tank && support ? 0.10f : 0f) + (controller ? 0.05f : 0f) + 0.10f * counters);
         }
 
         public static int AutoTier(float ratio) { return ratio < 0.6f ? 0 : ratio < 0.9f ? 1 : ratio < 1.3f ? 2 : 3; }
@@ -100,7 +169,7 @@ namespace AdamsHaven.Tower
         public string AutoPrediction(string region, List<int> party)
         {
             float danger = AutoDangerOf(region);
-            return danger <= 0 || party.Count == 0 ? "" : AutoTiers[AutoTier(PartyPower(party) / danger)];
+            return danger <= 0 || party.Count == 0 ? "" : AutoTiers[AutoTier(PartyPower(party, region) / danger)];
         }
 
         public bool CanJoinAuto(TowerResident hero)
@@ -135,7 +204,7 @@ namespace AdamsHaven.Tower
             State.water -= AutoWater * party.Count;
             long now = NowUnix();
             State.autoRun = new TowerAutoRun { region = region, party = new List<int>(party), startUnix = now,
-                endsUnix = now + Mathf.RoundToInt(AutoHoursOf(region) * 3600f), power = PartyPower(party),
+                endsUnix = now + Mathf.RoundToInt(AutoHoursOf(region) * 3600f), power = PartyPower(party, region),
                 danger = AutoDangerOf(region) };
             State.hasAutoRun = true;
             foreach (int id in party) Post(Resident(id), "auto");

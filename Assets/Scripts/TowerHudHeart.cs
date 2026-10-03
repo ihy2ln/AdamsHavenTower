@@ -151,8 +151,10 @@ public sealed partial class TowerHud
                 Mathf.RoundToInt(TowerRules.LegacyHeartDiscount(state.legacyRank) * 100) + "% less." : "") +
             "\n\nNow: buildings up to rank " + RankTag(rules.RankCap()) + ", Heart HP " +
             Mathf.RoundToInt(TowerRules.HeartMaxHp(state.heartRank)) +
+            ", shelters " + TowerRules.DwellerCap(state.heartRank) + " people" +
             "\nNext: buildings up to rank " + RankTag(TowerTiers.BuildingCap(state.heartRank + 1)) + ", Heart HP " +
-            Mathf.RoundToInt(TowerRules.HeartMaxHp(state.heartRank + 1)) + " (fully restored on upgrade)";
+            Mathf.RoundToInt(TowerRules.HeartMaxHp(state.heartRank + 1)) + " (fully restored on upgrade), shelters " +
+            TowerRules.DwellerCap(state.heartRank + 1) + " people";
         heartUpgradeButton.interactable = !top;
 
         // Status
