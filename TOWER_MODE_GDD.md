@@ -2,7 +2,7 @@
 
 **Status:** canonical design document for Tower Mode (v1 scope plus DLC roadmap).
 **Supersedes:** `TOWER_LIFE.md` (as design authority; it remains a build log), the Godot `GDD.md` Tower Tycoon sections, `Tycoon-Tower.md`, `Tycoon-Tower-Handoff.md`.
-**Decisions dated:** 2026-09-30. Anything marked **[TBD]** is an open balance or content item, listed again in section 16.
+**Decisions dated:** 2026-09-30; revised 2026-10-03 (TT 10.30.0: RimWorld depth is core, districts, outposts, floor caps, auto expeditions, sieges). Anything marked **[TBD]** is an open balance or content item, listed again in section 16.
 
 ---
 
@@ -10,11 +10,11 @@
 
 **Elevator pitch:** You are pulled into the world of Adams Haven and handed a dying crystal, the Celestium Heart, at the edge of Silverwood Forest. Grow a tower town around it: build rooms, staff them with villagers and summoned heroes, defend against the forest, and dig toward the Celestium beneath. Fallout Shelter's loop, dressed in Adams Haven's dark-timber and moonlit-crystal fantasy.
 
-**Pillars**
-1. **Fallout Shelter first.** Rooms produce, dwellers staff by stat, rush, incidents, expeditions, lunchbox-style summons. If a choice is between depth and clarity, pick clarity.
+**Pillars** (revised 2026-10-03, owner: "Fallout Shelter x RimWorld is the main foundation")
+1. **Fallout Shelter x RimWorld.** Fallout Shelter's loop on the surface: rooms produce, dwellers staff by stat, rush, incidents, expeditions, lunchbox-style summons. RimWorld underneath: people with traits and backstories, moods built from named thoughts, breaks, bonds and families, a storyteller, work priorities. If a choice is between depth and clarity, keep the depth and make it readable.
 2. **The Heart is the game.** Research, upgrades and summoning all live at the Heart. It is the tower's centre, its progression gate and its lose condition.
 3. **Every upgrade is visible.** A building grows from one bay to three and gains new furniture at every rank (F to SSR). The player can read progress off the tower.
-4. **Ship v1, expand with DLC.** RimWorld-style depth is deliberately out of v1 (section 14).
+4. **Manage the town, not just the rooms.** Cities: Skylines-style tools sit on top: districts zone floor bands with a specialisation and policies, service coverage and appeal make placement matter, and outposts in conquered regions extend the economy beyond the tower (sections 17 and 18).
 5. **AAA feel on mobile.** Juice on every tap, a premium summon cinematic, a consistent art-directed UI, free rotation.
 
 **Platform and model:** Unity, Android first, offline single-player, premium (no IAP, no ads in v1). Free rotation (portrait and landscape) in both Tower and Battle modes.
@@ -93,7 +93,7 @@
 - **Digging:** digging down costs Gold and time and moves through strata: dirt, soft rock, hard rock, Celestium-bearing rock, bedrock, full Celestium (the old Godot ladder reaches floor -18; final depth **[TBD]**). Deeper strata yield more Celestium through the Stone Quarry.
 - **Cells:** one building occupies one or more contiguous cells on a floor. A building cannot straddle the Heart shaft.
 - **Floor constraints (from catalog):** Farmstead requires a sunlit (above-ground) floor. Stone Quarry requires an underground floor.
-- **Move everything:** any placed building can be moved (long-press). Nothing is permanently stuck.
+- **Move everything:** any placed building can be moved. Nothing is permanently stuck. **Built 2026-10-03:** the room card's MOVE button (then tap the new place) keeps the room's rank, workers, residents, progress and condition, for a fee of 20 + 10 x width x rank gold; the new place follows the build rules (founded, against the shaft or another room, ground-only / underground-only). DEMOLISH (tap twice) refunds 40% of the catalogue price plus a quarter of the upgrade gold, sends everyone inside home and rehouses the homeless. Long-press to move is still to come.
 - **Roof and foundation:** the tower is crowned by a roof sprite and rests on a foundation layer; these are presentation only (no gameplay).
 - **Resolution of earlier docs:** the Godot docs said "no shared roof, nothing merges"; Unity added a roof crown. **Canon: roof crown is presentation only.** Same-type neighbour adjacency is covered in section 5.5.
 
@@ -188,11 +188,17 @@ Housing, Grain Silo and Warehouse take any worker with no stat bonus **[TBD]**.
 ### 6.2 Stats
 Seven stats: **Might, Sight, Grit, Charm, Wit, Grace, Luck.** Room output scales with the assigned dweller's matching stat (and optional training at Forge and Deck Hall).
 
-### 6.3 Needs and mood (v1 light)
-- Needs: **Food, Water, Rest** (plus injury/illness state).
-- **Satisfaction** 0 to 100 with five face states (angry, frown, blank, smiley, ecstatic at 0-19, 20-39, 40-59, 60-79, 80-100).
-- Low satisfaction lowers output and raises the chance of leaving. No mood-break minigame, no traits, no bonds in v1 (DLC, section 14). **Exception (ruling 2026-10-02):** hero traits stay live in expedition event, trap and skill checks; bonds stay deferred.
-- **Schedules / day-night:** day/night is presentation plus lighting. **Canon for v1: no schedule gameplay** (the Unity build's schedule system is parked with Colony Depth; see 16).
+### 6.3 Needs, mood and the colony layer (core, revised 2026-10-03)
+RimWorld's colony depth is part of the core game, not DLC. All of it runs in the simulation today (`TowerLife.cs`, `TowerColony.cs`, `TowerColonyDepth.cs`).
+- **Needs:** Food, Water, Rest, plus injury and illness. Residents eat and drink from tower stock on their own.
+- **Mood** = 50 + named **thoughts** (hunger, home quality, amenities, friends and rivals nearby, grief, danger, district life, inspiration...). The MOOD tab lists the strongest. **Satisfaction** shows the average on five faces (angry, frown, blank, smiley, ecstatic at 0-19, 20-39, 40-59, 60-79, 80-100) and scales output from x0.65 to x1.15.
+- **Traits (10)** shape work speed, rush odds, incident response, appetite, sociability and how a resident breaks. **Newcomers** (Gate recruits and children who grow up) carry **two traits** and a **backstory** (10, for example Hedge knight, Herbalist, Fallen noble): small stat bonuses and at most one job they will not do (never production). Founders, summons and checkpoint residents keep their single trait.
+- **Mood breaks:** under 18 mood for 25 seconds starts a 40-second break by temperament: sulk, food binge, tantrum (damages the workplace) or wander.
+- **Leaving:** a villager who walked in through the Gate (or grew up here) and stays miserable (under 25 mood, or breaking) for 1,080 live seconds walks out of the Gate; a warning comes at half-way. Heroes, Celestium Bodies and summoned named residents never leave; nobody leaves offline.
+- **Inspirations:** 720 live seconds at 85+ mood gives a 240-second inspiration by temperament: work frenzy (x1.5 production), inspired to heal (x1.5 care) or inspired to guard (x1.5 defence).
+- **Bonds and families:** residents who share a room build opinion; friends and rivals change mood, rivals can come to blows, close friends can fall in love and start a family. Hero traits also drive expedition event, trap and skill checks (ruling 2026-10-02).
+- **Work priorities:** six jobs (production, haul, repair, fire, care, defence), each 0 to 3. The **WORK GRID** (PEOPLE hold menu) is RimWorld's Work tab: every adult against every job on one screen.
+- **Schedules / day-night:** day, night or flexible. Gate recruits keep day or night hours (Night Owls work nights); founders, summons and checkpoint villagers stay flexible.
 
 ### 6.4 Levels and health
 Dwellers earn XP and levels; heroes level faster via expeditions. Injured dwellers recover at the Frosted Mug (Tonics speed recovery). Critical wounds left untended cause death for villagers (timer **[TBD]**, current build: 240 live seconds). Heroes are pulled back by the Heart instead of dying.
@@ -365,17 +371,19 @@ Heart rank sets: maximum floors above and below ground, maximum building rank, r
 
 **Pacing target:** a player reaches **SSR Heart in about 60 to 90 days of play** (5 to 10 minute sessions). Each Heart upgrade costs Gold plus Celestium (Celestium from rank C) on the same 2.2x curve as buildings, with timers about 2x per rank. Table values are draft tuning targets:
 
-| Heart rank | Target day | Floors (up / down) | Max building rank | Research tier | Dweller cap | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| F | 0 | 2 / 1 | D | 1 | 8 | Tutorial start |
-| E | 1 | 3 / 3 | D | 1 | 14 | Tutorial ends here; first dig |
-| D | 3 | 4 / 5 | C | 2 | 22 | Quarry becomes useful |
-| C | 7 | 5 / 7 | B | 2 | 32 | Celestium starts costing Heart upgrades |
-| B | 14 | 6 / 9 | A | 3 | 44 | |
-| A | 25 | 7 / 12 | S | 3 | 58 | |
-| S | 40 | 8 / 14 | SS | 4 | 74 | |
-| SS | 60 | 9 / 16 | SSR | 4 | 92 | SSR building upgrades allowed (needs CON-7) |
-| SSR | 80 | 10 / 18 | SSR | 5 | 110 | Endgame |
+| Heart rank | Target day | Floors (up / down) | Max building rank | Research tier | Dweller cap | Districts | Outposts | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| F | 0 | 2 / 1 | D | 1 | 8 | 0 | 1 | Tutorial start |
+| E | 1 | 3 / 3 | D | 1 | 14 | 1 | 1 | Tutorial ends here; first dig; first district |
+| D | 3 | 5 / 5 | C | 2 | 22 | 1 | 2 | Quarry becomes useful |
+| C | 7 | 7 / 7 | B | 2 | 32 | 2 | 2 | Celestium starts costing Heart upgrades |
+| B | 14 | 9 / 9 | A | 3 | 44 | 2 | 3 | |
+| A | 25 | 12 / 12 | S | 3 | 58 | 3 | 4 | |
+| S | 40 | 15 / 15 | SS | 4 | 74 | 4 | 5 | |
+| SS | 60 | 19 / 19 | SSR | 4 | 92 | 5 | 6 | SSR building upgrades allowed (needs CON-7) |
+| SSR | 80 | 24 / 24 | SSR | 5 | 110 | 6 | 8 | Endgame |
+
+**Floors (built 2026-10-03, owner ruling):** the floor limits are stretched to the game world's +24 / -24 so the late tower has room for districts. `OpenFloor` refuses a floor past the Heart's reach and the Floors popup names the rank that opens it; floors already open (older saves, checkpoints) are never taken away. Building ranks, research tiers, districts and outposts already follow this table in code; the dweller cap does not yet.
 
 ### 8.5 Status
 Heart HP, ward status, recent incidents. Heart damage sources are only breaches and unattended fires on its floor (section 9.4, 9.6).
@@ -415,7 +423,16 @@ Severity = 1 + min(2, residents / 20); incident HP scales with it.
 - One incident roughly every **480 to 600 live seconds** (8 to 10 minutes), shortened by up to 25% at Tense and Dire.
 - The first hour is guided (tutorial 2.1). No two incidents in one room. At most **2 active incidents** until Heart rank C, **3** from C.
 - **Positive events** also fire: a Silverbrook caravan (about 13%), a harvest festival (about 7%) and a lone traveller (about 6%) per roll.
-- Every incident raises a tray alert that jumps to the floor. No selectable storyteller in v1 (DLC).
+- Every incident raises a tray alert that jumps to the floor.
+- **Storytellers (built 2026-10-03, RimWorld):** chosen on the Heart's STATUS tab, carried into Legacy runs.
+
+| Storyteller | Event gap | Raiders from threat | Double raider weight at 55+ | Positive events | Most active incidents |
+| --- | --- | --- | --- | --- | --- |
+| Lys the Hearthkeeper (calm) | x1.4 | 35 | no | x1.3 | 2 |
+| The Silverbrook Chronicler (balanced, default) | x1 | 35 | yes | x1 | 2 |
+| The Briar's Whim (chaotic) | x0.75 | 25 | yes | x1 | 3 |
+
+  Balanced is exactly the pace the Tower always had. The GDD's "3 active incidents from Heart rank C" is not built; it is a balance item (16).
 - **Rush failure** remains a minor fire or pests incident, so rush is a decision.
 
 ### 9.4 Raids and the Gate
@@ -434,6 +451,7 @@ Severity = 1 + min(2, residents / 20); incident HP scales with it.
 - **Win:** Gold, Celestium, a chance of Echoes, and Threat drops sharply.
 - **Lose:** the Gate falls and a 3-minute **Last Stand** breach begins (9.4 rules; it can still be won with defenders and heroes). Damage reaches the Heart only through that breach.
 - **No sieges while offline.**
+- **Built 2026-10-03 (`TowerSiege.cs`), auto-defend only.** When an event is due, threat is 75+ and the siege cooldown is spent, the event becomes a siege warning (600 s; the threat line on the top bar counts down). The first siege can come after 2,160 live seconds; after each, the cooldown is 3.5 game days x the storyteller's pace. Defence = every adult on defence duty: Might x 0.3 + weapon x 2 (x1.5 for Gate guards), plus hero power / 10 for heroes at home. Wave = 8 + 6 x Heart rank + 0.3 x day. Win: 100 gold and 2 Celestium per Heart rank, threat -30, defenders gain XP. Loss: a Last Stand raid at a Gate with 1.5x HP and one more severity. The Battle Mode option belongs to the Battle session; Echoes are not built.
 
 ### 9.7 Illness and injury
 Unchanged rules: a critically wounded villager dies after 240 live seconds untended **[TBD final value]**; heroes are pulled back by the Heart instead of dying. The Care job, Frosted Mug and Tonics treat them.
@@ -449,7 +467,7 @@ Run from the **Silverbrook Adventure Guild** (and the Expeditions dock button). 
 
 ### 10.1 Parties
 - **A played run takes up to 6 heroes: 3 fight, 3 wait in reserve** (Battle Mode's field and reserve). Auto expeditions send 3. Villagers never go on expeditions. Heroes come from Sigil summons.
-- **Party slots:** 1 at the start, a 2nd from research (EXP-2), a 3rd from the Guild reaching rank A.
+- **Party slots:** 1 at the start, a 2nd from research (EXP-2), a 3rd from the Guild reaching rank A. **As built:** one auto expedition at a time; EXP-2 is Pack mules (+20% expedition gold) until parallel parties exist.
 - A hero is either staffing a room or away; sending a hero out empties their room slot (6.4). Injured heroes cannot be sent until healed.
 
 ### 10.2 Regions
@@ -484,13 +502,21 @@ A region unlocks when the previous region's lair boss is conquered **and** its r
 - **Rewards:** Gold, Firewood and Stone, Tonics, hero XP; Celestium from region 4 on; a small amount of Sigils (about 15 per day on average, part of the 45 per day target). Scale = base x region multiplier (1.0 to 3.0 in the current build).
 - Injured heroes recover at the Frosted Mug; Tonics speed it up.
 - Auto expeditions **never conquer** a region.
+- **Built 2026-10-03 (`TowerAutoExpedition.cs`, AUTO EXPEDITION from the Guild board or the Expeditions dock button's hold menu).** Any opened region, one to three heroes who are well and at home, 6 food and 6 water each. The run takes real time (like research, offline too). Stats in the simulation are 1 to 10, so power uses rank in place of stars, `stat sum x (1 + 0.08 x rank) x (0.5 + 0.5 x level / 50)`, and danger is rescaled so three founding heroes (all stats 3, about 13 power each at level 1) nearly succeed at Brook Edge and three maxed heroes (about 360) can face the deepest region:
+
+| Region | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9-13 (depths 1-5) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Danger | 45 | 55 | 65 | 80 | 95 | 115 | 135 | 160 | 180, 205, 230, 260, 290 |
+| Hours | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8 | 9, 10, 11, 12, 12 |
+
+  Rewards x region reward x tier: 80 gold, 12 firewood, 6 wood, 4 stone, a chance of a Tonic, 30 XP per hero; Celestium (1 + region reward) from region 4. 2 Sigils per return that is not a Fail, at most 6 a day. Heroes away on an auto run cannot staff rooms, join a played run or be stationed. Element counters (+10%) wait for region elements (16).
 
 ### 10.4 Personal roguelite run
 Reuses the existing flow: **Atlas (region map), plan provisions, a forest map generated fresh for every run (walking costs rations by distance and ground; walked ground becomes road), POI dungeons (20x20, fog of war, room events, stairs, goal room), lair boss conquers the region.** Full rules: BATTLE_MODE_GDD.md sections 3 to 9.
 - **Length target: 10 to 15 minutes**, trimmed to about 2 to 3 floors per POI. The run **autosaves on every room**, so the player can quit and resume exactly where they left.
 - **Fights use Battle Mode** with the party's 3 heroes. HP and injuries carry through the run; Tonics heal.
 - **Rewards:** the haul (Gold, Ore, Essence, Celestium, Tonics) is banked on return, plus Sigils for the return (capped per day). During the run each won fight offers a pick of a card upgrade, a relic or supplies; relics and upgrades last for that run. Target: up to 2x the auto ceiling plus exclusive drops (Echoes from boss clears, rare Sigil caches) **[TBD]**.
-- **First conquest of a region** grants a permanent passive (for example +10% auto rewards from that region) **[TBD]**.
+- **First conquest of a region** grants a permanent passive (for example +10% auto rewards from that region) **[TBD]**. **It also opens an outpost site there (section 18).**
 - **Head home from camp:** the whole haul is banked. **Retreat from anywhere else:** 25% of each find is dropped (the Safe Pocket is never taxed).
 - **Wipe:** the player keeps the 2-slot **Safe Pocket** and loses everything else carried; heroes return injured. No hero is ever lost.
 
@@ -738,15 +764,16 @@ The **mockup page** `UiWireframes/tower_ui_mockup.html` shows these layouts rend
 ## 14. v1 scope and DLC roadmap
 
 ### In v1
-Fallout Shelter loop, 21 buildings with F to SSR tiers and bay growth, villagers and heroes, seven-stat room matching, needs and simple satisfaction, resources above, Heart hub (summon, research, upgrade), fire/pest/raid/monster/illness incidents, auto and roguelite expeditions, goals and daily board, free-rotation UI, AAA juice, summon cinematic.
+Fallout Shelter loop, 21 buildings with F to SSR tiers and bay growth, villagers and heroes, seven-stat room matching, resources above, Heart hub (summon, research, upgrade), fire/pest/raid/siege/illness incidents, auto and roguelite expeditions, goals and daily board, free-rotation UI, AAA juice, summon cinematic.
+**The RimWorld colony layer is core (revised 2026-10-03):** traits and backstories, needs and thought-based mood, mood breaks, leaving and inspirations, bonds, families and grief, work priorities with a work grid, schedules, and a choice of three storytellers (6.3, 9.3).
+**Skylines-style management is core:** districts with specialisations, policies, service coverage and appeal (17), and outposts in conquered regions (18).
 
-### DLC expansions (RimWorld layer and content)
-1. **Colony Depth:** traits, mood thoughts and mood breaks, bonds (friends, rivals, love), families, schedules.
-2. **Storyteller:** incident director with selectable storytellers and difficulty.
-3. **Crafting and Research:** workbenches, materials, gear chains.
-4. **New regions and biomes:** more of Adams Haven beyond Silverwood.
+### DLC expansions (content and deeper systems)
+1. **Colony Depth II:** ideologies or beliefs, more traits and backstories, relationships beyond pairs, a difficulty slider per storyteller.
+2. **Crafting and Research:** workbenches, materials, gear chains.
+3. **New regions and biomes:** more of Adams Haven beyond Silverwood, with their outposts.
 
-Existing Unity systems beyond the v1 line (10 traits, mood breaks, bonds, storyteller, schedules) stay in the codebase behind flags and ship as the Colony Depth and Storyteller expansions.
+The old note that traits, mood breaks, bonds, the storyteller and schedules sat "behind flags" was never true of the code: they always ran. They are now design canon too.
 
 ---
 
@@ -762,7 +789,10 @@ Existing Unity systems beyond the v1 line (10 traits, mood breaks, bonds, storyt
 | Gate / stairs | Godot: east cells 22-23, stairs at 2; Unity: Heart centre with east wing | Heart and Gate are the right edge; no east wing (2026-09-30) |
 | Tier ladders | Godot placeable F..SSR w/ SR; art uses SS | Buildings: F, E, D, C, B, A, S, SS, SSR; heroes the same nine ranks |
 | Level vs rank | Level 1/2/3 = F/E/D | Rank is the only ladder; bays by rank (5.2) |
-| Day/night | Godot: presentation; Unity: drives schedules | Presentation only in v1 |
+| Day/night | Godot: presentation; Unity: drives schedules | Schedules are live: recruits keep day or night hours (6.3, 2026-10-03) |
+| RimWorld depth | v1 pillar 4: out of v1, DLC | Core (2026-10-03) |
+| Floors by Heart rank | GDD 8.4: +10 / -18 at SSR; code: +-24 always | Stretched table to +-24, enforced on opening (8.4) |
+| "Outposts" | BATTLE_MODE_GDD 13: towns on the run map | Two things: run-map outposts stay Battle's; Tower outposts are persistent staffed colonies (18) |
 | Villager death | 3 sim-minutes vs 240 live seconds | **[TBD]**, tune in balance pass |
 | Cards vs moves | Collection + DP budget vs learned moves | Not a Tower concern; Battle Mode spec owns it |
 | Battle system | AP/EP/CP/SP (Godot) vs CZN-style | Owned by `BATTLE_PORT.md` / `CHAOS_ZERO_REFERENCE.md` |
@@ -784,3 +814,75 @@ Existing Unity systems beyond the v1 line (10 traits, mood breaks, bonds, storyt
 11. Offline cap hours and incident handling offline.
 12. Tutorial reward amounts, step timing and the post-tutorial goal chain.
 13. Audio direction (music, SFX) and font selection.
+14. **TT 10.30.0 balance (all draft):** district specialisation strengths (15% / 20% / 20%), policy upkeep, coverage radius (1 + rank / 3 floors), appeal thresholds (50 / 75); outpost base yields, caravan interval (360 s), ambush and raid curves, founding cost (250 x region reward); auto-expedition danger and hours; siege defence and wave formulas; leaving (1,080 s) and inspiration (720 s) timers. Measure in a playthrough.
+15. **TT 10.30.0 follow-ups:** an outpost marker on the expedition Atlas (`TowerMapSources.cs`, the Expedition session's file); the Battle Mode option for sieges; region elements (auto-expedition element counters, 10.2); a storyteller picker on NEW GAME; the dweller cap by Heart rank (8.4); the GDD's 3 active incidents from Heart rank C; long-press to move a room; whether a district's appeal should also lower Threat.
+
+---
+
+## 17. Districts (Cities: Skylines layer, built 2026-10-03)
+
+A **district** is a band of consecutive floors the player zones (`TowerDistricts.cs`, BUILD hold menu or the Floors popup: DISTRICTS AND ZONING). Bands never overlap; floors outside every band are unzoned and lose nothing. The Heart allows 0 districts at F, then 1, 1, 2, 2, 3, 4, 5, 6 up to SSR (8.4).
+
+**Specialisation.** Purity = the share of the band's room cells whose kind matches; the bonus scales with it.
+
+| Specialisation | Counts | Bonus at full purity |
+| --- | --- | --- |
+| Residential | homes | +2 to +6 mood for everyone housed there; +10 appeal |
+| Industry | production and storage rooms | +15% production |
+| Market | Argent Market, Guild | +20% |
+| Arcane | Frosted Mug, Forge, Deck Hall | +20% training and Tonics; +10% care |
+
+**Policies** (per district, gold upkeep per game day, charged as it accrues). When the treasury cannot pay, every policy lapses until gold comes back.
+
+| Policy | Effect | Upkeep |
+| --- | --- | --- |
+| Rationing | meals 20% smaller; residents here -4 mood | 0 |
+| Overtime | production +15%; workers here -3 mood | 30 |
+| Curfew | no brawls on these floors; residents here -2 mood | 15 |
+| Festival Days | residents here +6 mood | 80 |
+| Quiet Hours | rest at home 30% faster; production -5% | 10 |
+| Hearth Watch | fire and pest damage here -25% | 25 |
+| Open Gate (band holds the ground floor) | wanderers arrive 25% sooner; Threat +4 | 20 |
+| Beautification | +25 appeal on these floors | 40 |
+
+**Service coverage** (every floor, zoned or not; bonuses only). A staffed provider covers floors within 1 + rank / 3 of its own; a guarded Gate covers 2 + guards / 2.
+
+| Service | Providers | On covered floors |
+| --- | --- | --- |
+| Medical | Frosted Mug | care x1.25 |
+| Safety | Gate guards | incident response x1.2 |
+| Food | Kitchen, Farmstead | meals 10% smaller for residents housed there |
+| Leisure | Argent Market, Guild, Deck Hall | +3 mood ("Leisure nearby") |
+
+**Appeal** (0 to 100 per floor): each room scores up to 3 (well kept at 80%+ condition, rank, decorative types: Manor, Terrace Row, Frosted Mug, Market), plus Beautification and Residential purity. Residents housed on a floor at 50+ feel "Pleasant floor" (+2), at 75+ "Lovely district" (+5). The average appeal of the floors people live on speeds Gate arrivals by up to 40%.
+
+**Info views:** the Districts panel switches the cutaway between VIEW OFF, DISTRICTS (tinted by specialisation, named), COVERAGE (red to green by services reached, with MED / SAFE / FOOD / FUN tags) and APPEAL.
+
+## 18. Outposts (built 2026-10-03)
+
+Conquering a region on a played expedition (clearing its lair) opens an **outpost site** there; the Tower announces it once. Outposts are **staffed colonies** run from the Tower (`TowerOutposts.cs`; OUTPOSTS from the Guild board or the Expeditions hold menu). They are not the run-map "outposts" of BATTLE_MODE_GDD section 13.
+
+- **Founding:** 250 x region reward gold, 15 wood, 15 stone, with a Guild standing. The Heart holds 1, 1, 2, 2, 3, 4, 5, 6, 8 outposts (F to SSR).
+- **Staff:** any adult who is well and at home, villagers included (unlike expeditions); Celestium Bodies stay. Stationed residents leave their job slot (their bed stays theirs), are fed by the outpost, slowly heal light wounds, and feel "Frontier pride" (+6) for three game days, then "Homesick" (-8). RECALL brings them home. Places: 2 / 4 / 6 by rank (F-D, C-B, A-SSR); ranks rise like a room's, capped by the Heart.
+- **Production per game day** = base x region reward x (1 + 0.5 x (rank - 1)) x staff skill x condition, where staff skill adds 1.0 for each average (5) worker in the region's key stat. The secondary good comes at half rate. Base per worker: 40 food, water or firewood; 6 wood; 4 stone; 3 ore; 2 essence; 60 gold; 0.5 Tonics; 0.4 Celestium.
+
+| Region | Outpost | Makes (secondary) | Key stat |
+| --- | --- | --- | --- |
+| Brook Edge | Brookside Farm | food (wood) | Grace |
+| Rootside | Rootside Logging Camp | firewood (wood) | Might |
+| Ford | Fordwatch Mill | water (food) | Sight |
+| Moon Shrine | Moonlit Sanctum | essence (Tonics) | Wit |
+| Old Bridge | Bridge Tollhouse | stone (gold) | Grit |
+| Marsh | Marsh Apothecary | Tonics (food) | Wit |
+| Watchpost | Watchpost Mine | ore (gold) | Might |
+| Wood Gate | Gatekeep Dig | Celestium (ore) | Grit |
+| Wood Edge | Woodcutters' Hamlet | wood (firewood) | Might |
+| Lakes | Lakeside Weir | water (essence) | Sight |
+| Mountains | Crystal Delve | ore (Celestium) | Grit |
+| Ruins | Rootcity Bazaar | gold (essence) | Luck |
+| Heart | Heartwood Grove | Celestium (essence) | Wit |
+
+- **Caravans** carry whole units home every 360 game seconds (or on SEND CARAVAN). Ambush chance on the road = 0.05 + threat / 200 - defence / 100, between 2% and 40%; an ambush loses 30 to 60% of the cargo.
+- **Threat and raids:** an outpost's threat climbs (6 + 2 x region reward) a game day. From 40, every 360 s there is a threat / 200 chance of a raid: attack = threat x (0.3 + 0.1 x region reward) against defence = 2 x rank + each worker's Might x 0.3 + weapon x 2 (+4 for heroes). A held raid drops threat by 25 and gives XP; a lost one loots 40% of the waiting stock and 20 condition, and, in live play only, wounds the staff (never downs them). Offline catch-up raids cost goods but never wound.
+- **Upkeep-free by design:** outposts cost founding and upgrades, and the people they take out of the tower.
+- **Later:** an outpost marker on the expedition Atlas (Expedition session's file), region passives from first conquest (10.4), and outposts reacting to Gate sieges.

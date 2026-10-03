@@ -109,3 +109,38 @@ All in `Assets/Scripts/TowerColony.cs` (partial `TowerRules`), hooked into the e
 - Rigs are pooled in "Tower 3D residents" across `RebuildScene` (off-screen ones parked inactive, removed when the resident
   leaves) and hidden while Battle / expeditions own the screen.
 - Residents at work or resting in the same room now share it out in id order (`ResidentPosition`) instead of stacking.
+
+## Oct 3: TT 10.30.0 - Fallout Shelter x RimWorld core, districts, outposts
+
+Owner direction: Fallout Shelter x RimWorld is the foundation (colony depth is core, not DLC), with Cities: Skylines-style
+management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18. Tests: `Assets/Editor/TowerManagementTests.cs`
+(separate from `TowerSimulationTests`, which the Expedition session also edits).
+
+- Groundwork (`TowerLayoutTools.cs`): `ColonyVersion` + `MigrateColony()` after `MigrateResearch()` (no schema bump: `Load`
+  only accepts schema 1-2). `State.colonyRandom` is the new systems' own xorshift, so `randomState` sequences never shift.
+  `layoutStamp` (bumped by AddRoom, UpgradeRoom, Demolish, MoveRoom, floor and wing completion, zoning) keys the caches.
+- Floor caps by Heart rank, stretched to the +-24 world: up 2,3,5,7,9,12,15,19,24 / down 1,3,5,7,9,12,15,19,24.
+  `OpenFloor` refuses past the cap; open floors are never removed. Floors popup says which Heart rank opens the next one.
+- MOVE (room card, then tap the new place; `AdamsHavenPrototype.BeginMove` / `PlaceMovingRoom`) keeps uid, rank, workers,
+  residents, progress and condition; fee 20 + 10 x width x rank. DEMOLISH (tap twice) refunds 40% of the catalogue price
+  plus a quarter of upgrade gold, evacuates the room and rehouses the homeless.
+- Colony depth (`TowerColonyDepth.cs`): newcomers (recruits, grown children) get `trait2` and a `backstory` (10; stat bonus,
+  at most one barred job; `SetPriority` refuses it). Miserable Gate villagers leave after 1,080 live s (warning at 540);
+  heroes, bodies and summoned named residents never do; nothing leaves offline. 720 s at 85+ mood gives a 240 s
+  inspiration (work / care / guard x1.5). Storytellers calm / balanced (default, identical to before) / chaotic on the
+  Heart STATUS tab, carried into Legacy runs. WORK GRID (`TowerHudWork.cs`, PEOPLE hold menu): all adults x six jobs.
+- Districts (`TowerDistricts.cs`, `TowerHudDistricts.cs`): floor bands, 0..6 by Heart rank; Residential / Industry /
+  Market / Arcane by purity; 8 policies with gold upkeep that lapse when unpaid; service coverage (Medical, Safety, Food,
+  Leisure) by radius; per-floor appeal (thoughts, faster Gate arrivals). Per-floor arrays rebuilt on layout change and every
+  10 s. Info views (`TowerArtDirector.Overlay`) tint each floor; `SceneSignature` hashes them.
+- Postings (`TowerAutoExpedition.cs`): `resident.posting` ("auto" / "outpost:<region>") + `exploring = true`, because the
+  expedition code rewrites `away` on every load. Posted residents skip needs and upkeep, lose their job slot, keep their bed.
+- Auto expeditions (GDD 10.3): one party, real-time, power vs rescaled danger, Fail/Partial/Success/Great, never conquers,
+  2 Sigils a return (6 a day). AUTO EXPEDITION on the Guild board and the Expeditions dock hold menu (`TowerHudExpeditions.cs`).
+- Outposts (`TowerOutposts.cs`, `TowerHudOutposts.cs`): a site per conquered region (no expedition-file hook: sites are
+  `regionsConquered` minus outposts), staffed colonies with region goods, caravans every 360 s with ambush risk, outpost
+  threat and raids (live raids wound, offline never), ranks F-SSR capped by the Heart, homesickness after 3 game days.
+- Gate sieges (`TowerSiege.cs`, GDD 9.6 auto-defend): a due event at threat 75+ becomes a 600 s siege warning; defence vs
+  wave; a loss is a Last Stand raid at a Gate. First siege after 2,160 live s; live only.
+- `TowerPerfProbe` also times TickDistricts, TickOutposts and TickSiege.
+- Left for the Expedition / Battle sessions: an outpost marker on the Atlas (`TowerMapSources.cs`), the Battle Mode siege option.

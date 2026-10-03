@@ -66,3 +66,15 @@ Request: first runs climb slowly; Legacy makes later runs faster.
 | 10 | 0 | 2.5 | 6.8 | 12.9 | 21.0 | 28.9 |
 
 The test `FirstRunsClimbSlowlyAndLegacyRunsFaster` runs this model against the real cost tables (first run 60 to 95 days; Legacy 10 under 60% of that). It is a model, not a played run: a measured playthrough is still worth doing once the tower's early game settles.
+
+## 7. TT 10.30.0 numbers (2026-10-03, drafts, not yet playtested)
+
+**Auto expeditions.** Founding heroes keep the default 3 in every stat, so a level-1 rank-D founder has about 13 power; checkpoint 6's level-25 founders about 20. Danger was rescaled to fit: Brook Edge 45 (two checkpoint-6 heroes: 41 power, ratio 0.91, Success; three level-1 founders: about 40, Partial), up to 290 for the deepest region (three maxed heroes about 361, ratio 1.24 Success, 1.37 Great with Tank + Support).
+
+**Outposts.** A day's output per average (5) worker, before region reward and rank: 40 food, water or firewood; 6 wood; 4 stone; 3 ore; 2 essence; 60 gold; 0.5 Tonics; 0.4 Celestium. Examples at rank F with two average workers: Brookside Farm (Brook Edge, x1.0) 80 food and 6 wood a day; Gatekeep Dig (Wood Gate, x3.0) 2.4 Celestium and 9 ore a day; Heartwood Grove (depth 5, x5.2) at SSR (x5) with six workers 62 Celestium a day. For scale, one rank-F Quarry makes about 18 Celestium a day.
+
+**Districts.** Industry at full purity +15% (Overtime another +15% for 30 gold a day); Market +20%; Arcane +20% training and Tonics; policy upkeep 0 to 80 gold a day, against a rank-F Market's 324 gold a day.
+
+**Sieges.** Wave = 8 + 6 x Heart rank + 0.3 x day: about 15 at F on day 3, 36 at C on day 14, 86 at SSR on day 80. Defence: two Might-10, weapon-3 defenders already give 18.
+
+**Performance.** Checkpoint 10 (60 residents, 374 rooms): Advance about 0.95 to 1.0 ms/frame with or without districts; TickDistricts, TickOutposts and TickSiege about 0.001 ms each, DistrictBonus over all rooms 0.004 ms. The earlier 0.55 ms figure was measured on a smaller day-90 tower; the bulk of today's cost is PlanJobs (0.43 ms) and TickRooms (0.29 ms).
