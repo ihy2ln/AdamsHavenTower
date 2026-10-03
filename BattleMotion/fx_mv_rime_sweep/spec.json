@@ -1,0 +1,12 @@
+{
+  "card": "mv_rime_sweep",
+  "kind": "sheet",
+  "size": [
+    960,
+    544
+  ],
+  "length": 41,
+  "seed": 612,
+  "floor": 0.2,
+  "prompt": "A wide sweeping crescent arc of frost and swirling snow slashes across the frame from left to right, leaving a glittering trail of tiny ice crystals that drift and fade."
+}

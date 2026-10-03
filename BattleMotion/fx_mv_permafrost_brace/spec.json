@@ -1,0 +1,12 @@
+{
+  "card": "mv_permafrost_brace",
+  "kind": "sheet",
+  "size": [
+    704,
+    704
+  ],
+  "length": 41,
+  "seed": 615,
+  "floor": 0.2,
+  "prompt": "Frost creeps up from the bottom center and a ring of short ice spikes grows from the ground in a circle, glowing pale blue, then cracks into sparkles and fades."
+}

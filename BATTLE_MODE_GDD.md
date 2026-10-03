@@ -130,6 +130,24 @@ Authoritative detail: BATTLE_PORT.md and CHAOS_ZERO_REFERENCE.md.
 - **Pacing:** speed 0.5x / 1x / 2x (0.5x default, remembered). Auto battle plays the whole hand with ultimates (`BattleAutoPlayer`). Tap skips ultimate cut-ins.
 - **Context:** background art per dungeon theme where landscape art exists (blight, crystal, heartwood, mine), the region name in the header.
 
+### 2D anime rigs, move effects and cinematics (pilot: Kaela, 2026-10-02)
+
+- **2D rig:** the fighter's anime art as a cutout puppet (20 bones, 21 layered parts, Celestium gauntlets on the hand
+  bones) with the same clip names and contact times as the 3D rigs, so the battle drives either. The character sheet's
+  SHOW 3D MODEL / SHOW 2D ART switch flips the whole field and is remembered. Pipeline: `Tools/build_2d_rig.py`
+  (Qwen Image Edit A-pose from the T-pose sheet, BiRefNet cutout) -> `Tools/build_2d_rig_parts.py` (SAM regions,
+  nearest-bone labels, hidden-limb fill) -> `Battle2DRigBuilder` + `Battle2DMoves` (prefab and keyframed clips).
+- **Cinematic tiers:** ultimates and awakenings always have a cinematic; a skill card has one only if
+  `UltCutIns/<card id>.mp4` exists (Kaela: Shatter). The CINE button (under LOG) picks every time / first use per
+  battle (default) / ultimates only / off. Clips play at 1x whatever the battle speed; a tap skips.
+- **Match cut:** for a 2D fighter the field zooms in until it matches the clip's first frame, the clip plays, its last
+  frame (the same stance) zooms back out. Both frames come from the rig itself (`RenderCineFrame`) over `Fx/cine_bg`,
+  and `Tools/produce_cine.py` generates the clip with MiniMax H3 first/last-frame video. `BattleMotion/<job>/key_first.png`
+  and `key_last.png` stay for a higher-quality pass (for example Seedance) with the same anchors.
+- **Move effects:** `Tools/produce_move_fx.py` renders effects on black with H3: short ones become 16-frame colour sheets
+  (`Fx/Moves/<card id>.png`), long ones H.264 video with the matte stacked under the colour (`Fx/Moves/<card id>.mp4`,
+  drawn by `Fx/StackedAlpha.shader`, hardware-decoded on Android). Placement per card: `BattleCinematics.MoveFx`.
+
 Difficulty, measured by the headless sim (`ExpeditionBalanceTests`): normal fights cost about 4-14% party HP, elites 10-30%, bosses 20-65%.
 
 ## 9. Regions and progression (Built)

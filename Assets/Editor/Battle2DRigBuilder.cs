@@ -209,6 +209,35 @@ public static class Battle2DRigBuilder
         return outPath;
     }
 
+    // The rig at the cine framing (BattleMode.CineCenterX/Y, CineHalf), 16:9 on a clear background: the first and last
+    // frame of a match-cut cinematic (Tools/produce_cine.py lays it over Fx/cine_bg).
+    public static string RenderCineFrame(string id, string clipName, float time, string outPath, int w = 1280, int h = 720)
+    {
+        string folder = Root + id + "/";
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(folder + "model.prefab");
+        var stage = new GameObject("2D rig cine frame");
+        stage.transform.position = new Vector3(7000, 5000, 0);
+        var model = (GameObject)UnityEngine.Object.Instantiate(prefab, stage.transform);
+        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(folder + clipName + ".anim");
+        if (clip != null) clip.SampleAnimation(model, time);
+        var camGo = new GameObject("Cine camera");
+        camGo.transform.SetParent(stage.transform, false);
+        camGo.transform.localPosition = new Vector3(BattleMode.CineCenterX, BattleMode.CineCenterY, -6);
+        var cam = camGo.AddComponent<Camera>();
+        cam.orthographic = true; cam.orthographicSize = BattleMode.CineHalf; cam.aspect = w / (float)h;
+        cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = Color.clear;
+        cam.nearClipPlane = 0.1f; cam.farClipPlane = 12;
+        var rt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
+        cam.targetTexture = rt;
+        cam.Render();
+        var tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+        RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, w, h), 0, 0); tex.Apply(); RenderTexture.active = null;
+        File.WriteAllBytes(outPath, tex.EncodeToPNG());
+        cam.targetTexture = null; rt.Release();
+        UnityEngine.Object.DestroyImmediate(stage); UnityEngine.Object.DestroyImmediate(rt); UnityEngine.Object.DestroyImmediate(tex);
+        return outPath;
+    }
+
     // Numbered PNG frames of clips played back to back ("AH_clip@from-to"), for preview videos.
     public static int RenderSequence(string id, string[] segments, string outDir, int fps = 30, int w = 720, int h = 720, float half = 1.45f)
     {

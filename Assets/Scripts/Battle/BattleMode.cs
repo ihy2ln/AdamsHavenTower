@@ -90,6 +90,19 @@ public sealed partial class BattleMode : MonoBehaviour
         if (selected != null && selectedActor == actor) Commit(battle.Enemies.Find(e => e.Alive));
     }
 
+    // Test hook: a fighter plays one of their kit cards by id (AP/EP topped up), on the first living enemy or themself.
+    public bool DebugPlayCard(string unitId, string cardId)
+    {
+        if (battle == null) return false;
+        BattleUnit actor = battle.Allies.Find(u => u.Id == unitId);
+        if (actor == null) return false;
+        BattleCard card = BattleCatalog.FighterKit(actor).Find(c => c.Id == cardId);
+        if (card == null) return false;
+        actor.Ap = Mathf.Max(actor.Ap, card.Ap); actor.Ep = Mathf.Max(actor.Ep, card.Ep);
+        BattleUnit target = card.Target == BattleTarget.Self ? actor : battle.Enemies.Find(e => battle.IsTarget(card, actor, e));
+        return Perform(card, actor, target);
+    }
+
     public void DebugReadyUltimate()
     {
         if (battle == null || battle.Allies.Count == 0) return;
@@ -403,6 +416,7 @@ public sealed partial class BattleMode : MonoBehaviour
         battle = null;
         CloseSheet();
         ReleaseUltClip();
+        ReleaseMoveFx();
         // Silence the drums; an expedition puts its own ambience back when it redraws.
         AdamsHaven.Tower.TowerAudio.Ambience("");
         if (callback != null) callback(won, won ? reward : 0);
@@ -635,7 +649,7 @@ public sealed partial class BattleMode : MonoBehaviour
         GUI.matrix = baseMatrix * Matrix4x4.Translate(new Vector3(jolt.x, jolt.y, 0f));
         if (paint) { DrawBackground(); DrawAmbient(); }
         DrawField();
-        if (paint) { DrawParticles(); DrawEffects(); DrawFloaters(); }
+        if (paint) { DrawParticles(); DrawEffects(); DrawFxVideo(); DrawFloaters(); }
         GUI.matrix = baseMatrix;
         if (paint) DrawVignette();
         DrawTopBar();
@@ -1154,6 +1168,9 @@ public sealed partial class BattleMode : MonoBehaviour
         }
 
         if (MiniButton(new Rect(1382f, 14f, 46f, 46f), "LOG", true, showLog, Ice, -1f, 12)) showLog = !showLog;
+        // Cinematics: every time, first use per battle, ultimates only, or none.
+        if (MiniButton(new Rect(1436f, 66f, 154f, 30f), CinematicLabel(Cinematics), true, Cinematics != CinematicMode.Off, Ice, -1f, 11))
+            Cinematics = (CinematicMode)(((int)Cinematics + 1) % 4);
         if (MiniButton(new Rect(1436f, 14f, 46f, 46f), SpeedLabel(speed), true, speed > Speeds[0], Gold, -1f, speed < 1f ? 13 : 15))
         { speed = NextSpeed(speed); SaveSpeed(speed); }
         if (MiniButton(new Rect(1490f, 14f, 46f, 46f), "AUTO", !battle.Finished, auto, Gold, -1f, 11))
@@ -1575,7 +1592,22 @@ public sealed partial class BattleMode : MonoBehaviour
         if (t < 0f || t > 1f) return;
         float a = t < 0.12f ? t / 0.12f : t > 0.86f ? (1f - t) / 0.14f : 1f;
         Color accent = ElementColor(cutUnit.Element);
-        if (ultPlayer != null && ultPlayer.clip == UltClip(cutUnit, cutCard) && ultTexture != null)
+        if (matchUnit != null)
+        {
+            // Match cut: zoom in on the 2D fighter, the clip (it starts and ends on her stance), zoom back out.
+            float local = fx - cutStart, inner = cutLen - 2f * matchIn;
+            if (local < matchIn) { DrawMatchZoom(local / Mathf.Max(.001f, matchIn)); DrawSkipHint(1f); return; }
+            if (local > matchIn + inner) { DrawMatchZoom(1f - (local - matchIn - inner) / Mathf.Max(.001f, matchIn)); return; }
+            if (CineBackdrop != null) GUI.DrawTexture(new Rect(0, 0, VW, VH), CineBackdrop, ScaleMode.ScaleAndCrop, false);
+            if (ultTexture != null && ultPlayer != null && ultPlayer.clip == cutClip)
+                GUI.DrawTexture(new Rect(0, 0, VW, VH), ultTexture, ScaleMode.ScaleAndCrop, false);
+            float na = Mathf.Clamp01((local - matchIn) / .15f);
+            Text(new Rect(60f, VH - 120f, 900f, 60f), cutCard.Name.ToUpperInvariant(), 44, new Color(1, 1, 1, na), TextAnchor.MiddleLeft, true, false, 3f);
+            Text(new Rect(60f, VH - 70f, 900f, 28f), cutUnit.Name.ToUpperInvariant(), 18, BattleGui.Alpha(accent, na), TextAnchor.MiddleLeft, true, false, 2f);
+            DrawSkipHint(1f);
+            return;
+        }
+        if (ultPlayer != null && cutClip != null && ultPlayer.clip == cutClip && ultTexture != null)
         {
             // Cinematic ultimate: letterboxed video, quick white pop in/out, name plate bottom-left.
             float va = t < 0.06f ? t / 0.06f : t > 0.93f ? (1f - t) / 0.07f : 1f;

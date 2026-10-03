@@ -48,7 +48,8 @@ public sealed partial class BattleMode
     private struct Effect
     {
         public byte Kind;              // 0 flash, 1 shockwave, 2 streak, 3 slash sheet, 4 burst sheet, 5 ground rune, 6 sparkle,
-                                       // 7-8 painted slash/impact, 9 painted element sheet (Sheet), 10 full-screen warp
+                                       // 7-8 painted slash/impact, 9 painted element sheet (Sheet), 10 full-screen warp,
+                                       // 11 per-move 4x4 colour sheet (BattleCinematics.MoveFx)
         public Vector2 Pos;
         public float Born, Life, Size, Angle;
         public Color Color;
@@ -80,6 +81,7 @@ public sealed partial class BattleMode
     private int factsSeen, announcedRound;
     private BattleUnit cutUnit;
     private BattleCard cutCard;
+    private VideoClip cutClip;
     private const float CutLen = 1.15f;
     private float cutLen = CutLen;
     // Ultimate cinematics (Resources/AdamsHaven/UltCutIns/<unit id>.mp4, from Tools/produce_battle_motion.py).
@@ -121,7 +123,7 @@ public sealed partial class BattleMode
             ultPlayer.targetTexture = ultTexture;
         }
         ultPlayer.clip = clip;
-        ultPlayer.playbackSpeed = speed;
+        ultPlayer.playbackSpeed = 1f;       // cinematics run in real time; the 0.5x battle speed is for the field
         ultPlayer.time = 0;
         ultPlayer.Play();
     }
@@ -143,6 +145,7 @@ public sealed partial class BattleMode
     {
         fx = cutStart + cutLen;
         hitStop = 0f;
+        matchUnit = null; cutClip = null;
         if (ultPlayer != null) ultPlayer.Stop();
     }
 
@@ -151,7 +154,8 @@ public sealed partial class BattleMode
         beats.Clear(); vis.Clear(); particles.Clear(); effects.Clear(); floaters.Clear();
         bolts.Clear(); flying.Clear(); banners.Clear();
         fx = 0f; queueEnd = 0f; shake = 0f; hitStop = 0f; cutStart = -9f;
-        cutUnit = null; cutCard = null; factsSeen = 0; announcedRound = 0;
+        cutUnit = null; cutCard = null; cutClip = null; factsSeen = 0; announcedRound = 0;
+        matchUnit = null; matchIn = 0f; cinematicsSeen.Clear();
     }
 
     private void Signal(BattleAnimationPhase phase, BattleUnit actor, BattleUnit target, BattleCard card, BattleFact fact = null)
@@ -371,15 +375,28 @@ public sealed partial class BattleMode
         bool tick = head.Kind == "poison" || head.Kind == "regen";
         bool offense = head.Kind == "damage";
         float t = Mathf.Max(queueEnd, fx);
-        if (actor != null && card != null && !actor.Enemy && (card.Kind == BattleCardKind.Ultimate || card.Kind == BattleCardKind.Awakening))
+        VideoClip clip = CinematicFor(actor, card);
+        bool cine = actor != null && card != null && !actor.Enemy && (IsUltimate(card) || clip != null) && Cinematics != CinematicMode.Off;
+        if (cine)
         {
             BattleUnit who = actor; BattleCard which = card;
-            VideoClip clip = UltClip(actor, card);
-            float len = clip != null ? (float)clip.length : CutLen;
-            At(t, () => { cutUnit = who; cutCard = which; cutStart = fx; cutLen = len;
-                if (clip != null) PlayUltClip(clip);
+            if (clip != null) cinematicsSeen.Add(card.Id);
+            // Clips play at 1x whatever the battle speed: their length in battle time scales with the speed.
+            float len = clip != null ? (float)clip.length * speed : CutLen;
+            FieldRig rig;
+            bool match = clip != null && fieldRigs.TryGetValue(actor, out rig) && rig.Flat && !IsUltimate(card);
+            float zoom = match ? MatchZoom * speed : 0f;
+            At(t, () => { cutUnit = who; cutCard = which; cutClip = clip; cutStart = fx; cutLen = len + 2f * zoom;
+                matchUnit = match ? who : null; matchIn = zoom;
+                if (clip != null && !match) PlayUltClip(clip);
                 Signal(BattleAnimationPhase.Ultimate, who, null, which); });
-            t += len;
+            if (match) At(t + zoom, () => { if (cutClip == clip) PlayUltClip(clip); });
+            t += len + 2f * zoom;
+        }
+        if (actor != null && card != null && !actor.Enemy)
+        {
+            BattleUnit fxTarget = group[0].Target;
+            At(t + (offense ? (Ranged(actor, card) ? 0.50f : 0.30f) : 0.34f), () => SpawnMoveFx(card, actor, fxTarget));
         }
         float impact = t + 0.05f;
         if (actor != null && card != null && !tick)
@@ -537,6 +554,7 @@ public sealed partial class BattleMode
                 Texture2D sheet = e.Kind == 7 ? BattleGui.GenSlash : e.Kind == 8 ? BattleGui.GenImpact : e.Sheet;
                 BattleGui.DrawSheet(sheet, 8, Mathf.FloorToInt(t * 8f), e.Pos, e.Size, e.Angle, e.Color);
             }
+            else if (e.Kind == 11 && e.Sheet != null) DrawMoveSheet(e, t);
             else if (e.Kind == 10)
             {
                 float w = e.Size, h = w * 704f / 1248f;
