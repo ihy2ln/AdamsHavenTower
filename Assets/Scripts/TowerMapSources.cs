@@ -14,6 +14,8 @@ namespace AdamsHaven.Tower
         float Road(int x, int y);           // drawn road strength, 0..1
         bool Known(TowerOverworldPoi p);    // learned of: glows through the fog
         bool Cleared(TowerOverworldPoi p);
+        // TowerRules.NodeHidden..NodeDone: hidden, a beacon through the fog, scouted (shown, out of reach), open, completed.
+        int NodeState(TowerOverworldPoi p);
         Texture2D Prop(TowerOverworldPoi p, out float width);
         Vector2Int Party { get; }
         List<string> PartyIds { get; }
@@ -32,8 +34,9 @@ namespace AdamsHaven.Tower
         public string Key { get { return Family + ":" + Run.shift; } }
         public bool Seen(int x, int y) { return rules.CellSeen(x, y); }
         public float Road(int x, int y) { return RoadValue(rules.RoadStrength(x, y)); }
-        public bool Known(TowerOverworldPoi p) { return rules.NodeVisible(p.id); }
+        public bool Known(TowerOverworldPoi p) { return rules.NodeVisible(p.id) || p.kind == "lair"; }
         public bool Cleared(TowerOverworldPoi p) { return Run.cleared.Contains(p.id); }
+        public int NodeState(TowerOverworldPoi p) { return rules.NodeState(p.id); }
         public Vector2Int Party { get { return new Vector2Int(Run.cx, Run.cy); } }
         public List<string> PartyIds { get { return LivingParty(Run); } }
         public float StampScale { get { return 1f; } }
@@ -46,6 +49,7 @@ namespace AdamsHaven.Tower
                 case "camp": width = 3.4f; break;
                 case "merchant": case "combat": width = 3.6f; break;
                 case "elite": width = 3.2f; break;
+                case "tower": width = 3.4f; break;
                 default: width = 3.3f; break;
             }
             return TowerMapArt.Prop(p.kind);
@@ -128,6 +132,12 @@ namespace AdamsHaven.Tower
         public float Road(int x, int y) { return roads[Map.Index(x, y)]; }
         public bool Cleared(TowerOverworldPoi p) { return rules.RegionConquered(p.id); }
         public float StampScale { get { return 0.8f; } }
+
+        public int NodeState(TowerOverworldPoi p)
+        {
+            if (Seen(p.x, p.y)) return Cleared(p) ? TowerRules.NodeDone : TowerRules.NodeOpen;
+            return Known(p) ? TowerRules.NodeBeacon : TowerRules.NodeHidden;
+        }
 
         // The next regions out (one requirement met) are rumoured: they glow through the fog.
         public bool Known(TowerOverworldPoi p)

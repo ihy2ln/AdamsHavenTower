@@ -20,6 +20,12 @@ public sealed class BattleCard
     public float SynergyScale;
     public bool Magic, TransferEp, TransferAp;
     public string[] Partners = Array.Empty<string>();
+    // Chaos Zero Nightmare keywords. Retain: stays in hand at the end of the turn (others are discarded).
+    // Exhaust: leaves the battle once played. Initiation: always in the opening hand.
+    public bool Retain, Exhaust, Initiation;
+    // A shield the card also gives its user (epiphany "Bulwark"), and the epiphanies applied to it ("swift,echo").
+    public float SelfShield;
+    public string Epiphany = "";
     // Each card level above 1 (expedition upgrades) adds LevelStep power and healing.
     public const float LevelStep = 0.2f;
     public float EffectivePower { get { return Power * (1f + LevelStep * (Level - 1)); } }
@@ -46,6 +52,14 @@ public sealed class BattleUnit
     public string Affix = "";
     public bool Boss;
     public int Phase;
+    // Bestiary rank of an enemy, 1 (F) .. 9 (SSR); 0 for heroes and pre-bestiary units.
+    public int Rank;
+    // Enemies: the action count (each card the party plays lowers it; at 0 the enemy acts at once, mid-turn) and
+    // tenacity (party hits wear it down; at 0 the enemy BREAKS). Both refill every round.
+    public int ActionCount, ActionMax, Tenacity, MaxTenacity;
+    public bool ActedThisRound;
+    // Fighters: a reserve's once-per-battle partner assist is spent; recovered from breakdown (cheaper ultimate).
+    public bool PartnerUsed, Overcame;
     public float Attack, Magic, Defense, Resistance, Speed, CritRate = 0.1f, CritDamage = 1.75f;
     public readonly List<BattleStatus> Statuses = new List<BattleStatus>();
     public bool Alive { get { return Hp > 0; } }
@@ -69,8 +83,9 @@ public sealed class BattleUnit
         for (int i = 0; i < Statuses.Count; i++)
         {
             if (Statuses[i].Name != name) continue;
-            Statuses[i].Magnitude = magnitude;
-            Statuses[i].Turns = turns;
+            // Shields stack; every other status is refreshed.
+            Statuses[i].Magnitude = name == "Shield" ? Statuses[i].Magnitude + magnitude : magnitude;
+            Statuses[i].Turns = name == "Shield" ? Math.Max(Statuses[i].Turns, turns) : turns;
             return;
         }
         Statuses.Add(new BattleStatus { Name = name, Magnitude = magnitude, Turns = turns });
@@ -115,13 +130,25 @@ public sealed class BattleRunModifiers
 public sealed class BattleState
 {
     public const int FieldMax = 3, ReserveMax = 3, EnemyMax = 6;
-    public const int AllyHandMax = 8, SummonerHandMax = 3, SpMax = 10, UltimateSpCost = 3;
+    public const int AllyHandMax = 10, SummonerHandMax = 3, SpMax = 10, UltimateSpCost = 3;
+    // Fighter cards drawn to at the start of every round (every unplayed card is discarded at the end of the turn
+    // unless it Retains), and the SP a reserve partner's assist costs.
+    public const int HandSize = 5, PartnerSpCost = 2;
     public readonly List<BattleUnit> Allies = new List<BattleUnit>();
     public readonly List<BattleUnit> Reserves = new List<BattleUnit>();
     public readonly List<BattleUnit> Enemies = new List<BattleUnit>();
     public readonly List<BattleCard> DrawPile = new List<BattleCard>();
     public readonly List<BattleCard> Hand = new List<BattleCard>();
     public readonly List<BattleCard> Discard = new List<BattleCard>();
+    public readonly List<BattleCard> Exhausted = new List<BattleCard>();
+    // Cards played this turn (the CHAIN counter) and how many enemy actions interrupted the party this battle.
+    public int CardsThisTurn, Interrupts;
+    // Epiphany: the card that glows this battle (playing it offers 1 of 3 upgrades), the choice waiting to be made,
+    // and every epiphany taken (card id -> "swift,echo") so the expedition can keep them for the run.
+    public string GlowCard = "";
+    public BattleCard EpiphanyCard;
+    public readonly List<string> EpiphanyOptions = new List<string>();
+    public readonly Dictionary<string, string> Epiphanies = new Dictionary<string, string>();
     public readonly List<string> Log = new List<string>();
     public readonly List<BattleFact> Facts = new List<BattleFact>();
     public readonly Dictionary<string, BattleCard> Intents = new Dictionary<string, BattleCard>();
@@ -149,9 +176,12 @@ public sealed class BattleState
         foreach (BattleUnit unit in reserves) if (Reserves.Count < ReserveMax) Reserves.Add(unit);
         foreach (BattleUnit unit in enemies) if (Enemies.Count < EnemyMax) Enemies.Add(unit);
         for (int i = 0; i < Allies.Count; i++) Allies[i].Lane = i;
-        for (int i = 0; i < Enemies.Count; i++) Enemies[i].Lane = i;
+        for (int i = 0; i < Enemies.Count; i++) { Enemies[i].Lane = i; InitEnemy(Enemies[i]); }
         foreach (BattleCard card in deck) DrawPile.Add(card.Copy());
         Shuffle(DrawPile);
+        // Initiation cards of the fighters on the field go on top (the pile is drawn from its end).
+        var opening = DrawPile.FindAll(c => c.Initiation && OwnerOnField(c));
+        foreach (BattleCard card in opening) { DrawPile.Remove(card); DrawPile.Add(card); }
         Summoner = summoner;
         EnemySummoner = enemySummoner;
         StartRound();
@@ -173,9 +203,55 @@ public sealed class BattleState
         }
     }
 
+    // Tuning (balance sim: ExpeditionBalanceTests). Tenacity for packs, guards, elites, bosses; the extra damage a
+    // broken enemy takes.
+    public static int[] Tenacity = { 6, 7, 9, 12 };
+    public static float BreakDamage = .25f;
+
+    // Action count by build: quick skirmishers act after 3 party cards, bruisers and guards after 5, bosses after 5
+    // (4 once enraged). Tenacity: see the tuning table above.
+    private static int ActionCountFor(BattleUnit u)
+    {
+        if (u.Boss) return u.Phase >= 2 ? 4 : 5;
+        if (u.Affix == "Hasted") return 3;
+        return u.Speed >= 13f ? 3 : u.Speed <= 9.5f ? 5 : 4;
+    }
+
+    private static void InitEnemy(BattleUnit u)
+    {
+        u.ActionMax = ActionCountFor(u);
+        u.ActionCount = u.ActionMax;
+        u.MaxTenacity = u.Boss ? Tenacity[3] : u.Affix.Length > 0 ? Tenacity[2] : u.Role == BattleRole.Tank ? Tenacity[1] : Tenacity[0];
+        u.Tenacity = u.MaxTenacity;
+    }
+
+    private bool OwnerOnField(BattleCard card)
+    {
+        if (card.Kind == BattleCardKind.Summoner || string.IsNullOrEmpty(card.Owner)) return true;
+        for (int i = 0; i < Allies.Count; i++) if (Allies[i].Id == card.Owner && Allies[i].Alive) return true;
+        return false;
+    }
+
+    // The reserve paired with a field fighter (same slot), or null.
+    public BattleUnit PartnerOf(BattleUnit fighter)
+    {
+        int i = Allies.IndexOf(fighter);
+        return i >= 0 && i < Reserves.Count ? Reserves[i] : null;
+    }
+
+    // The field fighter a reserve partners, or null.
+    public BattleUnit PartneredBy(BattleUnit reserve)
+    {
+        int i = Reserves.IndexOf(reserve);
+        return i >= 0 && i < Allies.Count ? Allies[i] : null;
+    }
+
+    public int UltCost(BattleUnit unit) { return unit != null && unit.Overcame ? UltimateSpCost - 1 : UltimateSpCost; }
+
     private void StartRound()
     {
         Round++;
+        CardsThisTurn = 0;
         // Stun and Slow bite on the round after they land, so they are read before durations tick down.
         var stunned = new HashSet<BattleUnit>();
         var slowed = new HashSet<BattleUnit>();
@@ -206,7 +282,8 @@ public sealed class BattleState
                 {
                     unit.Stress = Math.Min(unit.Stress, 40);
                     unit.AwakeningReady = true;
-                    Say(unit.Name + " recovers and gains an awakening skill.");
+                    unit.Overcame = true;
+                    Say(unit.Name + " overcomes the breakdown: an awakening skill, and ultimates cost 1 SP less.");
                 }
             }
         }
@@ -218,10 +295,17 @@ public sealed class BattleState
         Sp = Math.Min(SpMax, Sp + 1);
         EnemySp = Math.Min(SpMax, EnemySp + 1);
         Cp = 2; EnemyCp = 2;
+        foreach (BattleUnit enemy in Enemies)
+        {
+            if (!enemy.Alive) continue;
+            enemy.ActedThisRound = false;
+            enemy.ActionMax = ActionCountFor(enemy);
+            enemy.ActionCount = enemy.ActionMax;
+            if (!enemy.HasStatus("Broken")) enemy.Tenacity = enemy.MaxTenacity;
+        }
         EnsureWall(Enemies);
         RollIntents();
-        DrawCards(1);
-        for (int i = 0; i < Allies.Count; i++) if (Allies[i].Alive) DrawCards(Round == 1 ? 2 : 1);
+        RefillHand();
         CheckEnd();
         if (!Finished) Say("Round " + Round + ": choose a card, basic attack, or ultimate.");
     }
@@ -255,6 +339,26 @@ public sealed class BattleState
         int count = 0;
         for (int i = 0; i < Hand.Count; i++) if ((Hand[i].Kind == BattleCardKind.Summoner) == summoner) count++;
         return count;
+    }
+
+    // Draws fighter cards until HandSize of them are in hand. JD's support cards met on the way join the hand too
+    // (up to three); cards whose owner is benched or down are set aside.
+    private void RefillHand()
+    {
+        int misses = 0;
+        while (CountHand(false) < HandSize)
+        {
+            if (DrawPile.Count == 0)
+            {
+                if (Discard.Count == 0) break;
+                DrawPile.AddRange(Discard); Discard.Clear(); Shuffle(DrawPile); Say("The deck is reshuffled.");
+            }
+            BattleCard card = DrawPile[DrawPile.Count - 1]; DrawPile.RemoveAt(DrawPile.Count - 1);
+            if (CanDraw(card)) { Hand.Add(card); if (card.Kind != BattleCardKind.Summoner) misses = 0; continue; }
+            Discard.Add(card);
+            // Nothing left that can be drawn: stop instead of reshuffling forever.
+            if (++misses > DrawPile.Count + Discard.Count + 1) break;
+        }
     }
 
     public int DrawCards(int count)
@@ -293,7 +397,7 @@ public sealed class BattleState
         if (actor == null || !actor.Alive || actor.Enemy || actor.Strained(card)) return false;
         if (!string.IsNullOrEmpty(card.Owner) && actor.Id != card.Owner) return false;
         if (card.Kind == BattleCardKind.Awakening) return actor.AwakeningReady && actor.CollapseRounds == 0 && Allies.Contains(actor);
-        if (card.Kind == BattleCardKind.Ultimate) return actor.Ultimate >= 100 && Sp >= UltimateSpCost;
+        if (card.Kind == BattleCardKind.Ultimate) return actor.Ultimate >= 100 && Sp >= UltCost(actor);
         return actor.Ap >= card.Ap && actor.Ep >= card.Ep;
     }
 
@@ -326,13 +430,116 @@ public sealed class BattleState
         BattleUnit actor = OwnerOf(card);
         if (!CanPay(card, actor) || !IsTarget(card, actor, target)) return false;
         if (card.Kind == BattleCardKind.Summoner) Cp -= Math.Max(1, card.Ap);
-        else if (card.Kind == BattleCardKind.Ultimate) { Sp -= UltimateSpCost; actor.Ultimate = 0; }
+        else if (card.Kind == BattleCardKind.Ultimate) { Sp -= UltCost(actor); actor.Ultimate = 0; }
         else if (card.Kind == BattleCardKind.Awakening) actor.AwakeningReady = false;
         else { actor.Ap -= card.Ap; actor.Ep -= card.Ep; actor.Charge(18); }
         Say((actor == null ? Summoner.Name : actor.Name) + " uses " + card.Name + ".");
         Resolve(card, actor, target);
-        if (Hand.Remove(card)) Discard.Add(card);
+        if (Hand.Remove(card)) (card.Exhaust ? Exhausted : Discard).Add(card);
+        if (GlowCard.Length > 0 && card.Id == GlowCard) OfferEpiphany(card);
         CheckEnd();
+        // Ego moves (ultimates, awakenings) do not move the enemies' action counts; every other card does.
+        if (card.Kind != BattleCardKind.Ultimate && card.Kind != BattleCardKind.Awakening)
+        {
+            CardsThisTurn++;
+            TickActionCounts();
+        }
+        return true;
+    }
+
+    // Each card played lowers every enemy's action count; one that reaches 0 acts at once, mid-turn, then its count
+    // starts over with a fresh intent, so a long chain can draw a second action from a quick enemy. An enemy that
+    // acted mid-turn does not act again at the end of the turn.
+    private void TickActionCounts()
+    {
+        if (Finished) return;
+        var ready = new List<BattleUnit>();
+        foreach (BattleUnit enemy in Enemies)
+        {
+            if (!enemy.Alive || enemy.ActionMax <= 0) continue;
+            enemy.ActionCount = Math.Max(0, enemy.ActionCount - 1);
+            if (enemy.ActionCount == 0) ready.Add(enemy);
+        }
+        ready.Sort((a, b) => b.EffectiveSpeed.CompareTo(a.EffectiveSpeed));
+        foreach (BattleUnit enemy in ready)
+        {
+            if (Finished) return;
+            if (!enemy.Alive) continue;
+            EnemyAct(enemy, true);
+            if (Finished || !enemy.Alive) continue;
+            enemy.ActionCount = enemy.ActionMax;
+            enemy.Ap = enemy.MaxAp; enemy.Ep = enemy.MaxEp;
+            RollIntent(enemy);
+        }
+    }
+
+    // ---- reserve partners ------------------------------------------------------------------------------------
+
+    // A reserve's assist: their first ultimate at 60%, once per battle, for PartnerSpCost SP.
+    public BattleCard PartnerMove(BattleUnit reserve)
+    {
+        List<BattleCard> ults = BattleCatalog.Ultimates(reserve);
+        if (ults.Count == 0) return null;
+        BattleCard card = ults[0].Copy();
+        card.Power *= .6f; card.Heal *= .6f;
+        card.Name = card.Name + " (Assist)";
+        return card;
+    }
+
+    public bool CanPartnerAssist(BattleUnit reserve)
+    {
+        return !Finished && reserve != null && Reserves.Contains(reserve) && reserve.Alive && !reserve.PartnerUsed
+            && Sp >= PartnerSpCost && PartneredBy(reserve) != null && PartnerMove(reserve) != null;
+    }
+
+    public bool TryPartnerAssist(BattleUnit reserve, BattleUnit target)
+    {
+        if (!CanPartnerAssist(reserve)) return false;
+        BattleCard card = PartnerMove(reserve);
+        if (card.Target == BattleTarget.Enemy && (target == null || !target.Enemy || !Exposed(target))) return false;
+        if (card.Target == BattleTarget.Ally && (target == null || target.Enemy || !Allies.Contains(target) || !target.Alive)) return false;
+        Sp -= PartnerSpCost;
+        reserve.PartnerUsed = true;
+        Say(reserve.Name + " steps in beside " + PartneredBy(reserve).Name + ": " + card.Name + "!");
+        Resolve(card, reserve, card.Target == BattleTarget.Self ? reserve : target);
+        CheckEnd();
+        return true;
+    }
+
+    // ---- epiphany --------------------------------------------------------------------------------------------
+
+    private void OfferEpiphany(BattleCard card)
+    {
+        GlowCard = "";
+        EpiphanyOptions.Clear();
+        var pool = BattleCatalog.EpiphanyChoices(card);
+        while (pool.Count > 0 && EpiphanyOptions.Count < 3)
+        {
+            int i = rng.Next(pool.Count);
+            EpiphanyOptions.Add(pool[i]); pool.RemoveAt(i);
+        }
+        if (EpiphanyOptions.Count > 0) { EpiphanyCard = card; Say("Epiphany! " + card.Name + " can grow."); }
+    }
+
+    // Applies option i to every copy of the pending card for the rest of the battle (and records it for the run).
+    public bool ChooseEpiphany(int index)
+    {
+        if (EpiphanyCard == null || index < 0 || index >= EpiphanyOptions.Count) return false;
+        string mod = EpiphanyOptions[index];
+        BattleCard picked = EpiphanyCard;
+        string id = picked.Id;
+        bool appliedToPicked = false;
+        foreach (var list in new[] { DrawPile, Hand, Discard, Exhausted })
+            foreach (BattleCard c in list)
+                if (c.Id == id) { BattleCatalog.ApplyEpiphany(c, mod); if (c == picked) appliedToPicked = true; }
+        if (!appliedToPicked) BattleCatalog.ApplyEpiphany(picked, mod);
+        string before;
+        Epiphanies[id] = Epiphanies.TryGetValue(id, out before) && before.Length > 0 ? before + "," + mod : mod;
+        BattleUnit owner = OwnerOf(picked);
+        Fact("epiphany", owner, owner ?? Summoner, picked, 0, false, 1f, 1f);
+        Say(picked.Name + " gains " + BattleCatalog.EpiphanyName(mod) + ".");
+        EpiphanyCard = null;
+        EpiphanyOptions.Clear();
         return true;
     }
 
@@ -402,6 +609,12 @@ public sealed class BattleState
         if (actor != null && chosen != null && card.TransferAp) { chosen.Ap += actor.Ap; actor.Ap = 0; }
         if (actor != null && chosen != null && card.TransferEp) { chosen.Ep += actor.Ep; actor.Ep = 0; }
         if (chosen != null) { chosen.Ap += card.ApGain; chosen.Ep += card.EpGain; }
+        if (card.SelfShield > 0 && actor != null && actor.Alive && !actor.Enemy)
+        {
+            int amount = Math.Max(1, (int)Math.Round(card.SelfShield * MendMultiplier(actor)));
+            actor.ApplyStatus("Shield", amount, 1);
+            Fact("shield", actor, actor, card, amount, false, 1f, 1f);
+        }
         bool fullBond = FullBond(card, actor);
         if (card.Draw > 0) DrawCards(card.Draw + (fullBond ? 1 : 0));
         float bond = Bond(card, actor);
@@ -424,6 +637,7 @@ public sealed class BattleState
             if (!string.IsNullOrEmpty(card.Status))
             {
                 float magnitude = card.Status == "IceCounter" ? card.Magnitude : card.Magnitude * bond * MendMultiplier(actor);
+                if (card.Status == "Shield") magnitude = card.Magnitude * MendMultiplier(actor);
                 target.ApplyStatus(card.Status, magnitude, card.Duration + (fullBond && card.Status != "IceCounter" ? 1 : 0));
                 Fact("status", actor, target, card, 0, false, 1f, bond);
                 Say(target.Name + " gains " + card.Status + ".");
@@ -490,13 +704,27 @@ public sealed class BattleState
 
     private float StrikeMultiplier(BattleUnit unit)
     {
-        if (unit.Role == BattleRole.Dps && !Covered(unit)) return 1.15f;
-        if (unit.Role == BattleRole.Ranger && Covered(unit)) return 1.20f;
-        return 1f;
+        float partner = PartnerBonus(unit);
+        if (unit.Role == BattleRole.Dps && !Covered(unit)) return 1.15f * partner;
+        if (unit.Role == BattleRole.Ranger && Covered(unit)) return 1.20f * partner;
+        return partner;
+    }
+
+    // A field fighter with a living reserve partner in their slot hits, heals and shields 8% harder (CZN partners).
+    public const float PartnerPassive = 1.08f;
+    public float PartnerBonus(BattleUnit unit)
+    {
+        if (unit == null || unit.Enemy || !Allies.Contains(unit)) return 1f;
+        BattleUnit partner = PartnerOf(unit);
+        return partner != null && partner.Alive ? PartnerPassive : 1f;
     }
 
     private float GuardMultiplier(BattleUnit unit) { return unit.Role == BattleRole.Tank && unit.Taunting ? 1.25f : 1f; }
-    private float MendMultiplier(BattleUnit unit) { return unit != null && unit.Role == BattleRole.Support && Covered(unit) ? 1.25f : 1f; }
+    private float MendMultiplier(BattleUnit unit)
+    {
+        if (unit == null) return 1f;
+        return (unit.Role == BattleRole.Support && Covered(unit) ? 1.25f : 1f) * PartnerBonus(unit);
+    }
 
     private static float ElementMultiplier(BattleElement attack, BattleElement defend)
     {
@@ -516,7 +744,8 @@ public sealed class BattleState
         float synergy = card.Synergy == "combo_marked" && target.HasStatus("DefenseDown") ? 1f + card.SynergyScale : 1f;
         float rage = actor.Affix == "Enraged" && actor.Hp * 2 <= actor.MaxHp ? 1.5f : 1f;
         float raw = Math.Max(1f, card.EffectivePower * synergy * bond * runMultiplier * attack * rage * actor.AttackMultiplier * StrikeMultiplier(actor) - defense * target.DefenseMultiplier * GuardMultiplier(target));
-        return raw * element;
+        // A broken enemy takes more from everything until it recovers.
+        return raw * element * (target.HasStatus("Broken") ? 1f + target.StatusValue("Broken") : 1f);
     }
 
     // Expected non-critical damage of a card, for target previews and enemy intent badges.
@@ -535,15 +764,17 @@ public sealed class BattleState
         float raw = BaseDamage(card, actor, target, bond, runPlayMultiplier, out element);
         raw *= crit ? Math.Max(1f, actor.CritDamage) : 1f;
         int amount = Math.Max(1, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
+        if (target.Enemy && !actor.Enemy) WearTenacity(card, actor, target, element);
         int shield = (int)target.StatusValue("Shield");
         if (shield > 0)
         {
             int absorbed = Math.Min(shield, amount);
             amount -= absorbed;
             if (shield - absorbed <= 0) target.Statuses.RemoveAll(s => s.Name == "Shield");
-            else target.ApplyStatus("Shield", shield - absorbed, 99);
+            else target.Statuses.Find(s => s.Name == "Shield").Magnitude = shield - absorbed;
             Say(target.Name + "'s shield absorbs " + absorbed + ".");
-            if (amount <= 0) { Fact("damage", actor, target, card, 0, crit, element, bond); return; }
+            // Fully blocked: no health lost and no stress gained.
+            if (amount <= 0) { Fact("blocked", actor, target, card, absorbed, crit, element, bond); return; }
         }
         target.DamageBy(amount);
         target.Charge(12);
@@ -586,6 +817,30 @@ public sealed class BattleState
         }
     }
 
+    // Party hits wear an enemy's tenacity: 1, +1 for a 2 EP card, +1 more at 3 EP, +1 on a WEAK hit, +2 for an ultimate.
+    // At 0 the enemy BREAKS: it takes 25% more damage until next round, its action count is pushed back by one,
+    // and the fighter who broke it gets 1 AP back and sheds 10 stress, and JD gains 1 SP.
+    public static int TenacityDamage(BattleCard card, float element)
+    {
+        if (card == null) return 1;
+        int wear = 1 + (card.Ep >= 2 ? 1 : 0) + (card.Ep >= 3 ? 1 : 0) + (element > 1.01f ? 1 : 0);
+        if (card.Kind == BattleCardKind.Ultimate) wear += 2;
+        return wear;
+    }
+
+    private void WearTenacity(BattleCard card, BattleUnit actor, BattleUnit target, float element)
+    {
+        if (target.MaxTenacity <= 0 || target.HasStatus("Broken") || !target.Alive) return;
+        target.Tenacity = Math.Max(0, target.Tenacity - TenacityDamage(card, element));
+        if (target.Tenacity > 0) return;
+        target.ApplyStatus("Broken", BreakDamage, 1);
+        target.ActionCount += 1;
+        if (actor != null && Allies.Contains(actor) && actor.Alive) { actor.Ap += 1; actor.Stress = Math.Max(0, actor.Stress - 10); }
+        Sp = Math.Min(SpMax, Sp + 1);
+        Fact("break", actor, target, card, 0, false, element, 1f);
+        Say(target.Name + " BREAKS!");
+    }
+
     private void Fact(string kind, BattleUnit actor, BattleUnit target, BattleCard card, int amount, bool crit, float element, float bond)
     {
         Facts.Add(new BattleFact { Kind = kind, Actor = actor, Target = target, Card = card, Amount = amount,
@@ -618,25 +873,27 @@ public sealed class BattleState
     private void RollIntents()
     {
         Intents.Clear(); IntentTargets.Clear();
-        for (int i = 0; i < Enemies.Count; i++)
+        for (int i = 0; i < Enemies.Count; i++) RollIntent(Enemies[i]);
+    }
+
+    private void RollIntent(BattleUnit enemy)
+    {
+        Intents.Remove(enemy.Id); IntentTargets.Remove(enemy.Id);
+        if (!enemy.Alive) return;
+        List<BattleCard> pool = BattleCatalog.EnemyCards(enemy);
+        if (pool.Count == 0) return;
+        BattleCard card = null;
+        if (enemy.Boss && enemy.HasStatus("Charging"))
         {
-            BattleUnit enemy = Enemies[i];
-            if (!enemy.Alive) continue;
-            List<BattleCard> pool = BattleCatalog.EnemyCards(enemy);
-            if (pool.Count == 0) continue;
-            BattleCard card = null;
-            if (enemy.Boss && enemy.HasStatus("Charging"))
-            {
-                // The charge-up announced last round: the signature move lands now.
-                card = pool.Find(c => c.Id == "e_cataclysm");
-                enemy.Statuses.RemoveAll(s => s.Name == "Charging");
-            }
-            if (card == null) card = ChooseEnemyCard(enemy, pool);
-            if (card == null) continue;
-            Intents[enemy.Id] = card;
-            IntentTargets[enemy.Id] = card.Target == BattleTarget.Enemy ? EnemyVictim(card) : card.Target == BattleTarget.Self ? enemy :
-                card.Target == BattleTarget.Ally ? MostHurt(Enemies) : null;
+            // The charge-up announced last round: the signature move lands now.
+            card = pool.Find(c => c.Id == "e_cataclysm");
+            enemy.Statuses.RemoveAll(s => s.Name == "Charging");
         }
+        if (card == null) card = ChooseEnemyCard(enemy, pool);
+        if (card == null) return;
+        Intents[enemy.Id] = card;
+        IntentTargets[enemy.Id] = card.Target == BattleTarget.Enemy ? EnemyVictim(card) : card.Target == BattleTarget.Self ? enemy :
+            card.Target == BattleTarget.Ally ? MostHurt(Enemies) : null;
     }
 
     // Weighted by the situation: heal a hurt friend, buff when nobody is buffed, guard when unguarded, else attack.
@@ -688,31 +945,53 @@ public sealed class BattleState
         return available[rng.Next(available.Count)];
     }
 
+    // One enemy carries out its intent (at the end of the turn, or mid-turn when its action count runs out).
+    private void EnemyAct(BattleUnit enemy, bool interrupt)
+    {
+        enemy.ActedThisRound = true;
+        enemy.ActionCount = 0;
+        BattleCard card;
+        if (!Intents.TryGetValue(enemy.Id, out card)) return;
+        BattleUnit target;
+        IntentTargets.TryGetValue(enemy.Id, out target);
+        if (interrupt)
+        {
+            Interrupts++;
+            Fact("interrupt", enemy, enemy, card, 0, false, 1f, 1f);
+            Say(enemy.Name + " moves before the party can finish!");
+        }
+        // Hasted elites have two actions and repeat their move while they can pay for it.
+        for (int act = 0; act < 2 && enemy.Alive && enemy.Ap >= card.Ap && enemy.Ep >= card.Ep; act++)
+        {
+            if (act > 0 && enemy.Affix != "Hasted") break;
+            if (card.Target == BattleTarget.Enemy && (target == null || !target.Alive || !Exposed(target))) target = EnemyVictim(card);
+            if (card.Target == BattleTarget.Ally && (target == null || !target.Alive)) target = MostHurt(Enemies);
+            if ((card.Target == BattleTarget.Enemy || card.Target == BattleTarget.Self || card.Target == BattleTarget.Ally) && target == null) break;
+            enemy.Ap -= card.Ap; enemy.Ep -= card.Ep;
+            Say(enemy.Name + " uses " + card.Name + ".");
+            Resolve(card, enemy, target);
+            CheckEnd();
+            if (Finished) return;
+        }
+        Intents.Remove(enemy.Id);
+        IntentTargets.Remove(enemy.Id);
+    }
+
     public void EndTurn()
     {
         if (Finished) return;
+        // Every card not played this turn is thrown out (to the discard pile) unless it Retains, JD's included.
+        for (int i = Hand.Count - 1; i >= 0; i--)
+            if (!Hand[i].Retain) { Discard.Add(Hand[i]); Hand.RemoveAt(i); }
+        if (EpiphanyCard != null) ChooseEpiphany(0);
         List<BattleUnit> ordered = new List<BattleUnit>(Enemies);
         ordered.Sort((a, b) => b.EffectiveSpeed.CompareTo(a.EffectiveSpeed));
         for (int i = 0; i < ordered.Count; i++)
         {
             BattleUnit enemy = ordered[i];
-            if (!enemy.Alive) continue;
-            BattleCard card;
-            if (!Intents.TryGetValue(enemy.Id, out card)) continue;
-            BattleUnit target = IntentTargets[enemy.Id];
-            // Hasted elites have two actions and repeat their move while they can pay for it.
-            for (int act = 0; act < 2 && enemy.Alive && enemy.Ap >= card.Ap && enemy.Ep >= card.Ep; act++)
-            {
-                if (act > 0 && enemy.Affix != "Hasted") break;
-                if (card.Target == BattleTarget.Enemy && (target == null || !target.Alive || !Exposed(target))) target = EnemyVictim(card);
-                if (card.Target == BattleTarget.Ally && (target == null || !target.Alive)) target = MostHurt(Enemies);
-                if ((card.Target == BattleTarget.Enemy || card.Target == BattleTarget.Self || card.Target == BattleTarget.Ally) && target == null) break;
-                enemy.Ap -= card.Ap; enemy.Ep -= card.Ep;
-                Say(enemy.Name + " uses " + card.Name + ".");
-                Resolve(card, enemy, target);
-                CheckEnd();
-                if (Finished) return;
-            }
+            if (!enemy.Alive || enemy.ActedThisRound) continue;
+            EnemyAct(enemy, false);
+            if (Finished) return;
         }
         if (EnemySummoner != null && EnemySummoner.Alive)
         {

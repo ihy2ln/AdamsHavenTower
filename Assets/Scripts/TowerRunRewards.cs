@@ -68,6 +68,37 @@ namespace AdamsHaven.Tower
             return levels;
         }
 
+        // Card id -> epiphanies ("swift,echo") taken earlier in this run, for the battle deck.
+        public Dictionary<string, string> CardMods()
+        {
+            var mods = new Dictionary<string, string>();
+            var run = Run;
+            if (run == null || run.epiphanies == null) return mods;
+            foreach (var line in run.epiphanies)
+            {
+                int eq = line.IndexOf('=');
+                if (eq > 0) mods[line.Substring(0, eq)] = line.Substring(eq + 1);
+            }
+            return mods;
+        }
+
+        // Adds the epiphanies a fight produced (card id -> mods taken in that fight) to the run's own.
+        public void KeepEpiphanies(Dictionary<string, string> taken)
+        {
+            var run = Run;
+            if (run == null || taken == null || taken.Count == 0) return;
+            if (run.epiphanies == null) run.epiphanies = new List<string>();
+            var all = CardMods();
+            foreach (var pair in taken)
+            {
+                string before;
+                all[pair.Key] = all.TryGetValue(pair.Key, out before) && before.Length > 0 ? before + "," + pair.Value : pair.Value;
+                Note("Epiphany: a card grew stronger for the rest of the expedition.");
+            }
+            run.epiphanies.Clear();
+            foreach (var pair in all) run.epiphanies.Add(pair.Key + "=" + pair.Value);
+        }
+
         // What the relics change inside a fight (BattleState applies these).
         public BattleRunModifiers BattleModifiers()
         {
@@ -83,7 +114,8 @@ namespace AdamsHaven.Tower
         }
 
         // After a won fight: three distinct offers. Boss and elite fights always include a relic.
-        private void OfferRewards(string kind, TowerRng rng)
+        // poi: the place the fight was in (its mods may promise a relic), "" for an ambush.
+        private void OfferRewards(string kind, TowerRng rng, string poi = "")
         {
             var run = Run;
             NormalizeRewards(run);
@@ -98,7 +130,9 @@ namespace AdamsHaven.Tower
             }
             var relics = new List<TowerRelicDef>();
             foreach (var r in Relics) if (!HasRelic(r.id)) relics.Add(r);
-            bool relicDue = kind == "boss" || kind == "elite" || kind == "treasure" || rng.Value() < .35f;
+            // A Fortified place (TowerAtlasNodes) always has a relic on offer too.
+            bool relicDue = kind == "boss" || kind == "elite" || kind == "treasure" ||
+                (!string.IsNullOrEmpty(poi) && NodeTotals(poi).relic) || rng.Value() < .35f;
             if (relicDue && relics.Count > 0) offers.Add("relic:" + relics[rng.Next(relics.Count)].id);
             while (offers.Count < RewardChoices && cards.Count > 0)
             {
@@ -197,10 +231,10 @@ namespace AdamsHaven.Tower
         }
 
         // A won fight: offer rewards and let the run's relics act.
-        private void AfterWin(string kind, TowerRng rng)
+        private void AfterWin(string kind, TowerRng rng, string poi = "")
         {
             if (HasRelic("mending_moss")) HealParty(8, false);
-            OfferRewards(kind, rng);
+            OfferRewards(kind, rng, poi);
         }
     }
 }

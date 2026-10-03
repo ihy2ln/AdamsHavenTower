@@ -11,15 +11,18 @@ public static class BattleAutoPlayer
         public BattleUnit Actor, Target;
         public int Ultimate;     // >= 0: ultimate choice for Actor
         public bool Decree;      // JD's summoner ultimate
+        public bool Assist;      // Actor is a reserve partner stepping in
     }
 
     public static bool Next(BattleState b, out Move move)
     {
         move = new Move { Ultimate = -1 };
         if (b == null || b.Finished) return false;
+        // An epiphany waits on a choice: take the first offer.
+        if (b.EpiphanyCard != null) b.ChooseEpiphany(0);
         foreach (BattleUnit ally in b.Allies)
         {
-            if (!ally.Alive || ally.Ultimate < 100 || b.Sp < BattleState.UltimateSpCost) continue;
+            if (!ally.Alive || ally.Ultimate < 100 || b.Sp < b.UltCost(ally)) continue;
             List<BattleCard> options = BattleCatalog.Ultimates(ally);
             for (int i = 0; i < options.Count; i++)
             {
@@ -33,6 +36,19 @@ public static class BattleAutoPlayer
             }
         }
         if (b.Sp >= BattleState.SpMax && b.Summoner != null && b.Summoner.Alive) { move.Decree = true; return true; }
+        // A partner steps in when SP is spare (no ultimate is about to need it) or a boss is on the field.
+        bool ultSoon = b.Allies.Exists(u => u.Alive && u.Ultimate >= 70);
+        foreach (BattleUnit reserve in b.Reserves)
+        {
+            if (!b.CanPartnerAssist(reserve)) continue;
+            if (ultSoon && b.Sp < BattleState.UltimateSpCost + BattleState.PartnerSpCost && !b.Enemies.Exists(e => e.Alive && e.Boss)) continue;
+            BattleCard assist = b.PartnerMove(reserve);
+            BattleUnit target = Target(b, assist, b.PartneredBy(reserve));
+            if (assist.Target == BattleTarget.Self) target = reserve;
+            if (assist.Target == BattleTarget.Enemy && target == null) continue;
+            move = new Move { Card = assist, Actor = reserve, Target = target, Ultimate = -1, Assist = true };
+            return true;
+        }
         BattleCard best = null; BattleUnit bestActor = null, bestTarget = null; float bestValue = 0f;
         foreach (BattleCard card in b.Hand)
         {
@@ -47,6 +63,10 @@ public static class BattleAutoPlayer
         if (best != null) { move = new Move { Card = best, Actor = bestActor, Target = bestTarget, Ultimate = -1 }; return true; }
         foreach (BattleUnit ally in b.Allies)
         {
+            // Guard when an enemy means to hit this fighter hard this round; otherwise a basic attack.
+            BattleCard guard = BattleCatalog.Guard(ally);
+            if (b.CanPay(guard, ally) && Threatened(b, ally) && !ally.HasStatus("Shield"))
+            { move = new Move { Card = guard, Actor = ally, Target = ally, Ultimate = -1 }; return true; }
             BattleCard basic = BattleCatalog.Basic(ally);
             BattleUnit target = Target(b, basic, ally);
             if (b.CanPay(basic, ally) && b.IsTarget(basic, ally, target))
@@ -55,10 +75,26 @@ public static class BattleAutoPlayer
         return false;
     }
 
+    // An enemy's attack this round aims at the fighter for a fifth of their health or more.
+    private static bool Threatened(BattleState b, BattleUnit ally)
+    {
+        foreach (BattleUnit enemy in b.Enemies)
+        {
+            BattleCard card; BattleUnit target;
+            if (!enemy.Alive || !b.Intents.TryGetValue(enemy.Id, out card) || card.EffectivePower <= 0) continue;
+            bool aimed = card.Target == BattleTarget.AllEnemies || (b.IntentTargets.TryGetValue(enemy.Id, out target) && target == ally);
+            if (!aimed) continue;
+            float element;
+            if (b.PreviewDamage(card, enemy, ally, out element) * 5 >= ally.Hp) return true;
+        }
+        return false;
+    }
+
     // Plays a move straight into the rules (the simulation; BattleMode routes moves through its own animations).
     public static bool Apply(BattleState b, Move move)
     {
         if (move.Decree) return b.TrySummonerUltimate();
+        if (move.Assist) return b.TryPartnerAssist(move.Actor, move.Target);
         if (move.Ultimate >= 0) return b.TryUltimate(move.Actor, move.Ultimate, move.Target);
         return b.TryPlay(move.Card, move.Target);
     }

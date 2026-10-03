@@ -66,28 +66,34 @@ public sealed class TowerDungeonIllustration : MonoBehaviour
         image.material = mistMaterial;
     }
 
+    private readonly float[] light = new float[TowerDungeon.Size * TowerDungeon.Size];
+    private Color32[] pixels;
+
+    // Brightness per cell comes from the rules once (TowerRules.DungeonLight: in sight, rooms left to explore, passages,
+    // finished rooms dimmed); the mask then only reads that array instead of asking the rules for every pixel.
     public void Refresh(TowerRules rules)
     {
         if (discovery == null) return;
-        var pixels = new Color32[discovery.width * discovery.height];
+        rules.DungeonLight(light);
+        if (pixels == null || pixels.Length != discovery.width * discovery.height) pixels = new Color32[discovery.width * discovery.height];
         // Feather inward; undiscovered cell interiors remain fully opaque.
         for (int py = 0; py < discovery.height; py++) for (int px = 0; px < discovery.width; px++)
         {
             float x = (px + 0.5f) / 8, y = (py + 0.5f) / 8;
             int cx = Mathf.FloorToInt(x), cy = Mathf.FloorToInt(y);
-            float state = 0;
-            if (rules.Revealed(cx, cy))
+            float state = 0, lit = light[TowerDungeon.Index(cx, cy)];
+            if (lit > 0)
             {
                 float distance = 1;
                 for (int oy = -1; oy <= 1; oy++) for (int ox = -1; ox <= 1; ox++)
                 {
                     int nx = cx + ox, ny = cy + oy;
-                    if (!TowerDungeon.Inside(nx, ny) || rules.Revealed(nx, ny)) continue;
+                    if (!TowerDungeon.Inside(nx, ny) || light[TowerDungeon.Index(nx, ny)] > 0) continue;
                     float dx = Mathf.Max(nx - x, 0, x - nx - 1);
                     float dy = Mathf.Max(ny - y, 0, y - ny - 1);
                     distance = Mathf.Min(distance, Mathf.Sqrt(dx * dx + dy * dy));
                 }
-                state = (rules.InSight(cx, cy) ? 1 : 0.5f) * Mathf.SmoothStep(0, 1, distance / 0.6f);
+                state = lit * Mathf.SmoothStep(0, 1, distance / 0.6f);
             }
             byte value = (byte)Mathf.RoundToInt(state * 255);
             pixels[(discovery.height - 1 - py) * discovery.width + px] = new Color32(value, value, value, 255);

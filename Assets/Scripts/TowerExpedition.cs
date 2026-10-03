@@ -74,8 +74,21 @@ namespace AdamsHaven.Tower
         public List<string> rewardOffer = new List<string>();
         public List<string> relics = new List<string>();
         public List<TowerCardLevel> cardLevels = new List<TowerCardLevel>();
+        // Epiphanies taken in this run's fights, as "card id=swift,echo" (BattleState.Epiphanies); they last the run.
+        public List<string> epiphanies = new List<string>();
         public List<int> stress = new List<int>();
         public string conquest = "";        // a region conquered this run, until the player has seen the conquest card
+        // The run map as an Atlas web (TowerOverworldRules, TowerAtlasNodes). webVersion 0 = a grid run saved before the web
+        // (MigrateWebRun). nodesDone: places completed (camp, cleared dungeons, merchants, shrines and towers reached).
+        // webLinks: links among the places that stayed put through a shift. tablets: "tower:mod" set at climbed towers;
+        // tabletOffer: the pick waiting at a tower. On the grid, `road` holds the web links travelled (RoadKey).
+        public int webVersion;
+        public List<string> nodesDone = new List<string>();
+        public List<string> webLinks = new List<string>();
+        public List<string> tablets = new List<string>();
+        public List<string> tabletOffer = new List<string>();
+        // "id=hops": each place's hops from the camp when it appeared, so a shift never changes a known place's tier or mods.
+        public List<string> nodeHops = new List<string>();
     }
 
     // One walked route between two forest places, as points on the painted map (normalised, y from the top).
@@ -162,9 +175,24 @@ namespace AdamsHaven.Tower
             if (State.hasRun && State.run.eventId.Length > 0 && TowerEvents.Get(State.run.eventId) == null) State.run.eventId = "";
             if (State.hasRun && State.run.roomsCleared == null) State.run.roomsCleared = new List<string>();
             if (State.hasRun) NormalizeRewards(State.run);
+            if (State.hasRun) NormalizeAtlas(State.run);
             NormalizeJournal();
             MigratePlateRun();
+            MigrateWebRun();
+            // Dungeon fog is lifted room by room now: a save with the old cell-by-cell fog sees its current room again.
+            if (State.hasRun && State.run.dungeonPoi.Length > 0 && Dungeon != null) RevealAround();
             MarkPartyAway();
+        }
+
+        private static void NormalizeAtlas(TowerRun run)
+        {
+            if (run.nodesDone == null) run.nodesDone = new List<string>();
+            if (run.webLinks == null) run.webLinks = new List<string>();
+            if (run.tablets == null) run.tablets = new List<string>();
+            if (run.tabletOffer == null) run.tabletOffer = new List<string>();
+            if (run.nodeHops == null) run.nodeHops = new List<string>();
+            if (run.road == null) run.road = new List<string>();
+            if (run.revealed == null) run.revealed = new List<string>();
         }
 
         // Heroes out on an expedition are away from the Tower (no jobs, no rooms) until the run ends.
@@ -266,12 +294,9 @@ namespace AdamsHaven.Tower
             if (run == null) return "No expedition.";
             if (run.dungeonPoi.Length > 0) return "Leave the dungeon first.";
             if (layout.Node(nodeId) == null) return "Unknown place.";
-            if (GridRun)
-            {
-                // On the grid any seen place can be walked to; an event on the way may stop the party short.
-                var poi = Overworld.Poi(nodeId);
-                return GridMove(poi.x, poi.y).error;
-            }
+            // On the grid the party travels the web to any place linked to a completed one; an event on the way may stop
+            // it at a place short of the target.
+            if (GridRun) return AtlasTravel(nodeId).error;
             if (!layout.Linked(run.at, nodeId)) return "No trail leads there from here.";
             string block = EventBlock();
             if (block != null) return block;
@@ -349,7 +374,7 @@ namespace AdamsHaven.Tower
         {
             if (node == null || node.kind == "camp") return "";
             var region = RunRegion;
-            int depth = region == null ? 1 : region.depth;
+            int depth = (region == null ? 1 : region.depth) + NodeDepthBonus(node.id);
             switch (node.kind)
             {
                 case "combat": return "Danger " + depth + "  •  loot and a reward pick";
@@ -358,6 +383,7 @@ namespace AdamsHaven.Tower
                 case "treasure": return "A guarded vault  •  relic and hoard";
                 case "shrine": return "No fight  •  a blessing for a price";
                 case "merchant": return "No fight  •  supplies and relics for haul gold";
+                case "tower": return "No fight  •  climb it: see " + TowerRadius + " cells around, set a tablet";
                 default: return "Unknown  •  anything could be inside";
             }
         }

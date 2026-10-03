@@ -19,6 +19,11 @@ public sealed partial class BattleMode
         public float Started, Rate = 1f, Offset;
         public bool Hold;   // knocked down: stay on the last frame instead of returning to guard
         public bool Flat;   // a 2D anime cutout rig: drawn facing the enemy line, it cannot turn
+        // A model imported in the media library: no clips, so the battle animates it procedurally (idle sway, a
+        // lunge lean when it acts, a recoil when hit, a fall when it goes down).
+        public bool Imported;
+        public float KickStart = -9f, HurtStart = -9f;
+        public string MoveSet = "";
         public readonly List<Material> Materials = new List<Material>();
 
         public void TurnTo(float yaw)
@@ -81,8 +86,10 @@ public sealed partial class BattleMode
     {
         float age = fx - v.LungeStart;
         bool dashing = !v.Ranged && v.LungeTo != Vector2.zero && age >= 0f && age < v.LungeDur;
-        Texture2D tex = dashing ? AnimeClip(u.Id, "walk_in_place") : null;
-        if (!tex) tex = AnimeClip(u.Id, "idle");
+        if (FieldPicture(u) != null) return fallback;
+        string model = ModelId(u);
+        Texture2D tex = dashing ? AnimeClip(model, "walk_in_place") : null;
+        if (!tex) tex = AnimeClip(model, "idle");
         if (!tex) return fallback;
         int phase = (u.Id.GetHashCode() & 0x7fffffff) % AnimeFrames;
         return AnimeCell(tex, Mathf.FloorToInt(fx * AnimeFps) + phase);
@@ -108,31 +115,49 @@ public sealed partial class BattleMode
     // and a transparent orthographic camera rendering into its own image. Null when the unit has no usable model.
     FieldRig CreateRig(BattleUnit unit, string label, Vector3 at, int width, int height, float yaw)
     {
-        if (Prefer2DRigs)
+        // Media library: an imported picture means no rig at all (the field draws the picture); an imported .glb/.gltf
+        // becomes the rig; otherwise the unit's own model or the one it borrows (model swap).
+        if (FieldPicture(unit) != null) return null;
+        string loadError;
+        GameObject imported = MediaLibrary.ModelFor("unit." + unit.Id + ".model", out loadError);
+        if (loadError != null) Debug.LogWarning("Imported model for " + unit.Id + " not used: " + loadError);
+        string model = ModelId(unit);
+        if (imported == null && Prefer2DRigs)
         {
-            var flat = CreateFlatRig(unit, label, at, width, height);
+            var flat = CreateFlatRig(unit, model, label, at, width, height);
             if (flat != null) return flat;
         }
-        string path = "AdamsHaven/BattleModels/" + unit.Id + "/model";
-        var prefab = Resources.Load<GameObject>(path);
-        if (!prefab) return null;
-        var rig = new FieldRig();
+        string path = "AdamsHaven/BattleModels/" + model + "/model";
+        var prefab = imported == null ? Resources.Load<GameObject>(path) : null;
+        if (!prefab && imported == null) return null;
+        var rig = new FieldRig { Imported = imported != null, MoveSet = model };
         rig.Stage = new GameObject(label + unit.Id);
         rig.Stage.transform.SetParent(transform, false);
         rig.Stage.transform.position = at;
         var pivot = new GameObject("Model scale and facing").transform;
         pivot.SetParent(rig.Stage.transform, false);
         rig.Pivot = pivot;
-        rig.Model = Instantiate(prefab, pivot);
+        if (imported != null)
+        {
+            // glTF characters face the other way from the project's battle prefabs: turn them once inside a holder
+            // (the holder is what the procedural motion moves).
+            var holder = new GameObject("Imported model");
+            holder.transform.SetParent(pivot, false);
+            imported.transform.SetParent(holder.transform, false);
+            imported.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            rig.Model = holder;
+        }
+        else rig.Model = Instantiate(prefab, pivot);
         foreach (var a in rig.Model.GetComponentsInChildren<Animation>()) a.enabled = false;
         foreach (var a in rig.Model.GetComponentsInChildren<Animator>()) a.enabled = false;
-        foreach (var clip in Resources.LoadAll<AnimationClip>(path))
-        {
-            if (clip.name.StartsWith("__preview__", StringComparison.Ordinal)) continue;
-            int start = clip.name.LastIndexOf("AH_", StringComparison.Ordinal);
-            if (start >= 0) rig.Clips[clip.name.Substring(start)] = clip;
-        }
-        if (!UseOld3DRigs && !IsAnimeRig(rig, unit)) { Destroy(rig.Stage); return null; }
+        if (!rig.Imported)
+            foreach (var clip in Resources.LoadAll<AnimationClip>(path))
+            {
+                if (clip.name.StartsWith("__preview__", StringComparison.Ordinal)) continue;
+                int start = clip.name.LastIndexOf("AH_", StringComparison.Ordinal);
+                if (start >= 0) rig.Clips[clip.name.Substring(start)] = clip;
+            }
+        if (!rig.Imported && !UseOld3DRigs && !IsAnimeRig(rig, model == unit.Id ? unit : new BattleUnit { Id = model })) { Destroy(rig.Stage); return null; }
         AnimationClip idle;
         if (rig.Clips.TryGetValue("AH_battle_guard", out idle)) idle.SampleAnimation(rig.Model, 0);
         foreach (var helper in rig.Model.GetComponentsInChildren<MeshRenderer>())
@@ -227,12 +252,12 @@ public sealed partial class BattleMode
     public static bool Has2DRig(string id) { return Resources.Load<GameObject>(Rig2DFolder(id) + "/model") != null; }
     public static bool Has3DRig(string id) { return Resources.Load<GameObject>("AdamsHaven/BattleModels/" + id + "/model") != null; }
 
-    FieldRig CreateFlatRig(BattleUnit unit, string label, Vector3 at, int width, int height)
+    FieldRig CreateFlatRig(BattleUnit unit, string model, string label, Vector3 at, int width, int height)
     {
-        string folder = Rig2DFolder(unit.Id);
+        string folder = Rig2DFolder(model);
         var prefab = Resources.Load<GameObject>(folder + "/model");
         if (!prefab) return null;
-        var rig = new FieldRig { Flat = true };
+        var rig = new FieldRig { Flat = true, MoveSet = model };
         rig.Stage = new GameObject(label + unit.Id + " (2D)");
         rig.Stage.transform.SetParent(transform, false);
         rig.Stage.transform.position = at;
@@ -281,6 +306,11 @@ public sealed partial class BattleMode
         FieldRig hurt;
         if (signal.Target != null && fieldRigs.TryGetValue(signal.Target, out hurt) && !hurt.Hold)
         {
+            if (hurt.Imported)
+            {
+                if (signal.Phase == BattleAnimationPhase.Hit) hurt.HurtStart = fx;
+                else if (signal.Phase == BattleAnimationPhase.Down) { hurt.Hold = true; hurt.HurtStart = fx; }
+            }
             // Victim reactions: a flinch on damage, a held knockdown when the unit goes down.
             if (signal.Phase == BattleAnimationPhase.Hit) PlayRig(hurt, "AH_hit_react", .35f, 1.6f);
             else if (signal.Phase == BattleAnimationPhase.Down) PlayRig(hurt, "AH_knock_down", .2f, 1.3f, true);
@@ -299,10 +329,11 @@ public sealed partial class BattleMode
             return;
         }
         if (signal.Phase != BattleAnimationPhase.Action) return;
+        if (rig.Imported) { rig.KickStart = fx; return; }
         var c = signal.Card;
         float want = Mathf.Max(.15f, V(signal.Actor).Impact);
         Move[] set;
-        if (c != null && c.Power > 0 && MoveSets.TryGetValue(signal.Actor.Id, out set))
+        if (c != null && c.Power > 0 && MoveSets.TryGetValue(rig.MoveSet.Length > 0 ? rig.MoveSet : signal.Actor.Id, out set))
         {
             var m = c.Kind == BattleCardKind.Ultimate ? set[2] : c.Id != null && c.Id.StartsWith("basic_") ? set[0] : set[1];
             if (rig.Clips.ContainsKey(m.Clip)) { PlayRig(rig, m.Clip, m.Start, (m.Impact - m.Start) / want); return; }
@@ -312,7 +343,7 @@ public sealed partial class BattleMode
         else if (c.Kind == BattleCardKind.Ultimate) { name = "AH_attack_overhead_burst"; impact = .91f; }
         else if (c.Magic) { name = "AH_attack_cast_release"; impact = .78f; }
         else if (signal.Actor.Role == BattleRole.Ranger) { name = "AH_attack_aimed_shot"; impact = .64f; }
-        else if (signal.Actor.Id == "kaela") { name = "AH_attack_rising_strike"; impact = .66f; }
+        else if (rig.MoveSet == "kaela") { name = "AH_attack_rising_strike"; impact = .66f; }
         else { name = "AH_attack_cross_slash"; impact = .52f; }
         PlayRig(rig, name, 0, impact / want);
     }
@@ -324,6 +355,7 @@ public sealed partial class BattleMode
             bool visible = slots.ContainsKey(entry.Key);
             rig.Stage.SetActive(visible);
             if (!visible) continue;
+            if (rig.Imported) { PoseImported(rig, entry.Key); continue; }
             AnimationClip clip;
             if (!rig.Clips.TryGetValue(rig.Action, out clip)) continue;
             float time = rig.Offset + (fx - rig.Started) * rig.Rate;
@@ -337,6 +369,21 @@ public sealed partial class BattleMode
             clip.SampleAnimation(rig.Model, Mathf.Repeat(time, Mathf.Max(.01f, clip.length)));
         }
     }
+    // Procedural motion for an imported model (it has no clips): breathe and sway, lean into an attack, recoil from a
+    // hit, topple when it goes down. All on the battle clock.
+    void PoseImported(FieldRig rig, BattleUnit unit)
+    {
+        float t = fx + (unit.Id.GetHashCode() & 0xff) * .01f;
+        float kick = fx - rig.KickStart, hurt = fx - rig.HurtStart;
+        float lean = kick >= 0f && kick < .6f ? Mathf.Sin(kick / .6f * Mathf.PI) * 16f : 0f;
+        float recoil = hurt >= 0f && hurt < .35f ? Mathf.Sin(hurt / .35f * Mathf.PI) * -10f : 0f;
+        float fall = rig.Hold ? Mathf.Clamp01(hurt / .5f) * 80f : 0f;
+        float bob = Mathf.Sin(t * 2.1f) * .025f;
+        var tr = rig.Model.transform;
+        tr.localRotation = Quaternion.Euler(lean + recoil + fall, Mathf.Sin(t * .7f) * 6f, Mathf.Sin(t * 1.3f) * 2f);
+        tr.localPosition = new Vector3(0f, bob / Mathf.Max(.01f, rig.Pivot.localScale.y), 0f);
+    }
+
     bool DrawFieldRig(BattleUnit unit, Vector2 foot, float height)
     {
         FieldRig rig;
@@ -396,5 +443,5 @@ public sealed partial class BattleMode
     }
 #endif
     void OnDisable() { foreach (var r in fieldRigs.Values) if (r.Stage) r.Stage.SetActive(false); }
-    void OnDestroy() { AnimationSignal -= AnimateFieldRig; ReleaseFieldRigs(); }
+    void OnDestroy() { AnimationSignal -= AnimateFieldRig; MediaLibrary.Changed -= OnMediaChanged; ReleaseFieldRigs(); }
 }

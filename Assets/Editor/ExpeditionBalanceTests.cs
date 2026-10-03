@@ -96,11 +96,11 @@ public sealed class ExpeditionBalanceTests
         var a = BattleCatalog.Build(spec);
         var b = BattleCatalog.Build(spec);
         CollectionAssert.AreEqual(a.Enemies.Select(u => u.Species).ToList(), b.Enemies.Select(u => u.Species).ToList(), "same seed, same fight");
-        var marsh = new[] { "shardling_sprout", "glasswing_mite", "viridian_prism_warden", "moonstone_ravager" };
         for (int seed = 1; seed < 40; seed++)
         {
             var e = BattleCatalog.Build(new BattleEncounterSpec { Depth = 6, Kind = "normal", Theme = "marsh", Seed = seed });
-            foreach (var u in e.Enemies) CollectionAssert.Contains(marsh, u.Species, "marsh fights draw on the marsh roster");
+            foreach (var u in e.Enemies)
+                CollectionAssert.Contains(BattleBestiary.Form(u.Species).Family.themes, "marsh", u.Species + ": marsh fights draw on marsh families");
         }
         Assert.IsFalse(Enumerable.Range(1, 60).Any(s => BattleCatalog.Build(new BattleEncounterSpec { Depth = 2, Kind = "normal", Theme = "blight", Seed = s })
             .Enemies.Exists(u => u.Species == "eclipse_core_golem")), "the golem only appears from danger 8");

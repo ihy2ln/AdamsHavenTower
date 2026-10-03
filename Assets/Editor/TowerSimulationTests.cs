@@ -107,17 +107,16 @@ public sealed class TowerSimulationTests
         finally { TowerRules.GridMaps = false; }
     }
 
-    private static TowerOverworldPoi NearestOther(TowerRules rules)
+    // An open place next to the camp (a dungeon if the camp links to one), for trips across the web.
+    private static TowerOverworldPoi OpenPlace(TowerRules rules)
     {
-        var map = rules.Overworld; var camp = map.Camp;
-        TowerOverworldPoi best = null;
-        foreach (var p in map.pois)
-            if (p.kind != "camp" && p.kind != "lair" && (best == null ||
-                (p.x - camp.x) * (p.x - camp.x) + (p.y - camp.y) * (p.y - camp.y) < (best.x - camp.x) * (best.x - camp.x) + (best.y - camp.y) * (best.y - camp.y)))
-                best = p;
-        return best;
+        var dungeon = ExpeditionAtlasTests.OpenDungeon(rules);
+        if (dungeon != null) return dungeon;
+        var map = rules.Overworld;
+        return map.Poi(rules.Web.EdgesOf(map.Camp.id)[0].Other(map.Camp.id));
     }
 
+    // Grid runs are played as an Atlas web (BATTLE_MODE_GDD.md section 4): these replaced the free cell-walking tests.
     [Test]
     public void GridRunStartsAtCampInFog()
     {
@@ -127,46 +126,46 @@ public sealed class TowerSimulationTests
         Assert.AreEqual("camp", run.at);
         Assert.AreEqual(map.Camp.x, run.cx);
         Assert.IsTrue(rules.CellSeen(run.cx, run.cy));
-        Assert.IsFalse(rules.CellSeen(map.Lair.x, map.Lair.y), "the lair starts hidden");
         Assert.IsTrue(rules.NodeVisible("camp"));
         Assert.IsNotNull(rules.RunLayout.Node(map.Lair.id), "grid places act as forest nodes");
-        // Unseen ground cannot be targeted.
-        Assert.IsNotNull(rules.GridPreview(map.Lair.x, map.Lair.y).error);
+        Assert.IsTrue(rules.RunLayout.Linked(map.Camp.id, OpenPlace(rules).id), "linked like the web");
+        // The lair cannot be targeted yet: it is not linked to anything completed.
+        Assert.Less(rules.NodeState(map.Lair.id), TowerRules.NodeOpen);
+        Assert.IsNotNull(rules.AtlasRoute(map.Lair.id).error);
     }
 
     [Test]
-    public void GridPreviewMatchesWhatTheWalkCosts()
+    public void AtlasRouteMatchesWhatTheTripCosts()
     {
         var rules = GridExpedition();
         var run = rules.Run;
-        run.gridFog = new string('1', rules.Overworld.cells.Length);
-        var target = NearestOther(rules);
-        var preview = rules.GridPreview(target.x, target.y);
-        Assert.IsNull(preview.error);
+        var target = OpenPlace(rules);
+        var route = rules.AtlasRoute(target.id);
+        Assert.IsNull(route.error);
+        Assert.AreEqual(2, route.hops.Count, "one trail from the camp");
         int rations = run.rations; float carry = run.travelCarry;
-        var step = rules.GridMove(target.x, target.y);
+        var step = rules.AtlasTravel(target.id);
         Assert.IsNull(step.error);
         Assert.IsFalse(step.halted);
         Assert.AreEqual(target.id, run.at, "arrived at the place");
         Assert.AreEqual(target, step.arrived);
         float spent = (rations - run.rations) + (run.travelCarry - carry) / TowerRules.RationCost;
-        Assert.AreEqual(preview.rations, spent, 0.01f, "preview cost equals what the walk charged");
+        Assert.AreEqual(route.rations, spent, 0.01f, "the route card's cost equals what the trip charged");
         Assert.Greater(run.threat, 0);
-        Assert.IsNull(rules.EnterPoi(), "a grid place opens its dungeon");
+        if (TowerRules.ModdedKind(target.kind)) Assert.IsNull(rules.EnterPoi(), "a grid place opens its dungeon");
     }
 
     [Test]
-    public void GridWalkingWearsARoad()
+    public void TravelledTrailsWearIntoRoad()
     {
         var rules = GridExpedition();
-        var run = rules.Run; var map = rules.Overworld;
-        run.gridFog = new string('1', map.cells.Length);
-        var target = NearestOther(rules);
+        var map = rules.Overworld;
+        var target = OpenPlace(rules);
         var camp = map.Camp;
-        var first = rules.GridPreview(target.x, target.y);
-        rules.GridMove(target.x, target.y);
-        var back = rules.GridPreview(camp.x, camp.y);
-        Assert.Less(back.cost, first.cost, "the walked route is road now and costs less");
+        var first = rules.AtlasRoute(target.id);
+        Assert.IsNull(rules.AtlasTravel(target.id).error);
+        var back = rules.AtlasRoute(camp.id);
+        Assert.Less(back.cost, first.cost, "the travelled trail is road now and costs less");
         Assert.IsTrue(rules.CellIsRoad(target.x, target.y));
         Assert.Less(back.threat, first.threat, "road raises less threat");
     }
@@ -176,11 +175,10 @@ public sealed class TowerSimulationTests
     {
         var rules = GridExpedition();
         var run = rules.Run; var map = rules.Overworld;
-        run.gridFog = new string('1', map.cells.Length);
-        var target = NearestOther(rules);
-        var path = rules.GridPreview(target.x, target.y).path;
-        rules.GridMove(target.x, target.y);
-        rules.GridMove(map.Camp.x, map.Camp.y);
+        var target = OpenPlace(rules);
+        var path = rules.AtlasRoute(target.id).path;
+        rules.AtlasTravel(target.id);
+        rules.AtlasTravel(map.Camp.id);
         var middle = path[path.Count / 2];
         bool anchoredMiddle = (middle - new Vector2Int(map.Camp.x, map.Camp.y)).sqrMagnitude <= 9;
         Assume.That(!anchoredMiddle && map.At(middle.x, middle.y) != TowerTerrain.Road, "middle of the route is loose trail");
@@ -196,26 +194,35 @@ public sealed class TowerSimulationTests
     {
         var rules = GridExpedition();
         var run = rules.Run; var map = rules.Overworld;
-        run.gridFog = new string('1', map.cells.Length);
-        var target = map.Lair;
+        var lair = map.Lair;
+        ExpeditionAtlasTests.OpenWayTo(rules, lair.id);
         TowerRules.TraversalEvents = true;
-        // Nearing the lair always offers a rest first, which stops the walk.
-        var step = rules.GridMove(target.x, target.y);
-        Assert.IsNull(step.error);
-        Assert.IsTrue(step.halted, "stopped short by the event");
-        Assert.AreEqual(TowerEvents.RestId, run.eventId);
-        Assert.IsNotNull(rules.EventBlock());
-        Assert.IsTrue(rules.GridHasTarget, "the target is remembered");
-        // The halt survives a save.
-        var copy = JsonUtility.FromJson<TowerRun>(JsonUtility.ToJson(run));
-        Assert.AreEqual(target.x, copy.targetX);
-        Assert.AreEqual(run.cx, copy.cx);
-        Assert.IsNotNull(rules.GridResume().error, "cannot walk on until it is settled");
-        TowerRules.TraversalEvents = false;
-        run.eventId = ""; run.ambushDepth = 0;
-        var rest = rules.GridResume();
-        Assert.IsNull(rest.error);
-        Assert.AreEqual(target.id, run.at);
+        // Reaching a place linked to the lair always offers a rest first, which stops a longer trip there.
+        bool halted = false;
+        for (int guard = 0; guard < 20 && run.at != lair.id; guard++)
+        {
+            run.threat = 0;
+            var step = guard == 0 ? rules.AtlasTravel(lair.id) : rules.GridResume();
+            Assert.IsNull(step.error, step.error);
+            if (step.halted)
+            {
+                halted = true;
+                Assert.IsNotNull(rules.EventBlock());
+                Assert.IsTrue(rules.GridHasTarget, "the target is remembered");
+                Assert.AreNotEqual(lair.id, run.at, "stopped at a place on the way");
+                Assert.IsNotNull(rules.Overworld.Poi(run.at), "always at a place, never between");
+                // The halt survives a save.
+                var copy = JsonUtility.FromJson<TowerRun>(JsonUtility.ToJson(run));
+                Assert.AreEqual(lair.x, copy.targetX);
+                Assert.AreEqual(run.cx, copy.cx);
+                Assert.IsNotNull(rules.GridResume().error, "cannot travel on until it is settled");
+            }
+            ExpeditionAtlasTests.Settle(rules);
+            Assert.IsNull(rules.EventBlock());
+        }
+        Assert.AreEqual(lair.id, run.at);
+        Assert.Contains(TowerEvents.RestId, run.eventsSeen, "a rest is offered before the lair");
+        Assert.IsTrue(halted, "the rest stopped the trip at a place short of the lair");
         Assert.IsFalse(rules.GridHasTarget);
     }
 
@@ -226,35 +233,41 @@ public sealed class TowerSimulationTests
     {
         var rules = GridExpedition();
         var run = rules.Run;
-        run.gridFog = new string('1', rules.Overworld.cells.Length);
-        var first = NearestOther(rules);
-        rules.GridMove(first.x, first.y);
+        var first = OpenPlace(rules);
+        Assert.IsNull(rules.AtlasTravel(first.id).error);
         Assert.AreEqual(first.id, run.at);
         var before = rules.Overworld;
-        var lair = before.Lair;
+        var states = new System.Collections.Generic.Dictionary<string, int>();
+        foreach (var p in before.pois) states[p.id] = rules.NodeState(p.id);
+        var links = new System.Collections.Generic.List<string>();
+        foreach (var e in rules.Web.edges)
+            if (states[e.a] >= TowerRules.NodeScouted && states[e.b] >= TowerRules.NodeScouted) links.Add(e.key);
         run.threat = TowerRules.ThreatMax - 1;
-        var step = rules.GridMove(before.Camp.x, before.Camp.y);
-        Assert.IsTrue(step.shifted && step.halted, "the walk stops when the forest moves");
+        var step = rules.AtlasTravel(before.Camp.id);
+        Assert.IsTrue(step.shifted, "the forest moves when the meter fills");
         Assert.AreEqual(1, run.shift);
+        Assert.AreEqual(before.Camp.id, run.at, "the party stands at a place");
         Assert.IsFalse(rules.GridHasTarget, "the old plan is dropped");
         var after = rules.Overworld;
         Assert.AreNotSame(before, after);
-        // Camp and the explored place stay exactly where they were.
-        Assert.AreEqual(PoiKey(before.Camp), PoiKey(after.Camp));
-        Assert.AreEqual(PoiKey(first), PoiKey(after.Poi(first.id)));
-        // The unexplored places moved, and every place is still reachable.
-        int stayed = 0;
-        foreach (var p in before.pois) if (p.kind != "camp" && p.id != first.id && after.pois.Exists(q => PoiKey(q) == PoiKey(p))) stayed++;
-        Assert.AreEqual(0, stayed, "unexplored places moved");
+        // Every place the party knows of (and the lair) stays where it was with its links; places nobody had seen moved.
+        foreach (var p in before.pois)
+        {
+            bool stayed = after.pois.Exists(q => PoiKey(q) == PoiKey(p));
+            if (states[p.id] >= TowerRules.NodeBeacon) Assert.IsTrue(stayed, p.id + " stays");
+            else if (!run.revealed.Contains(p.id)) Assert.IsFalse(stayed, p.id + " moved");
+        }
+        foreach (var key in links) Assert.IsTrue(rules.Web.edges.Exists(e => e.key == key), key + " keeps its link");
         Assert.AreEqual(1, after.pois.FindAll(p => p.kind == "lair").Count);
         Assert.AreEqual(before.pois.Count, after.pois.Count);
+        Assert.AreEqual(after.pois.Count, rules.Web.Hops(after.Camp.id).Count, "every place is still on the web");
         foreach (var p in after.pois)
             Assert.IsNotNull(after.FindPath(new Vector2Int(after.Camp.x, after.Camp.y), new Vector2Int(p.x, p.y)), "reachable " + p.id);
-        Assert.IsFalse(rules.CellSeen(after.Lair.x, after.Lair.y), "fog closed in again");
         Assert.IsTrue(rules.CellSeen(run.cx, run.cy));
-        // Same shift, same forest.
+        // Same shift, same forest and the same web.
         var copy = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors);
         Assert.AreEqual(after.Hash(), copy.Hash());
+        Assert.AreEqual(rules.Web.Signature(), TowerMapWeb.Build(copy, run.anchors, run.webLinks).Signature());
     }
 
     [Test]
@@ -262,17 +275,18 @@ public sealed class TowerSimulationTests
     {
         var rules = GridExpedition();
         var run = rules.Run;
-        run.gridFog = new string('1', rules.Overworld.cells.Length);
         var before = rules.Overworld;
         var keys = before.pois.ConvertAll(PoiKey);
+        var known = before.pois.FindAll(p => rules.NodeState(p.id) >= TowerRules.NodeBeacon).ConvertAll(PoiKey);
+        var target = OpenPlace(rules);
         rules.State.clock += TowerRules.DaySeconds;
-        var target = NearestOther(rules);
-        rules.GridMove(target.x, target.y);
+        Assert.IsNull(rules.AtlasTravel(target.id).error);
         Assert.AreEqual(1, run.shift, "the day rolled over");
         var after = rules.Overworld;
         int moved = 0;
         foreach (var p in after.pois) if (!keys.Contains(PoiKey(p))) moved++;
         Assert.AreEqual(1, moved, "exactly one place moved");
+        foreach (var key in known) Assert.IsTrue(after.pois.Exists(p => PoiKey(p) == key), key + " is known and stays");
         Assert.IsTrue(rules.CellSeen(after.Camp.x, after.Camp.y), "a small shift leaves the fog alone");
     }
 

@@ -133,8 +133,100 @@ public static class BattleCatalog
             cards.Add(C("cy_smite", "Smite", id, 3, 1, 2.9f, magic: true));
             cards.Add(C("cy_rejuvenating_draught", "Draught", id, 2, 0, target: BattleTarget.Ally, heal: 22, epGain: 1));
         }
-        foreach (BattleCard card in cards) card.Element = unit.Element;
+        foreach (BattleCard card in cards) { card.Element = unit.Element; Keywords(card); }
         return cards;
+    }
+
+    // Chaos Zero Nightmare keywords. Each fighter opens with a signature card (Initiation); guards and setups wait in
+    // hand (Retain); the heaviest single moves burn out after one use per battle (Exhaust).
+    private static readonly HashSet<string> RetainCards = new HashSet<string> { "mv_glacier_guard", "mv_whiteout_counter",
+        "gh_guard_stance", "el_piercing_shot", "he_lend_strength", "he_reserve_tonic", "cy_barkeep_tonic", "da_ember_thrust" };
+    private static readonly HashSet<string> ExhaustCards = new HashSet<string> { "gh_reckless_swing", "cy_smite", "da_matriarch_pyre",
+        "he_bulwark_brew", "el_artillery_barrage" };
+    private static readonly HashSet<string> InitiationCards = new HashSet<string> { "mv_frost_jab", "gh_tiger_cleave", "el_forest_scout",
+        "he_hearthfire_mend", "da_bonfire_brand", "cy_radiant_palm" };
+
+    private static void Keywords(BattleCard card)
+    {
+        card.Retain = RetainCards.Contains(card.Id);
+        card.Exhaust = ExhaustCards.Contains(card.Id);
+        card.Initiation = InitiationCards.Contains(card.Id);
+    }
+
+    // The keywords as a short line for the card face ("RETAIN  -  EXHAUST").
+    public static string KeywordLine(BattleCard card)
+    {
+        var words = new List<string>();
+        if (card.Initiation) words.Add("INITIATION");
+        if (card.Retain) words.Add("RETAIN");
+        if (card.Exhaust) words.Add("EXHAUST");
+        return string.Join("  -  ", words.ToArray());
+    }
+
+    // ---- epiphany (CZN): playing the battle's glowing card offers 3 of these upgrades --------------------------
+
+    public static List<string> EpiphanyChoices(BattleCard card)
+    {
+        var list = new List<string>();
+        bool hits = card.Power > 0;
+        if (hits || card.Heal > 0) list.Add("sharpened");
+        if (card.Ep > 0) list.Add("swift");
+        if (card.Draw < 2) list.Add("echo");
+        if (!card.Retain) list.Add("steadfast");
+        if (hits && card.Target == BattleTarget.Enemy) list.Add("sweeping");
+        if (hits && string.IsNullOrEmpty(card.Status)) list.Add("rending");
+        if (card.SelfShield <= 0) list.Add("bulwark");
+        if (card.Exhaust) list.Add("enduring");
+        return list;
+    }
+
+    public static string EpiphanyName(string mod)
+    {
+        switch (mod)
+        {
+            case "sharpened": return "Sharpened";
+            case "swift": return "Swift";
+            case "echo": return "Echo";
+            case "steadfast": return "Steadfast";
+            case "sweeping": return "Sweeping";
+            case "rending": return "Rending";
+            case "bulwark": return "Bulwark";
+            case "enduring": return "Enduring";
+        }
+        return mod;
+    }
+
+    public static string EpiphanyText(string mod)
+    {
+        switch (mod)
+        {
+            case "sharpened": return "+20% power and healing.";
+            case "swift": return "Costs 1 EP less.";
+            case "echo": return "Draw a card when played.";
+            case "steadfast": return "Retain: stays in hand between turns.";
+            case "sweeping": return "Hits every enemy at 70% power.";
+            case "rending": return "Also lowers the target's defence 20% for 2 rounds.";
+            case "bulwark": return "Also shields its user.";
+            case "enduring": return "No longer exhausts.";
+        }
+        return "";
+    }
+
+    public static void ApplyEpiphany(BattleCard card, string mod)
+    {
+        switch (mod)
+        {
+            case "sharpened": card.Level++; break;
+            case "swift": card.Ep = Math.Max(0, card.Ep - 1); break;
+            case "echo": card.Draw++; break;
+            case "steadfast": card.Retain = true; break;
+            case "sweeping": if (card.Target == BattleTarget.Enemy && card.Power > 0) { card.Target = BattleTarget.AllEnemies; card.Power *= .7f; } break;
+            case "rending": if (string.IsNullOrEmpty(card.Status)) { card.Status = "DefenseDown"; card.Magnitude = .2f; card.Duration = 2; } break;
+            case "bulwark": card.SelfShield = Math.Max(card.SelfShield, 14f + card.Ep * 6f); break;
+            case "enduring": card.Exhaust = false; break;
+            default: return;
+        }
+        card.Epiphany = string.IsNullOrEmpty(card.Epiphany) ? mod : card.Epiphany + "," + mod;
     }
 
     public static List<BattleCard> SummonerKit()
@@ -158,6 +250,17 @@ public static class BattleCatalog
         return new BattleCard { Id = "basic_" + unit.Id, Name = "Basic Attack", Owner = unit.Id,
             Element = unit.Element, Ep = 0, Ap = 1, Power = .55f, Target = BattleTarget.Enemy };
     }
+
+    // The free shield every fighter has beside the basic attack (CZN's starting Defend): 1 AP, no EP, a shield worth
+    // about one enemy hit that soaks damage before HP. Damage a shield fully absorbs adds no stress.
+    public static BattleCard Guard(BattleUnit unit)
+    {
+        return new BattleCard { Id = "guard_" + unit.Id, Name = "Guard", Owner = unit.Id, Element = unit.Element,
+            Ep = 0, Ap = 1, Target = BattleTarget.Self, Kind = BattleCardKind.Skill, Status = "Shield",
+            Magnitude = GuardShield(unit), Duration = 1 };
+    }
+
+    public static float GuardShield(BattleUnit unit) { return Math.Max(8f, unit.Defense * 1.6f + unit.MaxHp * .05f); }
 
     public static List<BattleCard> SummonerUltimates()
     {
@@ -284,12 +387,30 @@ public static class BattleCatalog
         new Species("eclipse_core_golem", "Eclipse Core Golem", BattleElement.Dark, Bruiser, true, 8, "blight"),
     };
 
-    // Every species id, in bestiary order (the guild journal lists them all).
-    public static string[] SpeciesIds { get { var ids = new string[Bestiary.Length]; for (int i = 0; i < ids.Length; i++) ids[i] = Bestiary[i].Id; return ids; } }
+    // Every species id, in bestiary order (the guild journal lists them all): each family's forms, F to SSR.
+    public static string[] SpeciesIds
+    {
+        get
+        {
+            var ids = new List<string>();
+            if (BattleBestiary.Available)
+                foreach (var family in BattleBestiary.Families) foreach (var form in family.forms) ids.Add(form.id);
+            else foreach (Species s in Bestiary) ids.Add(s.Id);
+            return ids.ToArray();
+        }
+    }
 
-    // "Earth  •  found in briar, crystal, marsh" for the journal.
+    // "Earth, rank D-C  •  found in briar, crystal places  •  evolves into Geode Treant at B" for the journal.
     public static string SpeciesInfo(string id)
     {
+        var form = BattleBestiary.Form(id);
+        if (form != null)
+        {
+            var next = BattleBestiary.Form(form.evolvesTo);
+            return form.element + (form.large ? ", large" : "") + ", rank " + BattleBestiary.Span(form.minRank, form.maxRank) +
+                "  •  found in " + string.Join(", ", form.Family.themes) + " places" +
+                (next != null ? "  •  evolves into " + next.name + " at " + BattleBestiary.RankName(next.minRank) : "  •  apex form");
+        }
         foreach (Species s in Bestiary)
             if (s.Id == id) return s.Element + (s.Large ? ", large" : "") + "  •  found in " + string.Join(", ", s.Themes) + " places";
         return "";
@@ -298,6 +419,8 @@ public static class BattleCatalog
     // The bestiary name of a species id (journal), or the id itself when unknown.
     public static string SpeciesName(string id)
     {
+        var form = BattleBestiary.Form(id);
+        if (form != null) return form.name;
         foreach (Species s in Bestiary) if (s.Id == id) return s.Name;
         return id;
     }
@@ -338,19 +461,50 @@ public static class BattleCatalog
     // Lair bosses share one shape whatever their species, so every region's boss is a fight of the same weight.
     private static readonly float[] BossShape = { 1.25f, 1.15f, 1.15f, 1.15f, 1.0f };
     public const float EnemyHealth = 120f, EnemyAttack = 35f, EnemyMagic = 31f, HealthPerDepth = .12f, OffencePerDepth = .065f;
+    // Enemy offence after the CZN rules (BM 10.3.0) gave the party more power (breaks, partners, fresh hands): a
+    // multiplier from danger 1 (shallow) to 13 (deep), and an extra factor for lair bosses. Tuned with the balance sim
+    // (ExpeditionBalanceTests); the party's growth is mostly survivability, so shallow fights needed the bigger lift.
+    public static float OffenseShallow = 1.5f, OffenseDeep = 1f, BossOffenseScale = 1.25f;
+    private static float OffenseCurve(int depth, bool boss)
+    {
+        float t = Math.Max(0f, Math.Min(1f, (depth - 1) / 12f));
+        return (OffenseShallow + (OffenseDeep - OffenseShallow) * t) * (boss ? BossOffenseScale : 1f);
+    }
     public const float ElitePower = 2.0f, BossPower = 3.4f, MinionPower = .8f, BossOffence = 1.45f;
 
     private static BattleUnit Monster(Species s, int depth, int lane, float power, string id = null, string name = null, bool boss = false)
     {
-        float[] k = boss ? BossShape : Shape[s.Role];
+        return Make(s.Id, name ?? s.Name, s.Id, s.Element, s.Role, s.Large, depth, lane, power, id, boss, 0, 1f);
+    }
+
+    // A bestiary form at a rank. Packs at their depth's natural rank keep the pre-bestiary numbers exactly; each rank
+    // above or below moves health and offence by RankStep. Elites and bosses take their power from their kind.
+    public const float RankStep = .08f;
+    private static readonly string[] RoleNames = { "Bruiser", "Skirmisher", "Caster", "Guardian" };
+
+    private static BattleUnit Monster(BestiaryForm f, int rank, int depth, int lane, float power, string id = null, string name = null,
+        bool boss = false, bool rankScaled = true)
+    {
+        BattleElement element;
+        if (!Enum.TryParse(f.element, out element)) element = BattleElement.Neutral;
+        int role = Math.Max(0, Array.IndexOf(RoleNames, f.role));
+        float scale = rankScaled ? Math.Max(.5f, 1f + RankStep * (rank - BattleBestiary.RankForDepth(depth))) : 1f;
+        return Make(f.id, name ?? f.name, string.IsNullOrEmpty(f.art) ? f.id : f.art, element, role, f.large, depth, lane, power,
+            id, boss, rank, scale);
+    }
+
+    private static BattleUnit Make(string species, string name, string art, BattleElement element, int role, bool large, int depth,
+        int lane, float power, string id, bool boss, int rank, float scale)
+    {
+        float[] k = boss ? BossShape : Shape[role];
         float d = Math.Max(1, depth) - 1;
-        float health = (1f + HealthPerDepth * d) * power * (s.Large && !boss ? 1.25f : 1f);
-        float offence = (1f + OffencePerDepth * d) * (boss ? BossOffence : (float)Math.Sqrt(power));
+        float health = (1f + HealthPerDepth * d) * power * (large && !boss ? 1.25f : 1f) * scale;
+        float offence = (1f + OffencePerDepth * d) * (boss ? BossOffence : (float)Math.Sqrt(power)) * scale * OffenseCurve(depth, boss);
         int hp = Math.Max(1, (int)(EnemyHealth * k[0] * health));
-        return new BattleUnit { Id = (id ?? s.Id) + "_" + lane, Species = s.Id, Name = name ?? s.Name,
-            Art = "FieldModels/" + s.Id, Element = s.Element, Enemy = true,
-            Role = s.Role == Guardian ? BattleRole.Tank : s.Role == Caster ? BattleRole.Support : BattleRole.Dps,
-            InnateTaunt = s.Role == Guardian, Lane = lane, MaxHp = hp, Hp = hp,
+        return new BattleUnit { Id = (id ?? species) + "_" + lane, Species = species, Name = name,
+            Art = "FieldModels/" + art, Element = element, Enemy = true, Rank = rank,
+            Role = role == Guardian ? BattleRole.Tank : role == Caster ? BattleRole.Support : BattleRole.Dps,
+            InnateTaunt = role == Guardian, Lane = lane, MaxHp = hp, Hp = hp,
             Attack = EnemyAttack * k[1] * offence, Magic = EnemyMagic * k[2] * offence,
             Defense = 9f * k[3] * (1f + .05f * d), Resistance = 9f * k[3] * (1f + .05f * d),
             Speed = 10f * k[4], CritRate = .08f, CritDamage = 1.5f };
@@ -370,8 +524,49 @@ public static class BattleCatalog
 
     public static BattleEncounter Build(BattleEncounterSpec spec)
     {
+        BattleEncounter e = BuildCore(spec);
+        ApplyMapMods(spec, e);
+        return e;
+    }
+
+    // Atlas node modifiers on top of the built line-up (see BattleEncounterSpec).
+    private static void ApplyMapMods(BattleEncounterSpec spec, BattleEncounter e)
+    {
+        var rng = new Random((spec.Seed != 0 ? spec.Seed : spec.Depth * 7919) ^ 0x5bd1e995);
+        for (int n = 0; n < spec.ExtraFoes && e.Enemies.Count < BattleState.EnemyMax; n++)
+        {
+            var pack = e.Enemies.FindAll(u => !u.Boss && u.Affix.Length == 0);
+            if (pack.Count == 0) break;
+            BattleUnit src = pack[rng.Next(pack.Count)];
+            var copy = new BattleUnit { Id = src.Id + "_x" + n, Species = src.Species, Name = src.Name, Art = src.Art, Element = src.Element,
+                Enemy = true, Rank = src.Rank, Role = src.Role, InnateTaunt = false, Lane = e.Enemies.Count, MaxHp = src.MaxHp, Hp = src.MaxHp,
+                Attack = src.Attack, Magic = src.Magic, Defense = src.Defense, Resistance = src.Resistance, Speed = src.Speed,
+                CritRate = src.CritRate, CritDamage = src.CritDamage };
+            e.Enemies.Add(copy);
+        }
+        foreach (BattleUnit u in e.Enemies)
+        {
+            if (spec.Vitality != 1f) { u.MaxHp = Math.Max(1, (int)(u.MaxHp * spec.Vitality)); u.Hp = u.MaxHp; }
+            if (spec.Offense != 1f) { u.Attack *= spec.Offense; u.Magic *= spec.Offense; }
+        }
+        if (!string.IsNullOrEmpty(spec.Affix) && Array.IndexOf(Affixes, spec.Affix) >= 0)
+        {
+            BattleUnit target = e.Enemies.Find(u => !u.Boss && u.Affix.Length == 0);
+            if (target != null)
+            {
+                target.Affix = spec.Affix;
+                target.Name = spec.Affix + " " + target.Name;
+                if (spec.Affix == "Hasted") target.MaxAp = target.Ap = 2;
+                if (spec.Affix == "Shielded") target.ApplyStatus("Shield", target.MaxHp * .3f, 99);
+            }
+        }
+    }
+
+    private static BattleEncounter BuildCore(BattleEncounterSpec spec)
+    {
         var rng = new Random(spec.Seed != 0 ? spec.Seed : spec.Depth * 7919 + StableHash(spec.Kind + spec.Theme + spec.Region));
         var e = new BattleEncounter { Kind = spec.Kind, Depth = Math.Max(1, spec.Depth), Theme = spec.Theme ?? "", Region = spec.Region ?? "" };
+        if (BattleBestiary.Available) return BuildFromBestiary(spec, e, rng);
         int depth = e.Depth;
         List<Species> roster = Roster(spec.Theme, depth);
         if (spec.Kind == "boss")
@@ -415,6 +610,60 @@ public static class BattleCatalog
         return e;
     }
 
+    // The bestiary encounter: each pack member rolls a rank around the depth's natural rank and becomes the form its
+    // family takes at that rank; an elite is a pack member evolved one rank up; a lair boss is its family's form two
+    // ranks up (SSR only for the deepest lairs), flanked by small minions of the lair's theme.
+    private static BattleEncounter BuildFromBestiary(BattleEncounterSpec spec, BattleEncounter e, Random rng)
+    {
+        int depth = e.Depth, natural = BattleBestiary.RankForDepth(depth);
+        if (spec.Kind == "boss")
+        {
+            var lair = BattleBestiary.Boss(spec.Region);
+            var family = BattleBestiary.Family(lair != null ? lair.family : depth >= 8 ? "eclipse_golems" : "moonstone_ravagers");
+            string title = lair != null ? lair.title : depth >= 8 ? "Eclipse Core Golem" : "Grove Tyrant";
+            string theme = lair != null ? lair.theme : spec.Theme;
+            int bossRank = Math.Min(BattleBestiary.MaxRank, natural + 2);
+            BestiaryForm big = BattleBestiary.FormFor(family, bossRank);
+            List<BestiaryForm> minions = BattleBestiary.Spawnable(natural, theme, true);
+            e.Enemies.Add(Monster(minions[rng.Next(minions.Count)], natural, depth, 0, MinionPower, "minion"));
+            BattleUnit lord = Monster(big, Math.Max(big.minRank, Math.Min(bossRank, big.maxRank)), depth, 1, BossPower,
+                "boss_" + big.id, title, true, false);
+            lord.Boss = true; lord.Phase = 1;
+            e.Enemies.Add(lord);
+            e.Enemies.Add(Monster(minions[rng.Next(minions.Count)], natural, depth, 2, MinionPower, "minion"));
+            e.Boss = lord;
+            e.Title = "LAIR BOSS  -  " + title.ToUpperInvariant();
+            return e;
+        }
+        int count = spec.Kind == "elite" ? 3 : depth <= 2 ? 2 + rng.Next(2) : 3;
+        var ranks = new int[count];
+        for (int lane = 0; lane < count; lane++)
+        {
+            int rank = BattleBestiary.RollRank(depth, rng);
+            List<BestiaryForm> pool = BattleBestiary.Spawnable(rank, spec.Theme);
+            ranks[lane] = rank;
+            e.Enemies.Add(Monster(pool[rng.Next(pool.Count)], rank, depth, lane, spec.Kind == "ambush" ? .9f : 1f));
+        }
+        if (spec.Kind == "elite")
+        {
+            int pick = rng.Next(e.Enemies.Count);
+            BestiaryForm old = BattleBestiary.Form(e.Enemies[pick].Species);
+            int rank = Math.Min(BattleBestiary.MaxRank - 1, Math.Max(ranks[pick], natural) + 1);
+            BestiaryForm evolved = BattleBestiary.FormFor(old.Family, rank);
+            BattleUnit elite = Monster(evolved, Math.Max(evolved.minRank, Math.Min(rank, evolved.maxRank)), depth, pick, ElitePower,
+                rankScaled: false);
+            elite.Affix = Affixes[rng.Next(Affixes.Length)];
+            elite.Name = elite.Affix + " " + elite.Name;
+            if (elite.Affix == "Hasted") elite.MaxAp = elite.Ap = 2;
+            if (elite.Affix == "Shielded") elite.ApplyStatus("Shield", elite.MaxHp * .3f, 99);
+            e.Enemies[pick] = elite;
+            e.Title = "ELITE  -  " + elite.Name.ToUpperInvariant();
+            if (depth >= 3) e.Commander = EnemyCommander(depth);
+        }
+        else e.Title = spec.Kind == "ambush" ? "AMBUSH" : "SILVERWOOD PACK";
+        return e;
+    }
+
     // Tower skirmishes (the dock BATTLE button) only know a floor: grove packs, elites from 3, a boss from 8.
     public static List<BattleUnit> Encounter(int floor)
     {
@@ -428,7 +677,12 @@ public static class BattleCatalog
         int depth = Math.Max(1, Math.Abs(floor));
         if (depth < 3) return null;
         int hp = (int)(170 * (1f + .10f * (depth - 1)));
-        return new BattleUnit { Id = "enemy_commander", Name = "Vale Commander", Art = "FieldModels/enemy_summoner",
+        // The commander is a GKOM Whisperer (bestiary family "whisperers") at the depth's rank.
+        var whisperers = BattleBestiary.Family("whisperers");
+        int rank = BattleBestiary.RankForDepth(depth);
+        BestiaryForm form = whisperers != null ? BattleBestiary.FormFor(whisperers, rank) : null;
+        return new BattleUnit { Id = "enemy_commander", Name = form != null ? form.name : "Vale Commander", Art = "FieldModels/enemy_summoner",
+            Rank = form != null ? Math.Max(form.minRank, Math.Min(rank, form.maxRank)) : 0,
             Enemy = true, Element = BattleElement.Dark, MaxHp = hp, Hp = hp,
             Defense = 10f * (1f + .05f * depth), Resistance = 11f * (1f + .05f * depth), Speed = 11, CritRate = .1f, CritDamage = 1.6f };
     }
@@ -444,7 +698,22 @@ public static class BattleCatalog
     {
         string o = enemy.Id;
         var cards = new List<BattleCard>();
-        switch (enemy.Species)
+        var form = BattleBestiary.Form(enemy.Species);
+        if (form != null && form.cards != null && form.cards.Length > 0)
+        {
+            // Two moves, as before the bestiary: the family's first two. Elites (evolved, with an affix) add the form's
+            // signature, its highest unlocked move; lair bosses get Gathering Fury and their own signature instead.
+            var picked = new List<BestiaryCard>();
+            for (int i = 0; i < form.cards.Length && i < 2; i++) picked.Add(form.cards[i]);
+            if (enemy.Affix.Length > 0 && form.cards.Length > 2) picked.Add(form.cards[form.cards.Length - 1]);
+            foreach (var c in picked)
+            {
+                BattleTarget target;
+                if (!Enum.TryParse(c.target, out target)) target = BattleTarget.Enemy;
+                cards.Add(E(c.id, c.name, o, c.ep, c.power, target, c.status ?? "", c.magnitude, c.duration, c.heal, c.magic));
+            }
+        }
+        else switch (enemy.Species)
         {
             case "shardling_sprout":
                 cards.Add(E("e_bash", "Crystal Bash", o, 1, 1.2f));
@@ -527,6 +796,11 @@ public sealed class BattleEncounterSpec
 {
     public int Depth = 1, Seed;
     public string Kind = "normal", Theme = "", Region = "";
+    // Atlas map modifiers (waystone-style): enemy offence and health multipliers, extra pack members (up to the
+    // field's six) and an affix forced onto one non-boss enemy. Defaults leave the fight unchanged.
+    public float Offense = 1f, Vitality = 1f;
+    public int ExtraFoes;
+    public string Affix = "";
 }
 
 public sealed class BattleEncounter
@@ -540,4 +814,7 @@ public sealed class BattleEncounter
     // The run's card upgrades (card id -> level) and relic effects; null for a plain fight.
     public Dictionary<string, int> CardLevels;
     public BattleRunModifiers Modifiers;
+    // Epiphanies taken earlier in the run (card id -> "swift,echo"), and whether a card glows in this fight.
+    public Dictionary<string, string> CardMods;
+    public bool Epiphany;
 }

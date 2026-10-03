@@ -78,6 +78,7 @@ namespace AdamsHaven.Tower
             if (AmbushPending) return "Fight off the ambush first.";
             if (PendingEvent != null) return "Decide what to do first.";
             if (RewardPending) return "Choose your reward first.";
+            if (TabletPending) return "Choose a tablet first.";
             return null;
         }
 
@@ -209,7 +210,7 @@ namespace AdamsHaven.Tower
             if (o.threat > 0) RaiseThreat(o.threat); else LowerThreat(-o.threat);
         }
 
-        // Scouting: lifts the fog from the nearest hidden places along known trails.
+        // Scouting: lifts the fog from the nearest hidden places along known trails (on the grid, along the web).
         private void RevealHidden(int count)
         {
             var run = Run; var layout = RunLayout;
@@ -218,7 +219,8 @@ namespace AdamsHaven.Tower
                 var next = layout.nodes.Find(node => !run.revealed.Contains(node.id) &&
                     run.revealed.Exists(seen => layout.Linked(seen, node.id)));
                 if (next == null) return;
-                run.revealed.Add(next.id);
+                if (GridRun) { var fog = FogBuffer(); ScoutNode(next.id, fog); CommitFog(fog); }
+                else run.revealed.Add(next.id);
             }
         }
 

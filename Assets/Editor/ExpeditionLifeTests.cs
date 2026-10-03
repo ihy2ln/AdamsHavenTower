@@ -56,13 +56,12 @@ public sealed class ExpeditionLifeTests
 
         // The same route costs more rations and less threat in the rain.
         var map = rules.Overworld;
-        var target = map.pois.Find(p => p.kind != "camp");
+        string target = rules.Web.EdgesOf(map.Camp.id)[0].Other(map.Camp.id);    // a place linked to the camp
         Assert.IsTrue(SeekWeather(rules, "clear"));
-        rules.Run.gridFog = new string('1', map.cells.Length);      // the whole map in sight
-        var dry = rules.GridPreview(target.x, target.y);
+        var dry = rules.AtlasRoute(target);
         Assert.IsNull(dry.error);
         Assert.IsTrue(SeekWeather(rules, "rain"));
-        var wet = rules.GridPreview(target.x, target.y);
+        var wet = rules.AtlasRoute(target);
         Assert.AreEqual(dry.rations * TowerRules.RainRations, wet.rations, 0.01f);
         Assert.Less(wet.threat, dry.threat + 1, "rain never adds threat");
 
@@ -120,7 +119,7 @@ public sealed class ExpeditionLifeTests
         Assert.Contains("cobalt_burrower", loaded.Journal.beasts);
         Assert.AreEqual("Cobalt Burrower", BattleCatalog.SpeciesName("cobalt_burrower"));
         StringAssert.Contains("found in", BattleCatalog.SpeciesInfo("cobalt_burrower"));
-        Assert.AreEqual(12, BattleCatalog.SpeciesIds.Length);
+        Assert.AreEqual(98, BattleCatalog.SpeciesIds.Length, "every bestiary form");
 
         // An old save without a journal gets an empty one.
         var state = JsonUtility.FromJson<TowerState>(JsonUtility.ToJson(rules.State));

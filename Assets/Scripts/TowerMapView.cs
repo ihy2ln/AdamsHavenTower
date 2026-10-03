@@ -29,12 +29,35 @@ namespace AdamsHaven.Tower
         private readonly List<SpriteRenderer> marks = new List<SpriteRenderer>();
         private float[] seenCells, roadCells;       // what is drawn (may lag the rules while walking)
         private static Sprite dot, glow;
+        // Atlas nodes: the state each place is drawn in (TowerRules.NodeHidden..NodeDone), places fading in after a
+        // reveal, the web's trails and the tower's circle.
+        private readonly Dictionary<string, int> nodeStates = new Dictionary<string, int>();
+        private readonly Dictionary<string, float> revealing = new Dictionary<string, float>();
+        private readonly Dictionary<string, float> propScale = new Dictionary<string, float>();
+        private readonly List<LineRenderer> webLines = new List<LineRenderer>();
+        private string webKey = "";
+        private LineRenderer ring;
+        private Material lineMat;
+        private static Texture2D dashTex;
+        private bool synced;
+        // Scratch buffers for the soft masks (two 512x320 uploads would otherwise allocate megabytes each time).
+        private float[] maskA, maskTmp;
+        private Color32[] maskPx;
+        private bool masksDirty;
+        private float maskClock;
+        private Vector3 lastCamPos;
+        private float lastCamSize;
+
+        // Places that came out of the fog in the last Sync (the UI plays a sound for them).
+        public int LastRevealed { get; private set; }
+        // Bumped whenever the camera moves or zooms, so overlays (labels) are placed again only then.
+        public int CameraVersion { get; private set; }
 
         // walking
         private List<Vector2> walkPts;
         private List<int> walkCellAt;               // index into walkCells reached at each point
         private List<Vector2Int> walkCells;
-        private float walkDist, walkLen;
+        private float walkDist, walkLen, walkSpeed = 1f;
         private int walkCellsDone;
         private Action walkDone;
         public bool Walking { get { return walkPts != null; } }
@@ -87,6 +110,7 @@ namespace AdamsHaven.Tower
             rt = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32) { name = "Expedition map" };
             rt.Create();
             if (cam != null) { cam.targetTexture = rt; cam.aspect = width / (float)height; Clamp(); }
+            CameraVersion++;
         }
 
         private void OnDestroy()
@@ -100,6 +124,8 @@ namespace AdamsHaven.Tower
         {
             foreach (var go in built) if (go != null) Destroy(go);
             built.Clear(); figures.Clear(); shadows.Clear(); props.Clear(); tells.Clear(); marks.Clear();
+            nodeStates.Clear(); revealing.Clear(); propScale.Clear(); webLines.Clear(); webKey = ""; ring = null; synced = false;
+            if (lineMat != null) { Destroy(lineMat); lineMat = null; }
             foreach (var t in new[] { w0, w1, w2, roadTex, seenTex, atlas }) if (t != null) Destroy(t);
             if (root != null) Destroy(root.gameObject);
             root = null; walkPts = null; map = null;
@@ -128,6 +154,7 @@ namespace AdamsHaven.Tower
             BuildParty();
             BuildFog();
             seenCells = null; roadCells = null;
+            CameraVersion++;
         }
 
         // ---------------------------------------------------------------- ground
@@ -180,10 +207,10 @@ namespace AdamsHaven.Tower
             return tex;
         }
 
-        // Separable box blur, in place.
-        private static void Blur(float[] a, int W, int H, int r)
+        // Separable box blur, in place (tmp: scratch of the same size, or null to allocate one).
+        private static void Blur(float[] a, int W, int H, int r, float[] tmp = null)
         {
-            var tmp = new float[a.Length];
+            if (tmp == null || tmp.Length != a.Length) tmp = new float[a.Length];
             for (int y = 0; y < H; y++)
             {
                 float sum = 0; int row = y * W;
@@ -210,12 +237,13 @@ namespace AdamsHaven.Tower
         private void UploadMask(Texture2D tex, float[] cells, int blur)
         {
             int W = map.width * Px, H = map.height * Px;
-            var a = new float[W * H];
+            if (maskA == null || maskA.Length != W * H) { maskA = new float[W * H]; maskTmp = new float[W * H]; maskPx = new Color32[W * H]; }
+            var a = maskA;
             for (int py = 0; py < H; py++)
                 for (int px = 0; px < W; px++)
                     a[py * W + px] = cells[map.Index(px / Px, map.height - 1 - py / Px)];
-            Blur(a, W, H, blur); Blur(a, W, H, blur);
-            var c = new Color32[W * H];
+            Blur(a, W, H, blur, maskTmp); Blur(a, W, H, blur, maskTmp);
+            var c = maskPx;
             for (int i = 0; i < c.Length; i++) { byte v = (byte)Mathf.Clamp(a[i] * 255f, 0, 255); c[i] = new Color32(v, v, v, 255); }
             tex.SetPixels32(c); tex.Apply();
         }
@@ -344,6 +372,7 @@ namespace AdamsHaven.Tower
                 if (tex == null) continue;
                 var sr = SpriteAt("Place " + p.id, SpriteOf(tex, 0.08f), Cell(p.x, p.y) + new Vector2(0, -0.25f), width / (tex.width / 100f), Order(p.y) + 1);
                 props[p.id] = sr;
+                propScale[p.id] = width / (tex.width / 100f);
                 var tell = SpriteAt("Tell " + p.id, Glow, Cell(p.x, p.y), 2.6f, 900);
                 tell.color = p.kind == "lair" ? new Color(1f, 0.35f, 0.4f, 0.55f) : p.kind == "camp" ? new Color(1f, 0.8f, 0.45f, 0.6f) : new Color(0.75f, 0.85f, 1f, 0.45f);
                 tells[p.id] = tell;
@@ -460,33 +489,167 @@ namespace AdamsHaven.Tower
 
         // ---------------------------------------------------------------- state
 
-        // Redraw fog, worn road, places and the party from the rules.
+        // Redraw fog, worn road, places and the party from the rules. The soft masks are uploaded only when a cell
+        // changed (each upload blurs two 512x320 maps).
         public void Sync()
         {
             if (map == null) return;
             int n = map.cells.Length;
-            if (seenCells == null || seenCells.Length != n) { seenCells = new float[n]; roadCells = new float[n]; }
+            bool fresh = seenCells == null || seenCells.Length != n;
+            if (fresh) { seenCells = new float[n]; roadCells = new float[n]; }
+            bool seenChanged = fresh, roadChanged = fresh;
             for (int y = 0; y < map.height; y++)
                 for (int x = 0; x < map.width; x++)
                 {
                     int i = map.Index(x, y);
-                    seenCells[i] = source.Seen(x, y) ? 1 : 0;
-                    roadCells[i] = source.Road(x, y);
+                    float s = source.Seen(x, y) ? 1 : 0, r = source.Road(x, y);
+                    if (seenCells[i] != s) { seenCells[i] = s; seenChanged = true; }
+                    if (roadCells[i] != r) { roadCells[i] = r; roadChanged = true; }
                 }
-            UploadMask(seenTex, seenCells, 6);
-            UploadMask(roadTex, roadCells, 2);
+            if (seenChanged) UploadMask(seenTex, seenCells, 6);
+            if (roadChanged) UploadMask(roadTex, roadCells, 2);
+            masksDirty = false;
+            LastRevealed = 0;
             foreach (var p in map.pois)
             {
-                bool seen = source.Seen(p.x, p.y);
+                int state = source.NodeState(p);
+                int before;
+                bool had = nodeStates.TryGetValue(p.id, out before);
+                nodeStates[p.id] = state;
                 if (props.ContainsKey(p.id))
                 {
-                    props[p.id].gameObject.SetActive(seen);
-                    props[p.id].color = source.Cleared(p) ? new Color(0.78f, 0.86f, 0.78f) : Color.white;
+                    bool show = state >= TowerRules.NodeScouted;
+                    var prop = props[p.id];
+                    // A place that just came out of the fog rises into view.
+                    if (show && synced && (!had || before < TowerRules.NodeScouted) && !prop.gameObject.activeSelf) { StartReveal(p.id); LastRevealed++; }
+                    prop.gameObject.SetActive(show);
+                    prop.color = NodeTint(state);
                 }
-                // Places learned of but not yet seen glow through the fog.
-                if (tells.ContainsKey(p.id)) tells[p.id].gameObject.SetActive(!seen && source.Known(p));
+                // The lair (and places learned of but not yet seen) glow through the fog as a beacon; a place rising into
+                // view keeps its flare until the animation ends.
+                if (tells.ContainsKey(p.id) && !revealing.ContainsKey(p.id)) tells[p.id].gameObject.SetActive(state == TowerRules.NodeBeacon);
             }
+            synced = true;
             if (!Walking) { var at = source.Party; PlaceParty(Cell(at.x, at.y), at.y, Vector2.right, 0, false); }
+        }
+
+        // Completed places are tinted green-grey, scouted ones (seen, out of reach) dimmed and cool.
+        private static Color NodeTint(int state)
+        {
+            return state == TowerRules.NodeDone ? new Color(0.78f, 0.86f, 0.78f) :
+                state == TowerRules.NodeScouted ? new Color(0.62f, 0.66f, 0.74f) : Color.white;
+        }
+
+        private void StartReveal(string id)
+        {
+            revealing[id] = 0f;
+            if (props.ContainsKey(id)) props[id].transform.localScale = Vector3.one * propScale[id] * 0.2f;
+        }
+
+        // ---------------------------------------------------------------- the web's trails and the tower's circle
+
+        // One trail of the web to draw: its cells and how it is drawn (0 faint, 1 open from a completed place, 2 travelled).
+        public struct WebLine { public List<Vector2Int> cells; public int style; }
+
+        // Draws the web's trails as dotted lines under the fog. key: the caller's summary of what is shown; the same key
+        // keeps the lines already built.
+        public void SetWeb(string key, List<WebLine> lines)
+        {
+            if (map == null || key == webKey) return;
+            webKey = key;
+            foreach (var l in webLines) if (l != null) { built.Remove(l.gameObject); Destroy(l.gameObject); }
+            webLines.Clear();
+            if (lines == null) return;
+            foreach (var line in lines)
+            {
+                if (line.cells == null || line.cells.Count < 2) continue;
+                var pts = new List<Vector3>();
+                for (int i = 0; i < line.cells.Count; i++)
+                {
+                    var c = Cell(line.cells[i].x, line.cells[i].y);
+                    // Round the corners a little so the trail reads as a path, not a staircase.
+                    if (i > 0 && i < line.cells.Count - 1)
+                    {
+                        var prev = Cell(line.cells[i - 1].x, line.cells[i - 1].y); var next = Cell(line.cells[i + 1].x, line.cells[i + 1].y);
+                        c = c * 0.5f + (prev + next) * 0.25f;
+                    }
+                    pts.Add(new Vector3(c.x, c.y - 0.1f, 0));
+                }
+                var lr = Line("Web trail", line.style == 2 ? 790 : 780);
+                lr.positionCount = pts.Count;
+                lr.SetPositions(pts.ToArray());
+                float width = line.style == 2 ? 0.2f : line.style == 1 ? 0.16f : 0.12f;
+                lr.startWidth = lr.endWidth = width;
+                var col = line.style == 2 ? new Color(1f, 0.86f, 0.55f, 0.85f) : line.style == 1 ? new Color(0.95f, 0.92f, 0.8f, 0.6f) :
+                    new Color(0.8f, 0.85f, 0.95f, 0.3f);
+                lr.startColor = lr.endColor = col;
+                webLines.Add(lr);
+            }
+        }
+
+        // The circle a tower's view covers (cells), drawn above the fog; HideRing removes it.
+        public void ShowRing(Vector2Int center, float radius, Color color)
+        {
+            if (map == null) return;
+            if (ring == null) ring = Line("Tower circle", 905);
+            const int Segments = 96;
+            var c = Cell(center.x, center.y);
+            var pts = new Vector3[Segments];
+            for (int i = 0; i < Segments; i++)
+            {
+                float a = i * Mathf.PI * 2 / Segments;
+                pts[i] = new Vector3(c.x + Mathf.Cos(a) * radius, c.y + Mathf.Sin(a) * radius, 0);
+            }
+            ring.loop = true;
+            ring.positionCount = Segments;
+            ring.SetPositions(pts);
+            ring.startWidth = ring.endWidth = 0.18f;
+            ring.startColor = ring.endColor = color;
+            ring.gameObject.SetActive(true);
+        }
+
+        public void HideRing() { if (ring != null) ring.gameObject.SetActive(false); }
+
+        private LineRenderer Line(string name, int order)
+        {
+            if (lineMat == null)
+            {
+                lineMat = new Material(Shader.Find("Sprites/Default")) { mainTexture = Dash };
+                lineMat.mainTexture.wrapMode = TextureWrapMode.Repeat;
+            }
+            var go = new GameObject(name);
+            go.transform.SetParent(root, false);
+            var lr = go.AddComponent<LineRenderer>();
+            lr.useWorldSpace = false;
+            lr.sharedMaterial = lineMat;
+            lr.textureMode = LineTextureMode.Tile;
+            lr.numCapVertices = 2;
+            lr.sortingOrder = order;
+            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            lr.receiveShadows = false;
+            built.Add(go);
+            return lr;
+        }
+
+        // A soft dash, tiled along the trails (one dash per cell).
+        private static Texture2D Dash
+        {
+            get
+            {
+                if (dashTex != null) return dashTex;
+                const int W = 32, H = 8;
+                dashTex = new Texture2D(W, H, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Repeat, name = "Map trail dash" };
+                var px = new Color[W * H];
+                for (int y = 0; y < H; y++)
+                    for (int x = 0; x < W; x++)
+                    {
+                        float along = Mathf.Clamp01(1 - Mathf.Abs(x - W * 0.35f) / (W * 0.3f));
+                        float across = Mathf.Clamp01(1 - Mathf.Abs(y + 0.5f - H / 2f) / (H / 2f));
+                        px[y * W + x] = new Color(1, 1, 1, Mathf.SmoothStep(0, 1, along * 1.6f) * Mathf.SmoothStep(0, 1, across * 1.4f));
+                    }
+                dashTex.SetPixels(px); dashTex.Apply();
+                return dashTex;
+            }
         }
 
         private void PlaceParty(Vector2 lead, int row, Vector2 dir, float lead01, bool moving)
@@ -535,8 +698,10 @@ namespace AdamsHaven.Tower
         // ---------------------------------------------------------------- walking
 
         // Animates the party along cells the rules already walked, lifting fog and wearing road as they pass.
-        public void Walk(List<Vector2Int> cells, Action done)
+        // speed: a multiplier for long trips across the web (the whole route is walked in one go).
+        public void Walk(List<Vector2Int> cells, Action done, float speed = 1f)
         {
+            walkSpeed = Mathf.Max(0.25f, speed);
             ClearPreview();
             if (cells == null || cells.Count < 2) { done?.Invoke(); return; }
             walkCells = cells;
@@ -592,11 +757,13 @@ namespace AdamsHaven.Tower
         private void Update()
         {
             if (map == null || cam == null) return;
+            if (revealing.Count > 0) AnimateReveals();
+            PulseBeacons();
             if (Walking)
             {
                 float terrain = TowerOverworld.TerrainCost(map.At(walkCells[Mathf.Min(walkCellsDone, walkCells.Count - 1)].x, walkCells[Mathf.Min(walkCellsDone, walkCells.Count - 1)].y));
                 float pace = terrain >= 3 ? 0.6f : terrain >= 2 ? 0.8f : 1f;
-                walkDist += WalkSpeed * pace * Time.unscaledDeltaTime;
+                walkDist += WalkSpeed * walkSpeed * pace * Time.unscaledDeltaTime;
                 // Lift fog and wear road as each cell is reached.
                 int reached = CellIndexAt(walkDist);
                 bool changed = false;
@@ -610,7 +777,10 @@ namespace AdamsHaven.Tower
                     roadCells[i] = Mathf.Max(roadCells[i], source.Road(c.x, c.y));
                     changed = true;
                 }
-                if (changed) { UploadMask(seenTex, seenCells, 6); UploadMask(roadTex, roadCells, 2); }
+                // Uploads are throttled: a fast walk reaches several cells a frame, and each upload blurs two big masks.
+                if (changed) masksDirty = true;
+                maskClock += Time.unscaledDeltaTime;
+                if (masksDirty && maskClock >= 0.12f) { UploadMask(seenTex, seenCells, 6); UploadMask(roadTex, roadCells, 2); masksDirty = false; maskClock = 0; }
                 Vector2 dir;
                 var lead = PointAlong(walkDist, out dir);
                 PlaceParty(lead, 0, dir, 0, true);
@@ -618,10 +788,69 @@ namespace AdamsHaven.Tower
                 if (walkDist >= walkLen + FollowGap * figures.Count)
                 {
                     walkPts = null;
+                    walkSpeed = 1f;
                     var done = walkDone; walkDone = null;
                     Sync();
                     done?.Invoke();
                 }
+            }
+        }
+
+        // A revealed place rises from 20% to full size with a little overshoot, and its glow flares once.
+        private readonly List<string> revealDone = new List<string>();
+        private void AnimateReveals()
+        {
+            revealDone.Clear();
+            foreach (var id in new List<string>(revealing.Keys))
+            {
+                float t = revealing[id] + Time.unscaledDeltaTime / 0.55f;
+                revealing[id] = t;
+                if (!props.ContainsKey(id)) { revealDone.Add(id); continue; }
+                float k = Mathf.Clamp01(t);
+                float back = 1 + 2.2f * Mathf.Pow(k - 1, 3) + 1.2f * Mathf.Pow(k - 1, 2);     // ease out, slight overshoot
+                props[id].transform.localScale = Vector3.one * propScale[id] * Mathf.LerpUnclamped(0.2f, 1f, back);
+                if (tells.ContainsKey(id))
+                {
+                    var tell = tells[id];
+                    tell.gameObject.SetActive(k < 1);
+                    tell.color = new Color(1f, 0.92f, 0.65f, 0.75f * (1 - k));
+                    tell.transform.localScale = Vector3.one * (2.6f + 2.2f * k);
+                }
+                if (t >= 1) revealDone.Add(id);
+            }
+            foreach (var id in revealDone)
+            {
+                revealing.Remove(id);
+                if (props.ContainsKey(id)) props[id].transform.localScale = Vector3.one * propScale[id];
+                if (tells.ContainsKey(id))
+                {
+                    var p = map.Poi(id);
+                    tells[id].transform.localScale = Vector3.one * 2.6f;
+                    tells[id].color = TellColor(p);
+                    int state;
+                    tells[id].gameObject.SetActive(nodeStates.TryGetValue(id, out state) && state == TowerRules.NodeBeacon);
+                }
+            }
+        }
+
+        private static Color TellColor(TowerOverworldPoi p)
+        {
+            return p == null ? new Color(0.75f, 0.85f, 1f, 0.45f) : p.kind == "lair" ? new Color(1f, 0.35f, 0.4f, 0.55f) :
+                p.kind == "camp" ? new Color(1f, 0.8f, 0.45f, 0.6f) : new Color(0.75f, 0.85f, 1f, 0.45f);
+        }
+
+        // The lair's beacon breathes, so the goal is always easy to find through the fog.
+        private void PulseBeacons()
+        {
+            foreach (var pair in tells)
+            {
+                if (!pair.Value.gameObject.activeSelf || revealing.ContainsKey(pair.Key)) continue;
+                int state;
+                if (!nodeStates.TryGetValue(pair.Key, out state) || state != TowerRules.NodeBeacon) continue;
+                float k = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 2.2f);
+                var c = pair.Value.color; c.a = 0.4f + 0.3f * k;
+                pair.Value.color = c;
+                pair.Value.transform.localScale = Vector3.one * (2.4f + 0.5f * k);
             }
         }
 
@@ -633,8 +862,15 @@ namespace AdamsHaven.Tower
                 for (int x = cx - r - 2; x <= cx + r + 2; x++)
                     if (map.Inside(x, y) && source.Seen(x, y) && (x - cx) * (x - cx) + (y - cy) * (y - cy) <= (r + 2) * (r + 2))
                         seenCells[map.Index(x, y)] = 1;
+            // Places the rules already know about rise into view as the party comes near.
             foreach (var p in map.pois)
-                if (props.ContainsKey(p.id) && seenCells[map.Index(p.x, p.y)] > 0) props[p.id].gameObject.SetActive(true);
+                if (props.ContainsKey(p.id) && !props[p.id].gameObject.activeSelf && seenCells[map.Index(p.x, p.y)] > 0 &&
+                    source.NodeState(p) >= TowerRules.NodeScouted)
+                {
+                    props[p.id].gameObject.SetActive(true);
+                    props[p.id].color = NodeTint(source.NodeState(p));
+                    StartReveal(p.id);
+                }
         }
 
         // ---------------------------------------------------------------- camera
@@ -692,6 +928,8 @@ namespace AdamsHaven.Tower
             p.x = minX > maxX ? map.width / 2f : Mathf.Clamp(p.x, minX, maxX);
             p.y = minY > maxY ? map.height / 2f : Mathf.Clamp(p.y, minY, maxY);
             cam.transform.localPosition = p;
+            if (p != lastCamPos || cam.orthographicSize != lastCamSize || rt == null)
+            { lastCamPos = p; lastCamSize = cam.orthographicSize; CameraVersion++; }
         }
 
         public Vector2 ViewportToMap(Vector2 viewport)

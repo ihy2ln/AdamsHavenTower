@@ -49,7 +49,7 @@ public sealed partial class BattleMode
     {
         public byte Kind;              // 0 flash, 1 shockwave, 2 streak, 3 slash sheet, 4 burst sheet, 5 ground rune, 6 sparkle,
                                        // 7-8 painted slash/impact, 9 painted element sheet (Sheet), 10 full-screen warp,
-                                       // 11 per-move 4x4 colour sheet (BattleCinematics.MoveFx)
+                                       // 11 per-move 4x4 colour sheet (BattleCinematics.MoveFx), 12 imported picture
         public Vector2 Pos;
         public float Born, Life, Size, Angle;
         public Color Color;
@@ -122,11 +122,59 @@ public sealed partial class BattleMode
             ultTexture = new RenderTexture((int)clip.width, (int)clip.height, 0);
             ultPlayer.targetTexture = ultTexture;
         }
+        ultPlayer.source = VideoSource.VideoClip;
+        ultPlayer.audioOutputMode = VideoAudioOutputMode.None;
         ultPlayer.clip = clip;
-        ultPlayer.playbackSpeed = 1f;       // cinematics run in real time; the 0.5x battle speed is for the field
+        ultPlayer.playbackSpeed = 1f;       // cinematics run in real time, whatever the battle speed
         ultPlayer.time = 0;
         ultPlayer.Play();
     }
+
+    // An imported cinematic (media library), played from its file.
+    private string cutUrl;
+    private void PlayUltUrl(string url, int width, int height)
+    {
+        if (ultPlayer == null)
+        {
+            GameObject host = new GameObject("UltCutInPlayer");
+            host.transform.SetParent(transform, false);
+            ultPlayer = host.AddComponent<VideoPlayer>();
+            ultPlayer.playOnAwake = false;
+            ultPlayer.isLooping = false;
+            ultPlayer.renderMode = VideoRenderMode.RenderTexture;
+            ultPlayer.audioOutputMode = VideoAudioOutputMode.None;
+            ultPlayer.skipOnDrop = true;
+        }
+        int w = width > 0 ? width : 1280, h = height > 0 ? height : 720;
+        if (ultTexture == null || ultTexture.width != w || ultTexture.height != h)
+        {
+            if (ultTexture != null) ultTexture.Release();
+            ultTexture = new RenderTexture(w, h, 0);
+            ultPlayer.targetTexture = ultTexture;
+        }
+        ultPlayer.clip = null;
+        ultPlayer.source = VideoSource.Url;
+        ultPlayer.url = url;
+        // Imported clips keep their own sound track.
+        ultPlayer.audioOutputMode = VideoAudioOutputMode.Direct;
+        ultPlayer.playbackSpeed = 1f;
+        ultPlayer.Play();
+    }
+
+    // The imported cinematic for this action, following the CINE setting like the game's own.
+    private MediaLibrary.Entry MediaCineFor(BattleUnit actor, BattleCard card)
+    {
+        if (actor == null || card == null || actor.Enemy) return null;
+        var entry = MediaLibrary.Get("card." + card.Id + ".cine");
+        if (entry == null || entry.kind != MediaLibrary.Video) return null;
+        var mode = Cinematics;
+        if (mode == CinematicMode.Off) return null;
+        if (mode == CinematicMode.UltimatesOnly && !IsUltimate(card)) return null;
+        if (mode == CinematicMode.FirstUse && !IsUltimate(card) && cinematicsSeen.Contains(card.Id)) return null;
+        return entry;
+    }
+
+    private bool CutVideoReady { get { return ultPlayer != null && ultTexture != null && (cutClip != null ? ultPlayer.clip == cutClip : cutUrl != null && ultPlayer.url == cutUrl); } }
 
     private void ReleaseUltClip()
     {
@@ -137,7 +185,7 @@ public sealed partial class BattleMode
 
     private bool Busy { get { return fx < queueEnd - 0.001f || beats.Count > 0; } }
 
-    // An ultimate cut-in is on screen (it plays at the battle speed, so 0.5x makes it long).
+    // An ultimate cut-in is on screen (its length in battle time follows the battle speed).
     private bool CutInShowing { get { return cutUnit != null && cutCard != null && fx >= cutStart && fx < cutStart + cutLen; } }
 
     // Tap during a cut-in: jump to its end. The action itself still plays, so nothing is lost but the cinematic.
@@ -145,7 +193,7 @@ public sealed partial class BattleMode
     {
         fx = cutStart + cutLen;
         hitStop = 0f;
-        matchUnit = null; cutClip = null;
+        matchUnit = null; cutClip = null; cutUrl = null;
         if (ultPlayer != null) ultPlayer.Stop();
     }
 
@@ -179,18 +227,22 @@ public sealed partial class BattleMode
     {
         switch (phase)
         {
-            case BattleAnimationPhase.Ultimate: AdamsHaven.Tower.TowerAudio.Play("ult"); break;
-            case BattleAnimationPhase.Action:
-                if (card != null && actor != null && !Ranged(actor, card)) AdamsHaven.Tower.TowerAudio.PlayVaried("swing", 0.6f);
+            // Ultimates and awakenings play their own recorded sound with the cut-in (it builds to a climax about as long
+            // as the clip); without one, the shared whoosh.
+            case BattleAnimationPhase.Ultimate:
+            {
+                var own = card != null && IsUltimate(card) ? MoveSound(card) : null;
+                if (own != null) AdamsHaven.Tower.TowerAudio.PlayClip(own, .8f);
+                else AdamsHaven.Tower.TowerAudio.Play("ult");
                 break;
-            case BattleAnimationPhase.Hit:
-                if (fact != null && fact.Kind == "poison") AdamsHaven.Tower.TowerAudio.PlayVaried("status", 0.4f);
-                else AdamsHaven.Tower.TowerAudio.PlayVaried(fact != null && fact.Crit ? "crit" : "hit", fact != null && fact.Crit ? 1f : 0.75f);
-                break;
+            }
+            case BattleAnimationPhase.Action: ActionSound(actor, card); break;
+            case BattleAnimationPhase.Hit: HitSound(fact); break;
             case BattleAnimationPhase.Heal: AdamsHaven.Tower.TowerAudio.PlayVaried("heal", 0.6f, 0.04f); break;
-            case BattleAnimationPhase.Status: AdamsHaven.Tower.TowerAudio.PlayVaried("status", 0.55f); break;
+            case BattleAnimationPhase.Status: StatusSound(fact); break;
             case BattleAnimationPhase.Down: AdamsHaven.Tower.TowerAudio.Play("down", 0.8f); break;
-            case BattleAnimationPhase.PlayCard: AdamsHaven.Tower.TowerAudio.PlayVaried("card", 0.6f); break;
+            case BattleAnimationPhase.PlayCard: Sfx("Sfx/card_play", "card", 0.6f); break;
+            case BattleAnimationPhase.DrawCards: if (AdamsHaven.Tower.TowerAudio.Has("Sfx/card_draw")) AdamsHaven.Tower.TowerAudio.PlayVaried("Sfx/card_draw", .5f); break;
         }
     }
 
@@ -355,6 +407,16 @@ public sealed partial class BattleMode
         while (i < list.Count)
         {
             BattleFact head = list[i];
+            if (head.Kind == "interrupt")
+            {
+                // An enemy's action count ran out mid-turn: it acts now, before the party's next card.
+                BattleUnit who = head.Actor;
+                float at = Mathf.Max(queueEnd, fx);
+                At(at, () => { ShowBanner((who != null ? who.Name.ToUpperInvariant() : "ENEMY") + "  ACTS!", EnemyRed); Sfx("Sfx/enemy_turn", "status", .8f); });
+                queueEnd = at + .8f;
+                i++;
+                continue;
+            }
             int j = i + 1;
             while (j < list.Count && list[j].Actor == head.Actor && list[j].Card == head.Card) j++;
             ScheduleGroup(list.GetRange(i, j - i));
@@ -373,11 +435,29 @@ public sealed partial class BattleMode
         BattleUnit actor = head.Actor;
         BattleCard card = head.Card;
         bool tick = head.Kind == "poison" || head.Kind == "regen";
-        bool offense = head.Kind == "damage";
+        bool offense = group.Exists(f => f.Kind == "damage" || f.Kind == "blocked");
         float t = Mathf.Max(queueEnd, fx);
-        VideoClip clip = CinematicFor(actor, card);
-        bool cine = actor != null && card != null && !actor.Enemy && (IsUltimate(card) || clip != null) && Cinematics != CinematicMode.Off;
-        if (cine)
+        if (head.Kind == "epiphany")
+        {
+            At(t, () => ApplyFact(head));
+            queueEnd = t + .9f;
+            return;
+        }
+        MediaLibrary.Entry mediaCine = MediaCineFor(actor, card);
+        VideoClip clip = mediaCine != null ? null : CinematicFor(actor, card);
+        bool cine = actor != null && card != null && !actor.Enemy && (IsUltimate(card) || clip != null || mediaCine != null) && Cinematics != CinematicMode.Off;
+        if (cine && mediaCine != null)
+        {
+            // An imported cinematic: played by URL at real time, like the rendered ones (no match cut).
+            BattleUnit who = actor; BattleCard which = card;
+            string url = MediaLibrary.VideoUrl(mediaCine.key);
+            float len = (mediaCine.length > .1f ? mediaCine.length : 3f) * speed;
+            cinematicsSeen.Add(card.Id);
+            At(t, () => { cutUnit = who; cutCard = which; cutClip = null; cutUrl = url; cutStart = fx; cutLen = len; matchUnit = null; matchIn = 0f;
+                PlayUltUrl(url, mediaCine.width, mediaCine.height); Signal(BattleAnimationPhase.Ultimate, who, null, which); });
+            t += len;
+        }
+        else if (cine)
         {
             BattleUnit who = actor; BattleCard which = card;
             if (clip != null) cinematicsSeen.Add(card.Id);
@@ -386,7 +466,7 @@ public sealed partial class BattleMode
             FieldRig rig;
             bool match = clip != null && fieldRigs.TryGetValue(actor, out rig) && rig.Flat && !IsUltimate(card);
             float zoom = match ? MatchZoom * speed : 0f;
-            At(t, () => { cutUnit = who; cutCard = which; cutClip = clip; cutStart = fx; cutLen = len + 2f * zoom;
+            At(t, () => { cutUnit = who; cutCard = which; cutClip = clip; cutUrl = null; cutStart = fx; cutLen = len + 2f * zoom;
                 matchUnit = match ? who : null; matchIn = zoom;
                 if (clip != null && !match) PlayUltClip(clip);
                 Signal(BattleAnimationPhase.Ultimate, who, null, which); });
@@ -420,14 +500,14 @@ public sealed partial class BattleMode
         v.Banner = card.Name; v.BannerStart = fx; v.IntentSpent = true;
         Vector2 from = Foot(actor);
         Vector2 dest = Vector2.zero;
-        bool damaging = group[0].Kind == "damage";
+        bool damaging = group.Exists(f => f.Kind == "damage" || f.Kind == "blocked");
         v.Ranged = ranged; v.Impact = damaging ? (ranged ? 0.50f : 0.30f) : 0.34f;
         v.LungeDur = v.Impact + 0.42f;
         Signal(BattleAnimationPhase.Action, actor, group[0].Target, card);
         if (!ranged && damaging)
         {
             Vector2 sum = Vector2.zero; int n = 0;
-            for (int i = 0; i < group.Count; i++) if (group[i].Kind == "damage" && group[i].Target != null) { sum += Foot(group[i].Target); n++; }
+            for (int i = 0; i < group.Count; i++) if ((group[i].Kind == "damage" || group[i].Kind == "blocked") && group[i].Target != null) { sum += Foot(group[i].Target); n++; }
             if (n > 0)
             {
                 Vector2 aim = sum / n;
@@ -443,7 +523,7 @@ public sealed partial class BattleMode
         {
             Vector2 origin = Chest(actor);
             for (int i = 0; i < group.Count; i++)
-                if (group[i].Kind == "damage" && group[i].Target != null)
+                if ((group[i].Kind == "damage" || group[i].Kind == "blocked") && group[i].Target != null)
                     bolts.Add(new Bolt { From = origin, To = Chest(group[i].Target), Start = fx + 0.16f + i * 0.02f, Dur = v.Impact - 0.18f, Color = color });
             Spawn(0, origin, color, 210f, 0.36f);
             Spawn(1, origin, color, 150f, 0.38f);
@@ -461,6 +541,7 @@ public sealed partial class BattleMode
     {
         BattleUnit target = f.Target;
         if (target == null) return;
+        if (ApplyCznFact(f)) return;
         if (f.Kind == "damage" || f.Kind == "poison") Signal(BattleAnimationPhase.Hit, f.Actor, target, f.Card, f);
         else if (f.Kind == "heal" || f.Kind == "regen") Signal(BattleAnimationPhase.Heal, f.Actor, target, f.Card, f);
         else if (f.Kind == "status") Signal(BattleAnimationPhase.Status, f.Actor, target, f.Card, f);
@@ -555,6 +636,7 @@ public sealed partial class BattleMode
                 BattleGui.DrawSheet(sheet, 8, Mathf.FloorToInt(t * 8f), e.Pos, e.Size, e.Angle, e.Color);
             }
             else if (e.Kind == 11 && e.Sheet != null) DrawMoveSheet(e, t);
+            else if (e.Kind == 12 && e.Sheet != null) DrawImportedFx(e, t);
             else if (e.Kind == 10)
             {
                 float w = e.Size, h = w * 704f / 1248f;

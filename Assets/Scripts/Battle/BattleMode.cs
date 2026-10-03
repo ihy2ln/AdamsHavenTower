@@ -61,6 +61,10 @@ public sealed partial class BattleMode : MonoBehaviour
     private BattleUnit hoverUnit;
     private Vector2 mouse;
 #if UNITY_EDITOR
+    // Test hook: the live rules state.
+    public BattleState DebugState { get { return battle; } }
+    public void DebugAfterAction() { AfterAction(); }
+
     public string DebugSummary()
     {
         if (battle == null) return "no battle";
@@ -128,7 +132,8 @@ public sealed partial class BattleMode : MonoBehaviour
         string text = "";
         for (int i = 0; i < handOrder.Count; i++)
         {
-            CardVis cv = cardVis[handOrder[i]];
+            CardVis cv;
+            if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
             text += " | " + handOrder[i].Name + " pos=" + cv.Pos + " rest=" + cv.Rest + " ang=" + cv.Angle + " scale=" + cv.Scale + " alpha=" + cv.Alpha;
         }
         return text;
@@ -137,9 +142,13 @@ public sealed partial class BattleMode : MonoBehaviour
     private bool pressed, rightPressed, used, modalDrawing;
     private float[] moteSeed;
     // Presentation speed: the battle clock (lunges, hit timing and the 3D rigs' clips) runs at this rate.
-    // 0.5x is the base so the fighters' moves can be watched; the top-bar button cycles 0.5x / 1x / 2x.
+    // The old 1x clock was too fast, so half of it is the new base. The button shows rates relative to that base:
+    // a clock of 0.5 reads "1x", 1 reads "2x" and 2 reads "4x".
     private static readonly float[] Speeds = { 0.5f, 1f, 2f };
-    private const string SpeedPref = "AdamsHaven.BattleSpeed";
+    private const float SpeedBase = 0.5f;
+    // New key in BM 10.3.0: the old one could hold the old fast "1x" (a rate of 1), which now reads 2x; everyone starts
+    // again at the slower base.
+    private const string SpeedPref = "AdamsHaven.BattleSpeed.v2";
     private float speed = 0.5f;
     private BattleUnit popupUnit;
     private Rect popupRect, popupTile;
@@ -195,11 +204,33 @@ public sealed partial class BattleMode : MonoBehaviour
         if (Encounter != null && Encounter.CardLevels != null)
             foreach (BattleCard card in deck)
                 if (Encounter.CardLevels.TryGetValue(card.Id, out level) && level > 1) { card.Level = level; card.Name += new string('+', level - 1); }
+        // Epiphanies taken earlier in the run (card id -> "swift,echo").
+        string mods;
+        if (Encounter != null && Encounter.CardMods != null)
+            foreach (BattleCard card in deck)
+                if (Encounter.CardMods.TryGetValue(card.Id, out mods))
+                    foreach (string mod in mods.Split(',')) if (mod.Length > 0) BattleCatalog.ApplyEpiphany(card, mod);
+        EpiphaniesTaken = null;
+        MediaLibrary.PreloadAll();
+        AdamsHaven.Tower.TowerAudio.Music("battle");
         battle = new BattleState(Seed != 0 ? Seed : Environment.TickCount, field, reserve,
             Encounter != null ? Encounter.Enemies : BattleCatalog.Encounter(floor), deck,
             jd, Encounter != null ? Encounter.Commander : BattleCatalog.EnemyCommander(floor),
             null, Encounter != null ? Encounter.Modifiers : null);
         background = BackgroundFor(Encounter);
+        stageOverride = MediaLibrary.PickStage(Encounter != null ? (Encounter.Kind == "boss" ? "boss" : Encounter.Theme) : "any",
+            Encounter != null && Encounter.Kind == "boss", StageIdFor(background), Seed != 0 ? Seed : floor * 31 + 7);
+        // Expedition fights: one fighter card on the field glows; playing it brings an epiphany (CZN).
+        if (Encounter != null && Encounter.Epiphany)
+        {
+            var glow = new List<BattleCard>();
+            foreach (BattleCard card in battle.DrawPile)
+                if (card.Kind != BattleCardKind.Summoner && battle.Allies.Exists(u => u.Id == card.Owner) && string.IsNullOrEmpty(card.Epiphany)) glow.Add(card);
+            foreach (BattleCard card in battle.Hand)
+                if (card.Kind != BattleCardKind.Summoner && string.IsNullOrEmpty(card.Epiphany)) glow.Add(card);
+            if (glow.Count > 0) battle.GlowCard = glow[(int)((uint)(Seed != 0 ? Seed : Environment.TickCount) % (uint)glow.Count)].Id;
+        }
+        lastChain = 0; chainAt = -9f; enemyPhaseUntil = -1f; discarding.Clear(); assistUnit = null; ultReadySounded.Clear();
         reward = Mathf.Abs(floor) >= 8 ? 300 : Mathf.Abs(floor) >= 3 ? 160 : 80;
         moteSeed = new float[48 * 4];
         for (int i = 0; i < moteSeed.Length; i++) moteSeed[i] = UnityEngine.Random.value;
@@ -216,7 +247,7 @@ public sealed partial class BattleMode : MonoBehaviour
         ShowBanner(Encounter != null && Encounter.Boss != null ? Encounter.Boss.Name.ToUpperInvariant() : "ROUND 1",
             Encounter != null && Encounter.Boss != null ? EnemyRed : Gold);
         SyncHand();
-        Toast("Pick a card, then a highlighted target. Every fighter has a free basic attack.");
+        Toast("Pick a card, then a highlighted target. Every fighter also has a free BASIC attack and a GUARD shield.");
     }
 
     // Trimming reads pixels back through a render target, so do it here rather than mid-OnGUI.
@@ -230,6 +261,17 @@ public sealed partial class BattleMode : MonoBehaviour
     }
 
     private void Toast(string text) { toast = text; toastStart = Time.time; }
+
+    // Media library: the stage chosen for this fight when the player took the game's out or added their own.
+    private Texture2D stageOverride;
+    // Results for the expedition: epiphanies taken this battle (card id -> "swift,echo"), set when the battle ends.
+    public Dictionary<string, string> EpiphaniesTaken;
+
+    private static string StageIdFor(string resource)
+    {
+        foreach (var b in MediaLibrary.BuiltInStages) if (b.Resource == resource) return b.Id;
+        return null;
+    }
 
     // Lair bosses in the Silverwood depths fight in their own boss room; other fights use their theme's scene.
     private static string BackgroundFor(BattleEncounter encounter)
@@ -255,7 +297,7 @@ public sealed partial class BattleMode : MonoBehaviour
         return Speeds[(i + 1) % Speeds.Length];
     }
 
-    private static string SpeedLabel(float value) { return value < 1f ? value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "x" : value.ToString("0", System.Globalization.CultureInfo.InvariantCulture) + "x"; }
+    public static string SpeedLabel(float value) { return (value / SpeedBase).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "x"; }
 
     private Texture2D Art(string id)
     {
@@ -263,11 +305,48 @@ public sealed partial class BattleMode : MonoBehaviour
         Texture2D texture;
         if (!textures.TryGetValue(id, out texture))
         {
-            texture = Resources.Load<Texture2D>("AdamsHaven/" + id);
+            texture = MediaArt(id) ?? Resources.Load<Texture2D>("AdamsHaven/" + id);
             textures.Add(id, texture);
         }
         return texture;
     }
+
+    // Pictures imported in the media library stand in for the game's: card art, a fighter's card illustration, a
+    // portrait (chibi head) or field picture, and a monster's field cutout.
+    private static Texture2D MediaArt(string id)
+    {
+        int slash = id.IndexOf('/');
+        if (slash < 0) return null;
+        string folder = id.Substring(0, slash), name = id.Substring(slash + 1);
+        switch (folder)
+        {
+            case "Cards": return MediaLibrary.ImageFor("card." + name + ".art");
+            case "FullCards": return MediaLibrary.ImageFor("unit." + name + ".card");
+            case "Chibi": return MediaLibrary.ImageFor("unit." + name + ".portrait") ?? MediaLibrary.ImageFor("unit." + name + ".model");
+            case "FieldModels": return MediaLibrary.ImageFor("unit." + name + ".model");
+        }
+        return null;
+    }
+
+    // An imported field picture replaces the unit's animated chibi and rig.
+    private static Texture2D FieldPicture(BattleUnit unit) { return MediaLibrary.ImageFor("unit." + (unit.Enemy ? unit.Species : unit.Id) + ".model"); }
+
+    // The model a fighter is drawn with: their own, or another fighter's (media library model swap).
+    public static string ModelId(BattleUnit unit)
+    {
+        if (unit == null) return "";
+        string swap = unit.Enemy ? "" : MediaLibrary.SwapFor(unit.Id);
+        return swap.Length > 0 ? swap : unit.Id;
+    }
+
+    private void OnMediaChanged()
+    {
+        textures.Clear();
+        if (battle == null) return;
+        BuildFieldRigs();
+    }
+
+    private void OnEnable() { MediaLibrary.Changed -= OnMediaChanged; MediaLibrary.Changed += OnMediaChanged; }
 
     private Cutout Spr(string id) { return Trim(Art(id)); }
 
@@ -282,8 +361,8 @@ public sealed partial class BattleMode : MonoBehaviour
         TickFieldRigs();
         TickSheet(dt);
         UpdateHand(dt);
-        if (!Busy) RefreshIntents();
-        if (battle.Finished || !auto || showLog || confirmWithdraw || sheetUnit != null || Busy) return;
+        if (!Busy) { RefreshIntents(); CheckUltReady(); }
+        if (battle.Finished || !auto || showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || Busy) return;
         autoTimer -= dt;
         if (autoTimer > 0f) return;
         autoTimer = 0.3f;
@@ -297,13 +376,25 @@ public sealed partial class BattleMode : MonoBehaviour
         BattleAutoPlayer.Move move;
         if (!BattleAutoPlayer.Next(battle, out move)) return false;
         if (move.Decree) { DoDecree(); return true; }
-        return Perform(move.Card, move.Actor, move.Target, move.Ultimate);
+        return Perform(move.Card, move.Actor, move.Target, move.Ultimate, move.Assist);
     }
 
     // ---- actions (every rules mutation goes through here so the timeline sees it) ----------
 
-    private bool Perform(BattleCard card, BattleUnit actor, BattleUnit target, int ultimate = -1)
+    private bool Perform(BattleCard card, BattleUnit actor, BattleUnit target, int ultimate = -1, bool assist = false)
     {
+        if (assist)
+        {
+            // A reserve partner steps in beside the fighter they partner, then goes back to the bench.
+            float at = Mathf.Max(queueEnd, fx);
+            queueEnd = at;
+            if (!battle.TryPartnerAssist(actor, target)) return false;
+            assistUnit = actor; assistUntil = float.MaxValue;
+            At(at, () => Sfx("Sfx/partner", "chime", .8f));
+            AfterAction();
+            assistUntil = Mathf.Max(queueEnd, fx) + .35f;
+            return true;
+        }
         CardVis cv = null;
         bool fromHand = ultimate < 0 && battle.Hand.Contains(card) && cardVis.TryGetValue(card, out cv);
         float before = Mathf.Max(queueEnd, fx);
@@ -313,7 +404,9 @@ public sealed partial class BattleMode : MonoBehaviour
             flying.Add(new FlyCard { Card = card, From = cv.Pos, Angle = cv.Angle, Scale = cv.Scale, Start = fx });
             queueEnd = fx + FlyLen;
         }
+        int chainBefore = battle.CardsThisTurn;
         bool ok = ultimate >= 0 ? battle.TryUltimate(actor, ultimate, target) : battle.TryPlay(card, target);
+        if (ok && battle.CardsThisTurn > chainBefore) { int chain = battle.CardsThisTurn; At(Mathf.Max(fx, queueEnd), () => { lastChain = chain; chainAt = fx; }); }
         if (!ok)
         {
             if (fromHand) flying.RemoveAt(flying.Count - 1);
@@ -333,7 +426,7 @@ public sealed partial class BattleMode : MonoBehaviour
             announcedRound = battle.Round;
             float t = Mathf.Max(queueEnd, fx);
             string label = "ROUND " + battle.Round;
-            At(t, () => ShowBanner(label, Gold));
+            At(t, () => { ShowBanner(label, Gold); Sfx("Sfx/turn_start", "chime", .6f); });
             queueEnd = t + 0.95f;
         }
         SyncHand();
@@ -344,10 +437,11 @@ public sealed partial class BattleMode : MonoBehaviour
         if (battle == null || battle.Finished || Busy) return;
         ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null;
         float t = Mathf.Max(queueEnd, fx);
-        At(t, () => ShowBanner("ENEMY TURN", EnemyRed));
+        At(t, () => { ShowBanner("ENEMY TURN", EnemyRed); Sfx("Sfx/enemy_turn", "status", .7f); lastChain = 0; });
         queueEnd = t + 0.95f;
         battle.EndTurn();
         AfterAction();
+        enemyPhaseUntil = Mathf.Max(queueEnd, fx);
     }
 
     private void DoDecree()
@@ -355,7 +449,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (battle.Finished || Busy || battle.Sp < BattleState.SpMax) return;
         ClearSelection();
         float t = Mathf.Max(queueEnd, fx);
-        At(t, () => ShowBanner("JD'S DECREE", Gold));
+        At(t, () => { ShowBanner("JD'S DECREE", Gold); Sfx("Sfx/decree", "ult", .9f); });
         queueEnd = t + 0.95f;
         battle.TrySummonerUltimate();
         AfterAction();
@@ -386,14 +480,14 @@ public sealed partial class BattleMode : MonoBehaviour
     private void Commit(BattleUnit target)
     {
         if (selected == null || Busy || battle.Finished) return;
-        bool played = Perform(selected, selectedActor, target, selectedUltimate);
+        bool played = Perform(selected, selectedActor, target, selectedUltimate, selectingAssist);
         if (!played) Toast(target == null ? "This action cannot be played now." : "A taunting unit protects that target.");
         else ClearSelection();
     }
 
     private void ClearSelection()
     {
-        selected = null; selectedActor = null; selectedUltimate = -1; chooseUltimateFor = null;
+        selected = null; selectedActor = null; selectedUltimate = -1; chooseUltimateFor = null; selectingAssist = false;
     }
 
     private string Reason(BattleCard card, BattleUnit actor)
@@ -413,7 +507,9 @@ public sealed partial class BattleMode : MonoBehaviour
         if (battle == null) return;
         Action<bool, int> callback = leave; leave = null;
         bool won = battle.Victory;
+        EpiphaniesTaken = new Dictionary<string, string>(battle.Epiphanies);
         battle = null;
+        AdamsHaven.Tower.TowerAudio.Music("");
         CloseSheet();
         ReleaseUltClip();
         ReleaseMoveFx();
@@ -429,7 +525,13 @@ public sealed partial class BattleMode : MonoBehaviour
         List<BattleCard> gone = null;
         foreach (KeyValuePair<BattleCard, CardVis> pair in cardVis)
             if (!battle.Hand.Contains(pair.Key)) { if (gone == null) gone = new List<BattleCard>(); gone.Add(pair.Key); }
-        if (gone != null) for (int i = 0; i < gone.Count; i++) cardVis.Remove(gone[i]);
+        if (gone != null)
+        {
+            for (int i = 0; i < gone.Count; i++) { NoteDiscarded(gone[i], cardVis[gone[i]]); cardVis.Remove(gone[i]); }
+            // The fan is rebuilt in Update; until then drop what just left, or drawing and hover would look it up.
+            handOrder.RemoveAll(c => !cardVis.ContainsKey(c));
+            if (hoverCard != null && !cardVis.ContainsKey(hoverCard)) hoverCard = null;
+        }
         int fresh = 0;
         for (int i = 0; i < battle.Hand.Count; i++)
         {
@@ -473,7 +575,8 @@ public sealed partial class BattleMode : MonoBehaviour
         float k = 1f - Mathf.Exp(-dt * 13f);
         for (int i = 0; i < n; i++)
         {
-            CardVis cv = cardVis[handOrder[i]];
+            CardVis cv;
+            if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
             float offset = i - mid;
             float x = 836f + offset * spacing;
             float y = 790f + offset * offset * 2.2f;
@@ -513,27 +616,34 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void AddSlot(BattleUnit unit, Vector2 foot, float height)
     {
-        Cutout sprite = Spr(unit.Art);
-        Texture2D clip = AnimeClip(unit.Id, "idle");
+        Texture2D picture = FieldPicture(unit);
+        Cutout sprite = picture != null ? Trim(picture) : Spr(unit.Art);
+        Texture2D clip = picture != null ? null : AnimeClip(ModelId(unit), "idle");
         if (clip) sprite = AnimeCell(clip, 0);
         float aspect = sprite.Valid ? sprite.Aspect : 0.75f;
         slots[unit] = new SlotInfo { Foot = foot, H = height, W = height * aspect, Sprite = sprite };
     }
 
+    // Field layout runs every frame: the tables and buffers are kept, not reallocated.
+    private static readonly float[] laneX = { 604f, 408f, 212f };
+    private static readonly float[] laneY = { 584f, 536f, 576f };
+    private static readonly float[] laneH = { 268f, 252f, 262f };
+    private static readonly float[] footY = { 588f, 538f, 580f, 542f, 582f, 540f };
+    private readonly List<BattleUnit> foes = new List<BattleUnit>();
+    private static readonly Comparison<BattleUnit> ByLane = (a, b) => a.Lane.CompareTo(b.Lane);
+    private Comparison<BattleUnit> byFoot;
+
     private void LayoutField()
     {
         slots.Clear();
-        float[] laneX = { 604f, 408f, 212f };
-        float[] laneY = { 584f, 536f, 576f };
-        float[] laneH = { 268f, 252f, 262f };
         for (int i = 0; i < battle.Allies.Count; i++)
         {
             BattleUnit unit = battle.Allies[i];
             int lane = Mathf.Clamp(unit.Lane, 0, 2);
             AddSlot(unit, new Vector2(laneX[lane], laneY[lane]), laneH[lane]);
         }
-        List<BattleUnit> foes = new List<BattleUnit>(battle.Enemies);
-        foes.Sort((a, b) => a.Lane.CompareTo(b.Lane));
+        foes.Clear(); foes.AddRange(battle.Enemies);
+        foes.Sort(ByLane);
         float total = 0f;
         for (int i = 0; i < foes.Count; i++)
         {
@@ -542,7 +652,6 @@ public sealed partial class BattleMode : MonoBehaviour
         }
         float fit = Mathf.Min(1f, 640f / Mathf.Max(1f, total));
         float cursor = 912f;
-        float[] footY = { 588f, 538f, 580f, 542f, 582f, 540f };
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
@@ -553,9 +662,18 @@ public sealed partial class BattleMode : MonoBehaviour
         }
         AddSlot(battle.Summoner, new Vector2(115f, 450f), 205f);
         if (battle.EnemySummoner != null) AddSlot(battle.EnemySummoner, new Vector2(1490f, 462f), 244f);
+        // A reserve partner stepping in stands just behind the fighter they partner while their assist plays.
+        if (assistUnit != null && fx < assistUntil && battle.Reserves.Contains(assistUnit))
+        {
+            BattleUnit partner = battle.PartneredBy(assistUnit);
+            SlotInfo ps = partner != null && slots.ContainsKey(partner) ? slots[partner] : new SlotInfo { Foot = new Vector2(420f, 560f), H = 252f };
+            AddSlot(assistUnit, ps.Foot + new Vector2(-150f, 22f), ps.H * .96f);
+        }
+        else if (assistUnit != null && fx >= assistUntil) assistUnit = null;
         drawOrder.Clear();
         foreach (KeyValuePair<BattleUnit, SlotInfo> pair in slots) drawOrder.Add(pair.Key);
-        drawOrder.Sort((a, b) => slots[a].Foot.y.CompareTo(slots[b].Foot.y));
+        if (byFoot == null) byFoot = (a, b) => slots[a].Foot.y.CompareTo(slots[b].Foot.y);
+        drawOrder.Sort(byFoot);
     }
 
     private SlotInfo Slot(BattleUnit unit)
@@ -569,8 +687,14 @@ public sealed partial class BattleMode : MonoBehaviour
     private Vector2 Chest(BattleUnit unit) { SlotInfo s = Slot(unit); return s.Foot + new Vector2(0f, -s.H * 0.52f); }
     private Vector2 Head(BattleUnit unit) { SlotInfo s = Slot(unit); return s.Foot + new Vector2(0f, -s.H * 0.98f); }
 
+    // Intent badges (with damage previews) only change when the rules record something new.
+    private int intentsKey = -1;
+
     private void RefreshIntents()
     {
+        int key = battle.FactSerial * 64 + battle.Round * 8 + battle.Intents.Count;
+        if (key == intentsKey && intents.Count > 0) return;
+        intentsKey = key;
         intents.Clear();
         for (int i = 0; i < battle.Enemies.Count; i++)
         {
@@ -595,17 +719,19 @@ public sealed partial class BattleMode : MonoBehaviour
 
     // ---- input helpers -----------------------------------------------------------------------
 
+    private bool Modal { get { return showLog || confirmWithdraw || sheetUnit != null || MediaPanel.IsOpen || (battle != null && battle.EpiphanyCard != null && !Busy); } }
+
     private bool Press(Rect rect)
     {
         if (!pressed || used || !rect.Contains(mouse)) return false;
-        if ((showLog || confirmWithdraw || sheetUnit != null) && !modalDrawing) return false;
+        if (Modal && !modalDrawing) return false;
         used = true;
         return true;
     }
 
     private bool Over(Rect rect)
     {
-        if ((showLog || confirmWithdraw || sheetUnit != null) && !modalDrawing) return false;
+        if (Modal && !modalDrawing) return false;
         return rect.Contains(mouse);
     }
 
@@ -637,6 +763,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (debugClick && e.type == EventType.Repaint) { pressed = true; debugClick = false; }
 #endif
         used = false; modalDrawing = false;
+        if (MediaPanel.IsOpen) { pressed = rightPressed = false; }
         if (pressed && CutInShowing) { SkipCutIn(); pressed = false; used = true; }
         TrackHold(e);
 
@@ -668,11 +795,13 @@ public sealed partial class BattleMode : MonoBehaviour
             if (!resultSounded && paint) { resultSounded = true; AdamsHaven.Tower.TowerAudio.Play(battle.Victory ? "victory" : "defeat"); }
             DrawResult();
         }
+        if (paint) DrawDiscarding();
+        if (battle.EpiphanyCard != null && !Busy && !battle.Finished) DrawEpiphany();
         if (showLog) DrawLog();
         if (confirmWithdraw) DrawWithdrawConfirm();
         if (sheetUnit != null) DrawCharacterSheet();
 
-        if (pressed && !used && !showLog && !confirmWithdraw && sheetUnit == null && (selected != null || focusUnit != null || swapFrom != null || swapReserve != null))
+        if (pressed && !used && !Modal && (selected != null || focusUnit != null || swapFrom != null || swapReserve != null))
         { ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null; used = true; }
         if (rightPressed && sheetUnit == null) { ClearSelection(); focusUnit = null; swapFrom = null; swapReserve = null; }
         if (used && (e.type == EventType.MouseDown)) e.Use();
@@ -683,18 +812,19 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         BattleCard previous = hoverCard;
         hoverCard = null; hoverUnit = null;
-        if (showLog || confirmWithdraw || sheetUnit != null) return;
+        if (Modal) return;
         if (popupUnit != null && popupRect.Contains(mouse)) return;
         // Keep the current hover while the pointer is over either its lifted or resting shape,
         // otherwise a lifted card would drop away as soon as the pointer reached its lower half.
-        if (previous != null && handOrder.Contains(previous))
+        CardVis pv;
+        if (previous != null && handOrder.Contains(previous) && cardVis.TryGetValue(previous, out pv))
         {
-            CardVis pv = cardVis[previous];
             if (InsideCard(mouse, pv.Pos, pv.Angle, pv.Scale) || InsideCard(mouse, pv.Rest, pv.RestAngle, 1f)) { hoverCard = previous; return; }
         }
         for (int i = handOrder.Count - 1; i >= 0; i--)
         {
-            CardVis cv = cardVis[handOrder[i]];
+            CardVis cv;
+            if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
             if (InsideCard(mouse, cv.Rest, cv.RestAngle, 1f)) { hoverCard = handOrder[i]; return; }
         }
         for (int i = drawOrder.Count - 1; i >= 0; i--)
@@ -707,7 +837,7 @@ public sealed partial class BattleMode : MonoBehaviour
         }
         // The commander plates in the top corners are targetable too.
         if (new Rect(16f, 12f, 356f, 88f).Contains(mouse)) hoverUnit = battle.Summoner;
-        else if (battle.EnemySummoner != null && new Rect(1010f, 12f, 356f, 88f).Contains(mouse)) hoverUnit = battle.EnemySummoner;
+        else if (battle.EnemySummoner != null && CommanderPlate.Contains(mouse)) hoverUnit = battle.EnemySummoner;
     }
 
     private static bool InsideCard(Vector2 point, Vector2 center, float angle, float scale)
@@ -724,7 +854,7 @@ public sealed partial class BattleMode : MonoBehaviour
     private void DrawBackground()
     {
         Fill(new Rect(0, 0, VW, VH), new Color(.02f, .03f, .05f));
-        Texture2D bg = Art(background) ?? Art(DefaultBackground);
+        Texture2D bg = stageOverride ?? Art(background) ?? Art(DefaultBackground);
         float zoom = 1.06f + Mathf.Sin(Time.time * 0.17f) * 0.006f;
         Vector2 par = new Vector2(Mathf.Clamp((mouse.x - 800f) / 800f, -1f, 1f) * -16f, Mathf.Clamp((mouse.y - 450f) / 450f, -1f, 1f) * -8f);
         Rect r = new Rect(-VW * (zoom - 1f) * 0.5f + par.x, -VH * (zoom - 1f) * 0.5f + par.y - 10f, VW * zoom, VH * zoom);
@@ -903,8 +1033,10 @@ public sealed partial class BattleMode : MonoBehaviour
         bool commander = u == battle.Summoner || u == battle.EnemySummoner;
         float bw = u.Enemy ? Mathf.Clamp(s.W * 0.66f, 138f, 196f) : 156f;
         float cx = s.Foot.x, y = s.Foot.y;
-        string label = u == battle.Summoner ? "JD  -  SUMMONER" : u == battle.EnemySummoner ? "VALE COMMANDER"
-            : u.Enemy ? u.Name : u.Name.Split(' ')[0];
+        // Enemies carry their bestiary rank (F..SSR) in front of the name.
+        string rankTag = u.Enemy && u.Rank > 0 ? "[" + BattleBestiary.RankName(u.Rank) + "]  " : "";
+        string label = u == battle.Summoner ? "JD  -  SUMMONER" : u == battle.EnemySummoner ? rankTag + u.Name.ToUpperInvariant()
+            : u.Enemy ? rankTag + u.Name : u.Name.Split(' ')[0];
         float a = alive ? 1f : 0.45f;
         Color old = GUI.color; GUI.color = new Color(1, 1, 1, a);
         Text(new Rect(cx - 130f, y + 5f, 260f, 22f), label, u.Enemy ? 16 : 17, u.Enemy ? EnemyRed : Ice, TextAnchor.MiddleCenter, true, false, 1.5f);
@@ -912,8 +1044,10 @@ public sealed partial class BattleMode : MonoBehaviour
         float max = Mathf.Max(1f, u.MaxHp);
         Color fill = u.Enemy ? new Color(.86f, .30f, .30f) : new Color(.28f, .78f, .88f);
         Bar(bar, v.ShownHp / max, v.GhostHp / max, fill, new Color(1f, .88f, .7f, .9f));
+        DrawShieldOverlay(bar, u);
         Text(new Rect(bar.x, bar.y - 1f, bar.width, bar.height + 2f), Mathf.CeilToInt(v.ShownHp) + " / " + u.MaxHp, 11, Color.white, TextAnchor.MiddleCenter, true, false, 1f);
         float chipY = y + 48f;
+        if (u.Enemy && u.MaxTenacity > 0 && alive) { DrawTenacity(new Rect(bar.x, y + 45f, bw, 8f), u); chipY = y + 57f; }
         if (!u.Enemy && !commander)
         {
             Rect sb = new Rect(bar.x, y + 46f, bw, 6f);
@@ -1037,6 +1171,7 @@ public sealed partial class BattleMode : MonoBehaviour
             }
             if (info.Kind == 0)
                 Text(new Rect(head.x - 90f, py + 16f, 180f, 18f), info.Card.Name, 12, new Color(1f, .82f, .8f, .9f), TextAnchor.MiddleCenter, true, false, 1f);
+            DrawActionBadge(new Vector2(pill.x - 20f, pill.center.y), enemy);
         }
     }
 
@@ -1070,7 +1205,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void HandleFieldClicks()
     {
-        if (!pressed || used || hoverCard != null || showLog || confirmWithdraw || sheetUnit != null) return;
+        if (!pressed || used || hoverCard != null || Modal) return;
         BattleUnit u = hoverUnit;
         if (u == null) return;
         if (selected != null)
@@ -1129,6 +1264,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Rect bar = new Rect(x, r.y + 30f, w, 16f);
         float max = Mathf.Max(1f, unit.MaxHp);
         Bar(bar, v.ShownHp / max, v.GhostHp / max, enemy ? new Color(.86f, .30f, .30f) : new Color(.28f, .78f, .88f), new Color(1f, .88f, .7f, .9f));
+        DrawShieldOverlay(bar, unit);
         Text(bar, Mathf.CeilToInt(v.ShownHp) + " / " + unit.MaxHp, 12, Color.white, TextAnchor.MiddleCenter, true, false, 1f);
     }
 
@@ -1150,15 +1286,15 @@ public sealed partial class BattleMode : MonoBehaviour
         bool ready = battle.Sp >= BattleState.SpMax && !battle.Finished;
         if (MiniButton(new Rect(16f, 106f, 150f, 30f), "JD DECREE", ready && !Busy, ready, Gold, ready ? 1f : battle.Sp / (float)BattleState.SpMax, 14)) DoDecree();
 
-        Rect pill = new Rect(640f, 12f, 320f, 50f);
-        Round(pill, new Color(.02f, .04f, .07f, .82f), 25f);
-        Outline(pill, BattleGui.Alpha(Gold, .6f), 1.6f, 25f);
-        Text(new Rect(pill.x, pill.y + 2f, pill.width, 30f), "ROUND " + battle.Round, 26, Color.white, TextAnchor.MiddleCenter, true, false, 1.5f);
         string stage = Mathf.Abs(floor) >= 8 ? "BOSS" : Mathf.Abs(floor) >= 3 ? "ELITE" : "GROVE";
         string header = Encounter != null ? Encounter.Title + "  -  DANGER " + Encounter.Depth : "SILVERWOOD  -  " + stage + "  -  FLOOR " + floor;
-        Text(new Rect(pill.x - 60f, pill.y + 28f, pill.width + 120f, 18f), header, 12, Ice, TextAnchor.MiddleCenter, true);
+        DrawTurnPanel(TurnPanel, header);
+        DrawNextBox(new Rect(968f, 12f, 140f, 56f));
+        DrawTurnOrder(new Vector2(TurnPanel.center.x, 100f));
 
-        if (battle.EnemySummoner != null) DrawPlate(new Rect(1010f, 12f, 356f, 88f), battle.EnemySummoner, true, "VALE COMMANDER");
+        if (battle.EnemySummoner != null) DrawPlate(CommanderPlate, battle.EnemySummoner, true,
+            (battle.EnemySummoner.Rank > 0 ? "[" + BattleBestiary.RankName(battle.EnemySummoner.Rank) + "]  " : "") +
+            battle.EnemySummoner.Name.ToUpperInvariant());
         else
         {
             Rect wild = new Rect(1120f, 12f, 246f, 50f);
@@ -1168,10 +1304,12 @@ public sealed partial class BattleMode : MonoBehaviour
         }
 
         if (MiniButton(new Rect(1382f, 14f, 46f, 46f), "LOG", true, showLog, Ice, -1f, 12)) showLog = !showLog;
+        if (MiniButton(new Rect(1376f, 66f, 54f, 30f), "MEDIA", true, false, Violet, -1f, 10))
+        { ClearSelection(); auto = false; MediaPanel.Show(null, null, OnMediaChanged); }
         // Cinematics: every time, first use per battle, ultimates only, or none.
         if (MiniButton(new Rect(1436f, 66f, 154f, 30f), CinematicLabel(Cinematics), true, Cinematics != CinematicMode.Off, Ice, -1f, 11))
             Cinematics = (CinematicMode)(((int)Cinematics + 1) % 4);
-        if (MiniButton(new Rect(1436f, 14f, 46f, 46f), SpeedLabel(speed), true, speed > Speeds[0], Gold, -1f, speed < 1f ? 13 : 15))
+        if (MiniButton(new Rect(1436f, 14f, 46f, 46f), SpeedLabel(speed), true, speed > Speeds[0], Gold, -1f, 15))
         { speed = NextSpeed(speed); SaveSpeed(speed); }
         if (MiniButton(new Rect(1490f, 14f, 46f, 46f), "AUTO", !battle.Finished, auto, Gold, -1f, 11))
         { auto = !auto; autoTimer = .2f; ClearSelection(); }
@@ -1200,6 +1338,7 @@ public sealed partial class BattleMode : MonoBehaviour
             Rect hp = new Rect(r.x + 3f, r.yMax + 4f, r.width - 6f, 6f);
             Bar(hp, unit.Hp / (float)Mathf.Max(1, unit.MaxHp), 0f, new Color(.28f, .78f, .88f), Color.clear);
             if (!live) Text(r, "DOWN", 12, EnemyRed, TextAnchor.MiddleCenter, true, false, 1f);
+            DrawPartnerControls(unit, r);
             if (pressed && !used && Over(r)) BeginHold(unit);
             DrawHoldRing(unit, r);
             if (Press(r) && !Busy && !battle.Finished)
@@ -1248,7 +1387,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         bool enabled = !battle.Finished && !Busy;
         float r = 56f;
-        bool hover = enabled && Vector2.Distance(mouse, EndTurnPos) <= r + 4f && !showLog && !confirmWithdraw;
+        bool hover = enabled && Vector2.Distance(mouse, EndTurnPos) <= r + 4f && !Modal;
         bool hint = enabled && !HasPlay();
         float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * 4.4f);
         if (hint) DrawGlow(EndTurnPos, 118f, new Color(.4f, .9f, 1f, .38f * pulse + .12f));
@@ -1281,13 +1420,14 @@ public sealed partial class BattleMode : MonoBehaviour
             if (selected != null && handOrder.Contains(selected)) DrawCardFor(selected);
             if (hoverCard != null && hoverCard != selected) DrawCardFor(hoverCard);
         }
-        if (hoverCard != null && pressed && !used && !showLog && !confirmWithdraw)
+        if (hoverCard != null && pressed && !used && !Modal)
         { used = true; Select(hoverCard); }
     }
 
     private void DrawCardFor(BattleCard card)
     {
-        CardVis cv = cardVis[card];
+        CardVis cv;
+        if (!cardVis.TryGetValue(card, out cv)) return;
         BattleUnit actor = battle.OwnerOf(card);
         bool payable = Reason(card, actor).Length == 0 && !battle.Finished;
         DrawCard(card, cv.Pos, cv.Angle, cv.Scale, cv.Alpha, payable, card == selected, card == hoverCard);
@@ -1334,12 +1474,18 @@ public sealed partial class BattleMode : MonoBehaviour
         Rect r = new Rect(center.x - CardW * 0.5f, center.y - CardH * 0.5f, CardW, CardH);
         bool summoner = card.Kind == BattleCardKind.Summoner;
         Color accent = summoner ? Gold : ElementColor(card.Element);
+        if (battle != null && battle.GlowCard.Length > 0 && card.Id == battle.GlowCard)
+        {
+            // The epiphany card: a slow prismatic glow behind it (CZN's glowing corner).
+            float hue = Mathf.Repeat(Time.time * .12f, 1f);
+            DrawGlow(new Rect(r.x - 52f, r.y - 52f, r.width + 104f, r.height + 104f), BattleGui.Alpha(Color.HSVToRGB(hue, .45f, 1f), .5f + .2f * Mathf.Sin(Time.time * 4f)));
+        }
         if (isSelected) DrawGlow(new Rect(r.x - 44f, r.y - 44f, r.width + 88f, r.height + 88f), new Color(1f, .85f, .4f, .55f * (0.75f + 0.25f * Mathf.Sin(Time.time * 6f))));
         else if (isHover) DrawGlow(new Rect(r.x - 34f, r.y - 34f, r.width + 68f, r.height + 68f), BattleGui.Alpha(accent, .40f));
         DrawGlow(new Rect(r.x - 20f, r.y + 8f, r.width + 40f, r.height + 34f), new Color(0, 0, 0, .55f));
         Round(new Rect(r.x - 1f, r.y - 1f, r.width + 2f, r.height + 2f), new Color(.02f, .03f, .05f, 1f), 14f);
         Rect art = new Rect(r.x + 9f, r.y + 9f, r.width - 18f, r.height - 18f);
-        Texture2D tex = Art("Cards/" + card.Id) ?? Art("FullCards/" + card.Owner);
+        Texture2D tex = Art("Cards/" + card.Id) ?? Art("FullCards/" + card.Owner) ?? Art("Chibi/" + card.Owner);
         Fill(art, new Color(.03f, .05f, .09f));
         if (tex != null) GUI.DrawTexture(art, tex, ScaleMode.ScaleAndCrop, true);
         if (!payable) Fill(art, new Color(.02f, .03f, .06f, .58f));
@@ -1380,6 +1526,15 @@ public sealed partial class BattleMode : MonoBehaviour
         Round(tag, new Color(.02f, .04f, .07f, .86f), 10f);
         Outline(tag, BattleGui.Alpha(accent, .8f), 1.4f, 10f);
         Text(tag, TargetLabel(card.Target), 10, Gold, TextAnchor.MiddleCenter, true);
+        string keywords = BattleCatalog.KeywordLine(card);
+        if (!string.IsNullOrEmpty(card.Epiphany)) keywords = (keywords.Length > 0 ? keywords + "  -  " : "") + "EPIPHANY";
+        if (battle != null && battle.GlowCard.Length > 0 && card.Id == battle.GlowCard) keywords = "PLAY FOR AN EPIPHANY";
+        if (keywords.Length > 0)
+        {
+            Rect kw = new Rect(r.x + 14f, r.y + CardH - 120f, r.width - 28f, 18f);
+            Round(kw, new Color(.02f, .04f, .07f, .82f), 9f);
+            Text(kw, keywords, 9, new Color(.75f, 1f, .9f), TextAnchor.MiddleCenter, true);
+        }
         GUI.color = before;
         GUI.matrix = old;
     }
@@ -1430,7 +1585,7 @@ public sealed partial class BattleMode : MonoBehaviour
             Color old = GUI.color; GUI.color = alive ? Color.white : new Color(.5f, .5f, .55f, .6f);
             DrawPortrait(new Rect(face.x + 2f, face.y + 2f, 58f, 58f), Spr(u.Art));
             GUI.color = old;
-            Outline(face, u.Ultimate >= 100 && battle.Sp >= BattleState.UltimateSpCost ? BattleGui.Alpha(Gold, pulse) : BattleGui.Alpha(accent, .85f), 2f, 10f);
+            Outline(face, u.Ultimate >= 100 && battle.Sp >= battle.UltCost(u) ? BattleGui.Alpha(Gold, pulse) : BattleGui.Alpha(accent, .85f), 2f, 10f);
             float x = tile.x + 76f;
             Text(new Rect(x, tile.y + 4f, 130f, 20f), u.Name.Split(' ')[0].ToUpperInvariant(), 15, alive ? Color.white : new Color(.6f, .6f, .66f), TextAnchor.MiddleLeft, true, false, 1f);
             Text(new Rect(x + 96f, tile.y + 4f, 76f, 20f), u.Role.ToString().ToUpperInvariant(), 10, new Color(.7f, .8f, .9f), TextAnchor.MiddleRight, true);
@@ -1473,11 +1628,15 @@ public sealed partial class BattleMode : MonoBehaviour
                 BattleCard basic = BattleCatalog.Basic(u);
                 bool basicOn = canAct && u.Ap > 0 && !u.Strained(basic);
                 bool basicActive = selected != null && selected.Id == basic.Id && selectedActor == u;
-                if (MiniButton(new Rect(row.x, row.y, 76f, 26f), "BASIC", basicOn, basicActive, Ice, -1f, 13))
+                if (MiniButton(new Rect(row.x, row.y, 54f, 26f), "BASIC", basicOn, basicActive, Ice, -1f, 11))
                 { if (basicActive) ClearSelection(); else { ClearSelection(); Select(basic); } }
-                bool ultReady = u.Ultimate >= 100 && battle.Sp >= BattleState.UltimateSpCost;
-                if (MiniButton(new Rect(row.x + 82f, row.y, 90f, 26f), ultReady ? "ULTIMATE" : "ULT " + u.Ultimate + "%",
-                    canAct && ultReady, chooseUltimateFor == u, Gold, u.Ultimate / 100f, ultReady ? 12 : 13))
+                // Guard: the free shield (CZN's Defend). Damage it fully absorbs adds no stress.
+                BattleCard guard = BattleCatalog.Guard(u);
+                if (MiniButton(new Rect(row.x + 58f, row.y, 54f, 26f), "GUARD", canAct && u.Ap > 0 && !u.Strained(guard), false, Mint, -1f, 11))
+                { ClearSelection(); Select(guard); }
+                bool ultReady = u.Ultimate >= 100 && battle.Sp >= battle.UltCost(u);
+                if (MiniButton(new Rect(row.x + 116f, row.y, 56f, 26f), ultReady ? "ULT!" : u.Ultimate + "%",
+                    canAct && ultReady, chooseUltimateFor == u, Gold, u.Ultimate / 100f, 11))
                 { ClearSelection(); chooseUltimateFor = chooseUltimateFor == u ? null : u; focusUnit = null; }
             }
             if (chooseUltimateFor == u) { popupUnit = u; popupTile = tile; popupRect = UltimatePopupRect(u, tile); }
@@ -1521,6 +1680,8 @@ public sealed partial class BattleMode : MonoBehaviour
             string why = Reason(hoverCard, battle.OwnerOf(hoverCard));
             if (why.Length > 0) hint = why + ".";
         }
+        else if (battle.Round == 1 && battle.CardsThisTurn == 0 && fx > 2.5f && fx < 16f && !Busy)
+            hint = "Each card you play brings the enemies' counters down; at 0 they act at once. Break their tenacity bar to stagger them.";
         if (hint == null || Event.current.type != EventType.Repaint) return;
         float w = Mathf.Min(900f, 40f + hint.Length * 8.4f);
         Rect r = new Rect(806f - w * 0.5f, 640f, w, 34f);
@@ -1547,7 +1708,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (age > 3.2f || string.IsNullOrEmpty(toast)) return;
         float a = age < 0.15f ? age / 0.15f : age > 2.6f ? (3.2f - age) / 0.6f : 1f;
         float w = Mathf.Min(1000f, 60f + toast.Length * 9.4f);
-        Rect r = new Rect(800f - w * 0.5f, 112f + (1f - a) * -10f, w, 36f);
+        Rect r = new Rect(800f - w * 0.5f, 128f + (1f - a) * -10f, w, 36f);
         Round(r, new Color(.02f, .04f, .07f, .88f * a), 18f);
         Outline(r, BattleGui.Alpha(Ice, .6f * a), 1.6f, 18f);
         Text(r, toast, 16, new Color(1, 1, 1, a), TextAnchor.MiddleCenter, true);
@@ -1555,16 +1716,22 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawTooltip()
     {
-        if (Event.current.type != EventType.Repaint || hoverUnit == null || selected != null || showLog || confirmWithdraw || sheetUnit != null) return;
+        if (Event.current.type != EventType.Repaint || hoverUnit == null || selected != null || Modal) return;
         BattleUnit u = hoverUnit;
         SlotInfo s = Slot(u);
         List<string> lines = new List<string>();
-        lines.Add(u.Name);
+        lines.Add(u.Name + (u.Enemy && u.Rank > 0 ? "  -  rank " + BattleBestiary.RankName(u.Rank) : ""));
         lines.Add(u.Element + "  -  " + u.Role + (u.Taunting ? "  -  Taunt" : ""));
         lines.Add("HP " + u.Hp + " / " + u.MaxHp + (u.Enemy ? "" : "     AP " + u.Ap + "  EP " + u.Ep));
         if (!u.Enemy && u != battle.Summoner) lines.Add("Ultimate " + u.Ultimate + "%   Stress " + u.Stress + "%" + (u.CollapseRounds > 0 ? "  BREAKDOWN" : ""));
         for (int i = 0; i < u.Statuses.Count; i++)
             lines.Add((IsBuff(u.Statuses[i].Name) ? "+ " : "- ") + StatusLabel(u.Statuses[i].Name) + " (" + u.Statuses[i].Turns + " rounds)");
+        if (u.Enemy && u.MaxTenacity > 0)
+            lines.Add("Tenacity " + u.Tenacity + "/" + u.MaxTenacity + (u.HasStatus("Broken") ? "  -  BROKEN" : "") +
+                "  -  acts after " + u.ActionCount + " more card" + (u.ActionCount == 1 ? "" : "s") + (u.ActedThisRound ? " (has acted this round)" : ""));
+        if (u.StatusValue("Shield") > 0) lines.Add("Shield " + Mathf.RoundToInt(u.StatusValue("Shield")));
+        if (!u.Enemy && battle.Allies.Contains(u) && battle.PartnerOf(u) != null)
+            lines.Add("Partner " + battle.PartnerOf(u).Name.Split(' ')[0] + (battle.PartnerOf(u).Alive ? "  (+8%)" : "  (down)"));
         IntentInfo info;
         if (u.Enemy && intents.TryGetValue(u, out info) && !Busy)
             lines.Add("Next: " + info.Card.Name + (info.Damage > 0 ? " for about " + info.Damage : "") + (info.Target != null && info.Card.Target == BattleTarget.Enemy ? " on " + info.Target.Name.Split(' ')[0] : ""));
@@ -1607,7 +1774,7 @@ public sealed partial class BattleMode : MonoBehaviour
             DrawSkipHint(1f);
             return;
         }
-        if (ultPlayer != null && cutClip != null && ultPlayer.clip == cutClip && ultTexture != null)
+        if (CutVideoReady)
         {
             // Cinematic ultimate: letterboxed video, quick white pop in/out, name plate bottom-left.
             float va = t < 0.06f ? t / 0.06f : t > 0.93f ? (1f - t) / 0.07f : 1f;

@@ -195,7 +195,16 @@ public sealed partial class BattleMode
         if (MiniButton(new Rect(SheetBox.xMax - 66f, SheetBox.y + 16f, 50f, 50f), "X", true, false, EnemyRed, -1f, 20))
         { CloseSheet(); modalDrawing = false; return; }
         // 2D anime art or the 3D model, for fighters that have both (the choice applies to the whole field).
-        if (Has2DRig(u.Id) && Has3DRig(u.Id)
+        // Media library: swap this fighter's model, portrait or card art (enemies: their field picture).
+        if (MiniButton(new Rect(SheetView.x + 12f, SheetView.yMax - 52f, 190f, 40f), "MEDIA: MODEL & ART", true, false, Violet, -1f, 11))
+        {
+            BattleUnit keep = u;
+            MediaPanel.Show(u.Enemy ? "MONSTERS" : "FIGHTERS", u.Enemy ? u.Species : u.Id, () => { OnMediaChanged(); if (battle != null) OpenSheet(keep); });
+            used = true;
+            modalDrawing = false;
+            return;
+        }
+        if (Has2DRig(ModelId(u)) && Has3DRig(ModelId(u)) && !MediaLibrary.Has("unit." + u.Id + ".model")
             && MiniButton(new Rect(SheetView.xMax - 170f, SheetView.yMax - 52f, 158f, 40f), Prefer2DRigs ? "SHOW 3D MODEL" : "SHOW 2D ART", true, false, Ice, -1f, 12))
         {
             Prefer2DRigs = !Prefer2DRigs;
@@ -407,9 +416,9 @@ public sealed partial class BattleMode
         GUI.EndScrollView();
     }
 
-    private static string MoveCost(BattleCard card)
+    private string MoveCost(BattleCard card)
     {
-        if (card.Kind == BattleCardKind.Ultimate) return "ULTIMATE  -  " + BattleState.UltimateSpCost + " SP";
+        if (card.Kind == BattleCardKind.Ultimate) return "ULTIMATE  -  " + (battle != null ? battle.UltCost(sheetUnit) : BattleState.UltimateSpCost) + " SP";
         string cost = "";
         if (card.Ap > 0) cost += card.Ap + " AP";
         if (card.Ep > 0) cost += (cost.Length > 0 ? "  " : "") + card.Ep + " EP";

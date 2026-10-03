@@ -9,15 +9,37 @@ User direction (2026-09-28): make Adams Haven's Unity Battle Mode play as close 
 - Stress reaching a threshold causes a mental collapse; overcoming it unlocks an awakening skill. [Developer interview](https://newsroom.smilegate.com/en/bbs/board.php?bo_table=game&wr_id=76)
 - Combat uses simplified SD character presentation for tempo, with larger full-body animation for key moments. [Developer interview](https://newsroom.smilegate.com/en/bbs/board.php?bo_table=game&wr_id=76)
 
-## Unity status and next alignment work
+## Rules brought over (BM 10.3.0, 2026-10-03)
 
-| Reference point | Unity Battle Mode now | Next step |
+Researched from GameWith, Game8 and itemlevel.net guides (CZN Season 3). Adams Haven keeps its own per-fighter AP/EP economy and JD's CP/SP (owner decisions); these CZN systems sit on top of it.
+
+| CZN system | Adams Haven version | Code |
 | --- | --- | --- |
-| Three combatants plus three partners | Three fighters on the field; three fighter reserves can swap in | Design dedicated partner support slots and effects while retaining the desired reserve feature only if it adds value. |
-| Card chains within a limited turn cost | Shared deck with per-fighter EP/AP and JD CP/SP | Evaluate a shared turn-cost layer and card sequencing without losing authored Adams Haven moves. |
-| Stress, collapse, awakening | Stress and temporary strain affect card use; field HUD shows stress and breakdown. Recovery unlocks one free, character-specific awakening action. | Tune awakening effects and presentation through encounter playtests. |
-| Deck growth during exploration | Authored default deck; draw/discard/reshuffle | Connect card upgrades and choices to the Unity expedition and save data. |
-| SD characters on field, full art on cards | Chibi allies, transparent monster/JD cutouts on a painted stage with contact shadows; full-model move cards in an element-framed fan. Lunges, afterimages, projectiles, slash/burst sheets, rune circles, floating damage, ghost HP drain and ultimate cut-ins are code-driven. | Bind the timed `AnimationSignal` cues to rigged attack, hurt, support, and down clips; give every move card its own art. |
+| Draw 5 each turn, unplayed cards discarded, hand max 10 | Fighter cards refill to 5 at the start of each round (JD's support cards met on the way join the hand, up to 3). At End Turn every card not played, JD's included, goes to the discard pile unless it Retains; the turn box says how many will go. | `BattleState.RefillHand`, `EndTurn` |
+| Card tags Initiation / Retain / Exhaust | Initiation: one signature card per fighter is in the opening hand. Retain: guards and setups stay in hand. Exhaust: the heaviest single moves leave the battle once played. | `BattleCatalog.Keywords` |
+| Action Count: every card played lowers each enemy's counter, at 0 it acts at once | Counters 3 (fast), 4, 5 (slow, guards, bosses; 4 in phase 2). An enemy acts once per round: mid-turn when its count runs out, otherwise at End Turn. Ultimates, awakenings, decrees and partner assists do not tick it. | `TickActionCounts`, `EnemyAct` |
+| Tenacity and Ravage (break) | 6 pips (guards 7, elites 9, bosses 12). Hits wear 1, +1 for a 2-EP card, +1 more at 3 EP, +1 on WEAK, +2 for ultimates. At 0 the enemy BREAKS: +25% damage taken until next round, its count is pushed back 1, the breaker gets 1 AP back and sheds 10 stress, JD gains 1 SP. Refills each round. | `WearTenacity`, `TenacityDamage` |
+| Basic shield card; damage a shield fully blocks adds no stress | GUARD beside BASIC on every fighter tile: 1 AP, a shield of about one hit (defence x1.6 + 5% max HP). Shields stack and soak damage before HP. | `BattleCatalog.Guard` |
+| Partners (3 combatants + 3 partners) | Reserve i partners field fighter i: +8% to their damage, healing and shields while alive. Each reserve has a once-per-battle ASSIST for 2 SP: their first ultimate at 60%, stepping onto the field beside their partner. Swapping still works. | `PartnerOf`, `TryPartnerAssist` |
+| Epiphany (a glowing card upgrades mid-fight, pick 1 of 3) | In expedition fights one fighter card glows. Playing it offers 3 of 8 upgrades (Sharpened, Swift, Echo, Steadfast, Sweeping, Rending, Bulwark, Enduring). The pick applies to every copy at once and lasts for the rest of the run (`TowerRun.epiphanies`). | `OfferEpiphany`, `ChooseEpiphany`, `TowerRules.KeepEpiphanies` |
+| Overcoming a mental breakdown makes Ego cheaper | A fighter who recovers from breakdown gets the awakening action and their ultimates cost 2 SP instead of 3 for the rest of the battle. | `BattleUnit.Overcame`, `UltCost` |
+| Speed 1x / 2x / 4x | The button reads 1x / 2x / 4x over clock rates 0.5 / 1 / 2 (the old 1x was too fast, so half of it is the base). | `BattleMode.SpeedLabel` |
+
+On screen: one turn panel in the top centre (YOUR TURN / ENEMY TURN, ROUND N and the CHAIN count; the fight's title; how many cards End Turn will discard), NEXT TO ACT beside it with that enemy's cards left, and the full order strip under it (YOU > enemies by count > the enemy commander at END). Each enemy's intent pill carries its action-count ring (red on its last card), tenacity pips sit under enemy health and turn into a red BROKEN bar, shields show as a pale band over health bars with their value, the hand sweeps to the discard pile at End Turn, an interrupting enemy gets an "ACTS!" banner, and the Epiphany choice is a full-screen pick.
+
+**Balance.** The new tools made the party much stronger. Before tuning, normal fights cost 1–7% of party health instead of 4–14%. Enemy offence is now multiplied by a depth curve, 1.5x at danger 1 easing to 1.0x at danger 13, and lair bosses take a further 1.25x (`BattleCatalog.OffenseShallow/OffenseDeep/BossOffenseScale`). Enemy health is unchanged, so fight length is too. After tuning, the sim at the test's own sample size (80 fights per cell) gives: normal 5–10%, elite 13–29%, boss 21–71% party health lost. All 39 region/kind cells are inside the `ExpeditionBalanceTests` bands.
+
+Not brought over: a shared team AP pool (would replace the owner's AP/EP design), Rewind, Save Data / Faint Memory (runs are expedition-scoped), Combo/Celestial card tags.
+
+## Earlier alignment table (2026-09-29)
+
+| Reference point | Unity Battle Mode then | Status now |
+| --- | --- | --- |
+| Three combatants plus three partners | Three fighters on the field; three fighter reserves can swap in | Reserves are partners (passive + assist) and can still swap in. |
+| Card chains within a limited turn cost | Shared deck with per-fighter EP/AP and JD CP/SP | Chains now move enemy action counts; CHAIN counter on screen. |
+| Stress, collapse, awakening | Stress and temporary strain affect card use; field HUD shows stress and breakdown. Recovery unlocks one free, character-specific awakening action. | Recovery also makes ultimates cheaper; blocked damage adds no stress. |
+| Deck growth during exploration | Authored default deck; draw/discard/reshuffle | Epiphanies grow cards during runs (plus the existing reward-screen upgrades). |
+| SD characters on field, full art on cards | Chibi allies, monster cutouts, full-model move cards | Unchanged; any of it can now be replaced from the media library (MEDIA_LIBRARY.md). |
 
 Presentation targets already reached: enemy intent badges with expected damage and target, target-select reticles with damage previews, a curved hand with hover lift, a round end-turn button with draw/used piles, party tiles with AP/EP/stress/ult state, and per-hit feedback.
 

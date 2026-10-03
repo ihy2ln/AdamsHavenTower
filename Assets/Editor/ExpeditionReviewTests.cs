@@ -130,18 +130,12 @@ public sealed class ExpeditionReviewTests
         var run = rules.Run;
         float start = rules.RunClock;
         Assert.AreEqual(rules.State.clock, start, 0.001f);
-        // Walk to the farthest seen cell: travel time passes on the run's clock, not the Tower's.
+        // Travel to a place linked to the camp: travel time passes on the run's clock, not the Tower's.
         var map = rules.Overworld;
-        int bx = -1, by = -1, best = -1;
-        for (int y = 0; y < map.height; y++)
-            for (int x = 0; x < map.width; x++)
-            {
-                int dd = (x - run.cx) * (x - run.cx) + (y - run.cy) * (y - run.cy);
-                if (rules.CellSeen(x, y) && map.Walkable(x, y) && dd > best && rules.GridPreview(x, y).error == null) { best = dd; bx = x; by = y; }
-            }
-        Assert.Greater(best, 0);
+        var edges = rules.Web.EdgesOf(map.Camp.id);
+        Assert.Greater(edges.Count, 0);
         float towerClock = rules.State.clock;
-        Assert.IsNull(rules.GridMove(bx, by).error);
+        Assert.IsNull(rules.AtlasTravel(edges[0].Other(map.Camp.id)).error);
         Assert.Greater(run.clock, 0f, "walking takes time");
         Assert.AreEqual(towerClock, rules.State.clock, 0.001f, "the Tower stays paused");
         // Back at camp at 22:00: a rest sleeps until 06:00.

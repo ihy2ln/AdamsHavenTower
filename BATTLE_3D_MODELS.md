@@ -117,9 +117,9 @@ At runtime `Weapon_*` renderers get a "crystal light" toon setup in `CreateRig` 
 **Field framing.** The field camera now spans -0.55..2.95 model units (`FieldCamCenter`/`FieldCamHalf`, 600 px image); the old
 -0.5..2.5 clipped weapons raised overhead (Ghislaine's cleave reaches ~3.0 body units, measured in Blender).
 
-**Speed.** The battle clock's base rate is 0.5x (`Speeds = {0.5, 1, 2}` in BattleMode.cs); the top-bar button cycles
-0.5x / 1x / 2x and the choice is kept in PlayerPrefs `AdamsHaven.BattleSpeed`. Everything on the clock slows together
-(lunges, hit timing, rig clips), so contacts stay in sync.
+**Speed.** The battle clock's base rate is half the old one (`Speeds = {0.5, 1, 2}` in BattleMode.cs). Since BM 10.3.0
+the button labels are relative to that base, so it reads 1x / 2x / 4x (`SpeedLabel`). The choice is kept in PlayerPrefs
+`AdamsHaven.BattleSpeed.v2` (a new key, so saved fast speeds reset to the new 1x). Everything on the clock slows together (lunges, hit timing, rig clips), so contacts stay in sync.
 
 **Character sheet** (`Assets/Scripts/Battle/BattleSheet.cs`). Press and hold (0.45 s) a party tile in the bottom-left, a reserve
 portrait, JD's plate or an ally on the field. A quick tap still selects as before. The left half is a model viewer with its own

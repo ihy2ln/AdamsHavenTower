@@ -66,6 +66,7 @@ namespace AdamsHaven.Tower
             { "merchant", new[] { "Wandering Trader", "Peddler's Wagon" } },
             { "camp", new[] { "Camp" } },
             { "lair", new[] { "The Lair" } },
+            { "tower", new[] { "Old Beacon", "Stone Spire", "Wardstone", "Moon Spire" } },
         };
 
         // shift > 0 is the forest rearranging mid-run: the ground (rivers, lakes, hills, rocks) stays, the woods regrow
@@ -127,8 +128,10 @@ namespace AdamsHaven.Tower
             // Runs saved before version 3 keep the original mix so their places do not change kind.
             var kinds = new List<string>(version >= 3 ? KindsFor(biome.id) : Kinds);
             bool needCamp = anchoredCamp == null, needLair = fixedPois.Find(p => p.kind == "lair") == null;
+            // Version 4 maps hold one tower (TowerOverworldRules: climbing it reveals a wide circle and offers tablets).
+            bool needTower = version >= 4 && fixedPois.Find(p => p.kind == "tower") == null;
             foreach (var a in fixedPois) kinds.Remove(a.kind);
-            int wanted = kinds.Count + (needLair ? 1 : 0);
+            int wanted = kinds.Count + (needLair ? 1 : 0) + (needTower ? 1 : 0);
             var spots = new List<Vector2Int>();
             for (int tries = 0; tries < 4000 && spots.Count < wanted; tries++)
             {
@@ -144,6 +147,14 @@ namespace AdamsHaven.Tower
                 lairAt = 0;
                 for (int i = 1; i < spots.Count; i++) if ((spots[i] - camp).sqrMagnitude > (spots[lairAt] - camp).sqrMagnitude) lairAt = i;
             }
+            // The tower stands nearest the middle of the map, so its view covers the most ground.
+            int towerAt = -1;
+            if (needTower)
+            {
+                var middle = new Vector2Int(width / 2, height / 2);
+                for (int i = 0; i < spots.Count; i++)
+                    if (i != lairAt && (towerAt < 0 || (spots[i] - middle).sqrMagnitude < (spots[towerAt] - middle).sqrMagnitude)) towerAt = i;
+            }
             if (needCamp)
                 map.pois.Insert(0, new TowerOverworldPoi { id = "camp", kind = "camp", x = camp.x, y = camp.y,
                     theme = biome.themes[prng.Next(biome.themes.Length)], name = PickName("camp", prng, used) });
@@ -151,6 +162,7 @@ namespace AdamsHaven.Tower
             {
                 string kind;
                 if (i == lairAt) kind = "lair";
+                else if (i == towerAt) kind = "tower";
                 else if (kinds.Count == 0) kind = "combat";
                 else { int k = prng.Next(kinds.Count); kind = kinds[k]; kinds.RemoveAt(k); }
                 string id = shift == 0 ? "p" + (i + 1) : "s" + shift + "p" + (i + 1);

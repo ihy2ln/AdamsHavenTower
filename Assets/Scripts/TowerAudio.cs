@@ -62,18 +62,59 @@ namespace AdamsHaven.Tower
 
         // A one-shot: click, confirm, error, step, step_road, card, swing, hit, crit, heal, status, down, ult, chime,
         // reward, door, shift, victory, defeat.
+        // A sound the player imported in the media library (sfx.<id>) wins over everything else.
         public static void Play(string id, float volume = 1f, float pitch = 1f)
         {
             if (!Application.isPlaying) return;
             var me = I;
-            var clip = me.Clip(id);
+            var clip = MediaLibrary.AudioFor("sfx." + id) ?? me.Clip(id);
             if (clip == null) return;
-            var voice = me.voices[me.nextVoice];
-            me.nextVoice = (me.nextVoice + 1) % me.voices.Length;
+            me.Voice(clip, volume, pitch);
+        }
+
+        // A one-shot from a clip the caller already has (imported move sounds, previews).
+        public static void PlayClip(AudioClip clip, float volume = 1f, float pitch = 1f)
+        {
+            if (!Application.isPlaying || clip == null) return;
+            I.Voice(clip, volume, pitch);
+        }
+
+        // True when a recorded (or imported) clip exists for the id, so callers can prefer it over a generic sound.
+        public static bool Has(string id)
+        {
+            if (!Application.isPlaying) return false;
+            return MediaLibrary.Has("sfx." + id) || I.Recorded(id) != null;
+        }
+
+        private void Voice(AudioClip clip, float volume, float pitch)
+        {
+            var voice = voices[nextVoice];
+            nextVoice = (nextVoice + 1) % voices.Length;
             voice.Stop();
             voice.clip = clip; voice.pitch = pitch; voice.volume = SfxVolume * volume;
             voice.Play();
         }
+
+        private readonly Dictionary<string, AudioClip> recorded = new Dictionary<string, AudioClip>();
+        private AudioClip Recorded(string id)
+        {
+            AudioClip clip;
+            if (!recorded.TryGetValue(id, out clip)) { clip = Resources.Load<AudioClip>("AdamsHaven/Audio/" + id); recorded[id] = clip; }
+            return clip;
+        }
+
+        // Music the player imported for a place (music.battle / music.atlas / music.dungeon), looped over the ambience.
+        // "" or a place without music fades it out.
+        public static void Music(string place)
+        {
+            if (!Application.isPlaying) return;
+            var me = I;
+            if (me.music == null) { me.music = me.Source(true); }
+            me.musicKey = string.IsNullOrEmpty(place) ? "" : "music." + place;
+            if (me.musicKey.Length > 0) MediaLibrary.Preload(me.musicKey);
+        }
+        private AudioSource music;
+        private string musicKey = "";
 
         // Play with a little pitch spread, so repeated hits and steps do not sound like a machine.
         public static void PlayVaried(string id, float volume = 1f, float spread = 0.08f)
@@ -131,7 +172,19 @@ namespace AdamsHaven.Tower
             ambOld.volume = Mathf.MoveTowards(ambOld.volume, 0, step * AmbienceVolume);
             if (ambOld.volume <= 0 && ambOld.isPlaying) ambOld.Stop();
             nightLayer.volume = Mathf.MoveTowards(nightLayer.volume, nightTarget * AmbienceVolume * 0.8f, step * AmbienceVolume);
+            if (music != null)
+            {
+                // The wanted track loads asynchronously; swap it in once it is ready, fading the old one out first.
+                var want = musicKey.Length > 0 ? MediaLibrary.AudioFor(musicKey) : null;
+                if (music.clip != want)
+                {
+                    music.volume = Mathf.MoveTowards(music.volume, 0, step);
+                    if (music.volume <= 0) { music.Stop(); music.clip = want; if (want != null) music.Play(); }
+                }
+                else if (want != null) music.volume = Mathf.MoveTowards(music.volume, MusicVolume, step * MusicVolume);
+            }
         }
+        private const float MusicVolume = 0.6f;
 
         // ---------------------------------------------------------------- clips
 

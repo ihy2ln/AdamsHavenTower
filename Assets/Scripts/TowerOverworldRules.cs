@@ -3,30 +3,33 @@ using UnityEngine;
 
 namespace AdamsHaven.Tower
 {
-    // Result of a planned walk on the grid map: the route and what it will cost.
-    public sealed class TowerGridPreview
+    // A planned trip across the run map's web (TowerMapWeb): the places it passes, the trail cells and what it costs.
+    public sealed class TowerAtlasRoute
     {
-        public List<Vector2Int> path;
-        public float cost;
-        public float rations;           // expected rations (fractional: road travel shares a ration)
-        public int threat;
-        public int roadCells, trailCells;
+        public string target = "";
+        public List<string> hops = new List<string>();          // places from the party's to the target, both included
+        public List<Vector2Int> path = new List<Vector2Int>();  // trail cells, the party's cell first
+        public float cost, rations, hours;
+        public int threat, roadCells, trailCells;
         public string error;
+        public bool Here { get { return error == null && hops.Count == 1; } }
     }
 
-    // Result of walking: the cells the party actually crossed, and whether something stopped them.
+    // Result of travelling: the cells the party actually crossed, and whether something stopped them.
     public sealed class TowerGridStep
     {
         public List<Vector2Int> walked = new List<Vector2Int>();
-        public bool halted, shifted;
+        public bool halted, shifted, towerClimbed;
         public TowerOverworldPoi arrived;
         public string error;
     }
 
-    // Expedition rules on the layered grid map (TowerOverworld). Plate runs (mapKind "") keep the node rules: the game
-    // no longer draws them (their paintings are gone), but the rules tests walk them as a small fixed graph.
-    // Walking a cell wears it into road; roads cost less, raise less threat and calm the event odds.
-    // A full threat meter makes the forest stir, which wears down road away from camp, cleared places and the party.
+    // Expedition rules on the layered grid map (TowerOverworld). The map is played like the Path of Exile 2 Atlas:
+    // the places are nodes of a web (TowerMapWeb) and the party travels node to node along its trails, never cell by cell.
+    // Only places linked to a completed one (or the camp) can be reached; completing a place reveals its neighbours
+    // (TowerAtlasNodes.cs). Every trail cell still costs time, rations and threat, and is worn toward road (cheaper the
+    // next time). Events roll once per trail travelled. A full threat meter makes the forest stir: loose road wears down
+    // and places nobody has seen yet move. Plate runs (mapKind "") keep the old node rules for the rules tests.
     public sealed partial class TowerRules
     {
         // New expeditions use the grid map. Rules tests switch it off to walk the plate graphs.
@@ -35,55 +38,60 @@ namespace AdamsHaven.Tower
         public const string GridKind = "grid";
         public const float RationCost = 20f;            // cost units per ration (about one old trail hop)
         public const float ThreatPerTrailCell = 0.8f, ThreatPerRoadCell = 0.3f, ThreatPerNightCell = 0.4f;
-        public const int EventCells = 10, RoadWalked = 3, RoadMax = 9, RoadWornOnStir = 3, GridSight = 5;
+        public const int RoadWalked = 3, RoadMax = 9, RoadWornOnStir = 3, GridSight = 5;
+        // 1: the run map is a web of places (old grid runs are migrated on load: MigrateWebRun).
+        public const int WebVersion = 1;
         // Time in the wild (Tower clock seconds; DaySeconds = one day): each cost unit walked is 8 minutes,
         // a fight half an hour, a camp rest sleeps until dawn at night or three hours by day.
         public const float TravelSecondsPerCost = DaySeconds / 24f * (8f / 60f), BattleSeconds = DaySeconds / 48f;
 
         public bool GridRun { get { var run = Run; return run != null && run.mapKind == GridKind; } }
 
+        // The current run's grid map and web, regenerated from its seed (cached; compared field by field so the
+        // thousands of cell lookups a frame does not build a key string each time).
         private TowerOverworld overworldCache;
+        private TowerMapWeb webCache;
         private TowerForestLayout overworldLayout;
-        private string overworldKey = "";
+        private TowerRun owRun;
+        private string owBiome;
+        private int owSeed, owShift, owVersion;
 
-        // The current run's grid map, regenerated from its seed (cached).
         public TowerOverworld Overworld
         {
             get
             {
                 var run = Run;
                 if (run == null || run.mapKind != GridKind) return null;
-                string key = run.biome + ":" + run.gridSeed + ":" + run.shift + ":" + run.gridVersion;
-                if (key != overworldKey || overworldCache == null)
+                if (overworldCache == null || owRun != run || owBiome != run.biome || owSeed != run.gridSeed || owShift != run.shift ||
+                    owVersion != run.gridVersion)
                 {
                     overworldCache = TowerOverworldGen.Generate(run.biome, (uint)run.gridSeed, run.shift, run.anchors, version: run.gridVersion);
-                    overworldLayout = LayoutFromOverworld(overworldCache, run.layout);
-                    overworldKey = key;
+                    webCache = TowerMapWeb.Build(overworldCache, run.anchors, run.webLinks);
+                    overworldLayout = LayoutFromOverworld(overworldCache, run.layout, webCache);
+                    owRun = run; owBiome = run.biome; owSeed = run.gridSeed; owShift = run.shift; owVersion = run.gridVersion;
                 }
                 return overworldCache;
             }
         }
 
+        // The web of places over the current grid map (null on plate runs).
+        public TowerMapWeb Web { get { return Overworld == null ? null : webCache; } }
+
         // The grid's places seen as forest nodes, so dungeons, events and the run panel work unchanged.
-        private static TowerForestLayout LayoutFromOverworld(TowerOverworld map, string id)
+        // Their links are the web's, so scouting events and the rest-before-lair rule follow the same trails.
+        private static TowerForestLayout LayoutFromOverworld(TowerOverworld map, string id, TowerMapWeb web)
         {
             var layout = new TowerForestLayout { id = id, name = TowerForestLayouts.Pretty(map.biome == "edge" ? "forest_edge" : map.biome),
                 backdrop = "", theme = map.pois.Count > 0 ? map.pois[0].theme : "ruin", entrance = "camp" };
             foreach (var p in map.pois)
-                layout.nodes.Add(new TowerForestNode { id = p.id, kind = p.kind, name = p.name, theme = p.theme,
-                    x = (p.x + 0.5f) / map.width, y = (p.y + 0.5f) / map.height });
-            // Hidden neighbours: each place links to its three nearest, which scouting and the rest-before-lair rule use.
-            foreach (var a in layout.nodes)
             {
-                var near = new List<TowerForestNode>(layout.nodes);
-                near.Remove(a);
-                near.Sort((m, n) => Dist2(a, m).CompareTo(Dist2(a, n)));
-                for (int i = 0; i < Mathf.Min(3, near.Count); i++) a.links.Add(near[i].id);
+                var node = new TowerForestNode { id = p.id, kind = p.kind, name = p.name, theme = p.theme,
+                    x = (p.x + 0.5f) / map.width, y = (p.y + 0.5f) / map.height };
+                foreach (var e in web.EdgesOf(p.id)) node.links.Add(e.Other(p.id));
+                layout.nodes.Add(node);
             }
             return layout;
         }
-
-        private static float Dist2(TowerForestNode a, TowerForestNode b) { float dx = (a.x - b.x) * 1.6f, dy = a.y - b.y; return dx * dx + dy * dy; }
 
         private TowerForestLayout GridLayout { get { return Overworld == null ? null : overworldLayout; } }
 
@@ -93,10 +101,14 @@ namespace AdamsHaven.Tower
         {
             run.mapKind = GridKind;
             run.gridVersion = TowerOverworld.Version;
+            run.webVersion = WebVersion;
             run.biome = TowerOverworldGen.BiomeForRegion(region);
             run.gridSeed = (int)(TowerForestLayouts.Hash(region + ":grid", run.seed) & 0x7fffffff);
             run.shift = 0;
             run.layout = "grid_" + run.biome;
+            run.webLinks = new List<string>();
+            run.tablets = new List<string>();
+            run.tabletOffer = new List<string>();
             var map = Overworld;
             var camp = map.Camp;
             run.cx = camp.x; run.cy = camp.y;
@@ -105,6 +117,10 @@ namespace AdamsHaven.Tower
             run.gridRoad = new string('0', map.width * map.height);
             run.targetX = run.targetY = -1;
             run.day = GameDay;
+            run.nodesDone = new List<string> { camp.id };
+            run.nodeHops = new List<string>();
+            RecordHops();
+            SyncAtlas();
         }
 
         // A run saved on a painted plate (from before the grid map) moves onto the grid: the party makes a fresh camp in the
@@ -123,6 +139,50 @@ namespace AdamsHaven.Tower
             run.visited.Add(run.at);
             RevealFrom(run.at);
             Note("The forest shifted while the guild was away. The party made a fresh camp.");
+            return true;
+        }
+
+        // A grid run saved before the web (free cell-by-cell walking) keeps its map, haul and progress: every place it
+        // cleared or stood on counts as completed, and a party caught between places walks back to the camp.
+        public bool MigrateWebRun()
+        {
+            var run = Run;
+            if (run == null || run.mapKind != GridKind || run.webVersion >= WebVersion) return false;
+            if (run.nodesDone == null) run.nodesDone = new List<string>();
+            if (run.webLinks == null) run.webLinks = new List<string>();
+            if (run.tablets == null) run.tablets = new List<string>();
+            if (run.tabletOffer == null) run.tabletOffer = new List<string>();
+            var map = Overworld;
+            if (map == null || map.Camp == null) return false;
+            var here = map.PoiAt(run.cx, run.cy);
+            if (run.dungeonPoi.Length == 0 && here == null)
+            {
+                run.cx = map.Camp.x; run.cy = map.Camp.y; run.at = map.Camp.id;
+            }
+            else if (here != null) run.at = here.id;
+            var done = new List<string> { map.Camp.id };
+            done.AddRange(run.cleared); done.AddRange(run.visited);
+            if (run.at.Length > 0) done.Add(run.at);
+            if (run.dungeonPoi.Length > 0) done.Add(run.dungeonPoi);
+            // The old run walked freely, so it passed the places between: complete the fewest-hop way from the camp to each
+            // place it knew, so the party can always travel home over completed places.
+            var hops = Web.Hops(map.Camp.id);
+            foreach (var id in done.ToArray())
+            {
+                string at = id;
+                for (int guard = 0; guard < 64 && at != null && hops.ContainsKey(at) && hops[at] > 1; guard++)
+                {
+                    string back = null;
+                    foreach (var e in Web.EdgesOf(at)) { int h; if (hops.TryGetValue(e.Other(at), out h) && h == hops[at] - 1) { back = e.Other(at); break; } }
+                    if (back != null) done.Add(back);
+                    at = back;
+                }
+            }
+            foreach (var id in done) if (map.Poi(id) != null && !run.nodesDone.Contains(id)) run.nodesDone.Add(id);
+            run.targetX = run.targetY = -1;
+            run.webVersion = WebVersion;
+            RecordHops();
+            SyncAtlas();
             return true;
         }
 
@@ -145,18 +205,20 @@ namespace AdamsHaven.Tower
 
         private void PassBattleTime() { var run = Run; if (run != null) run.clock += BattleSeconds; }
 
-        // The woods rearrange around the party. Full (threat filled): every unexplored place moves, the woods regrow
-        // and the fog closes in again away from what is known. Small (a new day): one unexplored place moves.
-        // The camp, explored and cleared places, and the party's own spot never move.
+        // The woods rearrange around the party. Full (threat filled): every place nobody has seen moves, the woods regrow
+        // and the fog closes in again away from what is known. Small (a new day): one unseen place moves.
+        // The camp, the lair, completed, reachable and scouted places, and the party's own spot never move, and the
+        // links among them are carried over, so nothing known is cut off.
         public bool ShiftForest(bool small)
         {
-            var run = Run; var map = Overworld;
+            var run = Run; var map = Overworld; var web = Web;
             if (map == null) return false;
             var keep = new List<TowerOverworldPoi>();
             var loose = new List<TowerOverworldPoi>();
             foreach (var p in map.pois)
             {
-                bool fixedPlace = p.kind == "camp" || run.visited.Contains(p.id) || run.cleared.Contains(p.id) || p.id == run.at;
+                bool fixedPlace = p.kind == "camp" || p.kind == "lair" || NodeState(p.id) >= NodeScouted || run.visited.Contains(p.id) ||
+                    run.cleared.Contains(p.id) || p.id == run.at || p.id == run.dungeonPoi;
                 (fixedPlace ? keep : loose).Add(p);
             }
             if (loose.Count == 0) return false;
@@ -166,6 +228,10 @@ namespace AdamsHaven.Tower
                 var pick = loose.Find(p => !CellSeen(p.x, p.y)) ?? loose[EventRng("dayshift").Next(loose.Count)];
                 foreach (var p in loose) if (p != pick) keep.Add(p);
             }
+            var kept = new HashSet<string>();
+            foreach (var p in keep) kept.Add(p.id);
+            run.webLinks = new List<string>();
+            foreach (var e in web.edges) if (kept.Contains(e.a) && kept.Contains(e.b)) run.webLinks.Add(e.key);
             run.anchors = new List<TowerOverworldPoi>();
             foreach (var p in keep)
                 run.anchors.Add(new TowerOverworldPoi { id = p.id, kind = p.kind, name = p.name, theme = p.theme, x = p.x, y = p.y });
@@ -175,19 +241,22 @@ namespace AdamsHaven.Tower
             if (!small)
             {
                 // The fog closes in again except around the party, the anchored places and well-worn road.
-                run.gridFog = new string('0', moved.cells.Length);
-                RevealCells(run.cx, run.cy, GridSightRadius);
-                foreach (var p in run.anchors) RevealCells(p.x, p.y, 2);
+                var fog = new string('0', moved.cells.Length).ToCharArray();
+                RevealInto(fog, run.cx, run.cy, GridSightRadius);
+                foreach (var p in run.anchors) RevealInto(fog, p.x, p.y, NodeReveal);
                 for (int y = 0; y < moved.height; y++)
                     for (int x = 0; x < moved.width; x++)
-                        if (RoadStrength(x, y) >= RoadWalked) RevealCells(x, y, 1);
+                        if (RoadStrength(x, y) >= RoadWalked) RevealInto(fog, x, y, 1);
+                CommitFog(fog);
             }
             run.revealed.RemoveAll(id => moved.Poi(id) == null);
             foreach (var p in moved.pois) if (CellSeen(p.x, p.y) && !run.revealed.Contains(p.id)) run.revealed.Add(p.id);
+            RecordHops();
+            SyncAtlas();
             var here = moved.PoiAt(run.cx, run.cy);
             run.at = here != null ? here.id : "";
             Note(small ? "Overnight the trees have moved: one of the paths ahead is not where it was." :
-                "The forest shifts! Trees turn and close in; unexplored places are somewhere else now.");
+                "The forest shifts! Trees turn and close in; places nobody has seen are somewhere else now.");
             return true;
         }
 
@@ -239,58 +308,124 @@ namespace AdamsHaven.Tower
         // Lifts the fog in a circle; places inside it become known.
         private void RevealCells(int cx, int cy, int radius)
         {
+            var fog = FogBuffer();
+            if (fog == null) return;
+            RevealInto(fog, cx, cy, radius);
+            CommitFog(fog);
+        }
+
+        // The fog as a buffer to edit many cells at once (one string per batch instead of one per cell).
+        private char[] FogBuffer()
+        {
             var run = Run; var map = Overworld;
-            if (map == null) return;
+            if (map == null) return null;
             if (run.gridFog.Length != map.cells.Length) run.gridFog = new string('0', map.cells.Length);
-            var fog = run.gridFog.ToCharArray();
+            return run.gridFog.ToCharArray();
+        }
+
+        private void RevealInto(char[] fog, int cx, int cy, int radius)
+        {
+            var map = Overworld;
             for (int y = cy - radius; y <= cy + radius; y++)
                 for (int x = cx - radius; x <= cx + radius; x++)
                     if (map.Inside(x, y) && (x - cx) * (x - cx) + (y - cy) * (y - cy) <= radius * radius + radius) fog[map.Index(x, y)] = '1';
+        }
+
+        private void CommitFog(char[] fog)
+        {
+            var run = Run; var map = Overworld;
             run.gridFog = new string(fog);
             foreach (var p in map.pois)
                 if (fog[map.Index(p.x, p.y)] != '0' && !run.revealed.Contains(p.id)) run.revealed.Add(p.id);
         }
 
-        private void Wear(int x, int y)
+        private char[] RoadBuffer()
         {
             var run = Run; var map = Overworld;
             if (run.gridRoad.Length != map.cells.Length) run.gridRoad = new string('0', map.cells.Length);
-            var road = run.gridRoad.ToCharArray();
-            int i = map.Index(x, y);
-            road[i] = (char)('0' + Mathf.Min(RoadMax, road[i] - '0' + RoadWalked));
-            run.gridRoad = new string(road);
+            return run.gridRoad.ToCharArray();
         }
 
-        // ---------------------------------------------------------------- walking
+        private static void WearInto(char[] road, int i) { road[i] = (char)('0' + Mathf.Min(RoadMax, road[i] - '0' + RoadWalked)); }
 
-        public TowerGridPreview GridPreview(int tx, int ty)
+        // ---------------------------------------------------------------- routes
+
+        // The place the party stands at (on the web every stop is a place).
+        public string PartyNode
         {
-            var run = Run; var map = Overworld;
-            var preview = new TowerGridPreview();
-            if (map == null) { preview.error = "No grid map."; return preview; }
-            if (!map.Inside(tx, ty)) { preview.error = "Off the map."; return preview; }
-            if (!CellSeen(tx, ty)) { preview.error = "You can't see a way there yet."; return preview; }
-            if (!map.Walkable(tx, ty)) { preview.error = "No way through there."; return preview; }
+            get
+            {
+                var run = Run; var map = Overworld;
+                if (run == null || map == null) return null;
+                if (run.at.Length > 0 && map.Poi(run.at) != null) return run.at;
+                var here = map.PoiAt(run.cx, run.cy) ?? NearestPoi(run.cx, run.cy);
+                return here != null ? here.id : null;
+            }
+        }
+
+        // The cheapest way to a reachable place: through completed places only, along the web's trails.
+        public TowerAtlasRoute AtlasRoute(string targetId)
+        {
+            var route = new TowerAtlasRoute { target = targetId ?? "" };
+            var run = Run; var map = Overworld; var web = Web;
+            if (run == null || map == null) { route.error = "No grid map."; return route; }
+            var target = map.Poi(targetId);
+            if (target == null) { route.error = "Unknown place."; return route; }
+            string from = PartyNode;
+            if (from == null) { route.error = "The party is lost."; return route; }
+            if (from == targetId) { route.hops.Add(from); route.path.Add(new Vector2Int(target.x, target.y)); return route; }
+            int state = NodeState(targetId);
+            if (state == NodeHidden) { route.error = "Hidden in the fog."; return route; }
+            if (state < NodeOpen) { route.error = "Out of reach: complete a place linked to it first."; return route; }
+            // Dijkstra over the places (a dozen or so): only the start and completed places may be passed through.
+            var dist = new Dictionary<string, float> { { from, 0 } };
+            var prev = new Dictionary<string, string>();
+            var done = new HashSet<string>();
+            while (true)
+            {
+                string cur = null; float best = float.MaxValue;
+                foreach (var pair in dist)
+                    if (!done.Contains(pair.Key) && (pair.Value < best || (pair.Value == best && string.CompareOrdinal(pair.Key, cur) < 0)))
+                    { best = pair.Value; cur = pair.Key; }
+                if (cur == null || cur == targetId) break;
+                done.Add(cur);
+                if (cur != from && !NodeComplete(cur)) continue;
+                foreach (var e in web.EdgesOf(cur))
+                {
+                    string next = e.Other(cur);
+                    float d = best + e.length;
+                    float old;
+                    if (!dist.TryGetValue(next, out old) || d < old) { dist[next] = d; prev[next] = cur; }
+                }
+            }
+            if (!prev.ContainsKey(targetId)) { route.error = "No known way there."; return route; }
+            for (string at = targetId; at != null; at = at == from ? null : prev[at]) route.hops.Insert(0, at);
+            route.path.Add(new Vector2Int(map.Poi(from).x, map.Poi(from).y));
+            for (int h = 1; h < route.hops.Count; h++)
+            {
+                var cells = web.Edge(route.hops[h - 1], route.hops[h]).From(route.hops[h - 1]);
+                for (int i = 1; i < cells.Count; i++) route.path.Add(cells[i]);
+            }
             var road = RoadTest();
-            preview.path = map.FindPath(new Vector2Int(run.cx, run.cy), new Vector2Int(tx, ty), road);
-            if (preview.path == null) { preview.error = "No way through there."; return preview; }
-            preview.cost = map.PathCost(preview.path, road);
             bool night = !IsDaylight(RunHour());
             float threat = 0, weather = WeatherThreatScale;
-            for (int i = 1; i < preview.path.Count; i++)
+            route.cost = map.PathCost(route.path, road);
+            for (int i = 1; i < route.path.Count; i++)
             {
-                bool onRoad = road(map.Index(preview.path[i].x, preview.path[i].y));
-                if (onRoad) preview.roadCells++; else preview.trailCells++;
+                bool onRoad = road(map.Index(route.path[i].x, route.path[i].y));
+                if (onRoad) route.roadCells++; else route.trailCells++;
                 threat += ((onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0)) * weather;
             }
-            preview.rations = preview.cost * WeatherRationScale / RationCost;
-            preview.threat = Mathf.RoundToInt(threat);
-            return preview;
+            route.rations = route.cost * WeatherRationScale / RationCost;
+            route.threat = Mathf.RoundToInt(threat);
+            route.hours = route.cost * TravelSecondsPerCost / (DaySeconds / 24f);
+            return route;
         }
 
-        // Walks toward a cell, one cell at a time. Stops early when an event or ambush breaks out;
-        // the target is remembered so GridResume can finish the walk once it is settled.
-        public TowerGridStep GridMove(int tx, int ty)
+        // Travels the whole route at once: every trail cell costs time, rations and threat and wears toward road; each
+        // trail travelled may raise an event on arrival. An event, a tablet to choose or a shift stops the party at the
+        // place it reached; the target is remembered so GridResume can finish the trip once the event is settled.
+        public TowerGridStep AtlasTravel(string targetId)
         {
             var step = new TowerGridStep();
             var run = Run; var map = Overworld;
@@ -301,120 +436,114 @@ namespace AdamsHaven.Tower
             CheckDayRoll();
             map = Overworld;
             int shiftBefore = run.shift;
-            var preview = GridPreview(tx, ty);
-            if (preview.error != null) { step.error = preview.error; return step; }
-            run.targetX = tx; run.targetY = ty;
-            step.walked.Add(new Vector2Int(run.cx, run.cy));
-            int eventRoad = 0, eventCells = 0;
+            var route = AtlasRoute(targetId);
+            if (route.error != null) { step.error = route.error; return step; }
+            if (route.hops.Count < 2) { step.error = "You are here."; return step; }
+            var target = map.Poi(targetId);
+            run.targetX = target.x; run.targetY = target.y;
+            step.walked.Add(route.path[0]);
             var roads = RoadTest();
-            for (int i = 1; i < preview.path.Count; i++)
+            int sight = GridSightRadius;
+            for (int h = 1; h < route.hops.Count; h++)
             {
-                var c = preview.path[i];
-                bool diagonal = c.x != run.cx && c.y != run.cy;
-                bool onRoad = roads(map.Index(c.x, c.y));
-                float cost = map.Cost(c.x, c.y, roads) * (diagonal ? 1.4142f : 1f);
-                run.cx = c.x; run.cy = c.y;
-                run.clock += cost * TravelSecondsPerCost;
-                bool night = !IsDaylight(RunHour());
-                step.walked.Add(c);
-                Wear(c.x, c.y);
-                RevealCells(c.x, c.y, GridSightRadius);
-                // Rations by distance and ground.
-                run.travelCarry += cost * WeatherRationScale;
-                while (run.travelCarry >= RationCost)
+                var edge = Web.Edge(route.hops[h - 1], route.hops[h]);
+                var cells = edge.From(route.hops[h - 1]);
+                var fog = FogBuffer(); var wear = RoadBuffer();
+                int roadCells = 0;
+                for (int i = 1; i < cells.Count; i++)
                 {
-                    run.travelCarry -= RationCost;
-                    if (run.rations > 0) run.rations--;
-                    else
+                    var c = cells[i];
+                    bool diagonal = c.x != cells[i - 1].x && c.y != cells[i - 1].y;
+                    int index = map.Index(c.x, c.y);
+                    bool onRoad = roads(index);
+                    float cost = map.Cost(c.x, c.y, roads) * (diagonal ? 1.4142f : 1f);
+                    run.cx = c.x; run.cy = c.y;
+                    run.clock += cost * TravelSecondsPerCost;
+                    bool night = !IsDaylight(RunHour());
+                    step.walked.Add(c);
+                    WearInto(wear, index);
+                    RevealInto(fog, c.x, c.y, sight);
+                    // Rations by distance and ground.
+                    run.travelCarry += cost * WeatherRationScale;
+                    while (run.travelCarry >= RationCost)
                     {
-                        for (int h = 0; h < run.hp.Count; h++) if (run.hp[h] > 0) run.hp[h] = Mathf.Max(1, run.hp[h] - 10);
-                        Note("No rations left: the party grows weak.");
+                        run.travelCarry -= RationCost;
+                        if (run.rations > 0) run.rations--;
+                        else
+                        {
+                            for (int k = 0; k < run.hp.Count; k++) if (run.hp[k] > 0) run.hp[k] = Mathf.Max(1, run.hp[k] - 10);
+                            Note("No rations left: the party grows weak.");
+                        }
                     }
+                    run.threatCarry += ((onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0)) * WeatherThreatScale;
+                    if (onRoad) roadCells++;
                 }
-                // Threat by ground walked.
-                run.threatCarry += ((onRoad ? ThreatPerRoadCell : ThreatPerTrailCell) + (night ? ThreatPerNightCell : 0)) * WeatherThreatScale;
+                run.gridRoad = new string(wear);
+                CommitFog(fog);
+                // Arrived at the next place on the way.
+                var poi = map.Poi(route.hops[h]);
+                run.cx = poi.x; run.cy = poi.y; run.at = poi.id;
+                if (!run.visited.Contains(poi.id)) run.visited.Add(poi.id);
+                if (!run.road.Contains(edge.key)) run.road.Add(edge.key);
+                step.arrived = poi;
+                if (ArriveAt(poi)) step.towerClimbed = true;
+                // Threat by ground walked, settled at each place so a shift never strands the party between two.
                 int raise = Mathf.FloorToInt(run.threatCarry);
                 if (raise > 0) { run.threatCarry -= raise; RaiseThreat(raise); }
-                // Something on the way, every few cells.
-                eventCells++; if (onRoad) eventRoad++;
-                var lair = Overworld.Lair;
-                bool restDue = TraversalEvents && Near(lair, 9) && !Near(lair, 3) && !run.eventsSeen.Contains(TowerEvents.RestId);
-                if (eventCells >= EventCells || i == preview.path.Count - 1 || restDue)
-                {
-                    RollGridEvent(eventRoad * 2 >= eventCells);
-                    eventCells = eventRoad = 0;
-                }
                 if (run.shift != shiftBefore)
                 {
-                    // The forest moved under the party's feet: stop and look again (the target is kept).
-                    step.halted = step.shifted = true;
+                    // The forest moved: stop and look again (the old plan is dropped).
+                    step.shifted = true;
+                    step.halted = h < route.hops.Count - 1;
                     break;
                 }
-                if (EventBlock() != null)
-                {
-                    step.halted = i < preview.path.Count - 1;
-                    break;
-                }
-            }
-            var poi = Overworld.PoiAt(run.cx, run.cy);
-            run.at = poi != null ? poi.id : "";
-            if (poi != null)
-            {
-                step.arrived = poi;
-                if (!run.visited.Contains(poi.id)) run.visited.Add(poi.id);
+                RollEdgeEvent(route.hops[h], roadCells * 2 >= cells.Count - 1);
+                if (EventBlock() != null && h < route.hops.Count - 1) { step.halted = true; break; }
             }
             if (!step.halted) run.targetX = run.targetY = -1;
             return step;
         }
 
-        // The walk an event interrupted, if any.
+        // The trip an event interrupted, if any.
         public bool GridHasTarget { get { var run = Run; return run != null && run.targetX >= 0 && (run.targetX != run.cx || run.targetY != run.cy); } }
 
         public TowerGridStep GridResume()
         {
-            var run = Run;
-            if (!GridHasTarget) return new TowerGridStep { error = "Nowhere to go." };
-            return GridMove(run.targetX, run.targetY);
+            var run = Run; var map = Overworld;
+            if (!GridHasTarget || map == null) return new TowerGridStep { error = "Nowhere to go." };
+            var target = map.PoiAt(run.targetX, run.targetY);
+            if (target == null) { GridCancelTarget(); return new TowerGridStep { error = "The way there is lost." }; }
+            return AtlasTravel(target.id);
         }
 
         public void GridCancelTarget() { var run = Run; if (run != null) run.targetX = run.targetY = -1; }
 
-        // Like RollTraversalEvent, but per stretch of cells: quiet near camp and lair, a rest offered near the lair,
-        // otherwise trail 35% / road 10%, more with threat, never twice in a row.
-        private void RollGridEvent(bool road)
+        // One roll per trail travelled, on arrival: quiet into the camp and the lair, the Quiet Glade offered once on
+        // reaching the lair or a place linked to it, otherwise trail 35% / road 10%, more with threat, never twice in a row.
+        private void RollEdgeEvent(string toId, bool road)
         {
             var run = Run; var map = Overworld;
             run.steps++;
             if (!TraversalEvents) { run.lastStepEvent = false; return; }
             if (run.eventId.Length > 0 || AmbushPending) { run.lastStepEvent = true; return; }
-            var near = NearestPoi(run.cx, run.cy);
+            var to = map.Poi(toId); var lair = map.Lair;
             bool fired = false;
-            var camp = map.Camp; var lair = map.Lair;
-            bool quiet = Near(camp, 3) || Near(lair, 3);
-            if (!quiet)
+            bool byLair = lair != null && !run.cleared.Contains(lair.id) && (toId == lair.id || Web.Linked(toId, lair.id));
+            if (byLair && !run.eventsSeen.Contains(TowerEvents.RestId) && TowerEvents.Get(TowerEvents.RestId) != null)
             {
-                if (Near(lair, 9) && !run.eventsSeen.Contains(TowerEvents.RestId) && TowerEvents.Get(TowerEvents.RestId) != null)
+                StartEvent(TowerEvents.RestId); fired = true;
+            }
+            else if (to.kind != "camp" && to.kind != "lair" && !run.lastStepEvent)
+            {
+                var rng = EventRng("event");
+                float chance = (road ? EventChanceRoad : EventChanceTrail) + EventThreatBoost * run.threat / ThreatMax;
+                if (rng.Value() < chance)
                 {
-                    StartEvent(TowerEvents.RestId); fired = true;
-                }
-                else if (!run.lastStepEvent && near != null)
-                {
-                    var rng = EventRng("event");
-                    float chance = (road ? EventChanceRoad : EventChanceTrail) + EventThreatBoost * run.threat / ThreatMax;
-                    if (rng.Value() < chance)
-                    {
-                        var def = PickEvent(GridLayout.Node(near.id), road, rng);
-                        if (def != null) { StartEvent(def.id); fired = true; }
-                    }
+                    var def = PickEvent(GridLayout.Node(toId), road, rng);
+                    if (def != null) { StartEvent(def.id); fired = true; }
                 }
             }
             run.lastStepEvent = fired;
-        }
-
-        private bool Near(TowerOverworldPoi p, int cells)
-        {
-            var run = Run;
-            return p != null && (p.x - run.cx) * (p.x - run.cx) + (p.y - run.cy) * (p.y - run.cy) <= cells * cells;
         }
 
         public TowerOverworldPoi NearestPoi(int x, int y)

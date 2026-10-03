@@ -1,0 +1,6531 @@
+{
+ "version": 1,
+ "ranks": [
+  "F",
+  "E",
+  "D",
+  "C",
+  "B",
+  "A",
+  "S",
+  "SS",
+  "SSR"
+ ],
+ "population": [
+  40,
+  28,
+  15,
+  9,
+  4,
+  2,
+  1,
+  0.5,
+  0.1
+ ],
+ "families": [
+  {
+   "id": "goblinkin",
+   "name": "Ashvein Goblinkin",
+   "inspiration": "D&D / Pathfinder goblin, hobgoblin and bugbear",
+   "element": "Dark",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "ruin",
+    "mine",
+    "edge",
+    "briar"
+   ],
+   "lore": "Goblins whose dormant GKOM woke in the ash of burned camps. They hoard crystal chips like coin; the more crystal they swallow, the larger and more organised they become, until a warlord commands whole warbands.",
+   "minRank": 1,
+   "maxRank": 7,
+   "material": "Ash-black goblin hide",
+   "forms": [
+    {
+     "id": "ashvein_goblin_scavenger",
+     "name": "Ashvein Goblin Scavenger",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "Only a few smoky crystals betray the corruption beneath its skin.",
+     "cards": [
+      {
+       "id": "e_crystal_shiv",
+       "name": "Crystal Shiv",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shard_flick",
+       "name": "Shard Flick",
+       "ep": 1,
+       "power": 0.7,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.2,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "ashvein_hobgoblin",
+     "stage": 0,
+     "art": "ashvein_goblin_scavenger",
+     "ownArt": true,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Ash-black goblin hide",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "ashvein_hobgoblin",
+     "name": "Ashvein Hobgoblin",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "Drilled and armoured, it fights in a shield line and never alone.",
+     "cards": [
+      {
+       "id": "e_crystal_shiv",
+       "name": "Crystal Shiv",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shard_flick",
+       "name": "Shard Flick",
+       "ep": 1,
+       "power": 0.7,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.2,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_war_drum",
+       "name": "War Drum",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "ashvein_bugbrute",
+     "stage": 1,
+     "art": "ashvein_goblin_scavenger",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Ash-black goblin hide",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "ashvein_bugbrute",
+     "name": "Ashvein Bugbrute",
+     "minRank": 5,
+     "maxRank": 5,
+     "flavor": "A hulking ambusher that drags prey into the dark by the ankle.",
+     "cards": [
+      {
+       "id": "e_crystal_shiv",
+       "name": "Crystal Shiv",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shard_flick",
+       "name": "Shard Flick",
+       "ep": 1,
+       "power": 0.7,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.2,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_war_drum",
+       "name": "War Drum",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_brute_haul",
+       "name": "Brute Haul",
+       "ep": 2,
+       "power": 1.7,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "ashvein_warlord",
+     "stage": 2,
+     "art": "ashvein_goblin_scavenger",
+     "ownArt": false,
+     "core": "softball",
+     "crystal": "half the body armoured in crystal",
+     "drops": [
+      "B-rank Death Crystal",
+      "Ash-black goblin hide",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "ashvein_warlord",
+     "name": "Ashvein Warlord",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "Crowned in grey quartz, it speaks for every goblin in the valley.",
+     "cards": [
+      {
+       "id": "e_crystal_shiv",
+       "name": "Crystal Shiv",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shard_flick",
+       "name": "Shard Flick",
+       "ep": 1,
+       "power": 0.7,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.2,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_war_drum",
+       "name": "War Drum",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_brute_haul",
+       "name": "Brute Haul",
+       "ep": 2,
+       "power": 1.7,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_warband_volley",
+       "name": "Warband Volley",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "DefenseDown",
+       "magnitude": 0.15,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 3,
+     "art": "ashvein_goblin_scavenger",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Ash-black goblin hide",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "shardlings",
+   "name": "Shardlings",
+   "inspiration": "D&D myconid / treant, FF Mandragora",
+   "element": "Earth",
+   "role": "Guardian",
+   "large": false,
+   "themes": [
+    "briar",
+    "crystal",
+    "marsh",
+    "edge"
+   ],
+   "lore": "Saplings that took root over a buried GKOM orb. Each season they grow a ring of crystal instead of bark, and the oldest stand as geode trees that guard whole groves.",
+   "minRank": 1,
+   "maxRank": 6,
+   "material": "Crystal sap",
+   "forms": [
+    {
+     "id": "shardling_sprout",
+     "name": "Shardling Sprout",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A crystal-budded sapling that shuffles toward warmth.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "shardling_thicket",
+     "stage": 0,
+     "art": "shardling_sprout",
+     "ownArt": true,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Crystal sap",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "shardling_thicket",
+     "name": "Shardling Thicket",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A walking hedge of glassy thorns.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_bramble_lash",
+       "name": "Bramble Lash",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "geode_treant",
+     "stage": 1,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Crystal sap",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "geode_treant",
+     "name": "Geode Treant",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "An ancient oak split open to show a cavern of crystal inside.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_bramble_lash",
+       "name": "Bramble Lash",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_sap_mend",
+       "name": "Sap Mend",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 30,
+       "magic": true
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Crystal sap",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "flintjaws",
+   "name": "Flintjaws",
+   "inspiration": "D&D ankheg, FF antlion and killer insects",
+   "element": "Fire",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "briar",
+    "ruin",
+    "mine",
+    "edge"
+   ],
+   "lore": "Burrowing insects whose mandibles strike sparks. A hive grows around a queen fat with a cracked amber orb.",
+   "minRank": 1,
+   "maxRank": 6,
+   "material": "Flint mandible",
+   "forms": [
+    {
+     "id": "flintjaw_skitterer",
+     "name": "Flintjaw Skitterer",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "Its jaws strike sparks off every stone it bites.",
+     "cards": [
+      {
+       "id": "e_claw",
+       "name": "Corrupted Claw",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_ember_bite",
+       "name": "Ember Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "flintjaw_ripper",
+     "stage": 0,
+     "art": "flintjaw_skitterer",
+     "ownArt": true,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Flint mandible",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "flintjaw_ripper",
+     "name": "Flintjaw Ripper",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A soldier caste with mandibles like flint axes.",
+     "cards": [
+      {
+       "id": "e_claw",
+       "name": "Corrupted Claw",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_ember_bite",
+       "name": "Ember Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_spark_spray",
+       "name": "Spark Spray",
+       "ep": 2,
+       "power": 0.7,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "flintjaw_hive_queen",
+     "stage": 1,
+     "art": "flintjaw_skitterer",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Flint mandible",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "flintjaw_hive_queen",
+     "name": "Flintjaw Hive-Queen",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "A bloated queen that births burning larvae from her crystal sac.",
+     "cards": [
+      {
+       "id": "e_claw",
+       "name": "Corrupted Claw",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_ember_bite",
+       "name": "Ember Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_spark_spray",
+       "name": "Spark Spray",
+       "ep": 2,
+       "power": 0.7,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_brood_call",
+       "name": "Brood Call",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "flintjaw_skitterer",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Flint mandible",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "amberhides",
+   "name": "Amberhides",
+   "inspiration": "D&D gorgon bull, FF Behemoth-lite grazers, aurochs",
+   "element": "Earth",
+   "role": "Bruiser",
+   "large": false,
+   "themes": [
+    "briar",
+    "cave",
+    "heartwood",
+    "edge"
+   ],
+   "lore": "Grazing beasts that lick crystal salt-licks until amber plates grow through their hides. The matriarch leads the herd and tramples anything that threatens the calves.",
+   "minRank": 1,
+   "maxRank": 7,
+   "material": "Amber hide plate",
+   "forms": [
+    {
+     "id": "amberhide_grazer",
+     "name": "Amberhide Grazer",
+     "minRank": 1,
+     "maxRank": 3,
+     "flavor": "A placid grazer until something steps between it and the herd.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_amber_charge",
+       "name": "Amber Charge",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "amberhide_bull",
+     "stage": 0,
+     "art": "amberhide_grazer",
+     "ownArt": true,
+     "core": "marble to tennis ball",
+     "crystal": "a few small growths to crusted joints and spine",
+     "drops": [
+      "F-rank Death Crystal",
+      "Amber hide plate",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "amberhide_bull",
+     "name": "Amberhide Bull",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Amber horns as long as spears.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_amber_charge",
+       "name": "Amber Charge",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stampede",
+       "name": "Stampede",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "amberhide_matriarch",
+     "stage": 1,
+     "art": "amberhide_grazer",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Amber hide plate",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "amberhide_matriarch",
+     "name": "Amberhide Matriarch",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "The herd mother, her back a ridge of amber crystal.",
+     "cards": [
+      {
+       "id": "e_bash",
+       "name": "Crystal Bash",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_amber_charge",
+       "name": "Amber Charge",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_root_guard",
+       "name": "Root Guard",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stampede",
+       "name": "Stampede",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "amberhide_grazer",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Amber hide plate",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "thorncrystal_stalkers",
+   "name": "Thorncrystal Stalkers",
+   "inspiration": "D&D displacer beast, phase cats, FF Coeurl-style hunters",
+   "element": "Wind",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "briar",
+    "keep",
+    "heartwood",
+    "edge"
+   ],
+   "lore": "Panthers that bend light through the crystal thorns on their backs, appearing a pace from where they stand.",
+   "minRank": 2,
+   "maxRank": 7,
+   "material": "Mirage thorn",
+   "forms": [
+    {
+     "id": "thorncrystal_stalker",
+     "name": "Thorncrystal Stalker",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "It is never quite where your eyes say it is.",
+     "cards": [
+      {
+       "id": "e_pounce",
+       "name": "Thorn Pounce",
+       "ep": 1,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Hollow Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Wind",
+     "evolvesTo": "thornshade_prowler",
+     "stage": 0,
+     "art": "thorncrystal_stalker",
+     "ownArt": true,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Mirage thorn",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "thornshade_prowler",
+     "name": "Thornshade Prowler",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Hunts in pairs, one real, one a reflection.",
+     "cards": [
+      {
+       "id": "e_pounce",
+       "name": "Thorn Pounce",
+       "ep": 1,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Hollow Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_blur",
+       "name": "Mirage Blur",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Wind",
+     "evolvesTo": "mirage_panther",
+     "stage": 1,
+     "art": "thorncrystal_stalker",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Mirage thorn",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "mirage_panther",
+     "name": "Mirage Panther",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "A crystal-sheathed cat that leaves a trail of false copies.",
+     "cards": [
+      {
+       "id": "e_pounce",
+       "name": "Thorn Pounce",
+       "ep": 1,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Hollow Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_blur",
+       "name": "Mirage Blur",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_phase_rend",
+       "name": "Phase Rend",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Wind",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "thorncrystal_stalker",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Mirage thorn",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "quartzbacks",
+   "name": "Quartzbacks",
+   "inspiration": "D&D dire wolf / hell hound, FF wolves",
+   "element": "Water",
+   "role": "Bruiser",
+   "large": false,
+   "themes": [
+    "cave",
+    "mine",
+    "heartwood",
+    "edge"
+   ],
+   "lore": "Wolves with frost-quartz spines. The pack shares one rhythm, and the alpha howls the whole pack into a frenzy.",
+   "minRank": 1,
+   "maxRank": 6,
+   "material": "Frost-quartz fang",
+   "forms": [
+    {
+     "id": "quartzback_pup",
+     "name": "Quartzback Pup",
+     "minRank": 1,
+     "maxRank": 1,
+     "flavor": "Its first quartz spines are still soft as ice.",
+     "cards": [
+      {
+       "id": "e_frost_fang",
+       "name": "Frost Fang",
+       "ep": 1,
+       "power": 1.25,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_pack_howl",
+       "name": "Pack Howl",
+       "ep": 1,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "quartzback_hound",
+     "stage": 0,
+     "art": "quartzback_hound",
+     "ownArt": false,
+     "core": "marble",
+     "crystal": "a few small growths",
+     "drops": [
+      "F-rank Death Crystal",
+      "Frost-quartz fang",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "quartzback_hound",
+     "name": "Quartzback Hound",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "Frost rimes the ground where it runs.",
+     "cards": [
+      {
+       "id": "e_frost_fang",
+       "name": "Frost Fang",
+       "ep": 1,
+       "power": 1.25,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_pack_howl",
+       "name": "Pack Howl",
+       "ep": 1,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "quartzback_direwolf",
+     "stage": 1,
+     "art": "quartzback_hound",
+     "ownArt": true,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Frost-quartz fang",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "quartzback_direwolf",
+     "name": "Quartzback Direwolf",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Pony-sized, with a mane of frozen quartz.",
+     "cards": [
+      {
+       "id": "e_frost_fang",
+       "name": "Frost Fang",
+       "ep": 1,
+       "power": 1.25,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_pack_howl",
+       "name": "Pack Howl",
+       "ep": 1,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rime_rend",
+       "name": "Rime Rend",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "moonfang_alpha",
+     "stage": 2,
+     "art": "quartzback_hound",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Frost-quartz fang",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "moonfang_alpha",
+     "name": "Moonfang Alpha",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "The pack leader; its howl freezes rivers.",
+     "cards": [
+      {
+       "id": "e_frost_fang",
+       "name": "Frost Fang",
+       "ep": 1,
+       "power": 1.25,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_pack_howl",
+       "name": "Pack Howl",
+       "ep": 1,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rime_rend",
+       "name": "Rime Rend",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_blizzard_howl",
+       "name": "Blizzard Howl",
+       "ep": 3,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "",
+     "stage": 3,
+     "art": "quartzback_hound",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Frost-quartz fang",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "glasswings",
+   "name": "Glasswings",
+   "inspiration": "D&D stirge, FF killer bee / hornet",
+   "element": "Wind",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "marsh",
+    "crystal",
+    "cave",
+    "blight"
+   ],
+   "lore": "Insects with wings of beaten glass. One mite is a nuisance; the hive that follows is a cloud of cutting light.",
+   "minRank": 1,
+   "maxRank": 5,
+   "material": "Glass wing",
+   "forms": [
+    {
+     "id": "glasswing_mite",
+     "name": "Glasswing Mite",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A buzzing glint at the edge of sight.",
+     "cards": [
+      {
+       "id": "e_glass_sting",
+       "name": "Glass Sting",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swarm",
+       "name": "Glittering Swarm",
+       "ep": 2,
+       "power": 0.6,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Wind",
+     "evolvesTo": "glasswing_stinger",
+     "stage": 0,
+     "art": "glasswing_mite",
+     "ownArt": true,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Glass wing",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "glasswing_stinger",
+     "name": "Glasswing Stinger",
+     "minRank": 3,
+     "maxRank": 3,
+     "flavor": "A fist-sized wasp with a stinger of green glass.",
+     "cards": [
+      {
+       "id": "e_glass_sting",
+       "name": "Glass Sting",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swarm",
+       "name": "Glittering Swarm",
+       "ep": 2,
+       "power": 0.6,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_drain_sting",
+       "name": "Draining Sting",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Wind",
+     "evolvesTo": "glasswing_hive_mother",
+     "stage": 1,
+     "art": "glasswing_mite",
+     "ownArt": false,
+     "core": "tennis ball",
+     "crystal": "crusted joints and spine",
+     "drops": [
+      "D-rank Death Crystal",
+      "Glass wing",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "glasswing_hive_mother",
+     "name": "Glasswing Hive Mother",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "A crystal hive that walks on a hundred legs.",
+     "cards": [
+      {
+       "id": "e_glass_sting",
+       "name": "Glass Sting",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swarm",
+       "name": "Glittering Swarm",
+       "ep": 2,
+       "power": 0.6,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_drain_sting",
+       "name": "Draining Sting",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_hive_hum",
+       "name": "Hive Hum",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Wind",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "glasswing_mite",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Glass wing",
+      "GKOM Dust"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "obsidian_talons",
+   "name": "Obsidian Talons",
+   "inspiration": "D&D roc and harpy-hawks, FF Zu",
+   "element": "Fire",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "ruin",
+    "keep",
+    "blight",
+    "mine"
+   ],
+   "lore": "Raptors whose feathers harden to obsidian blades. The greatest of them circle the old bridge on wings of fire.",
+   "minRank": 2,
+   "maxRank": 7,
+   "material": "Obsidian feather",
+   "forms": [
+    {
+     "id": "obsidian_talon",
+     "name": "Obsidian Talon",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "A hawk with feathers like knapped glass.",
+     "cards": [
+      {
+       "id": "e_rake",
+       "name": "Talon Rake",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_dive",
+       "name": "Obsidian Dive",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "obsidian_roc",
+     "stage": 0,
+     "art": "obsidian_talon",
+     "ownArt": true,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Obsidian feather",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "obsidian_roc",
+     "name": "Obsidian Roc",
+     "minRank": 4,
+     "maxRank": 6,
+     "flavor": "Its shadow alone sends herds running.",
+     "cards": [
+      {
+       "id": "e_rake",
+       "name": "Talon Rake",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_dive",
+       "name": "Obsidian Dive",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_feather_storm",
+       "name": "Feather Storm",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "ash_thunderbird",
+     "stage": 1,
+     "art": "obsidian_talon",
+     "ownArt": false,
+     "core": "fist to grapefruit",
+     "crystal": "plated shoulders, back and limbs to most of the body sheathed",
+     "drops": [
+      "C-rank Death Crystal",
+      "Obsidian feather",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "ash_thunderbird",
+     "name": "Ash Thunderbird",
+     "minRank": 7,
+     "maxRank": 7,
+     "flavor": "A firestorm with wings, its crystal plumage glowing white-hot.",
+     "cards": [
+      {
+       "id": "e_rake",
+       "name": "Talon Rake",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_dive",
+       "name": "Obsidian Dive",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_feather_storm",
+       "name": "Feather Storm",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_sky_drop",
+       "name": "Sky Drop",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "obsidian_talon",
+     "ownArt": false,
+     "core": "volleyball",
+     "crystal": "crystal hide with bare seams",
+     "drops": [
+      "S-rank Death Crystal",
+      "Obsidian feather",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "prism_wardens",
+   "name": "Prism Wardens",
+   "inspiration": "D&D will-o'-wisp and animated sentinels, FF Magic Pot style spirits",
+   "element": "Light",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "ruin",
+    "heartwood",
+    "keep",
+    "marsh"
+   ],
+   "lore": "Lights that once guarded the moon shrine. GKOM bent their purpose: they still guard, but now they guard the corruption.",
+   "minRank": 1,
+   "maxRank": 6,
+   "material": "Prism shard",
+   "forms": [
+    {
+     "id": "prism_wisp",
+     "name": "Prism Wisp",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A floating mote of green light that leads travellers astray.",
+     "cards": [
+      {
+       "id": "e_prism_bolt",
+       "name": "Prism Bolt",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_verdant_mend",
+       "name": "Verdant Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 26,
+       "magic": true
+      },
+      {
+       "id": "e_prism_ward",
+       "name": "Prism Ward",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "DefenseUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Light",
+     "evolvesTo": "viridian_prism_warden",
+     "stage": 0,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Prism shard",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "viridian_prism_warden",
+     "name": "Prism Warden",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A faceted sentinel that heals its allies with light.",
+     "cards": [
+      {
+       "id": "e_prism_bolt",
+       "name": "Prism Bolt",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_verdant_mend",
+       "name": "Verdant Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 26,
+       "magic": true
+      },
+      {
+       "id": "e_prism_ward",
+       "name": "Prism Ward",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "DefenseUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Light",
+     "evolvesTo": "prism_archon",
+     "stage": 1,
+     "art": "viridian_prism_warden",
+     "ownArt": true,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Prism shard",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "prism_archon",
+     "name": "Prism Archon",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "A crown of rotating prisms judging everything that enters.",
+     "cards": [
+      {
+       "id": "e_prism_bolt",
+       "name": "Prism Bolt",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_verdant_mend",
+       "name": "Verdant Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 26,
+       "magic": true
+      },
+      {
+       "id": "e_prism_ward",
+       "name": "Prism Ward",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "DefenseUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_refraction",
+       "name": "Refraction",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Light",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Prism shard",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cobalt_burrowers",
+   "name": "Cobalt Burrowers",
+   "inspiration": "D&D bulette / purple worm, FF sandworm",
+   "element": "Earth",
+   "role": "Guardian",
+   "large": true,
+   "themes": [
+    "cave",
+    "mine",
+    "crystal",
+    "keep"
+   ],
+   "lore": "Armoured worms that eat ore and excrete cobalt crystal. Miners know the tremor that means one is passing below.",
+   "minRank": 2,
+   "maxRank": 7,
+   "material": "Cobalt shell",
+   "forms": [
+    {
+     "id": "cobalt_grub",
+     "name": "Cobalt Grub",
+     "minRank": 2,
+     "maxRank": 2,
+     "flavor": "A cart-sized larva gnawing through the mine walls.",
+     "cards": [
+      {
+       "id": "e_burrow_slam",
+       "name": "Burrow Slam",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_cobalt_shell",
+       "name": "Cobalt Shell",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "cobalt_burrower",
+     "stage": 0,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "golf ball",
+     "crystal": "scattered clusters",
+     "drops": [
+      "E-rank Death Crystal",
+      "Cobalt shell",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "cobalt_burrower",
+     "name": "Cobalt Burrower",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "Its cobalt shell turns aside picks and blades.",
+     "cards": [
+      {
+       "id": "e_burrow_slam",
+       "name": "Burrow Slam",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_cobalt_shell",
+       "name": "Cobalt Shell",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "cobalt_wyrmworm",
+     "stage": 1,
+     "art": "cobalt_burrower",
+     "ownArt": true,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Cobalt shell",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "cobalt_wyrmworm",
+     "name": "Cobalt Wyrmworm",
+     "minRank": 5,
+     "maxRank": 7,
+     "flavor": "A tunnel-wide worm whose maw is ringed in crystal teeth.",
+     "cards": [
+      {
+       "id": "e_burrow_slam",
+       "name": "Burrow Slam",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_cobalt_shell",
+       "name": "Cobalt Shell",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_cave_in",
+       "name": "Cave-In",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swallow",
+       "name": "Swallow Whole",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "softball to volleyball",
+     "crystal": "half the body armoured in crystal to crystal hide with bare seams",
+     "drops": [
+      "B-rank Death Crystal",
+      "Cobalt shell",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "moonstone_ravagers",
+   "name": "Moonstone Ravagers",
+   "inspiration": "D&D owlbear, FF beasts",
+   "element": "Water",
+   "role": "Bruiser",
+   "large": true,
+   "themes": [
+    "marsh",
+    "cave",
+    "blight",
+    "ruin"
+   ],
+   "lore": "Bear-like predators that hunt by moonlight. Moonstone grows in their fur and drinks in the light around them.",
+   "minRank": 2,
+   "maxRank": 6,
+   "material": "Moonstone claw",
+   "forms": [
+    {
+     "id": "moonstone_cub",
+     "name": "Moonstone Cub",
+     "minRank": 2,
+     "maxRank": 2,
+     "flavor": "Playful, until its mother answers its cry.",
+     "cards": [
+      {
+       "id": "e_moon_maul",
+       "name": "Moon Maul",
+       "ep": 1,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lunar_roar",
+       "name": "Lunar Roar",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "moonstone_ravager",
+     "stage": 0,
+     "art": "moonstone_ravager",
+     "ownArt": false,
+     "core": "golf ball",
+     "crystal": "scattered clusters",
+     "drops": [
+      "E-rank Death Crystal",
+      "Moonstone claw",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "moonstone_ravager",
+     "name": "Moonstone Ravager",
+     "minRank": 3,
+     "maxRank": 5,
+     "flavor": "A hulking beast with moonstone claws.",
+     "cards": [
+      {
+       "id": "e_moon_maul",
+       "name": "Moon Maul",
+       "ep": 1,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lunar_roar",
+       "name": "Lunar Roar",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "moonstone_ursine",
+     "stage": 1,
+     "art": "moonstone_ravager",
+     "ownArt": true,
+     "core": "tennis ball to softball",
+     "crystal": "crusted joints and spine to half the body armoured in crystal",
+     "drops": [
+      "D-rank Death Crystal",
+      "Moonstone claw",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "moonstone_ursine",
+     "name": "Moonstone Ursine",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "An ancient bear with a pale crystal crown.",
+     "cards": [
+      {
+       "id": "e_moon_maul",
+       "name": "Moon Maul",
+       "ep": 1,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lunar_roar",
+       "name": "Lunar Roar",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_crushing_hug",
+       "name": "Crushing Hug",
+       "ep": 2,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_tidal_swipe",
+       "name": "Tidal Swipe",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "moonstone_ravager",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Moonstone claw",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "stormglass_drakes",
+   "name": "Stormglass Drakes",
+   "inspiration": "D&D dragons and wyverns, FF Bahamut-line dragons",
+   "element": "Lightning",
+   "role": "Skirmisher",
+   "large": true,
+   "themes": [
+    "crystal",
+    "heartwood",
+    "ruin"
+   ],
+   "lore": "Dragons that nest in lightning-struck crystal spires. A drake becomes a wyvern, and a wyvern that survives a century of storms becomes a tempest dragon.",
+   "minRank": 3,
+   "maxRank": 9,
+   "material": "Stormglass scale",
+   "forms": [
+    {
+     "id": "stormglass_drake",
+     "name": "Stormglass Drake",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A young drake crackling with static.",
+     "cards": [
+      {
+       "id": "e_storm_breath",
+       "name": "Storm Breath",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_lightning_dive",
+       "name": "Lightning Dive",
+       "ep": 1,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Lightning",
+     "evolvesTo": "stormglass_wyvern",
+     "stage": 0,
+     "art": "stormglass_wyvern",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Stormglass scale",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "stormglass_wyvern",
+     "name": "Stormglass Wyvern",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "It rides the storm front and dives with the lightning.",
+     "cards": [
+      {
+       "id": "e_storm_breath",
+       "name": "Storm Breath",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_lightning_dive",
+       "name": "Lightning Dive",
+       "ep": 1,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Lightning",
+     "evolvesTo": "tempest_dragon",
+     "stage": 1,
+     "art": "stormglass_wyvern",
+     "ownArt": true,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Stormglass scale",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "tempest_dragon",
+     "name": "Tempest Dragon",
+     "minRank": 7,
+     "maxRank": 9,
+     "flavor": "A living thunderhead, its crystal scales ringing with every bolt.",
+     "cards": [
+      {
+       "id": "e_storm_breath",
+       "name": "Storm Breath",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_lightning_dive",
+       "name": "Lightning Dive",
+       "ep": 1,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_static_scales",
+       "name": "Static Scales",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_thunderclap",
+       "name": "Thunderclap",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Lightning",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "stormglass_wyvern",
+     "ownArt": false,
+     "core": "volleyball to beach ball",
+     "crystal": "crystal hide with bare seams to entire outer body sealed in crystal",
+     "drops": [
+      "S-rank Death Crystal",
+      "Stormglass scale",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eclipse_golems",
+   "name": "Eclipse Golems",
+   "inspiration": "D&D golems, FF Iron Giant",
+   "element": "Dark",
+   "role": "Bruiser",
+   "large": true,
+   "themes": [
+    "blight"
+   ],
+   "lore": "Constructs of rubble and crystal that assemble themselves around a dark orb. The largest is the blight's heart made flesh.",
+   "minRank": 4,
+   "maxRank": 9,
+   "material": "Eclipse stone",
+   "forms": [
+    {
+     "id": "shard_golem",
+     "name": "Shard Golem",
+     "minRank": 4,
+     "maxRank": 4,
+     "flavor": "Rubble held together by a pulsing orb.",
+     "cards": [
+      {
+       "id": "e_cleave",
+       "name": "Eclipse Crush",
+       "ep": 2,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_quake",
+       "name": "Core Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "eclipse_core_golem",
+     "stage": 0,
+     "art": "eclipse_core_golem",
+     "ownArt": false,
+     "core": "fist",
+     "crystal": "plated shoulders, back and limbs",
+     "drops": [
+      "C-rank Death Crystal",
+      "Eclipse stone",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "eclipse_core_golem",
+     "name": "Eclipse Core Golem",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "A titan of black stone around an eclipsed core.",
+     "cards": [
+      {
+       "id": "e_cleave",
+       "name": "Eclipse Crush",
+       "ep": 2,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_quake",
+       "name": "Core Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "heartrot_colossus",
+     "stage": 1,
+     "art": "eclipse_core_golem",
+     "ownArt": true,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Eclipse stone",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "heartrot_colossus",
+     "name": "Heartrot Colossus",
+     "minRank": 7,
+     "maxRank": 9,
+     "flavor": "The Silverwood's rotting heart, risen and walking.",
+     "cards": [
+      {
+       "id": "e_cleave",
+       "name": "Eclipse Crush",
+       "ep": 2,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_quake",
+       "name": "Core Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_dark_core",
+       "name": "Dark Core",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 40,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_orb_beam",
+       "name": "Orb Beam",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "eclipse_core_golem",
+     "ownArt": false,
+     "core": "volleyball to beach ball",
+     "crystal": "crystal hide with bare seams to entire outer body sealed in crystal",
+     "drops": [
+      "S-rank Death Crystal",
+      "Eclipse stone",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "gloam_oozes",
+   "name": "Gloam Oozes",
+   "inspiration": "D&D gelatinous cube and puddings, FF Flan",
+   "element": "Water",
+   "role": "Guardian",
+   "large": false,
+   "themes": [
+    "cave",
+    "marsh",
+    "blight"
+   ],
+   "lore": "Jellies that dissolve everything but crystal. Swallowed shards drift inside them, and the oldest are cubes of living geode that fill a corridor wall to wall.",
+   "minRank": 1,
+   "maxRank": 6,
+   "material": "Gloam gel",
+   "forms": [
+    {
+     "id": "gloam_ooze",
+     "name": "Gloam Ooze",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A puddle that glints with half-digested crystal.",
+     "cards": [
+      {
+       "id": "e_engulf",
+       "name": "Engulf",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_jelly_wobble",
+       "name": "Jelly Wobble",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.35,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "crystal_jelly",
+     "stage": 0,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Gloam gel",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crystal_jelly",
+     "name": "Crystal Jelly",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A wobbling flan with a red orb at its centre.",
+     "cards": [
+      {
+       "id": "e_engulf",
+       "name": "Engulf",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_jelly_wobble",
+       "name": "Jelly Wobble",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.35,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_acid_splash",
+       "name": "Acid Splash",
+       "ep": 2,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "geode_cube",
+     "stage": 1,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Gloam gel",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "geode_cube",
+     "name": "Geode Cube",
+     "minRank": 5,
+     "maxRank": 5,
+     "flavor": "A corridor-filling cube; skeletons hang inside it.",
+     "cards": [
+      {
+       "id": "e_engulf",
+       "name": "Engulf",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_jelly_wobble",
+       "name": "Jelly Wobble",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.35,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_acid_splash",
+       "name": "Acid Splash",
+       "ep": 2,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_dissolve",
+       "name": "Dissolve",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "abyssal_gel",
+     "stage": 2,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "softball",
+     "crystal": "half the body armoured in crystal",
+     "drops": [
+      "B-rank Death Crystal",
+      "Gloam gel",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "abyssal_gel",
+     "name": "Abyssal Gel",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "A black tide that swallows light itself.",
+     "cards": [
+      {
+       "id": "e_engulf",
+       "name": "Engulf",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_jelly_wobble",
+       "name": "Jelly Wobble",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.35,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_acid_splash",
+       "name": "Acid Splash",
+       "ep": 2,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_dissolve",
+       "name": "Dissolve",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "",
+     "stage": 3,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Gloam gel",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "husks",
+   "name": "Husks",
+   "inspiration": "D&D zombies, ghouls, wights and liches; GKOM Husk lore",
+   "element": "Dark",
+   "role": "Bruiser",
+   "large": false,
+   "themes": [
+    "ruin",
+    "blight",
+    "keep"
+   ],
+   "lore": "The men GKOM killed. Husks are what is left when the infection outlives the mind: they climb the rank ladder by devouring other orbs, and the oldest remember enough to cast.",
+   "minRank": 1,
+   "maxRank": 9,
+   "material": "Husk bone",
+   "forms": [
+    {
+     "id": "hollow_husk",
+     "name": "Hollow Husk",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A shambling corpse with a grey orb where its heart was.",
+     "cards": [
+      {
+       "id": "e_grasp",
+       "name": "Hollow Grasp",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rot_bite",
+       "name": "Rot Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "crystal_ghoul",
+     "stage": 0,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Husk bone",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crystal_ghoul",
+     "name": "Crystal Ghoul",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A fast, starving husk with crystal teeth.",
+     "cards": [
+      {
+       "id": "e_grasp",
+       "name": "Hollow Grasp",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rot_bite",
+       "name": "Rot Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_undying",
+       "name": "Undying",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 10,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "wight_knight",
+     "stage": 1,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Husk bone",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "wight_knight",
+     "name": "Wight Knight",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "A fallen soldier still wearing its rusted oath.",
+     "cards": [
+      {
+       "id": "e_grasp",
+       "name": "Hollow Grasp",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rot_bite",
+       "name": "Rot Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_undying",
+       "name": "Undying",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 10,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_death_knell",
+       "name": "Death Knell",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "orb_lich",
+     "stage": 2,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Husk bone",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "orb_lich",
+     "name": "Orb Lich",
+     "minRank": 7,
+     "maxRank": 9,
+     "flavor": "A husk that kept its mind; its orb floats above an open ribcage.",
+     "cards": [
+      {
+       "id": "e_grasp",
+       "name": "Hollow Grasp",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rot_bite",
+       "name": "Rot Bite",
+       "ep": 1,
+       "power": 0.9,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_undying",
+       "name": "Undying",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 10,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_death_knell",
+       "name": "Death Knell",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 3,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "volleyball to beach ball",
+     "crystal": "crystal hide with bare seams to entire outer body sealed in crystal",
+     "drops": [
+      "S-rank Death Crystal",
+      "Husk bone",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "veinweb_spiders",
+   "name": "Veinweb Spiders",
+   "inspiration": "D&D giant spider and drider, FF spiders",
+   "element": "Dark",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "cave",
+    "heartwood",
+    "ruin"
+   ],
+   "lore": "Spiders that spin crystal-fibre webs strung like black veins through the trees.",
+   "minRank": 2,
+   "maxRank": 7,
+   "material": "Veinweb silk",
+   "forms": [
+    {
+     "id": "veinweb_spider",
+     "name": "Veinweb Spider",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "A dog-sized spider with crystal-tipped legs.",
+     "cards": [
+      {
+       "id": "e_venom_bite",
+       "name": "Venom Bite",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_web_shot",
+       "name": "Web Shot",
+       "ep": 1,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.35,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "crystalweb_broodmother",
+     "stage": 0,
+     "art": "flintjaw_skitterer",
+     "ownArt": false,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Veinweb silk",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crystalweb_broodmother",
+     "name": "Crystalweb Broodmother",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Her back is a nest of hatching crystal eggs.",
+     "cards": [
+      {
+       "id": "e_venom_bite",
+       "name": "Venom Bite",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_web_shot",
+       "name": "Web Shot",
+       "ep": 1,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.35,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_brood",
+       "name": "Spawn Brood",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "silkqueen_arachne",
+     "stage": 1,
+     "art": "flintjaw_skitterer",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Veinweb silk",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "silkqueen_arachne",
+     "name": "Silkqueen Arachne",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "Half woman, half spider, wholly GKOM.",
+     "cards": [
+      {
+       "id": "e_venom_bite",
+       "name": "Venom Bite",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_web_shot",
+       "name": "Web Shot",
+       "ep": 1,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.35,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_brood",
+       "name": "Spawn Brood",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_silk_storm",
+       "name": "Silk Storm",
+       "ep": 3,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "flintjaw_skitterer",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Veinweb silk",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "glint_serpents",
+   "name": "Glint Serpents",
+   "inspiration": "D&D basilisk and naga, Norse world-serpent, FF Midgardsormr",
+   "element": "Earth",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "marsh",
+    "ruin",
+    "crystal"
+   ],
+   "lore": "Serpents whose gaze crystallises flesh. The eldest naga keep ruined temples; the last of the line coils around mountains.",
+   "minRank": 1,
+   "maxRank": 9,
+   "material": "Glint scale",
+   "forms": [
+    {
+     "id": "glint_adder",
+     "name": "Glint Adder",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A small snake with jewelled scales and a mean bite.",
+     "cards": [
+      {
+       "id": "e_fang",
+       "name": "Glint Fang",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stone_gaze",
+       "name": "Stone Gaze",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "gazestone_basilisk",
+     "stage": 0,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Glint scale",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "gazestone_basilisk",
+     "name": "Gazestone Basilisk",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "Look away: its gaze turns skin to quartz.",
+     "cards": [
+      {
+       "id": "e_fang",
+       "name": "Glint Fang",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stone_gaze",
+       "name": "Stone Gaze",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_coil",
+       "name": "Coil",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "coilqueen_naga",
+     "stage": 1,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Glint scale",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "coilqueen_naga",
+     "name": "Coilqueen Naga",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "A serpent priestess guarding a drowned temple.",
+     "cards": [
+      {
+       "id": "e_fang",
+       "name": "Glint Fang",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stone_gaze",
+       "name": "Stone Gaze",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_coil",
+       "name": "Coil",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_petrify_wave",
+       "name": "Petrify Wave",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "worldcoil_serpent",
+     "stage": 2,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Glint scale",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "worldcoil_serpent",
+     "name": "Worldcoil Serpent",
+     "minRank": 7,
+     "maxRank": 9,
+     "flavor": "Its crystal coils are mistaken for mountain ridges.",
+     "cards": [
+      {
+       "id": "e_fang",
+       "name": "Glint Fang",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_stone_gaze",
+       "name": "Stone Gaze",
+       "ep": 2,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_coil",
+       "name": "Coil",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_petrify_wave",
+       "name": "Petrify Wave",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 3,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "volleyball to beach ball",
+     "crystal": "crystal hide with bare seams to entire outer body sealed in crystal",
+     "drops": [
+      "S-rank Death Crystal",
+      "Glint scale",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "opal_sirens",
+   "name": "Opal Sirens",
+   "inspiration": "D&D harpy and siren, FF Siren",
+   "element": "Water",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "marsh",
+    "heartwood",
+    "ruin"
+   ],
+   "lore": "Winged singers of the drowned groves. Their opal throats carry a song that pulls travellers into the water.",
+   "minRank": 2,
+   "maxRank": 6,
+   "material": "Opal plume",
+   "forms": [
+    {
+     "id": "opal_harpy",
+     "name": "Opal Harpy",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "Screeching, opal-feathered and always hungry.",
+     "cards": [
+      {
+       "id": "e_talon",
+       "name": "Opal Talon",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lure_song",
+       "name": "Lure Song",
+       "ep": 2,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "blood_opal_siren",
+     "stage": 0,
+     "art": "blood_opal_siren",
+     "ownArt": false,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Opal plume",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "blood_opal_siren",
+     "name": "Blood Opal Siren",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Her song is beautiful. Her opal heart is not.",
+     "cards": [
+      {
+       "id": "e_talon",
+       "name": "Opal Talon",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lure_song",
+       "name": "Lure Song",
+       "ep": 2,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_tide_hymn",
+       "name": "Tide Hymn",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 30,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "siren_matron",
+     "stage": 1,
+     "art": "blood_opal_siren",
+     "ownArt": true,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Opal plume",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "siren_matron",
+     "name": "Siren Matron",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "The choir mistress of the sunken marsh.",
+     "cards": [
+      {
+       "id": "e_talon",
+       "name": "Opal Talon",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_lure_song",
+       "name": "Lure Song",
+       "ep": 2,
+       "power": 0.6,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_tide_hymn",
+       "name": "Tide Hymn",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 30,
+       "magic": true
+      },
+      {
+       "id": "e_drowning_aria",
+       "name": "Drowning Aria",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "blood_opal_siren",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Opal plume",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cathedral_hydras",
+   "name": "Cathedral Hydras",
+   "inspiration": "D&D / Greek hydra",
+   "element": "Earth",
+   "role": "Bruiser",
+   "large": true,
+   "themes": [
+    "marsh",
+    "heartwood"
+   ],
+   "lore": "Many-headed swamp serpents. Each new head grows around a fresh crystal; the oldest hydra wears a cathedral of them.",
+   "minRank": 4,
+   "maxRank": 9,
+   "material": "Hydra crystal",
+   "forms": [
+    {
+     "id": "fen_hydra",
+     "name": "Fen Hydra",
+     "minRank": 4,
+     "maxRank": 4,
+     "flavor": "Three heads, all of them angry.",
+     "cards": [
+      {
+       "id": "e_heads_bite",
+       "name": "Many Bites",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_regrow",
+       "name": "Regrow",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "marsh_hydra",
+     "stage": 0,
+     "art": "verdant_cathedral_hydra",
+     "ownArt": false,
+     "core": "fist",
+     "crystal": "plated shoulders, back and limbs",
+     "drops": [
+      "C-rank Death Crystal",
+      "Hydra crystal",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "marsh_hydra",
+     "name": "Marsh Hydra",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "Cut one head and two crystal heads grow back.",
+     "cards": [
+      {
+       "id": "e_heads_bite",
+       "name": "Many Bites",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_regrow",
+       "name": "Regrow",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_acid_spray",
+       "name": "Acid Spray",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "verdant_cathedral_hydra",
+     "stage": 1,
+     "art": "verdant_cathedral_hydra",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Hydra crystal",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "verdant_cathedral_hydra",
+     "name": "Verdant Cathedral Hydra",
+     "minRank": 7,
+     "maxRank": 9,
+     "flavor": "Its necks rise like the spires of a green-glass cathedral.",
+     "cards": [
+      {
+       "id": "e_heads_bite",
+       "name": "Many Bites",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_regrow",
+       "name": "Regrow",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_acid_spray",
+       "name": "Acid Spray",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_hydra_fury",
+       "name": "Hydra Fury",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "verdant_cathedral_hydra",
+     "ownArt": true,
+     "core": "volleyball to beach ball",
+     "crystal": "crystal hide with bare seams to entire outer body sealed in crystal",
+     "drops": [
+      "S-rank Death Crystal",
+      "Hydra crystal",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "geode_knights",
+   "name": "Geode Knights",
+   "inspiration": "D&D animated armor and death knight, FF Iron Knight",
+   "element": "Light",
+   "role": "Guardian",
+   "large": false,
+   "themes": [
+    "keep",
+    "ruin"
+   ],
+   "lore": "Suits of armour filled with crystal instead of men. They still salute, still hold the gate, still challenge travellers.",
+   "minRank": 3,
+   "maxRank": 7,
+   "material": "Geode plate",
+   "forms": [
+    {
+     "id": "geode_squire",
+     "name": "Geode Squire",
+     "minRank": 3,
+     "maxRank": 3,
+     "flavor": "An empty helmet glowing from within.",
+     "cards": [
+      {
+       "id": "e_geode_strike",
+       "name": "Geode Strike",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shield_wall",
+       "name": "Shield Wall",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Light",
+     "evolvesTo": "geode_knight",
+     "stage": 0,
+     "art": "crowned_geode_knight",
+     "ownArt": false,
+     "core": "tennis ball",
+     "crystal": "crusted joints and spine",
+     "drops": [
+      "D-rank Death Crystal",
+      "Geode plate",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "geode_knight",
+     "name": "Geode Knight",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "A full suit of plate grown together with quartz.",
+     "cards": [
+      {
+       "id": "e_geode_strike",
+       "name": "Geode Strike",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shield_wall",
+       "name": "Shield Wall",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rally",
+       "name": "Rally",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Light",
+     "evolvesTo": "crowned_geode_knight",
+     "stage": 1,
+     "art": "crowned_geode_knight",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Geode plate",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crowned_geode_knight",
+     "name": "Crowned Geode Knight",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "Its crystal crown is all that is left of a king.",
+     "cards": [
+      {
+       "id": "e_geode_strike",
+       "name": "Geode Strike",
+       "ep": 1,
+       "power": 1.2,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_shield_wall",
+       "name": "Shield Wall",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.4,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rally",
+       "name": "Rally",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_judgement",
+       "name": "Crystal Judgement",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Light",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "crowned_geode_knight",
+     "ownArt": true,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Geode plate",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "maw_behemoths",
+   "name": "Maw Behemoths",
+   "inspiration": "FF Behemoth / King Behemoth, Diablo demonic beasts",
+   "element": "Dark",
+   "role": "Bruiser",
+   "large": true,
+   "themes": [
+    "blight",
+    "mine"
+   ],
+   "lore": "Horned calamity beasts. Even the cub is a B-rank threat; the full-grown Obsidian Maw is sealed in obsidian crystal and bends gravity around its beach-ball core.",
+   "minRank": 5,
+   "maxRank": 9,
+   "material": "Obsidian horn",
+   "forms": [
+    {
+     "id": "maw_cub",
+     "name": "Maw Cub",
+     "minRank": 5,
+     "maxRank": 5,
+     "flavor": "Already the size of a horse.",
+     "cards": [
+      {
+       "id": "e_gravitic_rend",
+       "name": "Gravitic Rend",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_obsidian_quake",
+       "name": "Obsidian Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "maw_behemoth",
+     "stage": 0,
+     "art": "obsidian_maw_behemoth",
+     "ownArt": false,
+     "core": "softball",
+     "crystal": "half the body armoured in crystal",
+     "drops": [
+      "B-rank Death Crystal",
+      "Obsidian horn",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "maw_behemoth",
+     "name": "Maw Behemoth",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "Its roar shakes stones loose from cliffs.",
+     "cards": [
+      {
+       "id": "e_gravitic_rend",
+       "name": "Gravitic Rend",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_obsidian_quake",
+       "name": "Obsidian Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_voidcore_pulse",
+       "name": "Voidcore Pulse",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "obsidian_maw_behemoth",
+     "stage": 1,
+     "art": "obsidian_maw_behemoth",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Obsidian horn",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "obsidian_maw_behemoth",
+     "name": "Obsidian Maw Behemoth",
+     "minRank": 8,
+     "maxRank": 9,
+     "flavor": "Its entire outer body is sealed in obsidian GKOM crystals.",
+     "cards": [
+      {
+       "id": "e_gravitic_rend",
+       "name": "Gravitic Rend",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_obsidian_quake",
+       "name": "Obsidian Quake",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_voidcore_pulse",
+       "name": "Voidcore Pulse",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_maw_of_ruin",
+       "name": "Maw of Ruin",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "obsidian_maw_behemoth",
+     "ownArt": true,
+     "core": "basketball to beach ball",
+     "crystal": "sealed in crystal but for eyes and maw to entire outer body sealed in crystal",
+     "drops": [
+      "SS-rank Death Crystal",
+      "Obsidian horn",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crag_trolls",
+   "name": "Crag Trolls",
+   "inspiration": "D&D ogre and troll, FF Ogre",
+   "element": "Earth",
+   "role": "Bruiser",
+   "large": true,
+   "themes": [
+    "mine",
+    "cave",
+    "keep"
+   ],
+   "lore": "Brutes of the mountain passes. Trolls heal around their crystal faster than a sword can cut.",
+   "minRank": 3,
+   "maxRank": 7,
+   "material": "Troll crystal",
+   "forms": [
+    {
+     "id": "cragling_ogre",
+     "name": "Cragling Ogre",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "Dim, hungry and carrying half a tree.",
+     "cards": [
+      {
+       "id": "e_club",
+       "name": "Crag Club",
+       "ep": 1,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_troll_blood",
+       "name": "Troll Blood",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "crag_troll",
+     "stage": 0,
+     "art": "moonstone_ravager",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Troll crystal",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crag_troll",
+     "name": "Crag Troll",
+     "minRank": 5,
+     "maxRank": 6,
+     "flavor": "Cut it and the crystal knits the wound shut.",
+     "cards": [
+      {
+       "id": "e_club",
+       "name": "Crag Club",
+       "ep": 1,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_troll_blood",
+       "name": "Troll Blood",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_boulder_toss",
+       "name": "Boulder Toss",
+       "ep": 2,
+       "power": 1.7,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "ironhide_troll_king",
+     "stage": 1,
+     "art": "moonstone_ravager",
+     "ownArt": false,
+     "core": "softball to grapefruit",
+     "crystal": "half the body armoured in crystal to most of the body sheathed",
+     "drops": [
+      "B-rank Death Crystal",
+      "Troll crystal",
+      "Refined GKOM Essence"
+     ]
+    },
+    {
+     "id": "ironhide_troll_king",
+     "name": "Ironhide Troll King",
+     "minRank": 7,
+     "maxRank": 7,
+     "flavor": "A troll so old its hide has turned to ore.",
+     "cards": [
+      {
+       "id": "e_club",
+       "name": "Crag Club",
+       "ep": 1,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_troll_blood",
+       "name": "Troll Blood",
+       "ep": 2,
+       "power": 0,
+       "target": "Self",
+       "status": "Regen",
+       "magnitude": 12,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_boulder_toss",
+       "name": "Boulder Toss",
+       "ep": 2,
+       "power": 1.7,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rockslide",
+       "name": "Rockslide",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "moonstone_ravager",
+     "ownArt": false,
+     "core": "volleyball",
+     "crystal": "crystal hide with bare seams",
+     "drops": [
+      "S-rank Death Crystal",
+      "Troll crystal",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hoard_mimics",
+   "name": "Hoard Mimics",
+   "inspiration": "D&D mimic, FF Mimic",
+   "element": "Neutral",
+   "role": "Guardian",
+   "large": false,
+   "themes": [
+    "ruin",
+    "keep",
+    "mine"
+   ],
+   "lore": "GKOM learned that adventurers open boxes. Mimics are orbs wearing furniture.",
+   "minRank": 2,
+   "maxRank": 6,
+   "material": "Mimic tongue",
+   "forms": [
+    {
+     "id": "crate_mimic",
+     "name": "Crate Mimic",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "A supply crate with too many teeth.",
+     "cards": [
+      {
+       "id": "e_lid_snap",
+       "name": "Lid Snap",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_play_dead",
+       "name": "Play Dead",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 30,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Neutral",
+     "evolvesTo": "chest_mimic",
+     "stage": 0,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Mimic tongue",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "chest_mimic",
+     "name": "Chest Mimic",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "A treasure chest that is the treasure's last owner.",
+     "cards": [
+      {
+       "id": "e_lid_snap",
+       "name": "Lid Snap",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_play_dead",
+       "name": "Play Dead",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 30,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_adhesive_tongue",
+       "name": "Sticky Tongue",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Neutral",
+     "evolvesTo": "vault_devourer",
+     "stage": 1,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Mimic tongue",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "vault_devourer",
+     "name": "Vault Devourer",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "A whole vault door, hungry.",
+     "cards": [
+      {
+       "id": "e_lid_snap",
+       "name": "Lid Snap",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_play_dead",
+       "name": "Play Dead",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 30,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_adhesive_tongue",
+       "name": "Sticky Tongue",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_devour_hoard",
+       "name": "Devour Hoard",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Neutral",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "cobalt_burrower",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Mimic tongue",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cinder_motes",
+   "name": "Cinder Motes",
+   "inspiration": "D&D fire elemental, FF Bomb",
+   "element": "Fire",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "mine",
+    "blight",
+    "ruin"
+   ],
+   "lore": "Sparks of corrupted fire that swell when fed. A mote that eats enough ore becomes a walking forge.",
+   "minRank": 1,
+   "maxRank": 7,
+   "material": "Cinder core",
+   "forms": [
+    {
+     "id": "cinder_mote",
+     "name": "Cinder Mote",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A grinning spark that grows when it burns.",
+     "cards": [
+      {
+       "id": "e_ember",
+       "name": "Ember Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_self_destruct",
+       "name": "Swell",
+       "ep": 2,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "cinder_elemental",
+     "stage": 0,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Cinder core",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "cinder_elemental",
+     "name": "Cinder Elemental",
+     "minRank": 3,
+     "maxRank": 5,
+     "flavor": "A pillar of black fire around a red orb.",
+     "cards": [
+      {
+       "id": "e_ember",
+       "name": "Ember Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_self_destruct",
+       "name": "Swell",
+       "ep": 2,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_flame_wave",
+       "name": "Flame Wave",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_stoke",
+       "name": "Stoke",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "AttackUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "pyre_titan",
+     "stage": 1,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "tennis ball to softball",
+     "crystal": "crusted joints and spine to half the body armoured in crystal",
+     "drops": [
+      "D-rank Death Crystal",
+      "Cinder core",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "pyre_titan",
+     "name": "Pyre Titan",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "A giant of molten crystal; the ground cracks where it walks.",
+     "cards": [
+      {
+       "id": "e_ember",
+       "name": "Ember Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_self_destruct",
+       "name": "Swell",
+       "ep": 2,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_flame_wave",
+       "name": "Flame Wave",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_stoke",
+       "name": "Stoke",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "AttackUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Cinder core",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tide_wisps",
+   "name": "Tide Wisps",
+   "inspiration": "D&D water elemental, FF Leviathan",
+   "element": "Water",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "marsh",
+    "cave",
+    "heartwood"
+   ],
+   "lore": "Ripples on the lake that look back. In the deep lakes they gather into a serpent of black water.",
+   "minRank": 1,
+   "maxRank": 8,
+   "material": "Tide pearl",
+   "forms": [
+    {
+     "id": "tide_wisp",
+     "name": "Tide Wisp",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A drifting bubble of lake water with a grey orb inside.",
+     "cards": [
+      {
+       "id": "e_splash",
+       "name": "Splash",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_ebb",
+       "name": "Ebb",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 24,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "undine",
+     "stage": 0,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Tide pearl",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "undine",
+     "name": "Undine",
+     "minRank": 3,
+     "maxRank": 5,
+     "flavor": "A water maiden with crystal eyes.",
+     "cards": [
+      {
+       "id": "e_splash",
+       "name": "Splash",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_ebb",
+       "name": "Ebb",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 24,
+       "magic": true
+      },
+      {
+       "id": "e_undertow",
+       "name": "Undertow",
+       "ep": 2,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Water",
+     "evolvesTo": "abyssal_tidewyrm",
+     "stage": 1,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "tennis ball to softball",
+     "crystal": "crusted joints and spine to half the body armoured in crystal",
+     "drops": [
+      "D-rank Death Crystal",
+      "Tide pearl",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "abyssal_tidewyrm",
+     "name": "Abyssal Tidewyrm",
+     "minRank": 6,
+     "maxRank": 8,
+     "flavor": "A serpent of black water coiled around a crimson orb.",
+     "cards": [
+      {
+       "id": "e_splash",
+       "name": "Splash",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_ebb",
+       "name": "Ebb",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 24,
+       "magic": true
+      },
+      {
+       "id": "e_undertow",
+       "name": "Undertow",
+       "ep": 2,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_tidal_wave",
+       "name": "Tidal Wave",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Water",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "viridian_prism_warden",
+     "ownArt": false,
+     "core": "grapefruit to basketball",
+     "crystal": "most of the body sheathed to sealed in crystal but for eyes and maw",
+     "drops": [
+      "A-rank Death Crystal",
+      "Tide pearl",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "static_sprites",
+   "name": "Static Sprites",
+   "inspiration": "D&D air elemental and djinni, FF Ramuh-style storm spirits",
+   "element": "Lightning",
+   "role": "Skirmisher",
+   "large": false,
+   "themes": [
+    "crystal",
+    "mine",
+    "heartwood"
+   ],
+   "lore": "Sparks that dance between crystal spires. Enough of them become a storm with a face.",
+   "minRank": 1,
+   "maxRank": 7,
+   "material": "Static crystal",
+   "forms": [
+    {
+     "id": "static_sprite",
+     "name": "Static Sprite",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A crackling spark that loves metal.",
+     "cards": [
+      {
+       "id": "e_zap",
+       "name": "Zap",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_charge_up",
+       "name": "Charge Up",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Lightning",
+     "evolvesTo": "storm_elemental",
+     "stage": 0,
+     "art": "glasswing_mite",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Static crystal",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "storm_elemental",
+     "name": "Storm Elemental",
+     "minRank": 3,
+     "maxRank": 5,
+     "flavor": "A whirling cloud stitched with crystal lightning.",
+     "cards": [
+      {
+       "id": "e_zap",
+       "name": "Zap",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_charge_up",
+       "name": "Charge Up",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_chain_lightning",
+       "name": "Chain Lightning",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Lightning",
+     "evolvesTo": "thunderhead_djinn",
+     "stage": 1,
+     "art": "glasswing_mite",
+     "ownArt": false,
+     "core": "tennis ball to softball",
+     "crystal": "crusted joints and spine to half the body armoured in crystal",
+     "drops": [
+      "D-rank Death Crystal",
+      "Static crystal",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "thunderhead_djinn",
+     "name": "Thunderhead Djinn",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "A storm giant that bargains, then betrays.",
+     "cards": [
+      {
+       "id": "e_zap",
+       "name": "Zap",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_charge_up",
+       "name": "Charge Up",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_chain_lightning",
+       "name": "Chain Lightning",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_thunder_lance",
+       "name": "Thunder Lance",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Lightning",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "glasswing_mite",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Static crystal",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rotcaps",
+   "name": "Rotcaps",
+   "inspiration": "D&D myconid and violet fungus, FF Funguar",
+   "element": "Earth",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "marsh",
+    "blight",
+    "cave"
+   ],
+   "lore": "Mushrooms that grew on husks. Their spores carry a mild GKOM that makes victims sleepy and slow.",
+   "minRank": 1,
+   "maxRank": 5,
+   "material": "Rotcap spore",
+   "forms": [
+    {
+     "id": "sporecap",
+     "name": "Sporecap",
+     "minRank": 1,
+     "maxRank": 2,
+     "flavor": "A waddling mushroom that sneezes grey spores.",
+     "cards": [
+      {
+       "id": "e_spore_puff",
+       "name": "Spore Puff",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_mycelium_mend",
+       "name": "Mycelium Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 22,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "spore_shambler",
+     "stage": 0,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "marble to golf ball",
+     "crystal": "a few small growths to scattered clusters",
+     "drops": [
+      "F-rank Death Crystal",
+      "Rotcap spore",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "spore_shambler",
+     "name": "Spore Shambler",
+     "minRank": 3,
+     "maxRank": 4,
+     "flavor": "A husk overgrown by fungus, still walking.",
+     "cards": [
+      {
+       "id": "e_spore_puff",
+       "name": "Spore Puff",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_mycelium_mend",
+       "name": "Mycelium Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 22,
+       "magic": true
+      },
+      {
+       "id": "e_sleep_spores",
+       "name": "Sleep Spores",
+       "ep": 2,
+       "power": 0.5,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "rotbloom_matron",
+     "stage": 1,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "tennis ball to fist",
+     "crystal": "crusted joints and spine to plated shoulders, back and limbs",
+     "drops": [
+      "D-rank Death Crystal",
+      "Rotcap spore",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "rotbloom_matron",
+     "name": "Rotbloom Matron",
+     "minRank": 5,
+     "maxRank": 5,
+     "flavor": "A fungal mother-flower the size of a cottage.",
+     "cards": [
+      {
+       "id": "e_spore_puff",
+       "name": "Spore Puff",
+       "ep": 1,
+       "power": 0.8,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_mycelium_mend",
+       "name": "Mycelium Mend",
+       "ep": 1,
+       "power": 0,
+       "target": "Ally",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 22,
+       "magic": true
+      },
+      {
+       "id": "e_sleep_spores",
+       "name": "Sleep Spores",
+       "ep": 2,
+       "power": 0.5,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_rot_bloom",
+       "name": "Rot Bloom",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 9,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "shardling_sprout",
+     "ownArt": false,
+     "core": "softball",
+     "crystal": "half the body armoured in crystal",
+     "drops": [
+      "B-rank Death Crystal",
+      "Rotcap spore",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ruin_gargoyles",
+   "name": "Ruin Gargoyles",
+   "inspiration": "D&D gargoyle and imp, FF gargoyles",
+   "element": "Earth",
+   "role": "Guardian",
+   "large": false,
+   "themes": [
+    "ruin",
+    "keep"
+   ],
+   "lore": "Statues the GKOM crept into. They sit still for decades, then move all at once.",
+   "minRank": 2,
+   "maxRank": 6,
+   "material": "Gargoyle grit",
+   "forms": [
+    {
+     "id": "grit_imp",
+     "name": "Grit Imp",
+     "minRank": 2,
+     "maxRank": 2,
+     "flavor": "A pebble-skinned imp that throws gravel and giggles.",
+     "cards": [
+      {
+       "id": "e_stone_claw",
+       "name": "Stone Claw",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_statue_form",
+       "name": "Statue Form",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.45,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "ruin_gargoyle",
+     "stage": 0,
+     "art": "obsidian_talon",
+     "ownArt": false,
+     "core": "golf ball",
+     "crystal": "scattered clusters",
+     "drops": [
+      "E-rank Death Crystal",
+      "Gargoyle grit",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "ruin_gargoyle",
+     "name": "Ruin Gargoyle",
+     "minRank": 3,
+     "maxRank": 5,
+     "flavor": "It was on the roof. Now it is behind you.",
+     "cards": [
+      {
+       "id": "e_stone_claw",
+       "name": "Stone Claw",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_statue_form",
+       "name": "Statue Form",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.45,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swoop",
+       "name": "Swoop",
+       "ep": 2,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": false,
+     "element": "Earth",
+     "evolvesTo": "cathedral_gargoyle_lord",
+     "stage": 1,
+     "art": "obsidian_talon",
+     "ownArt": false,
+     "core": "tennis ball to softball",
+     "crystal": "crusted joints and spine to half the body armoured in crystal",
+     "drops": [
+      "D-rank Death Crystal",
+      "Gargoyle grit",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "cathedral_gargoyle_lord",
+     "name": "Cathedral Gargoyle Lord",
+     "minRank": 6,
+     "maxRank": 6,
+     "flavor": "A gargoyle the size of a bell tower.",
+     "cards": [
+      {
+       "id": "e_stone_claw",
+       "name": "Stone Claw",
+       "ep": 1,
+       "power": 1.15,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_statue_form",
+       "name": "Statue Form",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.45,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_swoop",
+       "name": "Swoop",
+       "ep": 2,
+       "power": 1.5,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_granite_cry",
+       "name": "Granite Cry",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Guardian",
+     "large": true,
+     "element": "Earth",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "obsidian_talon",
+     "ownArt": false,
+     "core": "grapefruit",
+     "crystal": "most of the body sheathed",
+     "drops": [
+      "A-rank Death Crystal",
+      "Gargoyle grit",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "gloomshades",
+   "name": "Gloomshades",
+   "inspiration": "D&D specter, banshee and wraith, FF ghosts",
+   "element": "Dark",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "ruin",
+    "blight",
+    "heartwood"
+   ],
+   "lore": "Shadows of the GKOM dead. A shade that keeps feeding becomes a banshee, and a banshee becomes a hole in the world.",
+   "minRank": 2,
+   "maxRank": 7,
+   "material": "Shade essence",
+   "forms": [
+    {
+     "id": "gloomshade",
+     "name": "Gloomshade",
+     "minRank": 2,
+     "maxRank": 3,
+     "flavor": "A shadow that moves against the light.",
+     "cards": [
+      {
+       "id": "e_chill_touch",
+       "name": "Chill Touch",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.15,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_fade",
+       "name": "Fade",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "wailing_banshee",
+     "stage": 0,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "golf ball to tennis ball",
+     "crystal": "scattered clusters to crusted joints and spine",
+     "drops": [
+      "E-rank Death Crystal",
+      "Shade essence",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "wailing_banshee",
+     "name": "Wailing Banshee",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "Her scream cracks crystal and eardrums alike.",
+     "cards": [
+      {
+       "id": "e_chill_touch",
+       "name": "Chill Touch",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.15,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_fade",
+       "name": "Fade",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Banshee Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "void_wraith",
+     "stage": 1,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Shade essence",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "void_wraith",
+     "name": "Void Wraith",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "A tear in the air with a crimson orb for a heart.",
+     "cards": [
+      {
+       "id": "e_chill_touch",
+       "name": "Chill Touch",
+       "ep": 1,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.15,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_fade",
+       "name": "Fade",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 25,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Banshee Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_soul_rend",
+       "name": "Soul Rend",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Shade essence",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "spinetail_chimeras",
+   "name": "Spinetail Chimeras",
+   "inspiration": "D&D manticore and chimera, FF Chimera",
+   "element": "Fire",
+   "role": "Bruiser",
+   "large": false,
+   "themes": [
+    "keep",
+    "mine",
+    "crystal"
+   ],
+   "lore": "Beasts stitched together by GKOM from whatever it caught. Their tails fire crystal spines.",
+   "minRank": 3,
+   "maxRank": 8,
+   "material": "Chimera spine",
+   "forms": [
+    {
+     "id": "spinetail_lynx",
+     "name": "Spinetail Lynx",
+     "minRank": 3,
+     "maxRank": 3,
+     "flavor": "A lynx with a scorpion's crystal tail.",
+     "cards": [
+      {
+       "id": "e_maul",
+       "name": "Maul",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_spine_volley",
+       "name": "Spine Volley",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Skirmisher",
+     "large": false,
+     "element": "Fire",
+     "evolvesTo": "manticore",
+     "stage": 0,
+     "art": "thorncrystal_stalker",
+     "ownArt": false,
+     "core": "tennis ball",
+     "crystal": "crusted joints and spine",
+     "drops": [
+      "D-rank Death Crystal",
+      "Chimera spine",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "manticore",
+     "name": "Manticore",
+     "minRank": 4,
+     "maxRank": 6,
+     "flavor": "A lion's body, a man's grin, and a tail full of spines.",
+     "cards": [
+      {
+       "id": "e_maul",
+       "name": "Maul",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_spine_volley",
+       "name": "Spine Volley",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_fire_breath",
+       "name": "Fire Breath",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "crystal_chimera",
+     "stage": 1,
+     "art": "thorncrystal_stalker",
+     "ownArt": false,
+     "core": "fist to grapefruit",
+     "crystal": "plated shoulders, back and limbs to most of the body sheathed",
+     "drops": [
+      "C-rank Death Crystal",
+      "Chimera spine",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crystal_chimera",
+     "name": "Crystal Chimera",
+     "minRank": 7,
+     "maxRank": 8,
+     "flavor": "Lion, goat and dragon, fused in red crystal.",
+     "cards": [
+      {
+       "id": "e_maul",
+       "name": "Maul",
+       "ep": 1,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_spine_volley",
+       "name": "Spine Volley",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_fire_breath",
+       "name": "Fire Breath",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_three_heads",
+       "name": "Three Heads",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Bruiser",
+     "large": true,
+     "element": "Fire",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "thorncrystal_stalker",
+     "ownArt": false,
+     "core": "volleyball to basketball",
+     "crystal": "crystal hide with bare seams to sealed in crystal but for eyes and maw",
+     "drops": [
+      "S-rank Death Crystal",
+      "Chimera spine",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "whisperers",
+   "name": "Whisperers",
+   "inspiration": "GKOM-A cultists (Weaververse \"Whisperers\"), D&D cult fanatics",
+   "element": "Dark",
+   "role": "Caster",
+   "large": false,
+   "themes": [
+    "ruin",
+    "keep",
+    "blight"
+   ],
+   "lore": "People who survived GKOM and chose to serve it. They command lower-rank variants and lead elite packs; their leaders are A-rank Whisperers like the Crimson Queen.",
+   "minRank": 3,
+   "maxRank": 7,
+   "material": "Whisperer sigil",
+   "forms": [
+    {
+     "id": "hollow_acolyte",
+     "name": "Hollow Acolyte",
+     "minRank": 3,
+     "maxRank": 3,
+     "flavor": "A robed initiate with black-veined hands.",
+     "cards": [
+      {
+       "id": "e_dark_bolt",
+       "name": "Dark Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_dirge",
+       "name": "Dirge",
+       "ep": 1,
+       "power": 0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "whisperer",
+     "stage": 0,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "tennis ball",
+     "crystal": "crusted joints and spine",
+     "drops": [
+      "D-rank Death Crystal",
+      "Whisperer sigil",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "whisperer",
+     "name": "Whisperer",
+     "minRank": 4,
+     "maxRank": 5,
+     "flavor": "It speaks, and the variants listen.",
+     "cards": [
+      {
+       "id": "e_dark_bolt",
+       "name": "Dark Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_dirge",
+       "name": "Dirge",
+       "ep": 1,
+       "power": 0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_creeping_rot",
+       "name": "Creeping Rot",
+       "ep": 2,
+       "power": 0.7,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "crimson_whisperer",
+     "stage": 1,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "fist to softball",
+     "crystal": "plated shoulders, back and limbs to half the body armoured in crystal",
+     "drops": [
+      "C-rank Death Crystal",
+      "Whisperer sigil",
+      "GKOM Dust"
+     ]
+    },
+    {
+     "id": "crimson_whisperer",
+     "name": "Crimson Whisperer",
+     "minRank": 6,
+     "maxRank": 7,
+     "flavor": "A cult queen crowned in red crystal.",
+     "cards": [
+      {
+       "id": "e_dark_bolt",
+       "name": "Dark Bolt",
+       "ep": 1,
+       "power": 1.1,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_dirge",
+       "name": "Dirge",
+       "ep": 1,
+       "power": 0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_creeping_rot",
+       "name": "Creeping Rot",
+       "ep": 2,
+       "power": 0.7,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_blood_pact",
+       "name": "Blood Pact",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      }
+     ],
+     "role": "Caster",
+     "large": false,
+     "element": "Dark",
+     "evolvesTo": "",
+     "stage": 2,
+     "art": "enemy_summoner",
+     "ownArt": false,
+     "core": "grapefruit to volleyball",
+     "crystal": "most of the body sheathed to crystal hide with bare seams",
+     "drops": [
+      "A-rank Death Crystal",
+      "Whisperer sigil",
+      "Refined GKOM Essence"
+     ]
+    }
+   ]
+  }
+ ],
+ "bosses": [
+  {
+   "region": "silverbrook_edge",
+   "family": "amberhides",
+   "title": "Amberhide Matriarch",
+   "theme": "briar"
+  },
+  {
+   "region": "rootside_camp",
+   "family": "thorncrystal_stalkers",
+   "title": "Thornfang Alpha",
+   "theme": "briar"
+  },
+  {
+   "region": "shallow_ford",
+   "family": "quartzbacks",
+   "title": "Rimecoat Packlord",
+   "theme": "cave"
+  },
+  {
+   "region": "moon_shrine",
+   "family": "prism_wardens",
+   "title": "Moon-Shrine Ascendant",
+   "theme": "ruin"
+  },
+  {
+   "region": "old_bridge",
+   "family": "obsidian_talons",
+   "title": "Obsidian Roc",
+   "theme": "keep"
+  },
+  {
+   "region": "sunken_marsh",
+   "family": "moonstone_ravagers",
+   "title": "Drowned Ravager",
+   "theme": "marsh"
+  },
+  {
+   "region": "watchpost_ruin",
+   "family": "cobalt_burrowers",
+   "title": "Cobalt Siegeworm",
+   "theme": "keep"
+  },
+  {
+   "region": "silverwood_gate",
+   "family": "stormglass_drakes",
+   "title": "Stormglass Wyvern Queen",
+   "theme": "crystal"
+  },
+  {
+   "region": "silverwood_d1",
+   "family": "quartzbacks",
+   "title": "Fallen-Oak Packlord",
+   "theme": "heartwood"
+  },
+  {
+   "region": "silverwood_d2",
+   "family": "moonstone_ravagers",
+   "title": "Mirror-Lake Ravager",
+   "theme": "marsh"
+  },
+  {
+   "region": "silverwood_d3",
+   "family": "cobalt_burrowers",
+   "title": "Deepmaw of the Mines",
+   "theme": "mine"
+  },
+  {
+   "region": "silverwood_d4",
+   "family": "eclipse_golems",
+   "title": "Eclipse Core Golem",
+   "theme": "blight"
+  },
+  {
+   "region": "silverwood_d5",
+   "family": "eclipse_golems",
+   "title": "Heartrot Colossus",
+   "theme": "blight"
+  }
+ ]
+}
