@@ -212,3 +212,26 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
 - Owner: real building assets are needed to replace the blocks (plan in GDD 19.2).
 - Tests: `TowerManagementTests` 68 (+2 town map); 187 Tower tests green; full four-suite run 256 green before the
   ring-road change.
+
+## Oct 3 (6): TT 10.3.3 - town lots, reference pictures, picture-to-3D pipeline
+
+- Owner rulings: a few building types per district at three rank bands; a reference picture first, then the 3D model;
+  the town runs itself AND the player can take full control of any lot or group; render budget ignored for now.
+- Town lots (`TowerTownLots.cs`, `TowerState.townLots`): 15 types (Residential cottage / row house / manor, Market
+  stall / inn / bazaar, Industry workshop / mill / foundry, Arcane shrine / library / bathhouse, Defence gatehouse /
+  wall / watchtower). `TickTown` (live and offline): a fresh town fills to `TownTargetLots` (6 + 2 per resident +
+  rooms / 6, capped by the ring) at once, then one lot every 20 s, road frontage nearest the Tower first, the district
+  furthest below its share (45/20/20/10/5); one auto lot rises a rank every 60 s up to the Heart. `SetLot`, `SetLots`
+  (all or nothing on gold, 40 gold per rank), `SetLotsAuto` (hand back / lock). Player lots are `manual` and never
+  touched by the town; a cleared lot stays vacant until handed back. Lot index by tile for O(1) lookups.
+- TOWN view draws the real lots (district colours, type shapes, band size, a flag on player lots), tap or AREA box
+  selection, lot panel: type, rank, BUILD (cost), TOWN, LOCK. Preview ranks keep the placeholder fill.
+- Reference pictures: `Tools/build_town_prompts.py` -> `TownPrompts/` (48 prompts incl. the Tower);
+  `Tools/render_town_refs.py` renders them on local ComfyUI (Qwen Image 2.1). F-D from text; C-B / A-SSR as an edit of
+  the F-D picture with an upgrade lead-in, rejected as a copy below difference 19 (copies measured 13-15, real
+  upgrades 23-29): one reroll, then text only. ComfyUI restarts now and then: the script retries.
+- Picture to 3D: `Tools/town_to_3d.py` (BiRefNet + Trellis.2 via the `char_to_3d` graph) -> `Tools/town_glb_to_fbx.py`
+  (Blender: square to the grid by the smallest-footprint yaw, 1x1 footprint, bottom-centre origin, 30k faces) ->
+  `Resources/AdamsHaven/TowerModels/town_<type>/<stem>.fbx + .png`; `TowerModelImporter` builds the prefab and
+  `TowerTownView.TownPrefab` swaps it in for that type and band.
+- Tests: `TowerManagementTests` 73 (+5 lots); 192 Tower tests green.

@@ -4,7 +4,7 @@ Updated 2026-10-03 after TT 10.3.1. Read this first, then `TOWER_MODE_GDD.md` (d
 
 ## 0. Start here
 
-**TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1). TT 10.3.2 shipped the TOWN view greybox (GDD 19.2).** The next jobs, in the owner's order: **real building assets for the town** (the blocks must go), then **town lots as rules data**, then the economy and visitors (GDD 19.3-19.4). Ask the owner the questions in section 3 first.
+**TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1). TT 10.3.2 shipped the TOWN view greybox (GDD 19.2). TT 10.3.3 shipped town lots (auto growth + full player override), the 48-picture reference pack and the picture-to-3D pipeline.** The next jobs, in the owner's order: **real building assets for the town** (the blocks must go), then **town lots as rules data**, then the economy and visitors (GDD 19.3-19.4). Ask the owner the questions in section 3 first.
 
 Paste-ready prompt for the next session:
 
@@ -14,7 +14,7 @@ Paste-ready prompt for the next session:
 
 Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\Unity AHCG\My project`, branch master), with **Cities: Skylines-style management** on top. The player is the Summoner/Steward of the Celestium Heart.
 
-**Tests (2026-10-03):** `TowerManagementTests` 68 + `TowerSimulationTests` 119, all green (EditMode). The `^Expedition` and `^Battle` groups were also green (253 in all four).
+**Tests (2026-10-03):** `TowerManagementTests` 73 + `TowerSimulationTests` 119, all green (EditMode). The `^Expedition` and `^Battle` groups were also green (253 in all four).
 
 | Area | State |
 | --- | --- |
@@ -73,7 +73,7 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
 | --- | --- |
 | Design authority | `TOWER_MODE_GDD.md` (17 Districts, 18 Outposts, 19 Town) |
 | Build log / balance | `TOWER_LIFE.md`, `TOWER_BALANCE_REPORT.md` |
-| Town view | `TowerTownMap.cs` (ground plan), `TowerTownView.cs` (scene, camera, input), `TowerHudTown.cs` (HUD) |
+| Town view | `TowerTownMap.cs` (ground plan), `TowerTownLots.cs` (lots, growth, player commands), `TowerTownView.cs` (scene, camera, input, models), `TowerHudTown.cs` (HUD, lot panel); `Tools/build_town_prompts.py`, `render_town_refs.py`, `town_to_3d.py`, `town_glb_to_fbx.py` |
 | Rules and state | `Assets/Scripts/TowerDomain.cs` (state, catalog, build / upgrade, dweller cap), `TowerSystems*.cs` (tick), `TowerLife.cs` (mood, goals, storyteller), `TowerColony.cs` (levels, raids, bonds, Steward), `TowerHeart.cs` (Heart, Legacy, Standard summon), `TowerBanners.cs` (banners), `TowerTown.cs` (venues, errands, joy), `TowerResearch.cs`, `TowerSigils.cs`, `TowerMilestones.cs` (checkpoints) |
 | TT 10.30.x systems | `TowerLayoutTools.cs` (floor caps, move / demolish, `MigrateColony`, colony random), `TowerColonyDepth.cs` (traits, backstories, leaving, inspirations, storytellers), `TowerDistricts.cs`, `TowerAutoExpedition.cs` (postings, auto runs, elements), `TowerOutposts.cs`, `TowerSiege.cs`, `TowerSiegeBattle.cs` (Battle Mode bridge) |
 | HUD | `TowerHud.cs` (+ partials `TowerHudChrome`, `TowerHudHeart` (summon banners), `TowerHudResearch`, `TowerHudWork`, `TowerHudDistricts`, `TowerHudExpeditions`, `TowerHudOutposts`, `TowerHudSiege`, `TowerHudDev`), `TowerUiSkin.cs`, `TowerArtDirector.cs` (cutaway art and info-view overlays), `TowerFx.cs` (mood glyphs incl. errands) |
