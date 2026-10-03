@@ -11,6 +11,8 @@ Outputs land next to the prompts: TownPrompts/<district>/<type>/<file>.png (and 
 """
 from pathlib import Path
 import json, shutil, sys, time, urllib.error
+import numpy as np
+from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import produce_battle_motion as M
@@ -33,32 +35,53 @@ EDIT_LEAD = {
 }
 
 
-def render(row, seed):
-    out = PROJECT / row['file']
-    refs = []
-    prompt = row['prompt']
-    if row['references'] and not TEXT_ONLY:
-        ref = out.parent / row['references']
-        if not ref.exists():
-            raise SystemExit(f'reference missing, render the F-D picture first: {ref}')
-        refs = [M.to_input(M.flat_ref(ref), f'town_{ref.stem}.png')]
-        # Given the full description, the edit model redraws the reference as it is. Ask for the upgrade instead.
-        prompt = EDIT_LEAD[row['band']] + ' ' + prompt
+COPY_BELOW = 19.0   # mean grey difference (0-255, at 96x72) under which an upgrade is a copy of its reference
+
+
+def difference(a, b):
+    """How different two pictures are: mean absolute grey difference at 96x72. Measured on the first pack: copies of
+    the F-D reference score 13-15, real C-B / A-SSR upgrades 23-29."""
+    A = np.asarray(Image.open(a).convert('L').resize((96, 72)), float)
+    B = np.asarray(Image.open(b).convert('L').resize((96, 72)), float)
+    return float(np.abs(A - B).mean())
+
+
+def queue(refs, prompt, row, seed):
     prefix = f"AdamsHaven/Town/{row['type']}_{row['band'].replace('-', '').lower()}"
-    t0 = time.time()
-    files = None
     for attempt in range(6):
         try:
-            files = M.run(M.qwen_edit(refs, prompt, SIZES[row['canvas']], seed, prefix), 'town-refs')
-            break
+            return M.run(M.qwen_edit(refs, prompt, SIZES[row['canvas']], seed, prefix), 'town-refs')[-1]
         except (OSError, urllib.error.URLError) as e:   # the local server restarts now and then: wait and re-queue
             print(f'  ComfyUI unreachable ({e}); retry {attempt + 1}/6 in 30s', flush=True)
             time.sleep(30)
-    if files is None:
-        raise SystemExit('ComfyUI stayed unreachable')
+    raise SystemExit('ComfyUI stayed unreachable')
+
+
+def render(row, seed):
+    out = PROJECT / row['file']
+    t0 = time.time()
+    ref = out.parent / row['references'] if row['references'] else None
+    result, how = None, 'text'
+    if ref is not None and not TEXT_ONLY:
+        if not ref.exists():
+            raise SystemExit(f'reference missing, render the F-D picture first: {ref}')
+        refs = [M.to_input(M.flat_ref(ref), f'town_{ref.stem}.png')]
+        # Given the full description, the edit model redraws the reference as it is. Ask for the upgrade instead,
+        # and reject copies: one reroll, then fall back to the prompt alone (as the F-D pictures are made).
+        prompt = EDIT_LEAD[row['band']] + ' ' + row['prompt']
+        for s in (seed, seed + 1000):
+            result = queue(refs, prompt, row, s)
+            diff = difference(ref, result)
+            if diff >= COPY_BELOW:
+                how = f'upgrade of {ref.name}, difference {diff:.1f}'
+                break
+            print(f'  copy of the reference (difference {diff:.1f}); ' + ('rerolling' if s == seed else 'text only'), flush=True)
+            result = None
+    if result is None:
+        result = queue([], row['prompt'], row, seed)
     out.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(files[-1], out)
-    print(f"  {out.relative_to(PROJECT)}  ({time.time() - t0:.0f}s)", flush=True)
+    shutil.copy(result, out)
+    print(f"  {out.relative_to(PROJECT)}  ({how}, {time.time() - t0:.0f}s)", flush=True)
 
 
 def main(args):

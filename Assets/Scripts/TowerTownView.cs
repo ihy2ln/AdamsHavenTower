@@ -421,10 +421,34 @@ public sealed class TowerTownView : MonoBehaviour
         return go;
     }
 
+    // Modelled buildings (Tools/town_to_3d.py): TowerModels/town_<type>/<type>_<fd|cb|assr>, a 1x1-footprint prefab.
+    private static readonly string[] BandKeys = { "fd", "cb", "assr" };
+    private static readonly float[] BandFill = { 0.82f, 0.9f, 0.98f };
+    private readonly Dictionary<string, GameObject> townPrefabs = new Dictionary<string, GameObject>();
+
+    private GameObject TownPrefab(string type, int band)
+    {
+        string path = "AdamsHaven/TowerModels/town_" + type + "/" + type + "_" + BandKeys[band];
+        GameObject prefab;
+        if (!townPrefabs.TryGetValue(path, out prefab)) townPrefabs[path] = prefab = Resources.Load<GameObject>(path);
+        return prefab;
+    }
+
     // A readable stand-in per type: band 0/1/2 (F-D, C-B, A-SSR) sets height and footprint fill.
     private void BuildLot(TowerLot lot, TowerTownBuildingDef def, Vector3 at)
     {
         int band = TowerRules.RankBand(lot.rank);
+        var prefab = TownPrefab(def.id, band);
+        if (prefab != null)
+        {
+            var model = Instantiate(prefab, lotRoot);
+            model.name = def.id + " " + lot.x + "," + lot.z;
+            model.transform.localPosition = at;
+            // Vary the facing by lot so a street of the same model does not repeat exactly.
+            model.transform.localRotation = Quaternion.Euler(0, 90 * ((lot.x * 7 + lot.z * 13) & 3), 0) * prefab.transform.localRotation;
+            model.transform.localScale = prefab.transform.localScale * BandFill[band];
+            return;
+        }
         var look = DistrictLook[def.district];
         Color wall = look[0], roof = look[1];
         float fill = 0.62f + band * 0.14f, h = 0.6f + band * 0.45f;
