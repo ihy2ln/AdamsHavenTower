@@ -106,7 +106,7 @@ public sealed partial class TowerHud : MonoBehaviour
         canvas.sortingOrder = 20;
         var scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1280, 720);
+        scaler.referenceResolution = new Vector2(1600, 900);   // TT 10.4.2: a compact HUD (was 1280x720, every panel 25% larger)
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = Screen.width / (float)Screen.height < 16f / 9f ? 0f : 1f;
         if (EventSystem.current == null)
@@ -459,6 +459,7 @@ public sealed partial class TowerHud : MonoBehaviour
             Box(name, safeRoot, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-10, -58), new Vector2(width, height), Glass) :
             Box(name, safeRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 94), new Vector2(width, height), Glass);
         TowerUiSkin.ApplyPanel(popup, Glass, true);
+        TowerUiFlow.Add(popup, top ? new Vector2(0, 14) : new Vector2(0, -18));
         popup.gameObject.SetActive(false);
         return popup;
     }
@@ -661,9 +662,11 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildLeft()
     {
-        var left = Rect("Resident panel", safeRoot, new Vector2(0, 0), new Vector2(0, 1),
-            new Vector2(0, 8), new Vector2(294, -104), Panel);
+        // Only as tall as its contents, so the tower shows below it (TT 10.4.2).
+        var left = Rect("Resident panel", safeRoot, new Vector2(0, 1), new Vector2(0, 1),
+            new Vector2(0, -104 - 514), new Vector2(294, -104), Panel);
         TowerUiSkin.ApplyPanel(left, Glass, true);
+        TowerUiFlow.Add(left, new Vector2(-24, 0));
         TextAt(left.transform, "Resident heading", "RESIDENTS", 14, 10, 150, 32, 22, Gold);
         Divider(left.transform, 9, 39, 279);
         ButtonAt(left.transform, "Previous residents", "‹", 179, 10, 45, 36,
@@ -698,8 +701,9 @@ public sealed partial class TowerHud : MonoBehaviour
         for (int i = 0; i < priorityButtons.Length; i++)
         {
             int index = i;
+            // Spaced apart so a tap lands on the button meant (TT 10.4.2).
             priorityButtons[i] = ButtonAt(work.transform, "Priority " + priorityNames[i], "",
-                10 + (i % 3) * 94, 2 + (i / 3) * 47, 88, 41,
+                12 + (i % 3) * 94, 4 + (i / 3) * 49, 78, 36,
                 () => CyclePriority(index), Teal, 13);
             priorityLabels[i] = LabelOf(priorityButtons[i]);
         }
@@ -724,9 +728,10 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildRight()
     {
-        var right = Rect("Room panel", safeRoot, new Vector2(1, 0), new Vector2(1, 1),
-            new Vector2(-300, 8), new Vector2(0, -104), Panel);
+        var right = Rect("Room panel", safeRoot, new Vector2(1, 1), new Vector2(1, 1),
+            new Vector2(-300, -104 - 470), new Vector2(0, -104), Panel);
         TowerUiSkin.ApplyPanel(right, Glass, true);
+        TowerUiFlow.Add(right, new Vector2(24, 0));
         TextAt(right.transform, "Room heading", "SELECTED ROOM", 15, 11, 250, 32, 22, Gold);
         CloseButton(right.transform, 262, 12, () =>
         {
@@ -1474,10 +1479,10 @@ public sealed partial class TowerHud : MonoBehaviour
             tutorialTitle.rectTransform.anchoredPosition = new Vector2(44, -2);   // inside the banner's carved ends
             tutorialTitle.rectTransform.sizeDelta = new Vector2(522, 82);
             string[] lessons = {
-                "1 / BUILD  •  Open FLOORS and expand the foundation twice (WEST or EAST). Then open BUILD, choose Kitchen and tap the empty + lot.",
-                "2 / MATCH  •  In PEOPLE pick a resident, tap the Kitchen, compare the expected rate, then press ASSIGN.",
-                "3 / COLLECT  •  Let the Kitchen finish, then tap its food bubble (or COLLECT).",
-                "4 / RUSH  •  Review the success chance and failure risk, then rush the Kitchen.",
+                "1 / FOOD  •  Everyone eats FOOD all day. Open FLOORS, expand the foundation (EAST first, then WEST), then BUILD a Kitchen on the + lot.",
+                "2 / MATCH  •  In PEOPLE pick a resident, tap the Kitchen, compare the expected rate, then press ASSIGN. Idle hands cook nothing.",
+                "3 / COLLECT  •  Let the Kitchen finish, then tap its food bubble (or COLLECT). FOOD and WATER at the top drop every minute.",
+                "4 / WATER  •  BUILD a Stone Well on a free + lot: it draws WATER. Then RUSH the Kitchen once (check the odds first).",
                 "5 / PRIORITIES  •  In PEOPLE > WORK, tap a priority button (PROD, HAUL, REPAIR...) to change it.",
                 "6 / INCIDENT  •  Watch the alert and responders travel to the affected room.",
                 "7 / RECOVER  •  Keep fire, care, and defense priorities active until danger ends."

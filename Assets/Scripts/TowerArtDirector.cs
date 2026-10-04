@@ -91,7 +91,7 @@ public sealed class TowerArtDirector : MonoBehaviour
             framedWest = wings;
             framedPanels = panels;
             float width = (west + east + 1) * Cell;
-            float viewWidthFraction = 0.86f - (residentsOpen ? 0.19f : 0) - (roomOpen ? 0.19f : 0);
+            float viewWidthFraction = 0.88f - (residentsOpen ? 0.14f : 0) - (roomOpen ? 0.14f : 0);   // compact panels (TT 10.4.2)
             float fit = Mathf.Max(3.7f, (width + 1.8f) / (2 * cameraView.aspect * viewWidthFraction));
             // A player who zoomed or panned keeps their view when a wing finishes or a panel opens;
             // a freshly loaded tower is framed to fit.
@@ -100,16 +100,14 @@ public sealed class TowerArtDirector : MonoBehaviour
             {
                 cameraView.orthographicSize = fit;
                 float shift = ((roomOpen ? 1 : 0) - (residentsOpen ? 1 : 0)) *
-                    0.105f * cameraView.orthographicSize * 2 * cameraView.aspect;
+                    0.08f * cameraView.orthographicSize * 2 * cameraView.aspect;
                 cameraView.transform.position = new Vector3(X(22.5f + (east - west) * 0.5f) + shift,
                     newState && west <= 2 ? 0.35f : cameraView.transform.position.y, -30);
                 tower.ClampView();
             }
         }
         UpdateSites();
-        foreach (var beam in coreBeams)
-            if (beam != null) beam.color = new Color(0.65f, 0.91f, 1,
-                0.32f + 0.07f * Mathf.Sin(tower.Rules.State.clock * 2.2f));
+        AnimateHeartBeam();
         var hud = Object.FindAnyObjectByType<TowerHud>();
         if (hud != null && hud != styledHud) { StyleHud(hud); styledHud = hud; }
         portraitTimer += Time.unscaledDeltaTime;
@@ -346,8 +344,12 @@ public sealed class TowerArtDirector : MonoBehaviour
                     Art("Celestium Heart sanctuary", "Structure/heart_sanctuary_v1", cx,
                         y + 0.12f, 2, rw - 0.05f, 2.23f, new Rect(0.32f, 0, 0.36f, 1));
                 else if (room.type == "gate")
-                    Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
+                {
+                    // The painting opens to the right: the west Gate is mirrored so both open away from the tower.
+                    var gateArt = Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
                         rw * 1.05f, 2.30f, new Rect(0.13f, 0.01f, 0.79f, 0.98f));
+                    if (room.x < TowerRules.CoreX) Mirror(gateArt, -1);
+                }
                 else if (room.type == "barn" && BarnModel(room, cx, y, tower.Rules.IsPowered(room)))
                 {
                     if (!tower.Rules.IsPowered(room)) Label("NO FIREWOOD", new Vector3(cx, y + 0.35f, -1.2f), rw);
@@ -453,17 +455,60 @@ public sealed class TowerArtDirector : MonoBehaviour
                 TerrainBand("Celestium depths " + cell + ":" + depth, "stratum_celestium",
                     cx, ground - depth * Storey, 3 * Storey, true);
         }
-        if (tower.Rules.State.introPhase == "complete")
+        if (tower.Rules.State.introPhase == "complete") BuildHeartBeam();
+    }
+    // ---------------------------------------------------------------- the Heart's beam (TT 10.4.2)
+
+    // Magic waves run out of the Heart along the shaft, up past the highest floor and down past the lowest by two
+    // floors each, and fade at the tips. Each half is a column of beam tiles that scroll outward and wrap.
+    private const float BeamTile = 3 * Storey, BeamSpeed = 1.4f;
+    private readonly List<int> beamDirs = new List<int>();
+    private float beamHeartY, beamUp, beamDown;
+
+    private void BuildHeartBeam()
+    {
+        beamDirs.Clear();
+        int lowest = 0, highest = 0;
+        foreach (var floor in tower.Rules.State.floors) { lowest = Mathf.Min(lowest, floor.number); highest = Mathf.Max(highest, floor.number); }
+        beamHeartY = tower.Rules.HeartFloor * Storey;
+        beamUp = (highest + 2) * Storey + Storey * 0.5f - beamHeartY;
+        beamDown = beamHeartY - ((lowest - 2) * Storey - Storey * 0.5f);
+        for (int dir = -1; dir <= 1; dir += 2)
         {
-            for (int floor = TowerRules.FloorMin; floor <= TowerRules.FloorMax; floor += 3)
+            int count = Mathf.CeilToInt((dir > 0 ? beamUp : beamDown) / BeamTile) + 1;
+            for (int i = 0; i < count; i++)
             {
-                var beam = Art("Celestium core energy " + floor, "Structure/heart_beam",
-                    X(22.5f), (floor + 1) * Storey, 3.8f, Cell * 0.78f, 3 * Storey + 0.02f,
-                    new Rect(0.26f, 0.1f, 0.48f, 0.8f), new Color(0.65f, 0.91f, 1, 0.36f));
-                if (beam != null) coreBeams.Add(beam.GetComponent<SpriteRenderer>());
+                var beam = Art("Celestium core energy " + dir + ":" + i, "Structure/heart_beam", X(22.5f), beamHeartY, 3.8f,
+                    Cell * 0.78f, BeamTile + 0.02f, new Rect(0.26f, 0.1f, 0.48f, 0.8f), new Color(0.65f, 0.91f, 1, 0.36f));
+                if (beam == null) continue;
+                var renderer = beam.GetComponent<SpriteRenderer>();
+                renderer.flipY = dir < 0;   // the waves curl away from the Heart on both halves
+                coreBeams.Add(renderer);
+                beamDirs.Add(dir);
             }
         }
     }
+
+    private void AnimateHeartBeam()
+    {
+        if (coreBeams.Count == 0 || coreBeams.Count != beamDirs.Count) return;
+        float t = Time.time, scroll = (t * BeamSpeed) % BeamTile;
+        int up = 0, down = 0;
+        for (int i = 0; i < coreBeams.Count; i++)
+        {
+            var beam = coreBeams[i];
+            if (beam == null) continue;
+            int dir = beamDirs[i], index = dir > 0 ? up++ : down++;
+            float far = index * BeamTile + scroll, mid = far - BeamTile * 0.5f, limit = dir > 0 ? beamUp : beamDown;
+            beam.transform.localPosition = new Vector3(beam.transform.localPosition.x, beamHeartY + dir * mid, beam.transform.localPosition.z);
+            float tip = Mathf.Clamp01((limit - mid) / (BeamTile * 0.75f)) *      // fades out toward the end of the beam
+                Mathf.Clamp01(far / BeamTile);                                    // and in as it leaves the Heart
+            float wave = 0.72f + 0.28f * Mathf.Sin(mid * 0.9f - t * 3.2f);       // brightness waves travelling outward
+            beam.color = new Color(0.65f, 0.91f, 1, 0.38f * wave * tip);
+            beam.enabled = far - BeamTile < limit;
+        }
+    }
+
     // The side copies are mirrored so their edges meet the middle painting seamlessly.
     private static void Mirror(GameObject layer, int side)
     {

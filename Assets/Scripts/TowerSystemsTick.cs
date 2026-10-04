@@ -43,6 +43,7 @@ namespace AdamsHaven.Tower
             resident.currentRoom = resident.homeRoom > 0 ? resident.homeRoom : heart == null ? 0 : heart.uid;
             resident.currentTask = "idle";
             Bump("expedition");
+            if (resident.exploreChoice == "supplies") Bump("supplies_return");
             Emit("expedition", resident.currentRoom, resident.id, resident.name);
             return null;
         }

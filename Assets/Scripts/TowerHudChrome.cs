@@ -328,7 +328,8 @@ public sealed partial class TowerHud
     private void BuildMainMenu()
     {
         popupMenu = Rect("Menu popup", safeRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-            new Color(0.02f, 0.03f, 0.05f, 0.86f));
+            new Color(0.02f, 0.03f, 0.05f, 0.5f));   // 50%: the tower stays visible behind the menu
+        TowerUiFlow.Add(popupMenu, Vector2.zero);
         var catcher = popupMenu.gameObject.AddComponent<Button>();
         catcher.transition = Selectable.Transition.None;
         catcher.onClick.AddListener(CloseAllPopups);
@@ -337,6 +338,7 @@ public sealed partial class TowerHud
         var card = Box("Menu profile", popupMenu.transform, new Vector2(0, 0.5f), new Vector2(0, 0.5f),
             new Vector2(64, 0), new Vector2(340, 476), Color.white);
         TowerUiSkin.ApplyPanel(card, Glass, true);
+        card.color = new Color(card.color.r, card.color.g, card.color.b, 0.97f);   // solid: panels behind must not show through
         card.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;   // swallow taps
         var c = card.transform;
         TitleAt(c, "Menu title", TowerModes.Title, 22, 22, 300, 19);

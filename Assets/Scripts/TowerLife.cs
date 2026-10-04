@@ -28,11 +28,13 @@ namespace AdamsHaven.Tower
     {
         public readonly string id, title, counter;
         public readonly int target, gold, celestium, tonics, sigils;
+        public readonly int wood, stone;
         public TowerGoalDef(string id, string title, string counter, int target,
-            int gold, int celestium = 0, int tonics = 0, int sigils = 0)
+            int gold, int celestium = 0, int tonics = 0, int sigils = 0, int wood = 0, int stone = 0)
         {
             this.id = id; this.title = title; this.counter = counter; this.target = target;
             this.gold = gold; this.celestium = celestium; this.tonics = tonics; this.sigils = sigils;
+            this.wood = wood; this.stone = stone;
         }
         public string Reward
         {
@@ -42,6 +44,8 @@ namespace AdamsHaven.Tower
                 if (gold > 0) text += gold + "g ";
                 if (celestium > 0) text += celestium + "C ";
                 if (tonics > 0) text += tonics + " tonics ";
+                if (wood > 0) text += wood + " wood ";
+                if (stone > 0) text += stone + " stone ";
                 if (sigils > 0) text += sigils + " Sigils";
                 return text.Trim();
             }
@@ -72,6 +76,12 @@ namespace AdamsHaven.Tower
 
         public const int ActiveGoals = 3;
 
+        // Story quests (TT 10.4.2): pinned first in the goal list until claimed, never drawn from the pool.
+        public static readonly TowerGoalDef[] Quests = {
+            new TowerGoalDef("supplies_run", "QUEST  Supplies run: send a resident out for SUPPLIES (Adventure Guild)",
+                "supplies_return", 1, 60, 0, 0, 3, 25, 15)
+        };
+
         // Presentation hook: FX and audio observe what the simulation already decided.
         public Action<string, int, int, string> Signal;
 
@@ -95,6 +105,7 @@ namespace AdamsHaven.Tower
         public static TowerGoalDef GoalDef(string id)
         {
             foreach (var def in GoalPool) if (def.id == id) return def;
+            foreach (var def in Quests) if (def.id == id) return def;
             return null;
         }
 
@@ -114,6 +125,11 @@ namespace AdamsHaven.Tower
         {
             if (State.goals == null) State.goals = new List<TowerGoal>();
             State.goals.RemoveAll(g => g.claimed);
+            if (!State.suppliesQuestDone && !State.goals.Exists(g => g.id == "supplies_run"))
+            {
+                State.goals.Insert(0, new TowerGoal { id = "supplies_run", baseline = Counter("supplies_return") });
+                while (State.goals.Count > ActiveGoals) State.goals.RemoveAt(State.goals.Count - 1);
+            }
             int guard = 0;
             while (State.goals.Count < ActiveGoals && guard++ < GoalPool.Length * 2)
             {
@@ -143,6 +159,8 @@ namespace AdamsHaven.Tower
             State.gold += def.gold;
             State.celestium += def.celestium;
             State.tonics = Mathf.Min(30, State.tonics + def.tonics);
+            State.wood += def.wood; State.stone += def.stone;
+            if (goal.id == "supplies_run") State.suppliesQuestDone = true;
             GrantSigils(def.sigils);
             goal.claimed = true;
             State.notifiedGoals.Remove(goal.id);
@@ -461,6 +479,11 @@ namespace AdamsHaven.Tower
                 if (resident.ageStage == 0 && resident.origin != "body" && resident.jobRoom == 0 &&
                     !resident.exploring && !resident.away)
                     return resident.name + " has no workplace. Assign them to a room.";
+            // Nothing more urgent: make sure food and water have a producer; both drain from day one (TT 10.4.2).
+            if (!State.rooms.Exists(r => r.type == "well") && !State.works.Exists(w => w.type == "well"))
+                return "Water drains every minute and nothing draws more: BUILD a Stone Well and put someone in it.";
+            if (!State.rooms.Exists(r => r.type == "kitchen" || r.type == "farmstead") && !State.works.Exists(w => w.type == "kitchen"))
+                return "Food drains every minute and nothing cooks more: BUILD a Kitchen and put someone in it.";
             return "";
         }
 

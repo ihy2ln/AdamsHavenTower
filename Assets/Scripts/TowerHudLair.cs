@@ -98,6 +98,7 @@ public sealed partial class TowerHud
         popupLair = Box("Dungeon popup", safeRoot, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 10),
             new Vector2(720, 450), Glass);
         TowerUiSkin.ApplyPanel(popupLair, Glass, true);
+        TowerUiFlow.Add(popupLair, new Vector2(0, -18));
         popupLair.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;   // swallow taps
         var t = popupLair.transform;
         TextAt(t, "Dungeon title", "DUNGEON", 16, 10, 130, 30, 19, Gold);

@@ -224,6 +224,7 @@ namespace AdamsHaven.Tower
         public string mode = "tower";                            // "tower" or "lair"
         public TowerLairState lair = new TowerLairState();       // empty in a Tower save
         public List<TowerReceipt> receipts = new List<TowerReceipt>();   // TT 10.4.1 sell-back window (TowerSellBack.cs)
+        public bool suppliesQuestDone;   // TT 10.4.2 story quest: the first supplies expedition (TowerLife.Quests)
     }
 
     public sealed class TowerRoomDef
@@ -993,7 +994,8 @@ namespace AdamsHaven.Tower
                 Tick(dt, live);
                 remaining -= dt;
             }
-            State.day = Mathf.Max(State.day, 1 + Mathf.FloorToInt(State.clock / DaySeconds));
+            // Days turn over at midnight: the clock starts at 06:00, a quarter of a day in (TT 10.4.2).
+            State.day = Mathf.Max(State.day, 1 + Mathf.FloorToInt((State.clock + DaySeconds * 0.25f) / DaySeconds));
             // SET-6 Festival: every second day opens with a harvest festival.
             if (State.day != dayBefore && State.day % 2 == 0 && Researched("SET-6") && State.festivalSeconds <= 0)
             {

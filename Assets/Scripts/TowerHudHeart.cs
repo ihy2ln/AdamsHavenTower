@@ -45,6 +45,7 @@ public sealed partial class TowerHud
         popupHeart = Box("Heart hub", safeRoot, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 10),
             new Vector2(720, 450), Glass);
         TowerUiSkin.ApplyPanel(popupHeart, Glass, true);
+        TowerUiFlow.Add(popupHeart, new Vector2(0, -18));
         var t = popupHeart.transform;
         TextAt(t, "Heart title", "HEART", 16, 10, 120, 30, 19, Gold);
         tabSummon = ButtonAt(t, "Tab summon", "SUMMON", 150, 10, 120, 34, () => { heartTab = "summon"; Refresh(); }, Teal, 14);

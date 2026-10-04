@@ -9,7 +9,8 @@ using UnityEngine.UI;
 // maps whatever tint is on the Image to a flat style, so existing Refresh code that recolours buttons keeps working.
 public static class TowerUiSkin
 {
-    public static readonly Color GlassFill = new Color(0.075f, 0.09f, 0.12f, 0.93f);
+    public static readonly Color GlassFill = new Color(0.075f, 0.09f, 0.12f, 0.78f);
+    public const float PanelAlpha = 0.8f;   // TT 10.4.2: framed panels let the tower show through
     public static readonly Color TextMain = new Color(0.93f, 0.91f, 0.86f);
     public static readonly Color TextDim = new Color(0.62f, 0.65f, 0.70f);
     public static readonly Color Accent = new Color(0.91f, 0.80f, 0.55f);          // Genshin gold
@@ -194,7 +195,7 @@ public static class TowerUiSkin
         image.type = Image.Type.Sliced;
         image.pixelsPerUnitMultiplier = tall ? Mathf.Max(6f, 2.1f * 180f / Mathf.Min(size.x, size.y)) :
             TowerSleekArt.BodySize(sheet, state).y / size.y;
-        image.color = Color.white;
+        image.color = new Color(1, 1, 1, PanelAlpha);
         var shadow = image.gameObject.GetComponent<Shadow>();
         if (shadow != null) shadow.enabled = false;
         var rim = image.transform.Find("Rim");
