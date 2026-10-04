@@ -38,8 +38,22 @@ base.save_render(str(outdir / f'{name}.png'), scene=sc)
 bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 verts = mesh.data.vertices
 
+# Level it: Trellis reads the picture's 35-degree camera pitch as part of the building, so the model comes out tilted.
+# The plinth's underside is the biggest downward-facing area; turn its area-weighted normal to straight down. Twice,
+# with a tighter cone the second time, so walls and roof overhangs do not pull the estimate.
+for cone in (-0.5, -0.85):
+    down = Vector((0, 0, 0))
+    for poly in mesh.data.polygons:
+        if poly.normal.z < cone: down += poly.normal * poly.area
+    if down.length < 1e-9: break
+    rot = down.normalized().rotation_difference(Vector((0, 0, -1))).to_matrix()
+    for v in verts: v.co = rot @ v.co
+    mesh.data.update()
+    print('LEVEL', round(math.degrees(down.normalized().angle(Vector((0, 0, -1)))), 1))
+
 # Square to the grid: the yaw (0-89 degrees) whose axis-aligned footprint rectangle is smallest. Blender is Z-up.
-pts = [(v.co.x, v.co.y) for v in verts[::max(1, len(verts) // 4000)]]
+step = max(1, len(verts) // 4000)   # Blender collections do not take slice steps
+pts = [(verts[i].co.x, verts[i].co.y) for i in range(0, len(verts), step)]
 best, best_area = 0, float('inf')
 for deg in range(90):
     a = math.radians(deg); c, s = math.cos(a), math.sin(a)
