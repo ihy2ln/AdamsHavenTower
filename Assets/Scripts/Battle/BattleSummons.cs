@@ -95,7 +95,7 @@ public sealed partial class BattleMode
     // Where a summoned fighter stands this moment, eased toward their summon place (snapped while unseen).
     Vector2 SummonPos(BattleUnit u)
     {
-        Vector2 target = SummonSpotOf(u), pos;
+        Vector2 target = SummonSpotOf(u) + new Vector2(0f, FieldDrop), pos;
         if (!spotPos.TryGetValue(u, out pos) || SummonAlpha(u) <= .001f) pos = target;
         else pos = Vector2.Lerp(pos, target, 1f - Mathf.Exp(-Time.deltaTime * 9f));
         spotPos[u] = pos;
@@ -182,7 +182,7 @@ public sealed partial class BattleMode
     void SummonFlash(BattleUnit u)
     {
         Color c = ElementColor(u.Element);
-        Vector2 foot = SummonSpotOf(u);          // the place itself: the slot may not have moved there yet
+        Vector2 foot = SummonSpotOf(u) + new Vector2(0f, FieldDrop);   // the place itself: the slot may not have moved there yet
         SlotInfo s = Slot(u);
         Spawn(5, foot, c, s.W * 1.1f + 70f, .9f, Random.Range(0f, 360f));
         Spawn(1, foot + new Vector2(0f, -8f), c, 320f, .45f);
@@ -204,7 +204,7 @@ public sealed partial class BattleMode
         if (selected == null || battle == null) return null;
         if (selected.Target != BattleTarget.Ally && selected.Target != BattleTarget.Self) return null;
         for (int i = 0; i < battle.Allies.Count; i++)
-            if (new Rect(16f, 640f + i * 84f, 256f, 78f).Contains(mouse)) return battle.Allies[i];
+            if (new Rect(16f, 640f + i * 84f, 256f, 78f).Contains(MouseIn(-1, 1))) return battle.Allies[i];
         return null;
     }
 }

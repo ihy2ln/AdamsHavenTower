@@ -85,6 +85,27 @@ public sealed class SummonBattleTests
     }
 
     [Test]
+    public void ApAndEpRunOffJdsPool()
+    {
+        var b = Battle(true);
+        var jd = b.Summoner;
+        int ap = b.Allies.Where(u => u.Alive).Sum(u => u.MaxAp), ep = b.Allies.Where(u => u.Alive).Sum(u => u.MaxEp);
+        Assert.AreEqual(ap, jd.MaxAp, "JD's AP pool is the contract's AP");
+        Assert.AreEqual(ep, jd.MaxEp, "JD's EP pool is the contract's EP");
+        var kaela = Ally(b, "kaela");
+        int kaelaAp = kaela.Ap, kaelaEp = kaela.Ep;
+        var guard = BattleCatalog.Guard(kaela);
+        Assert.IsTrue(b.TryPlay(guard, kaela));
+        Assert.AreEqual(ap - guard.Ap, jd.Ap, "the card was paid from JD's pool");
+        Assert.AreEqual(kaelaAp, kaela.Ap, "the fighter's own AP is untouched");
+        Assert.AreEqual(kaelaEp, kaela.Ep);
+        // One fighter can be called again while the pool lasts.
+        Assert.IsTrue(b.CanPay(BattleCatalog.Basic(kaela), kaela));
+        jd.Ap = 0;
+        Assert.IsFalse(b.CanPay(BattleCatalog.Basic(kaela), kaela), "an empty pool stops every fighter");
+    }
+
+    [Test]
     public void ClassicBattlesAreUnchanged()
     {
         var b = Battle(false);

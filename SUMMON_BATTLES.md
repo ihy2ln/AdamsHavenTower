@@ -24,6 +24,11 @@ the fighters are summoned onto it card by card. Tower skirmishes and the battle 
   this turn. The partner appears and strikes alongside: "TEAM-UP!" shows, and the card hits for `TeamUpPower` (1.25x).
   - The bond partners come from the existing bond table.
   - Each fighter joins one team-up per turn.
+- **JD's pool.** AP and EP belong to JD, not to the fighters: one pool the whole contract draws on, refilled each
+  round to the field fighters' maxima added up (3 AP, 9 EP for the usual three). Any fighter can be called again while
+  the pool lasts. SP and CP were already JD's. JD's plate shows `AP / EP / SP / CP`; the party tiles drop their pips.
+  - A fighter's own AP now only says whether they can be called this round (a stun empties it).
+  - AP/EP gains and a break's +1 AP go to the pool; AP/EP transfers between fighters do nothing in a summon battle.
 - **Contracts.** HP, stress and the ultimate meter live on the party tiles. A fighter only takes damage while they
   are the Vanguard. Party-wide heals and buffs ("all allies") also reach JD.
 - **Tuning** (`ExpeditionBalanceTests`, run in summon mode; health lost counts JD and the fighters together):
@@ -41,6 +46,13 @@ the fighters are summoned onto it card by card. Tower skirmishes and the battle 
   - An attacker steps out further forward when a Vanguard holds.
   - A team-up partner stands just behind.
   - Enemies get the field from x 840.
+- **Sizes.** Fighters and JD draw at `AllyScale` 1.25x, enemies at `EnemyScale` 1.1x of their (taller) base, so a
+  regular humanoid enemy stands level with a fighter and large beasts and bosses tower over them. The pack stands in two
+  staggered rows (`PackStep` 0.5) and is fitted to x 790..1572.
+- **Screen shape.** The HUD is pinned to the real screen edges, not the 16:9 canvas: the top bar to the top, the hand,
+  party tiles and END TURN to the bottom, corner groups to the sides (`Hud` / `Edge` in BattleMode.cs). On a screen
+  taller than 16:9 the ground line drops into the freed space (`FieldDrop`) and units grow up to 1.3x (`TallBoost`);
+  on a wider one the pack also uses the right margin.
 - **Summon effects.** A summon opens a circle in the fighter's element, then a flash and particles; a fighter leaving
   dissolves into particles.
 - **Movement.** Fighters glide between places, so a fighter taking up the Vanguard post doesn't jump.

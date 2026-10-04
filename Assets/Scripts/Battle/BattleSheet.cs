@@ -66,7 +66,7 @@ public sealed partial class BattleMode
     private void BeginHold(BattleUnit unit)
     {
         if (unit == null || sheetUnit != null) return;
-        holdUnit = unit; holdStart = Time.unscaledTime; holdFrom = mouse; holdFocusBefore = focusUnit;
+        holdUnit = unit; holdStart = Time.unscaledTime; holdFrom = mouse + hudShift; holdFocusBefore = focusUnit;
     }
 
     private void TrackHold(Event e)

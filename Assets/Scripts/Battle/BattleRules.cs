@@ -175,6 +175,9 @@ public sealed class BattleState
     public static float SummonJdVitality = 1.6f, SummonEnemyPower = 1.6f, SummonBossPower = 1.05f;
     private static readonly string[] AnchorStatuses = { "Taunt", "Shield", "IceCounter", "DefenseUp", "Charging" };
     private float teamUpMultiplier = 1f;
+    // Summon battles: AP and EP are JD's, one pool the whole contract draws on (the field fighters' maxima added up).
+    // A fighter's own AP only says whether they can be called this round (a stun or a paid swap empties it).
+    public BattleUnit Wallet(BattleUnit actor) { return SummonMode && actor != null && !actor.Enemy && Summoner != null ? Summoner : actor; }
     // Counts every fact ever recorded; Facts itself is capped, so presentation reads the tail by serial.
     public int FactSerial;
     public bool Finished, Victory, Withdrawn;
@@ -314,10 +317,18 @@ public sealed class BattleState
                 }
             }
         }
+        if (SummonMode && Summoner != null)
+        {
+            int ap = 0, ep = 0;
+            foreach (BattleUnit unit in Allies) if (unit.Alive) { ap += unit.MaxAp; ep += unit.MaxEp; }
+            Summoner.MaxAp = Math.Max(1, ap); Summoner.MaxEp = Math.Max(1, ep);
+            Summoner.Ap = Summoner.MaxAp; Summoner.Ep = Summoner.MaxEp;
+            foreach (BattleUnit unit in Allies) if (unit.Alive && slowed.Contains(unit)) Summoner.Ep = Math.Max(0, Summoner.Ep - 1);
+        }
         if (SummonMode && Vanguard != null && (!Vanguard.Alive || !Anchored(Vanguard))) Recall();
         if (Round == 1 && Allies.Count > 0 && Allies[0].Alive)
         {
-            if (RunModifiers.Scout) Allies[0].Ep++;
+            if (RunModifiers.Scout) Wallet(Allies[0]).Ep++;
             if (RunModifiers.Fortify) Allies[0].ApplyStatus("DefenseUp", .20f, 1);
         }
         Sp = Math.Min(SpMax, Sp + 1);
@@ -426,7 +437,9 @@ public sealed class BattleState
         if (!string.IsNullOrEmpty(card.Owner) && actor.Id != card.Owner) return false;
         if (card.Kind == BattleCardKind.Awakening) return actor.AwakeningReady && actor.CollapseRounds == 0 && Allies.Contains(actor);
         if (card.Kind == BattleCardKind.Ultimate) return actor.Ultimate >= 100 && Sp >= UltCost(actor);
-        return actor.Ap >= card.Ap && actor.Ep >= card.Ep;
+        if (SummonMode && actor.Ap <= 0) return false;
+        BattleUnit wallet = Wallet(actor);
+        return wallet.Ap >= card.Ap && wallet.Ep >= card.Ep;
     }
 
     public bool IsTarget(BattleCard card, BattleUnit actor, BattleUnit target)
@@ -461,7 +474,7 @@ public sealed class BattleState
         if (card.Kind == BattleCardKind.Summoner) Cp -= Math.Max(1, card.Ap);
         else if (card.Kind == BattleCardKind.Ultimate) { Sp -= UltCost(actor); actor.Ultimate = 0; }
         else if (card.Kind == BattleCardKind.Awakening) actor.AwakeningReady = false;
-        else { actor.Ap -= card.Ap; actor.Ep -= card.Ep; actor.Charge(18); }
+        else { BattleUnit wallet = Wallet(actor); wallet.Ap -= card.Ap; wallet.Ep -= card.Ep; actor.Charge(18); }
         Say((actor == null ? Summoner.Name : actor.Name) + " uses " + card.Name + ".");
         LastTeamUp = SummonMode ? TeamUpPartner(card, actor) : null;
         if (LastTeamUp != null)
@@ -728,9 +741,11 @@ public sealed class BattleState
     private void Resolve(BattleCard card, BattleUnit actor, BattleUnit chosen)
     {
         runPlayMultiplier = RunDamageMultiplier(card, actor);
-        if (actor != null && chosen != null && card.TransferAp) { chosen.Ap += actor.Ap; actor.Ap = 0; }
-        if (actor != null && chosen != null && card.TransferEp) { chosen.Ep += actor.Ep; actor.Ep = 0; }
-        if (chosen != null) { chosen.Ap += card.ApGain; chosen.Ep += card.EpGain; }
+        // In a summon battle the pool is shared, so a transfer changes nothing and a gain goes to JD.
+        if (!SummonMode && actor != null && chosen != null && card.TransferAp) { chosen.Ap += actor.Ap; actor.Ap = 0; }
+        if (!SummonMode && actor != null && chosen != null && card.TransferEp) { chosen.Ep += actor.Ep; actor.Ep = 0; }
+        if (chosen != null && !chosen.Enemy) { BattleUnit gain = Wallet(chosen); gain.Ap += card.ApGain; gain.Ep += card.EpGain; }
+        else if (chosen != null) { chosen.Ap += card.ApGain; chosen.Ep += card.EpGain; }
         if (card.SelfShield > 0 && actor != null && actor.Alive && !actor.Enemy)
         {
             int amount = Math.Max(1, (int)Math.Round(card.SelfShield * MendMultiplier(actor)));
@@ -968,7 +983,7 @@ public sealed class BattleState
         if (target.Tenacity > 0) return;
         target.ApplyStatus("Broken", BreakDamage, 1);
         target.ActionCount += 1;
-        if (actor != null && Allies.Contains(actor) && actor.Alive) { actor.Ap += 1; actor.Stress = Math.Max(0, actor.Stress - 10); }
+        if (actor != null && Allies.Contains(actor) && actor.Alive) { Wallet(actor).Ap += 1; actor.Stress = Math.Max(0, actor.Stress - 10); }
         Sp = Math.Min(SpMax, Sp + 1);
         Fact("break", actor, target, card, 0, false, element, 1f);
         Say(target.Name + " BREAKS!");

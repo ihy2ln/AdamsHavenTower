@@ -259,7 +259,8 @@ public sealed partial class BattleMode
         if (actor == null) return false;
         BattleCard card = BattleCatalog.FighterKit(actor).Find(c => c.Id == cardId);
         if (card == null) return false;
-        actor.Ap = Mathf.Max(actor.Ap, card.Ap); actor.Ep = Mathf.Max(actor.Ep, card.Ep);
+        BattleUnit wallet = battle.Wallet(actor);
+        actor.Ap = Mathf.Max(actor.Ap, card.Ap); wallet.Ap = Mathf.Max(wallet.Ap, card.Ap); wallet.Ep = Mathf.Max(wallet.Ep, card.Ep);
         BattleUnit target = card.Target == BattleTarget.Self ? actor : battle.Enemies.Find(e => battle.IsTarget(card, actor, e));
         if (target == null) target = battle.Allies.Find(a => a != actor && battle.IsTarget(card, actor, a));
         if (target == null) target = battle.Allies.Find(a => battle.IsTarget(card, actor, a));

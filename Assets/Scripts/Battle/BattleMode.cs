@@ -102,7 +102,8 @@ public sealed partial class BattleMode : MonoBehaviour
         if (actor == null) return false;
         BattleCard card = BattleCatalog.FighterKit(actor).Find(c => c.Id == cardId);
         if (card == null) return false;
-        actor.Ap = Mathf.Max(actor.Ap, card.Ap); actor.Ep = Mathf.Max(actor.Ep, card.Ep);
+        BattleUnit wallet = battle.Wallet(actor);
+        actor.Ap = Mathf.Max(actor.Ap, card.Ap); wallet.Ap = Mathf.Max(wallet.Ap, card.Ap); wallet.Ep = Mathf.Max(wallet.Ep, card.Ep);
         BattleUnit target = card.Target == BattleTarget.Self ? actor : battle.Enemies.Find(e => battle.IsTarget(card, actor, e));
         return Perform(card, actor, target);
     }
@@ -182,6 +183,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         BattleGui.Build();
         ResetFx();
+        exitRequested = false;
         victoryPlayed = false;
         cardVis.Clear(); handOrder.Clear(); slots.Clear(); drawOrder.Clear(); intents.Clear();
         ClearSelection();
@@ -357,6 +359,9 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void Update()
     {
+        // A leave button only asks to exit; the teardown runs here, outside OnGUI, so no OnGUI pass ever sees the
+        // battle half torn down (ExitBattle nulls it and the leave callback may destroy this component).
+        if (exitRequested) { exitRequested = false; ExitBattle(); return; }
         if (battle == null) return;
         float dt = Mathf.Min(Time.deltaTime, 0.05f);
         UpdateSoftStage();
@@ -506,10 +511,20 @@ public sealed partial class BattleMode : MonoBehaviour
             return battle.Cp < Math.Max(1, card.Ap) ? "JD needs " + Math.Max(1, card.Ap) + " CP" : "";
         if (actor == null || !actor.Alive) return "Its owner is down";
         if (actor.Strained(card)) return actor.Name.Split(' ')[0] + " is in breakdown";
+        if (Summons)
+        {
+            if (actor.Ap <= 0) return actor.Name.Split(' ')[0] + " can't be called this round";
+            if (battle.Summoner.Ap < card.Ap) return "JD has no AP left";
+            if (battle.Summoner.Ep < card.Ep) return "JD needs " + card.Ep + " EP";
+            return "";
+        }
         if (actor.Ap < card.Ap) return actor.Name.Split(' ')[0] + " has no AP left";
         if (actor.Ep < card.Ep) return actor.Name.Split(' ')[0] + " needs more EP";
         return "";
     }
+
+    private bool exitRequested;
+    private void RequestExit() { if (battle != null) exitRequested = true; }
 
     private void ExitBattle()
     {
@@ -654,12 +669,26 @@ public sealed partial class BattleMode : MonoBehaviour
     // so units grow upward; a unit never grows past the headroom under the HUD (its head, the intent badge above an
     // enemy and the turn-order row must all stay clear).
     public static float FieldScale = 1.5f;
+    // The party side (fighters and JD) grows less than the pack: at 1.5x the humans dwarfed the beasts.
+    public static float AllyScale = 1.25f;
+    // Enemy art is sized from a taller base (EnemyHeight: 320 for a regular form, 400 large, 440+ lair bosses), so at
+    // 1.1x a regular humanoid stands level with a fighter and large beasts and bosses tower over them.
+    public static float EnemyScale = 1.1f;
     const float HeadroomTop = 172f;
     private static readonly float[] laneX = { 640f, 430f, 222f };
     private static readonly float[] laneY = { 600f, 548f, 590f };
     private static readonly float[] laneH = { 268f, 252f, 262f };
     private static readonly float[] footY = { 604f, 552f, 596f, 556f, 598f, 554f };
-    static float Grown(float h, float foot) { return Mathf.Min(h * FieldScale, foot - HeadroomTop); }
+    float Grown(float h, float foot, float scale = -1f)
+    {
+        // On a screen taller than 16:9 the top bar is pinned higher (HUD anchoring), so units may grow into that room.
+        float top = HeadroomTop + Mathf.Min(0f, screenView.y) * .8f;
+        return Mathf.Min(h * (scale > 0f ? scale : FieldScale) * TallBoost, foot - top);
+    }
+    // On a screen taller than 16:9 the hand is pinned lower; the field's ground line follows part of the way down.
+    float FieldDrop { get { return Mathf.Max(0f, screenView.yMax - VH) * .55f; } }
+    // ...and the units grow into the extra height (a pack that runs out of width is still fitted to it).
+    float TallBoost { get { return Mathf.Clamp(1f + (screenView.height / VH - 1f) * .6f, 1f, 1.3f); } }
     private readonly List<BattleUnit> foes = new List<BattleUnit>();
     private static readonly Comparison<BattleUnit> ByLane = (a, b) => a.Lane.CompareTo(b.Lane);
     private Comparison<BattleUnit> byFoot;
@@ -671,38 +700,43 @@ public sealed partial class BattleMode : MonoBehaviour
         {
             BattleUnit unit = battle.Allies[i];
             int lane = Mathf.Clamp(unit.Lane, 0, 2);
-            if (Summons) { Vector2 spot = SummonPos(unit); AddSlot(unit, spot, Grown(laneH[0], spot.y) * (unit == shownMate ? .92f : 1f)); continue; }
-            AddSlot(unit, new Vector2(laneX[lane], laneY[lane]), Grown(laneH[lane], laneY[lane]));
+            if (Summons) { Vector2 spot = SummonPos(unit); AddSlot(unit, spot, Grown(laneH[0], spot.y, AllyScale) * (unit == shownMate ? .92f : 1f)); continue; }
+            Vector2 laneFoot = new Vector2(laneX[lane], laneY[lane] + FieldDrop);
+            AddSlot(unit, laneFoot, Grown(laneH[lane], laneFoot.y, AllyScale));
         }
         foes.Clear(); foes.AddRange(battle.Enemies);
         foes.Sort(ByLane);
-        // The pack's full span: each beast 0.72 of its width after the one before, the last one whole. It is fitted
-        // into PackLeft..PackRight (shrunk only when it would not fit) and centred there, so the last beast, its name
-        // and its intent badge never run off the right edge.
+        // The pack stands in two staggered rows (footY alternates front and back), so each beast starts PackStep of its
+        // width after the one before; the last one is whole. The span is fitted into PackLeft..PackRight (shrunk only
+        // when it would not fit) and centred there, so the last beast, its name and its intent badge stay on screen.
+        // A wider screen than 16:9 lends the pack its right margin.
+        const float PackStep = .5f;
+        float drop = FieldDrop;
         float span = 0f;
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
             float aspect = s.Valid ? s.Aspect : 0.85f;
-            float w0 = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footY[i % footY.Length]) * aspect;
-            span += i < foes.Count - 1 ? w0 * 0.72f : w0;
+            float w0 = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footY[i % footY.Length] + drop, EnemyScale) * aspect;
+            span += i < foes.Count - 1 ? w0 * PackStep : w0;
         }
         // A summon battle's party side holds only JD and one summon: the enemies get more of the field.
-        float PackLeft = Summons ? 840f : 868f, PackRight = 1572f;
+        float PackLeft = Summons ? 790f : 868f, PackRight = 1572f + Mathf.Max(0f, screenView.xMax - VW) * .7f;
         float fit = Mathf.Min(1f, (PackRight - PackLeft) / Mathf.Max(1f, span));
         float cursor = PackLeft + ((PackRight - PackLeft) - span * fit) * .5f;
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
             float aspect = s.Valid ? s.Aspect : 0.85f;
-            float h = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footY[i % footY.Length]) * fit;
+            float footAt = footY[i % footY.Length] + drop;
+            float h = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footAt, EnemyScale) * fit;
             float w = h * aspect;
-            AddSlot(foes[i], new Vector2(cursor + w * 0.5f, footY[i % footY.Length]), h);
-            cursor += w * 0.72f;
+            AddSlot(foes[i], new Vector2(cursor + w * 0.5f, footAt), h);
+            cursor += w * PackStep;
         }
-        if (Summons) AddSlot(battle.Summoner, JdSpot, Grown(262f, JdSpot.y));
-        else AddSlot(battle.Summoner, new Vector2(118f, 470f), Mathf.Min(205f * Mathf.Sqrt(FieldScale), 470f - HeadroomTop));
-        if (battle.EnemySummoner != null) AddSlot(battle.EnemySummoner, new Vector2(1490f, 476f), Mathf.Min(244f * Mathf.Sqrt(FieldScale), 476f - HeadroomTop));
+        if (Summons) { Vector2 jdFoot = JdSpot + new Vector2(0f, drop); AddSlot(battle.Summoner, jdFoot, Grown(262f, jdFoot.y, AllyScale)); }
+        else AddSlot(battle.Summoner, new Vector2(118f, 470f + drop), Mathf.Min(205f * Mathf.Sqrt(FieldScale), 470f + drop - HeadroomTop));
+        if (battle.EnemySummoner != null) AddSlot(battle.EnemySummoner, new Vector2(1490f, 476f + drop), Mathf.Min(244f * Mathf.Sqrt(FieldScale), 476f + drop - HeadroomTop));
         // A reserve partner stepping in stands just behind the fighter they partner while their assist plays.
         if (assistUnit != null && fx < assistUntil && battle.Reserves.Contains(assistUnit))
         {
@@ -784,6 +818,32 @@ public sealed partial class BattleMode : MonoBehaviour
         return enabled && Press(r);
     }
 
+    // ---- HUD anchoring -----------------------------------------------------------------------
+
+    // The canvas is 1600x900 (16:9). A screen of another shape shows more around it (screenView). Each HUD group is
+    // pinned to its own screen edges by drawing it shifted into that margin (the top bar to the top, the hand and the
+    // tiles to the bottom, the corner groups to the sides), so the field gets the room in between. The pointer is
+    // shifted with the group, so the hit tests inside it need no changes.
+    private Matrix4x4 hudBase = Matrix4x4.identity;
+    private Vector2 hudShift;
+
+    // h: -1 left edge, 0 centred, 1 right edge; v: -1 top edge, 0 centred, 1 bottom edge.
+    private Vector2 Edge(int h, int v)
+    {
+        return new Vector2(h < 0 ? screenView.x : h > 0 ? screenView.xMax - VW : 0f,
+            v < 0 ? screenView.y : v > 0 ? screenView.yMax - VH : 0f);
+    }
+
+    private void Hud(Vector2 shift)
+    {
+        mouse += hudShift - shift;
+        hudShift = shift;
+        GUI.matrix = hudBase * Matrix4x4.Translate(new Vector3(shift.x, shift.y, 0f));
+    }
+
+    // The pointer as a HUD group pinned to these edges sees it.
+    private Vector2 MouseIn(int h, int v) { return mouse + hudShift - Edge(h, v); }
+
     // ---- OnGUI -------------------------------------------------------------------------------
 
     private void OnGUI()
@@ -797,6 +857,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Vector2 offset = new Vector2((sw - VW * scale) * 0.5f, (sh - VH * scale) * 0.5f);
         screenView = new Rect(-offset.x / scale, -offset.y / scale, sw / scale, sh / scale);
         if (e.type != EventType.Layout) mouse = (e.mousePosition - offset) / scale;
+        hudShift = Vector2.zero;
         pressed = e.type == EventType.MouseDown && e.button == 0;
         rightPressed = e.type == EventType.MouseDown && e.button == 1;
         if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape) rightPressed = true;
@@ -824,21 +885,25 @@ public sealed partial class BattleMode : MonoBehaviour
         DrawField();
         if (paint) { DrawParticles(); DrawEffects(); DrawFxVideo(); }
         GUI.matrix = baseMatrix;
+        hudBase = baseMatrix;
         if (paint) DrawFloaters();
         if (paint) DrawVignette();
         // A staged skill has the screen to itself: the panels step aside (the hand ducks below the frame).
         if (StageWeight < .3f)
         {
             DrawTopBar();
-            DrawPartyTiles();
-            DrawReserves();
-            DrawPiles();
-            DrawEndTurn();
+            Hud(Edge(-1, 1)); DrawPartyTiles();
+            Hud(Edge(-1, -1)); DrawReserves();
+            Hud(Edge(1, 1)); DrawPiles(); DrawEndTurn();
         }
-        DrawHand();
+        // The hand is built to overhang the canvas bottom by ~30: pinned to the screen edge it keeps that overhang.
+        Vector2 handEdge = Edge(0, 1);
+        Hud(new Vector2(handEdge.x, Mathf.Max(0f, handEdge.y - 34f))); DrawHand();
+        Hud(Edge(-1, 1));
         if (chooseUltimateFor != null && chooseUltimateFor == popupUnit) DrawUltimateChoices(popupUnit, popupTile);
         else popupUnit = null;
-        DrawHint();
+        Hud(Edge(0, 1)); DrawHint();
+        Hud(Vector2.zero);
         if (paint) { DrawStageOverlay(); DrawFlyingCards(); DrawCutIn(); DrawBanners(); DrawToast(); }
         DrawTooltip();
         if (battle.Finished && !Busy)
@@ -864,19 +929,20 @@ public sealed partial class BattleMode : MonoBehaviour
         BattleCard previous = hoverCard;
         hoverCard = null; hoverUnit = null;
         if (Modal) return;
-        if (popupUnit != null && popupRect.Contains(mouse)) return;
+        if (popupUnit != null && popupRect.Contains(MouseIn(-1, 1))) return;
+        Vector2 handMouse = MouseIn(0, 1);
         // Keep the current hover while the pointer is over either its lifted or resting shape,
         // otherwise a lifted card would drop away as soon as the pointer reached its lower half.
         CardVis pv;
         if (previous != null && handOrder.Contains(previous) && cardVis.TryGetValue(previous, out pv))
         {
-            if (InsideCard(mouse, pv.Pos, pv.Angle, pv.Scale) || InsideCard(mouse, pv.Rest, pv.RestAngle, 1f)) { hoverCard = previous; return; }
+            if (InsideCard(handMouse, pv.Pos, pv.Angle, pv.Scale) || InsideCard(handMouse, pv.Rest, pv.RestAngle, 1f)) { hoverCard = previous; return; }
         }
         for (int i = handOrder.Count - 1; i >= 0; i--)
         {
             CardVis cv;
             if (!cardVis.TryGetValue(handOrder[i], out cv)) continue;
-            if (InsideCard(mouse, cv.Rest, cv.RestAngle, 1f)) { hoverCard = handOrder[i]; return; }
+            if (InsideCard(handMouse, cv.Rest, cv.RestAngle, 1f)) { hoverCard = handOrder[i]; return; }
         }
         for (int i = drawOrder.Count - 1; i >= 0 && !StageShowing; i--)
         {
@@ -890,8 +956,8 @@ public sealed partial class BattleMode : MonoBehaviour
         BattleUnit tile = TileHover();
         if (tile != null) { hoverUnit = tile; return; }
         // The commander plates in the top corners are targetable too.
-        if (new Rect(16f, 12f, 356f, 88f).Contains(mouse)) hoverUnit = battle.Summoner;
-        else if (battle.EnemySummoner != null && CommanderPlate.Contains(mouse)) hoverUnit = battle.EnemySummoner;
+        if (new Rect(16f, 12f, 356f, 88f).Contains(MouseIn(-1, -1))) hoverUnit = battle.Summoner;
+        else if (battle.EnemySummoner != null && CommanderPlate.Contains(MouseIn(1, -1))) hoverUnit = battle.EnemySummoner;
     }
 
     private static bool InsideCard(Vector2 point, Vector2 center, float angle, float scale)
@@ -1427,6 +1493,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawTopBar()
     {
+        Hud(Edge(-1, -1));
         Rect jd = new Rect(16f, 12f, 356f, 88f);
         DrawPlate(jd, battle.Summoner, false, "JD  -  SUMMONER");
         if (pressed && !used && selected == null && Over(jd)) BeginHold(battle.Summoner);
@@ -1439,15 +1506,20 @@ public sealed partial class BattleMode : MonoBehaviour
             bool full = battle.Sp >= BattleState.SpMax;
             Round(pip, on ? (full ? BattleGui.Alpha(Gold, .75f + .25f * Mathf.Sin(Time.time * 7f)) : new Color(.45f, .82f, 1f)) : new Color(.09f, .12f, .18f, .95f), 4f);
         }
-        Text(new Rect(jd.x + 88f, jd.y + 65f, 250f, 18f), "SP " + battle.Sp + "/" + BattleState.SpMax + "     CP " + battle.Cp + "/2", 12, new Color(.75f, .85f, .95f), TextAnchor.MiddleLeft, true);
+        string pools = "SP " + battle.Sp + "/" + BattleState.SpMax + "     CP " + battle.Cp + "/2";
+        // A summon battle's AP and EP are JD's: the contract draws on one pool.
+        if (Summons) pools = "AP " + battle.Summoner.Ap + "/" + battle.Summoner.MaxAp + "   EP " + battle.Summoner.Ep + "/" + battle.Summoner.MaxEp + "   " + pools;
+        Text(new Rect(jd.x + 88f, jd.y + 65f, 268f, 18f), pools, 12, new Color(.75f, .85f, .95f), TextAnchor.MiddleLeft, true);
         bool ready = battle.Sp >= BattleState.SpMax && !battle.Finished;
         if (MiniButton(new Rect(16f, 106f, 150f, 30f), "JD DECREE", ready && !Busy, ready, Gold, ready ? 1f : battle.Sp / (float)BattleState.SpMax, 14)) DoDecree();
 
+        Hud(Edge(0, -1));
         string stage = Mathf.Abs(floor) >= 8 ? "BOSS" : Mathf.Abs(floor) >= 3 ? "ELITE" : "GROVE";
         string header = Encounter != null ? Encounter.Title + "  -  DANGER " + Encounter.Depth : "SILVERWOOD  -  " + stage + "  -  FLOOR " + floor;
         DrawTurnPanel(TurnPanel, header);
         DrawNextBox(new Rect(968f, 12f, 140f, 56f));
         DrawTurnOrder(new Vector2(TurnPanel.center.x, 100f));
+        Hud(Edge(1, -1));
 
         if (battle.EnemySummoner != null) DrawPlate(CommanderPlate, battle.EnemySummoner, true,
             (battle.EnemySummoner.Rank > 0 ? "[" + BattleBestiary.RankName(battle.EnemySummoner.Rank) + "]  " : "") +
@@ -1473,7 +1545,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (MiniButton(new Rect(1490f, 14f, 46f, 46f), "AUTO", !battle.Finished, auto, Gold, -1f, 11))
         { auto = !auto; autoTimer = .2f; ClearSelection(); }
         if (MiniButton(new Rect(1544f, 14f, 46f, 46f), battle.Finished ? "EXIT" : "RUN", true, false, EnemyRed, -1f, 12))
-        { if (battle.Finished) ExitBattle(); else confirmWithdraw = true; }
+        { if (battle.Finished) RequestExit(); else confirmWithdraw = true; }
     }
 
     // ---- reserves, piles, end turn -------------------------------------------------------------
@@ -1535,7 +1607,7 @@ public sealed partial class BattleMode : MonoBehaviour
         for (int i = 0; i < battle.Allies.Count; i++)
         {
             BattleUnit u = battle.Allies[i];
-            if (u.Alive && u.Ap > 0 && !u.Strained(BattleCatalog.Basic(u))) return true;
+            if (u.Alive && battle.CanPay(BattleCatalog.Basic(u), u)) return true;
         }
         for (int i = 0; i < battle.Hand.Count; i++)
             if (Reason(battle.Hand[i], battle.OwnerOf(battle.Hand[i])).Length == 0) return true;
@@ -1758,14 +1830,15 @@ public sealed partial class BattleMode : MonoBehaviour
             float x = tile.x + 76f;
             Text(new Rect(x, tile.y + 4f, 130f, 20f), u.Name.Split(' ')[0].ToUpperInvariant(), 15, alive ? Color.white : new Color(.6f, .6f, .66f), TextAnchor.MiddleLeft, true, false, 1f);
             Text(new Rect(x + 96f, tile.y + 4f, 76f, 20f), u.Role.ToString().ToUpperInvariant(), 10, new Color(.7f, .8f, .9f), TextAnchor.MiddleRight, true);
-            // AP / EP pips.
+            // AP / EP pips (a summon battle's AP and EP are JD's pool, shown on JD's plate).
+            if (!Summons)
             for (int a = 0; a < Mathf.Max(1, u.MaxAp); a++)
             {
                 Rect pip = new Rect(x + a * 16f, tile.y + 27f, 12f, 12f);
                 Round(pip, a < u.Ap ? new Color(.96f, .72f, .22f) : new Color(.10f, .12f, .17f), 4f);
                 Outline(pip, new Color(1f, .85f, .5f, .8f), 1.2f, 4f);
             }
-            int epPips = Mathf.Max(u.MaxEp, u.Ep);
+            int epPips = Summons ? 0 : Mathf.Max(u.MaxEp, u.Ep);
             float epStart = x + Mathf.Max(1, u.MaxAp) * 16f + 10f;
             for (int p = 0; p < epPips; p++)
             {
@@ -1795,13 +1868,13 @@ public sealed partial class BattleMode : MonoBehaviour
             else
             {
                 BattleCard basic = BattleCatalog.Basic(u);
-                bool basicOn = canAct && u.Ap > 0 && !u.Strained(basic);
+                bool basicOn = canAct && battle.CanPay(basic, u);
                 bool basicActive = selected != null && selected.Id == basic.Id && selectedActor == u;
                 if (MiniButton(new Rect(row.x, row.y, 54f, 26f), "BASIC", basicOn, basicActive, Ice, -1f, 11))
                 { if (basicActive) ClearSelection(); else { ClearSelection(); Select(basic); } }
                 // Guard: the free shield (CZN's Defend). Damage it fully absorbs adds no stress.
                 BattleCard guard = BattleCatalog.Guard(u);
-                if (MiniButton(new Rect(row.x + 58f, row.y, 54f, 26f), "GUARD", canAct && u.Ap > 0 && !u.Strained(guard), false, Mint, -1f, 11))
+                if (MiniButton(new Rect(row.x + 58f, row.y, 54f, 26f), "GUARD", canAct && battle.CanPay(guard, u), false, Mint, -1f, 11))
                 { ClearSelection(); Select(guard); }
                 bool ultReady = u.Ultimate >= 100 && battle.Sp >= battle.UltCost(u);
                 if (MiniButton(new Rect(row.x + 116f, row.y, 56f, 26f), ultReady ? "ULT!" : u.Ultimate + "%",
@@ -1891,7 +1964,7 @@ public sealed partial class BattleMode : MonoBehaviour
         List<string> lines = new List<string>();
         lines.Add(u.Name + (u.Enemy && u.Rank > 0 ? "  -  rank " + BattleBestiary.RankName(u.Rank) : ""));
         lines.Add(u.Element + "  -  " + u.Role + (u.Taunting ? "  -  Taunt" : ""));
-        lines.Add("HP " + u.Hp + " / " + u.MaxHp + (u.Enemy ? "" : "     AP " + u.Ap + "  EP " + u.Ep));
+        lines.Add("HP " + u.Hp + " / " + u.MaxHp + (u.Enemy || (Summons && u != battle.Summoner) ? "" : "     AP " + u.Ap + "  EP " + u.Ep));
         if (!u.Enemy && u != battle.Summoner) lines.Add("Ultimate " + u.Ultimate + "%   Stress " + u.Stress + "%" + (u.CollapseRounds > 0 ? "  BREAKDOWN" : ""));
         for (int i = 0; i < u.Statuses.Count; i++)
             lines.Add((IsBuff(u.Statuses[i].Name) ? "+ " : "- ") + StatusLabel(u.Statuses[i].Name) + " (" + u.Statuses[i].Turns + " rounds)");
@@ -1996,7 +2069,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Text(new Rect(0, 270f, VW, 130f), battle.Victory ? "VICTORY" : battle.Withdrawn ? "WITHDRAWN" : "DEFEAT", 110, c, TextAnchor.MiddleCenter, true, false, 5f);
         Text(new Rect(300f, 404f, 1000f, 50f), battle.Victory ? RewardLine ?? reward + " gold will return to the Tower." : battle.LastMessage, 26, Color.white, TextAnchor.MiddleCenter, true, false, 2f);
         Rect button = new Rect(620f, 500f, 360f, 70f);
-        if (MiniButton(button, ReturnLabel, true, true, c, -1f, 24)) ExitBattle();
+        if (MiniButton(button, ReturnLabel, true, true, c, -1f, 24)) RequestExit();
     }
 
     private void DrawLog()
@@ -2027,7 +2100,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Text(new Rect(box.x + 30f, box.y + 100f, 560f, 49f), WithdrawLine ?? "The party returns to the Tower without a reward.", 18, Color.white, TextAnchor.MiddleCenter);
         if (MiniButton(new Rect(box.x + 40f, box.y + 172f, 240f, 55f), "KEEP FIGHTING", true, false, Ice, -1f, 17)) confirmWithdraw = false;
         if (MiniButton(new Rect(box.x + 340f, box.y + 172f, 240f, 55f), "WITHDRAW", true, false, EnemyRed, -1f, 17))
-        { confirmWithdraw = false; battle.Forfeit(); ExitBattle(); }
+        { confirmWithdraw = false; battle.Forfeit(); RequestExit(); }
         modalDrawing = false;
     }
 }
