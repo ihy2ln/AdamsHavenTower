@@ -52,3 +52,6 @@ TownPrompts/**/*.png
 /BattleMotion/fighter_*/review/
 /BattleMotion/fighter_*/segments/_takes/
 /SeedanceHandoff/
+
+# Monster generation workspace (source for Tools/sync_codex_cards.py). Kept on disk, not in git; snapshot in ../Archive/MonsterPrompts_2026-10-04.7z.
+/MonsterPrompts/
