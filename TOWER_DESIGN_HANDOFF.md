@@ -1,16 +1,62 @@
 # Tower Mode handoff (for the next TT session)
 
-Updated 2026-10-03 after TT 10.3.1. Read this first, then `TOWER_MODE_GDD.md` (design authority), `TOWER_LIFE.md` (build log, newest at the bottom) and `TOWER_BALANCE_REPORT.md` (measured numbers).
+Updated 2026-10-04 after TT 10.4.3. Read this first, then `TOWER_MODE_GDD.md` (design authority; section 20 is Dungeon Mode, 19 the town), `TOWER_LIFE.md` (build log, newest at the bottom) and `TOWER_BALANCE_REPORT.md` (measured numbers).
 
-## 0. Start here
+## 0. Start here: one game, two modes, one town
 
-**TT 10.4.0 (2026-10-04) forked Dungeon Mode (GDD 20):** the Heart as the summoner's dungeon, raided by adventurer parties. Same project, own saves (`AdamsHavenDungeon/`), switched from MENU. Slice 1 is built and playable (founding, route, traps, monsters, raid reports, notoriety and the elite team). Next for Dungeon Mode: let the owner play it and tune `LairBalance`; then Heart relocation, monster taming, prison/converts and real dungeon art (GDD 20.6). Tower Mode work below is unchanged.
+There are **two playable modes** in the same Unity project, and **the town is a view inside each of them**, not a third mode.
 
-**TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1). TT 10.3.2 shipped the TOWN view greybox (GDD 19.2). TT 10.3.3 shipped town lots (auto growth + full player override), the 48-picture reference pack and the picture-to-3D pipeline.** The next jobs, in the owner's order: **real building assets for the town** (the blocks must go), then **town lots as rules data**, then the economy and visitors (GDD 19.3-19.4). Ask the owner the questions in section 3 first.
+| What | Kind | How to reach it | Saves | State |
+| --- | --- | --- | --- | --- |
+| **Tower Mode** | Mode (the default) | Launch the game | `LocalLow/.../AdamsHavenTower/` (slot 0 = NEW GAME, 1 = player, 2-10 pinned checkpoints) | Full colony sim; opening reworked in TT 10.4.1-10.4.3 |
+| **Dungeon Mode** | Mode (fork, GDD 20) | MENU > **DUNGEON MODE** (tap twice). The scene reloads; MENU > **TOWER MODE** goes back | `LocalLow/.../AdamsHavenDungeon/` (1 = dormant, 2 summit, 3 depths, 4 elite incoming) | Slice 1 built (TT 10.4.0): founding, traps, monsters, raids, notoriety, elite team |
+| **Town** | A **view** in either mode (GDD 19) | **TOWN** button, top right, under the resource bar | Lives in the same save (`townLots`) | Ring town around the tower; lots grow by themselves or by the player; **all 48 building models now exist** (TT 10.3.2-10.3.3 + asset chain) |
 
-Paste-ready prompt for the next session:
+Code map: Tower = `Tower*.cs`; Dungeon = `Lair*.cs` + `TowerHudLair.cs` (switch in `LairMode.cs`, `TowerModes.IsLair`); Town = `TowerTown*.cs` + `TowerHudTown.cs`.
+Every Tower file edit for the dungeon is an `IsLair` branch, so Tower Mode plays exactly as before.
 
-> TT <next version>. Tower Tycoon: town building assets and town lots (GDD 19.2). Read `TOWER_DESIGN_HANDOFF.md` sections 0 and 3 first and ask me its open questions before coding.
+### What the owner asked for (2026-10-03/04), and where it stands
+
+- **The pivot (2026-10-03):** the Heart becomes the summoner's **dungeon**, raided by adventurers (Dungeon Keeper x Kairosoft Dungeon Village). **The town stays and becomes the adventurer economy.** Ruled: a separate mode, so the Tower stays playable. Built as Dungeon Mode slice 1; **the town is not yet wired to the dungeon** (see Track B).
+- **Town (GDD 19):** its own view, a circle-ish ring on a square grid around the tower, growing with the Heart; it runs itself and the player can override any lot or group of lots. Reference picture first, then the 3D shell. **Done:** view, lots, the 48-picture pack and all 48 models. **Next:** lots as rules data, then economy and visitors.
+
+### Recent batches (2026-10-04)
+
+| Batch | Commits | What |
+| --- | --- | --- |
+| TT 10.4.0 | 8b820bc | Dungeon Mode fork, slice 1 (GDD 20) |
+| TT 10.4.1 | a2da408 | Sell-back window (100% to 0% over 180 game s; undoes an upgrade), DECONSTRUCT afterwards, cancel construction for a full refund; ground floor could not grow (EAST button hidden); Gates step out when a foundation starts; placing ends after one build; no sky tint during the lessons; worker duty fix (newcomers became repairers and burned the last stone); Lumber Mill gives a little stone; gentler first 3 days |
+| TT 10.4.2 | b76c5b7 | Compact see-through HUD (1600x900 reference, 80% panels, 50% menu backdrop, ease-in), outward-facing Gates, animated Heart beam (2 floors past top and bottom), days turn at midnight, supplies-run quest (25 wood, 15 stone), FOOD and WATER lessons |
+| TT 10.4.3 | 1434e40, b8e6cc0, 175c383, 3645161 | Drag onto any producer completes the MATCH lesson; **rest hysteresis** (the "resident bugs out" jitter: rest at 25 flipped rest/meal every frame); the Steward no longer undoes the player's assignment for a game day; Shack and Kitchen use their F/E/D art (furnished interiors from rank B) |
+
+Tests: `LairModeTests` + `TowerManagementTests` + `TowerSimulationTests` = **216 green** (EditMode, 2026-10-04).
+
+### Three tracks, pick one per session
+
+**Track A: Tower Mode, keep playing the opening.** The owner plays new games and reports what breaks. Open items:
+- C to SSR rank pictures for every building (only F/E/D exist; C+ reuse D).
+- Priority buttons still cycle 2>3>0 (spaced apart now, not redesigned).
+- A full play-through to day 10 with the new sell-back, quest and lessons.
+
+> TT <next>. Tower Tycoon, Track A: play a new Tower game to day 5 in the Editor (drive it through RunCommand: press HUD buttons by name, `WorldTap` via SendMessage, `ScreenCapture`), list what breaks, fix it. Read `TOWER_DESIGN_HANDOFF.md` section 0 first.
+
+**Track B: Dungeon Mode slice 2 (GDD 20.6), and tie the town to it.** Slice 1 is playable but untuned. Ask the owner first:
+1. Did the raid loop feel right? Tune `LairBalance` (one file of numbers).
+2. **Town as the adventurer economy:** parties that flee spend gold in town (placeholder: `5 x survivors x rank` gold in `FinishParty`). Should adventurers visibly arrive through the town, shop, rest at the inn, and pick quests there? Should the town's buildings set party size and rank (an inn draws bigger parties, a temple heals them)?
+3. Order of the slice-2 list: Heart relocation (`ShiftFloors` is ready), monster taming on expeditions, prison and converts, walked retreats, real dungeon art, a dungeon tutorial.
+
+> TT <next>. Tower Tycoon, Track B: Dungeon Mode slice 2 and the town as the adventurer economy. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 20, then ask me the Track B questions before coding.
+
+**Track C: Town slices 2 to 4 (GDD 19.2-19.4).** Assets are done; the questions in section 3 below are still open (town homes and the dweller cap, raider damage, growth speed, the gold loop, wages and prices, visitors and traders).
+
+> TT <next>. Tower Tycoon, Track C: town lots as rules data, then the town economy (GDD 19.2-19.4). Read `TOWER_DESIGN_HANDOFF.md` sections 0 and 3 first and ask me the open questions before coding.
+
+### Working rules learned this week
+
+- The Editor may be in Play (owner or the BM session): never edit `.cs` during Play; exit, `AssetDatabase.Refresh()`, wait for the compile, then test.
+- Run EditMode tests through Unity MCP `TestRunnerApi` with a callback that writes to a file; the run can leave an untitled scene, so reopen `Assets/Scenes/AdamsHavenTower.unity` before Play.
+- Commit only our own hunks; the BM session owns `Battle/*`, `TowerExpedition*`, `TowerDungeon*`, `TowerMap*`, `AdamsHavenPrototype.cs` (one-line hooks only), `TowerSimulationTests.cs`.
+- A resident who "bugs out" is plan thrash: log `currentTask`/`targetRoom` per frame; fix with hysteresis.
 
 ## 1. Where things stand
 
