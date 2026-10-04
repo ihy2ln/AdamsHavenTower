@@ -38,6 +38,18 @@ EDIT_LEAD = {
 COPY_BELOW = 19.0   # mean grey difference (0-255, at 96x72) under which an upgrade is a copy of its reference
 
 
+# Types whose shape must survive the upgrade (the generic lead-in grows everything into a big hall).
+EDIT_KEEP = {
+    'watchtower': ("Keep it ONE slender, tall watchtower: a narrow square stone tower with a lookout platform and a "
+                   "brazier on top, standing alone on a small base. It is not a house, hall or manor; grow it taller "
+                   "and grander (buttressed dressed-stone base, carved lookout, Celestium lanterns), not wider."),
+    'wallsegment': ("Keep it a straight stretch of town wall with a crenellated walkway; make it taller and finer "
+                    "(dressed stone, buttresses, a small guard turret), not a house."),
+    'gatehouse': "Keep the arched road passage through it and the two flanking towers; it stays a gatehouse.",
+    'stall': "Keep it a small open-fronted market stall with an awning and goods on the counter, not a shop hall.",
+}
+
+
 def difference(a, b):
     """How different two pictures are: mean absolute grey difference at 96x72. Measured on the first pack: copies of
     the F-D reference score 13-15, real C-B / A-SSR upgrades 23-29."""
@@ -68,7 +80,7 @@ def render(row, seed):
         refs = [M.to_input(M.flat_ref(ref), f'town_{ref.stem}.png')]
         # Given the full description, the edit model redraws the reference as it is. Ask for the upgrade instead,
         # and reject copies: one reroll, then fall back to the prompt alone (as the F-D pictures are made).
-        prompt = EDIT_LEAD[row['band']] + ' ' + row['prompt']
+        prompt = EDIT_LEAD[row['band']] + ' ' + EDIT_KEEP.get(row['type'], '') + ' ' + row['prompt']
         for s in (seed, seed + 1000):
             result = queue(refs, prompt, row, s)
             diff = difference(ref, result)

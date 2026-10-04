@@ -32,7 +32,8 @@ def pictures(args):
 
 
 def to_glb(png, settings):
-    glb = WORK / f'{png.stem}.glb'
+    # Quick and full-quality builds cache separately, so a full-quality pass replaces the quick models one by one.
+    glb = WORK / f'{png.stem}{"" if settings is C.QUICK else "_hq"}.glb'
     if glb.exists(): return glb
     image = f'town_{png.stem}.png'
     shutil.copy(png, C.COMFY / 'input' / image)
@@ -82,4 +83,10 @@ if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('--')] or ['inn_fd']
     settings = C.QUICK if '--quick' in sys.argv else C.MAX
     for png in pictures(args):
+        hq = WORK / f'{png.stem}_hq.glb'
+        if settings is C.QUICK and hq.exists():
+            continue   # never put a quick model over a full-quality one
+        if settings is C.MAX and hq.exists() and (WORK / 'out' / f'{png.stem}.hq').exists():
+            continue   # already in the game at full quality
         to_unity(png, to_glb(png, settings))
+        if settings is C.MAX: (WORK / 'out' / f'{png.stem}.hq').touch()

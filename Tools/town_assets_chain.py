@@ -2,6 +2,7 @@
 Safe to re-run; both steps skip work already done. Logs to TownModels/chain.log.
 
   python Tools/town_assets_chain.py [--quick]   # wait for a running render_town_refs.py first, then do both steps
+  python Tools/town_assets_chain.py --hq        # after the quick chain: rebuild every model at full quality
 """
 from pathlib import Path
 import subprocess, sys, time
@@ -11,8 +12,9 @@ LOG = PROJECT / 'TownModels' / 'chain.log'
 
 
 def running(pattern):
+    # python.exe or pythonw.exe (the chains run detached under pythonw); the pattern is a regex on the command line.
     r = subprocess.run(['powershell', '-NoProfile', '-Command',
-                        "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { $_.CommandLine -match '" +
+                        "Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'python*.exe' -and $_.CommandLine -match '" +
                         pattern + "' } | Measure-Object | Select-Object -ExpandProperty Count"], capture_output=True, text=True)
     return int((r.stdout.strip() or '0')) > 0
 
@@ -28,6 +30,14 @@ def step(script, *args):
 
 if __name__ == '__main__':
     LOG.parent.mkdir(exist_ok=True)
+    if '--hq' in sys.argv:
+        # Full-quality pass: wait for the quick chain to finish, then rebuild every model at full quality.
+        while running('town_assets_chain.py --quick') or running('town_to_3d.py all --quick'):
+            time.sleep(60)
+        for attempt in range(3):
+            if step('town_to_3d.py', 'all') == 0: break
+            time.sleep(120)
+        raise SystemExit(0)
     while running('render_town_refs'):
         time.sleep(60)
     for attempt in range(3):            # ComfyUI restarts now and then; each pass resumes where the last stopped
