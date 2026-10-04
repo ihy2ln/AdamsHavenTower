@@ -136,6 +136,28 @@ public sealed class TowerManagementTests
     }
 
     [Test]
+    public void TiredResidentRestsInsteadOfFlippingEveryTick()
+    {
+        // TT 10.4.3 regression: rest hovering at 25 flipped the plan between "rest" and a meal errand every
+        // frame; each flip restarted the walk and the resident never arrived anywhere.
+        var rules = Lot();
+        Assert.IsNull(rules.Build("kitchen", 0, 23));
+        var kaela = rules.State.residents[0];
+        Assert.IsNull(rules.Assign(kaela.id, rules.RoomAt(0, 23).uid));
+        kaela.rest = 24.9f; kaela.hunger = 44; kaela.thirst = 72;
+        int flips = 0;
+        string last = kaela.currentTask;
+        for (int i = 0; i < 120; i++)
+        {
+            rules.Advance(0.25f, true);
+            if (kaela.currentTask != last) { flips++; last = kaela.currentTask; }
+        }
+        Assert.LessOrEqual(flips, 2, "the plan keeps changing its mind");
+        Assert.AreEqual("rest", kaela.currentTask);
+        Assert.AreEqual(kaela.homeRoom, kaela.currentRoom, "she made it home");
+    }
+
+    [Test]
     public void SellBackFallsToNothingThenDeconstructs()
     {
         var rules = Lot();

@@ -248,6 +248,8 @@ namespace AdamsHaven.Tower
             return resident.currentTask == task && resident.targetRoom == room ? count - 1 : count;
         }
 
+        public const float RestRecoveredAt = 70f;   // a resident sent home exhausted rests until this
+
         private void PlanJobs()
         {
             foreach (var byRoom in claims.Values) byRoom.Clear();
@@ -276,8 +278,12 @@ namespace AdamsHaven.Tower
                     SetTask(resident, "recharge", heartRoom == null ? 0 : heartRoom.uid);
                     return;
                 }
+                // Exhausted or starving: go home and rest. Once resting, stay until properly recovered (TT 10.4.3): with
+                // a single threshold, rest hovered at 25 and the plan flipped between "rest" and an errand every frame,
+                // restarting the walk each time, so the resident never arrived anywhere.
+                bool recovering = resident.currentTask == "rest" && !Sleeping(resident) && resident.rest < RestRecoveredAt;
                 if (resident.origin != "body" &&
-                    (resident.rest < 25 || resident.hunger < 12 || resident.thirst < 12))
+                    (resident.rest < 25 || resident.hunger < 12 || resident.thirst < 12 || recovering))
                 {
                     SetTask(resident, "rest", resident.homeRoom > 0 ? resident.homeRoom :
                         heartRoom == null ? 0 : heartRoom.uid);
