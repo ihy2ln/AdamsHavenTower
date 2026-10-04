@@ -38,7 +38,9 @@ namespace AdamsHaven.Tower
         {
             if (State.siegeWarning > 0 || State.siegeCooldown > 0 || State.threat < SiegeThreat || !HasGate()) return false;
             State.siegeWarning = SiegeWarning;
-            Note("Scouts see a Silverwood host gathering. A siege reaches the Gates in ten minutes: post guards, arm defenders, " +
+            if (IsLair) Note("The guilds are sending an elite team for the Heart. It reaches the Gates in ten minutes: arm the " +
+                "traps, fill the lairs, or meet it in battle.");
+            else Note("Scouts see a Silverwood host gathering. A siege reaches the Gates in ten minutes: post guards, arm defenders, " +
                 "or lead the heroes out in battle.");
             Emit("siege_warning", 0, 0, "");
             return true;
@@ -49,7 +51,7 @@ namespace AdamsHaven.Tower
             State.siegeCooldown = Mathf.Max(0, State.siegeCooldown - dt);
             if (State.siegeWarning <= 0 || State.siegeBattle) return;   // the heroes are fighting it out in Battle Mode
             State.siegeWarning -= dt;
-            if (State.siegeWarning <= 0) { State.siegeWarning = 0; ResolveSiege(); }
+            if (State.siegeWarning <= 0) { State.siegeWarning = 0; if (IsLair) LairEliteArrives(); else ResolveSiege(); }
         }
 
         private void ResolveSiege()
@@ -67,6 +69,7 @@ namespace AdamsHaven.Tower
             int gold = 100 * State.heartRank, celestium = 2 * State.heartRank;
             State.gold += gold; State.celestium += celestium;
             State.threat = Mathf.Max(0, State.threat - 30);
+            if (IsLair) LairEliteRepelled();
             State.siegesWon++;
             foreach (var r in State.residents)
                 if (r.ageStage == 0 && !r.downed && !r.exploring && r.priorityDefense > 0) GiveXp(r, 20);
@@ -79,6 +82,7 @@ namespace AdamsHaven.Tower
         {
             State.siegeCooldown = 3.5f * DaySeconds * Storyteller.delay;
             State.siegesLost++;
+            if (IsLair) { Note(how + " The elite team marches on the Gates."); LairEliteArrives(); Emit("siege_lost", 0, 0, ""); return; }
             Note(how + " Last Stand: drive the raiders out before they reach the Heart!");
             if (StartRaid() == null)
             {

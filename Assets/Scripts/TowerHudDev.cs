@@ -73,13 +73,20 @@ public sealed partial class TowerHud
             ("LESSON +1", () => Do(r().DevTutorialStep(1))),
             ("END LESSONS", () => Do(r().DevTutorialStep(7))),
             ("NEW GAME", () => { tower.NewGame(); devOverlay.gameObject.SetActive(false); Refresh(); }) });
+        if (TowerModes.IsLair)
+            Row(c, 5, "DUNGEON", new (string, Action)[] {
+                ("+ PARTY NOW", () => Do(r().DevLairParty())),
+                ("+ ELITE NOW", () => Do(r().DevLairElite())),
+                ("+25 NOTORIETY", () => Do(r().DevLairNotoriety(25))),
+                ("+5 MONSTERS", () => Do(r().DevLairMonsters(5))),
+                ("DIG FLOOR", () => Do(r().LairDigFloor())) });
         devOverlay.gameObject.SetActive(false);
     }
 
     // One labelled row of eight buttons; a blank caption marks the instant-build toggle.
     private void Row(Transform card, int row, string title, (string caption, Action action)[] buttons)
     {
-        float top = 70 + row * 108;
+        float top = 70 + row * (TowerModes.IsLair ? 92 : 108);   // Dungeon Mode adds a sixth row
         TextAt(card, "Dev row " + title, title, 24, top, 400, 22, 14, Gold);
         for (int i = 0; i < buttons.Length; i++)
         {

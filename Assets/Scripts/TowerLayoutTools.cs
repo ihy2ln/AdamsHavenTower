@@ -77,6 +77,7 @@ namespace AdamsHaven.Tower
             NormalizeSiege();
             NormalizeBanners();
             NormalizeTown();
+            NormalizeLair();
             foreach (var resident in State.residents)
             {
                 if (resident.trait2 == null) resident.trait2 = "";
@@ -138,8 +139,8 @@ namespace AdamsHaven.Tower
             for (int cx = x; cx < x + width; cx++)
                 if (!IsFounded(floor, cx))
                     return "Expand the Celestium foundation " + (westSide ? "west" : "east") + " first.";
-            if (def.groundOnly && floor != 0) return "This room needs the ground floor.";
-            if (def.undergroundOnly && floor >= 0) return "This room belongs underground.";
+            string zone = ZoneReason(def, floor);
+            if (zone != null) return zone;
             for (int cx = x; cx < x + width; cx++)
                 if (Occupied(floor, cx, room)) return "Another room occupies that space.";
             // Like a new room it must lean on the shaft or on another room, never on its own old cells.

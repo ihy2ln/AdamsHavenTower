@@ -54,9 +54,9 @@ public sealed partial class TowerHud : MonoBehaviour
     private int guildAutoOpened;
     private readonly Button[] flyoutButtons = new Button[6];
     private Text buildPageText, floorText, incidentText;
-    private readonly Button[] categoryButtons = new Button[5];
-    private readonly string[] categoryIds = { "all", "home", "produce", "store", "service" };
-    private readonly string[] categoryNames = { "ALL", "HOMES", "PRODUCE", "STORE", "SERVICES" };
+    private readonly Button[] categoryButtons = new Button[6];   // the sixth, DUNGEON, shows in Dungeon Mode only
+    private readonly string[] categoryIds = { "all", "home", "produce", "store", "service", "dungeon" };
+    private readonly string[] categoryNames = { "ALL", "HOMES", "PRODUCE", "STORE", "SERVICES", "DUNGEON" };
     private string buildCategory = "all";
     private Button floorOpenAbove, floorOpenBelow, floorWest, floorEast;
     private Button recruit, autoHaul, stewardButton, autoAssignButton;
@@ -120,7 +120,7 @@ public sealed partial class TowerHud : MonoBehaviour
         BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
         BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
         BuildHeartPopup(); BuildAlertsPopup(); BuildWorkPopup(); BuildDistrictsPopup();
-        BuildAutoPopup(); BuildOutpostsPopup(); BuildSiegeBanner();
+        BuildAutoPopup(); BuildOutpostsPopup(); BuildSiegeBanner(); BuildLairPopup();
         BuildSaves(); BuildDefeat(); BuildFlyout(); BuildDev();
         BuildTownOverlay();   // last, so it sits above the rest of the canvas
         UpdateSafeArea();
@@ -135,6 +135,7 @@ public sealed partial class TowerHud : MonoBehaviour
         if (tower == null) return;
         TickTown();
         TickNewGameConfirm();
+        TickModeSwitch();
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;
@@ -468,7 +469,7 @@ public sealed partial class TowerHud : MonoBehaviour
             popupHeart.gameObject.activeSelf || popupAlerts.gameObject.activeSelf ||
             popupGuild.gameObject.activeSelf || popupWork.gameObject.activeSelf ||
             popupDistricts.gameObject.activeSelf || popupAuto.gameObject.activeSelf ||
-            popupOutposts.gameObject.activeSelf;
+            popupOutposts.gameObject.activeSelf || popupLair != null && popupLair.gameObject.activeSelf;
     }
 
     private void HidePopups()
@@ -479,6 +480,7 @@ public sealed partial class TowerHud : MonoBehaviour
         popupGuild.gameObject.SetActive(false); popupWork.gameObject.SetActive(false);
         popupDistricts.gameObject.SetActive(false); popupAuto.gameObject.SetActive(false);
         popupOutposts.gameObject.SetActive(false);
+        if (popupLair != null) popupLair.gameObject.SetActive(false);
     }
 
     private void CloseAllPopups()
@@ -509,10 +511,12 @@ public sealed partial class TowerHud : MonoBehaviour
         for (int i = 0; i < categoryButtons.Length; i++)
         {
             int index = i;
+            float pitch = TowerModes.IsLair ? 96 : 116;
             categoryButtons[i] = ButtonAt(popupBuild.transform, "Category " + categoryIds[i], categoryNames[i],
-                14 + i * 116, 12, 110, 32, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
+                14 + i * pitch, 12, pitch - 6, 32, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
                 Teal, 13);
         }
+        categoryButtons[5].gameObject.SetActive(TowerModes.IsLair);
         CloseButton(popupBuild.transform, 648, 12, CloseAllPopups);
         for (int i = 0; i < buildButtons.Length; i++)
         {
@@ -544,7 +548,8 @@ public sealed partial class TowerHud : MonoBehaviour
         floorOpenAbove = ButtonAt(popupFloors.transform, "Open above", "OPEN ABOVE", 14, 98, 218, 46,
             () => tower.Apply(tower.Rules.OpenFloor(tower.FocusFloor + 1)), Teal, 14);
         floorOpenBelow = ButtonAt(popupFloors.transform, "Open below", "OPEN BELOW", 238, 98, 218, 46,
-            () => tower.Apply(tower.Rules.OpenFloor(tower.FocusFloor - 1)), Teal, 14);
+            () => tower.Apply(tower.Rules.LairFounded ? tower.Rules.LairAddLivingFloor() :
+                tower.Rules.OpenFloor(tower.FocusFloor - 1)), Teal, 14);
         floorWest = ButtonAt(popupFloors.transform, "Expand west", "< WEST", 14, 152, 218, 46,
             () => ExpandFocused(-1), Teal, 14);
         floorEast = ButtonAt(popupFloors.transform, "Expand east", "EAST >", 238, 152, 218, 46,
@@ -788,6 +793,7 @@ public sealed partial class TowerHud : MonoBehaviour
             heroButtons[i] = ButtonAt(tutorialPanel.transform, "Starter " + id, id.ToUpperInvariant(),
                 22 + i * 194, 44, 181, 44, () => tower.Apply(tower.Rules.ChooseStarter(id)), Teal, 15);
         }
+        BuildLairFounding(tutorialPanel.transform);
         // RimWorld's storyteller pick, offered with the dormant Heart (optional: AWAKEN HEART stays the only step).
         for (int i = 0; i < storytellerButtons.Length; i++)
         {
@@ -811,7 +817,7 @@ public sealed partial class TowerHud : MonoBehaviour
         var card = Rect("Checkpoint card", saveOverlay.transform,
             new Vector2(0.22f, 0.14f), new Vector2(0.78f, 0.86f), Vector2.zero, Vector2.zero, Panel);
         TowerUiSkin.ApplyPanel(card, Glass, true);
-        TextAt(card.transform, "Checkpoint title", "TOWER CHECKPOINTS", 28, 19, 340, 44,
+        TextAt(card.transform, "Checkpoint title", TowerModes.IsLair ? "DUNGEON SAVES" : "TOWER CHECKPOINTS", 28, 19, 340, 44,
             27, Gold);
         // Slot 0 is the NEW GAME save; this reopens it without wiping it.
         ButtonAt(card.transform, "Continue new game", "MY NEW GAME", 380, 18, 175, 43, () =>
@@ -824,8 +830,7 @@ public sealed partial class TowerHud : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             int slot = i + 1;
-            ButtonAt(card.transform, "Slot " + slot, "DAY " + TowerMilestones.Days[i] + "  /  " +
-                TowerMilestones.Labels[i], 27 + i % 2 * 340, 79 + i / 2 * 77, 323, 65,
+            ButtonAt(card.transform, "Slot " + slot, TowerMilestones.SlotCaption(slot), 27 + i % 2 * 340, 79 + i / 2 * 77, 323, 65,
                 () => { tower.LoadCheckpoint(slot); saveOverlay.gameObject.SetActive(false); Refresh(); }, Teal, 15);
         }
         saveOverlay.gameObject.SetActive(false);
@@ -907,6 +912,7 @@ public sealed partial class TowerHud : MonoBehaviour
             case "living": return "home";
             case "produce": return "produce";
             case "storage": return "store";
+            case "lair": return "dungeon";
             default: return "service";
         }
     }
@@ -914,11 +920,11 @@ public sealed partial class TowerHud : MonoBehaviour
     private List<string> BuildChoices()
     {
         var choices = new List<string>();
-        foreach (var def in TowerCatalog.All)
+        foreach (var def in tower.Rules.BuildableDefs())
             if (def.kind != "heart" && def.kind != "gate" && tower.Rules.State.blueprints.Contains(def.id) &&
                 (buildCategory == "all" || CategoryOf(def) == buildCategory)) choices.Add(def.id);
         if (tower.Rules.State.introPhase != "complete") return choices;
-        foreach (var def in TowerCatalog.All)
+        foreach (var def in tower.Rules.BuildableDefs())
             if (def.kind != "heart" && def.kind != "gate" && !tower.Rules.State.blueprints.Contains(def.id) &&
                 (buildCategory == "all" || CategoryOf(def) == buildCategory)) choices.Add(def.id);
         return choices;
@@ -1002,6 +1008,7 @@ public sealed partial class TowerHud : MonoBehaviour
         if (popupDistricts.gameObject.activeSelf) RefreshDistricts(state);
         if (popupAuto.gameObject.activeSelf) RefreshAuto(state);
         if (popupOutposts.gameObject.activeSelf) RefreshOutposts(state);
+        if (popupLair != null && popupLair.gameObject.activeSelf) RefreshLair(state);
         RefreshDev();
         RefreshChip();
     }
@@ -1049,6 +1056,7 @@ public sealed partial class TowerHud : MonoBehaviour
             tower.Rules.ThreatLabel().ToUpperInvariant() + "  ·  HEART " + Mathf.CeilToInt(state.heartHp) +
                 (state.siegeWarning > 0 ? "  ·  <color=#ff7060>SIEGE " + TowerRules.Clock(state.siegeWarning) + "</color>" : "") :
             "HEART " + Mathf.CeilToInt(state.heartHp);
+        if (tower.Rules.LairFounded && state.introPhase == "complete") threatText.text = LairTopShort(state);
         RefreshTopChrome(state);
     }
 
@@ -1120,6 +1128,13 @@ public sealed partial class TowerHud : MonoBehaviour
             LabelOf(floorOpenBelow).text = "NEEDS HEART " + TowerTiers.Tier(TowerRules.HeartRankForFloor(focus - 1));
         if (above != null) LabelOf(floorOpenAbove).text = "BUILDING  " + TowerRules.Clock(above.remaining);
         if (below != null) LabelOf(floorOpenBelow).text = "BUILDING  " + TowerRules.Clock(below.remaining);
+        if (rules.LairFounded)
+        {
+            floorText.text = rules.FloorLabel(focus);
+            LabelOf(floorOpenAbove).text = "DIG DUNGEON FLOOR  " + rules.LairDigCost() + "C";
+            LabelOf(floorOpenBelow).text = "ADD LIVING FLOOR  " + rules.LairLivingCost() + "C";
+            floorOpenAbove.interactable = floorOpenBelow.interactable = true;
+        }
         var westWork = rules.WingWork(focus, -1);
         var eastWork = rules.WingWork(focus, 1);
         floorWest.interactable = here != null && westWork == null;
@@ -1378,6 +1393,7 @@ public sealed partial class TowerHud : MonoBehaviour
                 "  •  shared housing supports family growth.";
             return;
         }
+        if (def.kind == "lair") { roomAdvice.text = tower.Rules.LairRoomAdvice(room); return; }
         if (def.kind == "heart")
         { roomAdvice.text = "The Heart connects every floor. If raiders reach it, it bleeds."; return; }
         if (def.kind == "gate")
@@ -1466,6 +1482,7 @@ public sealed partial class TowerHud : MonoBehaviour
             if (step < lessons.Length) tutorialTitle.text = lessons[step];
             return;
         }
+        if (RefreshLairFounding(phase)) return;
         tutorialTitle.fontSize = 20;
         tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 38);
         tutorialTitle.text = phase == "dormant" ? "Awaken the Celestium Heart" :

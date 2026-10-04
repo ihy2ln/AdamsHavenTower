@@ -235,3 +235,13 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
   `Resources/AdamsHaven/TowerModels/town_<type>/<stem>.fbx + .png`; `TowerModelImporter` builds the prefab and
   `TowerTownView.TownPrefab` swaps it in for that type and band.
 - Tests: `TowerManagementTests` 73 (+5 lots); 192 Tower tests green.
+
+## TT 10.4.0 (2026-10-04): Dungeon Mode fork, slice 1 ("Raid Day")
+- New mode in the same project (GDD 20): MENU > DUNGEON MODE reloads the scene into `AdamsHavenDungeon/` saves (slot 1
+  dormant, 2 summit, 3 depths, 4 elite incoming). Tower Mode is unchanged; every Tower edit is an `IsLair` branch.
+- Founding picks summit or depths; parties zig-zag down the stairs, meet traps, snares, lairs and vaults, and end in a
+  raid report (DUNGEON popup: RAIDS / MONSTERS / DUNGEON). Monster banner on the Heart's SUMMON tab. Notoriety drives the
+  elite team through the siege code. DEV > DUNGEON row: PARTY NOW, ELITE NOW, +25 NOTORIETY, +5 MONSTERS, DIG FLOOR.
+- Play check: Tower slot 1 -> DUNGEON MODE -> summit slot -> a party fled after spike, snare (ransom), lair and vault ->
+  TOWER MODE back to slot 1 day 212, Tower save folder untouched.
+- Tests: `LairModeTests` 19 new; `TowerManagementTests` 73 + `TowerSimulationTests` 119 and Expedition/Battle/Bestiary 79 green.

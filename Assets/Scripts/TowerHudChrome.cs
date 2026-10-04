@@ -335,11 +335,11 @@ public sealed partial class TowerHud
 
         // Left: a profile card, like the traveler card in the Paimon menu.
         var card = Box("Menu profile", popupMenu.transform, new Vector2(0, 0.5f), new Vector2(0, 0.5f),
-            new Vector2(64, 0), new Vector2(340, 428), Color.white);
+            new Vector2(64, 0), new Vector2(340, 476), Color.white);
         TowerUiSkin.ApplyPanel(card, Glass, true);
         card.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;   // swallow taps
         var c = card.transform;
-        TitleAt(c, "Menu title", "CELESTIUM TOWER", 22, 22, 300, 19);
+        TitleAt(c, "Menu title", TowerModes.Title, 22, 22, 300, 19);
         menuDay = TextAt(c, "Menu day", "", 24, 56, 296, 30, 24, TowerUiSkin.TextMain);
         menuDay.fontStyle = FontStyle.Bold;
         var line = Rect("Menu line", c, new Vector2(0, 1), new Vector2(0, 1), new Vector2(24, -98),
@@ -357,6 +357,7 @@ public sealed partial class TowerHud
         ButtonAt(c, "Menu checkpoints", "CHECKPOINTS", 24, 364, 140, 40,
             () => { CloseAllPopups(); saveOverlay.gameObject.SetActive(true); }, Teal, 13);
         ButtonAt(c, "Menu dev", "DEV", 176, 364, 140, 40, OpenDev, Teal, 14);
+        BuildModeSwitch(c);
 
         // Right: every system as an icon tile.
         var tiles = new[] {
@@ -370,6 +371,7 @@ public sealed partial class TowerHud
             new MenuTile("icons_utility", "drawer_arrow", "Floors", Teal, () => TogglePopup(popupFloors)),
             new MenuTile("icons_utility", "steward", "Steward", Teal,
                 () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward))),
+            TowerModes.IsLair ? new MenuTile("icons_dock", "battle", "Dungeon", Alert, OpenLair) :
             new MenuTile("icons_utility", "collect", "Recruit", Teal, () => tower.Apply(tower.Rules.RecruitVisitor())),
             new MenuTile("icons_utility", "rush", "Auto-assign", Teal, () => tower.Apply(tower.Rules.AutoAssignIdle())),
             new MenuTile("icons_utility", "pause", "Pause", Teal, () => { SetTime(0); CloseAllPopups(); })
@@ -403,7 +405,7 @@ public sealed partial class TowerHud
         menuDay.text = "Day " + state.day + "  ·  " + ((int)hour).ToString("00") + ":" +
             ((int)((hour % 1f) * 60f)).ToString("00");
         menuValues.text = RankTag(state.heartRank) + "   <color=#9aa3ad>HP</color> " + Mathf.CeilToInt(state.heartHp) +
-            "\n" + rules.ThreatLabel() +
+            "\n" + rules.ThreatLabel() + (rules.IsLair ? " (notoriety)" : "") +
             "\n" + rules.BiologicalPopulation() + " / " + rules.PopulationCap() +
             "\n" + state.regionsConquered.Count + " / " + TowerRules.Regions.Length + " conquered" +
             "\n" + state.sigils + "\n" + state.celestium + "\n" + TowerRules.Compact(state.gold);

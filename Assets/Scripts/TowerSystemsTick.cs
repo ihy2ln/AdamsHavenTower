@@ -39,7 +39,7 @@ namespace AdamsHaven.Tower
             resident.exploreGold = resident.exploreWood = resident.exploreStone = 0;
             resident.exploreOre = resident.exploreEssence = resident.exploreCelestium = 0;
             GiveXp(resident, 15);
-            var heart = RoomAt(0, CoreX);
+            var heart = RoomAt(HeartFloor, CoreX);
             resident.currentRoom = resident.homeRoom > 0 ? resident.homeRoom : heart == null ? 0 : heart.uid;
             resident.currentTask = "idle";
             Bump("expedition");
@@ -50,7 +50,7 @@ namespace AdamsHaven.Tower
         private void TickNeeds(float dt, bool live)
         {
             int cells = 0;
-            foreach (var room in State.rooms) if (room.type != "heart" && room.type != "gate") cells += room.width;
+            foreach (var room in State.rooms) if (room.type != "heart" && room.type != "gate" && !IsLairRoom(room)) cells += room.width;
             State.firewood = Mathf.Max(0, State.firewood - 0.00065f * cells * dt);
             BeginMoodPass();
             try { NeedsPass(dt, live); }
@@ -479,6 +479,7 @@ namespace AdamsHaven.Tower
 
         private void TickVisitors(float dt)
         {
+            if (IsLair) return;   // Dungeon Mode: adventurer parties come instead (LairRaids.cs)
             if (!HasGate() || BiologicalPopulation() + State.pendingVisitors >= PopulationCap()) return;
             State.gateTimer += dt * GateArrivalFactor();   // appealing floors and an Open Gate draw wanderers sooner
             if (State.gateTimer < 240) return;
@@ -588,7 +589,7 @@ namespace AdamsHaven.Tower
             bool guidedIncident = State.tutorialStep == 5;
             State.eventTimer++;
             State.eventCooldown = NextEventDelay();
-            var rooms = State.rooms.FindAll(r => r.type != "heart" && r.type != "gate" &&
+            var rooms = State.rooms.FindAll(r => r.type != "heart" && r.type != "gate" && !IsLairRoom(r) &&
                 !State.incidents.Exists(i => i.roomUid == r.uid));
             if (rooms.Count == 0) return;
             if (!guidedIncident && TryStartSiege()) return;   // a Dire tower draws a siege instead (GDD 9.6)

@@ -4,6 +4,8 @@ Updated 2026-10-03 after TT 10.3.1. Read this first, then `TOWER_MODE_GDD.md` (d
 
 ## 0. Start here
 
+**TT 10.4.0 (2026-10-04) forked Dungeon Mode (GDD 20):** the Heart as the summoner's dungeon, raided by adventurer parties. Same project, own saves (`AdamsHavenDungeon/`), switched from MENU. Slice 1 is built and playable (founding, route, traps, monsters, raid reports, notoriety and the elite team). Next for Dungeon Mode: let the owner play it and tune `LairBalance`; then Heart relocation, monster taming, prison/converts and real dungeon art (GDD 20.6). Tower Mode work below is unchanged.
+
 **TT 10.3.1 shipped summon banners (GDD 8.1) and town life slice 1 (GDD 19.1). TT 10.3.2 shipped the TOWN view greybox (GDD 19.2). TT 10.3.3 shipped town lots (auto growth + full player override), the 48-picture reference pack and the picture-to-3D pipeline.** The next jobs, in the owner's order: **real building assets for the town** (the blocks must go), then **town lots as rules data**, then the economy and visitors (GDD 19.3-19.4). Ask the owner the questions in section 3 first.
 
 Paste-ready prompt for the next session:

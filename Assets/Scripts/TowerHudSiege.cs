@@ -28,6 +28,14 @@ public sealed partial class TowerHud
         siegePanel.gameObject.SetActive(show);
         if (!show) return;
         int heroes = rules.SiegeFighters().Count;
+        if (rules.IsLair)
+        {
+            siegeText.text = "<color=#ff8a70>ELITE TEAM IN " + TowerRules.Clock(state.siegeWarning) + "</color>   notoriety " +
+                Mathf.RoundToInt(state.lair.notoriety) + (heroes == 0 ? "\n<size=12>No battle-ready hero: traps and monsters must hold.</size>" :
+                    "\n<size=12>Meet them with " + heroes + " hero" + (heroes == 1 ? "" : "es") + ", or let the dungeon do it.</size>");
+            siegeFight.interactable = heroes > 0;
+            return;
+        }
         siegeText.text = "<color=#ff8a70>SIEGE IN " + TowerRules.Clock(state.siegeWarning) + "</color>   wave " +
             Mathf.RoundToInt(rules.SiegeWave()) + " vs defence " + Mathf.RoundToInt(rules.SiegeDefence()) +
             (heroes == 0 ? "\n<size=12>No battle-ready hero at home: the guards hold alone.</size>" :

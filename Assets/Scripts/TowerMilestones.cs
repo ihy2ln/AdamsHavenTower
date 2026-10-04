@@ -29,6 +29,7 @@ namespace AdamsHaven.Tower
 
         public static TowerState Create(int slot)
         {
+            if (TowerModes.IsLair) return LairMilestones.Create(slot);
             int index = Mathf.Clamp(slot - 1, 0, 9);
             var rules = TowerRules.New(slot);
             TowerState state = rules.State;
@@ -269,8 +270,16 @@ namespace AdamsHaven.Tower
             }
         }
 
+        // The checkpoint list's caption for slot i (1-10).
+        public static string SlotCaption(int i)
+        {
+            if (TowerModes.IsLair) return LairMilestones.Caption(i);
+            return "DAY " + Days[i - 1] + "  /  " + Labels[i - 1];
+        }
+
         public static void EnsureSlots()
         {
+            if (TowerModes.IsLair) { LairMilestones.EnsureSlots(); return; }
             for (int slot = 1; slot <= 10; slot++)
             {
                 var existing = TowerSaveFiles.Load(slot);

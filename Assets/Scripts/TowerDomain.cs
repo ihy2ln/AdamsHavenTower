@@ -220,6 +220,9 @@ namespace AdamsHaven.Tower
         public bool pickMissed;      // the same guarantee for Pick-Your-Hero; it carries over when the target changes
         public int residentPity;     // Resident banner pulls since the last A or better
         public List<TowerLot> townLots = new List<TowerLot>();   // TT 10.3.3 town lots (TowerTownLots.cs)
+        // TT 10.4.0 Dungeon Mode (LairMode.cs and the Lair* files)
+        public string mode = "tower";                            // "tower" or "lair"
+        public TowerLairState lair = new TowerLairState();       // empty in a Tower save
     }
 
     public sealed class TowerRoomDef
@@ -266,7 +269,7 @@ namespace AdamsHaven.Tower
         public static TowerRoomDef Get(string id)
         {
             foreach (var def in All) if (def.id == id) return def;
-            return null;
+            return LairCatalog.Get(id);
         }
     }
 
@@ -279,7 +282,7 @@ namespace AdamsHaven.Tower
         public const int MaxRank = 9;
         public static int MaxLevel(string type) { return MaxRank; }
         public static bool SingleBay(string type)
-        { return type == "gate" || type == "heart" || type == "house" || type == "well" || type == "silo"; }
+        { return type == "gate" || type == "heart" || type == "house" || type == "well" || type == "silo" || LairCatalog.SingleBay(type); }
         public static int Bays(string type, int level)
         { return SingleBay(type) ? 1 : level <= 3 ? 1 : (level <= 5 ? 2 : 3); }
         public static int BarnBays(int level) { return Bays("barn", level); }
@@ -419,7 +422,7 @@ namespace AdamsHaven.Tower
         public string AwakenHeart()
         {
             if (State.introPhase != "dormant") return "The Heart is already awake.";
-            State.introPhase = "gate"; Note("The Heart awakened."); return null;
+            State.introPhase = IsLair ? "lair_site" : "gate"; Note("The Heart awakened."); return null;
         }
 
         public string PlaceIntroGate()
@@ -437,7 +440,7 @@ namespace AdamsHaven.Tower
                 return "Choose Kaela, Ghislaine, or Elara.";
             AddResident(unitId, unitId == "kaela" ? "Kaela" :
                 (unitId == "ghislaine" ? "Ghislaine" : "Elara"), "hero", 1).rank = 3;
-            TowerRoom shack = State.rooms.Find(r => r.type == "house" && r.floor == 0);
+            TowerRoom shack = State.rooms.Find(r => r.type == "house" && r.floor == StarterFloor);
             if (shack != null)
             {
                 var starter = State.residents[State.residents.Count - 1];
@@ -458,6 +461,7 @@ namespace AdamsHaven.Tower
             State.wood += 20;
             State.stone += 12;
             Note("The Tower opened. Survival rooms, 650 gold and 45 Celestium were granted.");
+            if (IsLair) LairFoundedNow();
             return null;
         }
 
@@ -554,8 +558,8 @@ namespace AdamsHaven.Tower
             if (f == null) return "Open this floor first.";
             if (westSide && x < CoreX - f.west) return "Expand the Celestium foundation west first.";
             if (eastSide && x + footprint - 1 > CoreX + f.east) return "Expand the Celestium foundation east first.";
-            if (def.groundOnly && floor != 0) return "This room needs the ground floor.";
-            if (def.undergroundOnly && floor >= 0) return "This room belongs underground.";
+            string zone = ZoneReason(def, floor);
+            if (zone != null) return zone;
             for (int cx = x; cx < x + footprint; cx++)
                 if (RoomAt(floor, cx) != null || WorkRoomAt(floor, cx) != null) return "Another room occupies that space.";
             if (westSide && x + footprint != CoreX && RoomAt(floor, x + footprint) == null &&
@@ -600,6 +604,7 @@ namespace AdamsHaven.Tower
 
         public string OpenFloor(int number)
         {
+            if (IsLair) return LairDigFloor();
             if (number < FloorMin || number > FloorMax) return "Floor out of range.";
             if (Floor(number) != null) return "Floor already open.";
             if (FloorWork(number) != null) return "That floor is already being built.";
@@ -764,6 +769,7 @@ namespace AdamsHaven.Tower
             if (resident.ageStage != 0) return "Children cannot be assigned to work.";
             var def = TowerCatalog.Get(room.type);
             if (def.kind == "heart") return "The Heart is not a workplace.";
+            if (def.kind == "lair") return "Dungeon rooms are run by traps and monsters.";
             if (def.kind == "gate" && resident.origin == "body") return "Celestium Bodies cannot stand guard.";
             bool home = def.kind == "living";
             int used = 0;
@@ -1029,8 +1035,10 @@ namespace AdamsHaven.Tower
 
     public static class TowerSaveFiles
     {
-        public static string Folder { get { return Path.Combine(Application.persistentDataPath, "AdamsHavenTower"); } }
-        public static string PathFor(int slot) { return Path.Combine(Folder, "slot_" + slot.ToString("00") + ".json"); }
+        public static string FolderFor(string mode) { return Path.Combine(Application.persistentDataPath, TowerModes.FolderName(mode)); }
+        public static string Folder { get { return FolderFor(TowerModes.Current); } }
+        public static string PathFor(int slot) { return PathFor(TowerModes.Current, slot); }
+        public static string PathFor(string mode, int slot) { return Path.Combine(FolderFor(mode), "slot_" + slot.ToString("00") + ".json"); }
 
         public static TowerState Load(int slot)
         {
@@ -1088,9 +1096,10 @@ namespace AdamsHaven.Tower
 
         public static void Save(TowerState state)
         {
-            Directory.CreateDirectory(Folder);
+            string mode = state.mode == TowerModes.Lair ? TowerModes.Lair : TowerModes.Tower;   // the save's own folder
+            Directory.CreateDirectory(FolderFor(mode));
             state.savedUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            string path = PathFor(state.slot);
+            string path = PathFor(mode, state.slot);
             string temp = path + ".tmp";
             File.WriteAllText(temp, JsonUtility.ToJson(state, true));
             if (File.Exists(path)) File.Copy(path, path + ".bak", true);

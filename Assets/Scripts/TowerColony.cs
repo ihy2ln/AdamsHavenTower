@@ -128,8 +128,8 @@ namespace AdamsHaven.Tower
 
         private readonly HashSet<int> darkRooms = new HashSet<int>();
 
-        private static float PowerDistance(TowerRoom room)
-        { return Mathf.Abs(room.floor) * 3f + Mathf.Abs(room.x + room.width * 0.5f - (CoreX + 0.5f)); }
+        private float PowerDistance(TowerRoom room)
+        { return Mathf.Abs(room.floor - HeartFloor) * 3f + Mathf.Abs(room.x + room.width * 0.5f - (CoreX + 0.5f)); }
 
         // With no firewood banked, only as much of the Tower as the mills can feed stays lit,
         // starting nearest the Heart. Lumber Mills, the Heart and the Gate never go dark.
@@ -139,7 +139,7 @@ namespace AdamsHaven.Tower
             if (State.firewood > 0.01f) return;
             float upkeep = UpkeepPerMinute("firewood");
             float ratio = upkeep <= 0 ? 1 : Mathf.Clamp01(IncomePerMinute("firewood") / upkeep);
-            var lit = State.rooms.FindAll(r => r.type != "heart" && r.type != "gate" && r.type != "lumber_mill");
+            var lit = State.rooms.FindAll(r => r.type != "heart" && r.type != "gate" && r.type != "lumber_mill" && !IsLairRoom(r));
             lit.Sort((a, b) => PowerDistance(a).CompareTo(PowerDistance(b)));
             int total = 0;
             foreach (var room in lit) total += room.width;
@@ -170,6 +170,7 @@ namespace AdamsHaven.Tower
         // Raiders arrive at one of the Gates, where guards meet them first.
         public string StartRaid()
         {
+            if (IsLair) return LairSpawnParty("normal");   // Dungeon Mode: adventurers, not raiders
             var open = Gates().FindAll(g => !State.incidents.Exists(i => i.roomUid == g.uid));
             if (!HasGate()) return "There is no Gate to attack.";
             if (open.Count == 0) return "The Gates are already under attack.";

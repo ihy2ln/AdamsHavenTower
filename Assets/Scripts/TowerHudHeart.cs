@@ -79,6 +79,7 @@ public sealed partial class TowerHud
         summonOne = ButtonAt(s, "Summon one", "SUMMON ×1", 16, 160, 336, 50, () => DoSummon(1), Teal, 18);
         summonTen = ButtonAt(s, "Summon ten", "SUMMON ×10", 368, 160, 336, 50, () => DoSummon(10), Teal, 18);
         summonResults = TextAt(s, "Results", "", 16, 218, 688, 170, 15, Cream, TextAnchor.UpperLeft);
+        BuildMonsterBannerTab(s);
 
         heartUpgradeTab = Rect("Upgrade tab", t, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0, -58), Color.clear);
         heartUpgradeTab.raycastTarget = false;
@@ -107,6 +108,7 @@ public sealed partial class TowerHud
 
     private void DoSummon(int count)
     {
+        if (lairBanner && LairHud) { tower.Apply(tower.Rules.SummonMonsters(count)); Refresh(); return; }
         string error = tower.Rules.Summon(count, tower.Rules.State.summonBanner);
         tower.Apply(error);
         Refresh();
@@ -217,6 +219,7 @@ public sealed partial class TowerHud
                         pull.waiting ? "waits in the Heart (no free bed)" : "joins the Tower") + "</color>");
             summonResults.text = string.Join(pulls.Count > 5 ? "\n" : "\n\n", lines.ToArray());
         }
+        RefreshMonsterBanner(state);
 
         // Upgrade
         bool top = state.heartRank >= TowerTiers.MaxRank;

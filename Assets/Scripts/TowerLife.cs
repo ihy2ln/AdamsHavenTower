@@ -468,6 +468,7 @@ namespace AdamsHaven.Tower
 
         public float ThreatTarget()
         {
+            if (IsLair) return State.lair.notoriety;   // Dungeon Mode: notoriety is the threat
             float pressure = BiologicalPopulation() * 1.2f + State.rooms.Count * 0.25f +
                 Mathf.Max(0, State.day - 3) * 0.5f + State.heartRank * 3f + DistrictThreat();
             float defence = 0;
@@ -522,8 +523,8 @@ namespace AdamsHaven.Tower
             var pool = new List<string> { "fire", "pests" };
             if (State.residents.Count >= 5 && threat >= 20) pool.Add("illness");
             var teller = Storyteller;
-            if (threat >= teller.raidThreat) pool.Add("raiders");
-            if (threat >= 55 && teller.doubleRaids) pool.Add("raiders");
+            if (threat >= teller.raidThreat && !IsLair) pool.Add("raiders");
+            if (threat >= 55 && teller.doubleRaids && !IsLair) pool.Add("raiders");
             if (State.rooms.Exists(r => r.floor < 0 && r.type != "heart")) pool.Add("cave_in");
             return pool[Mathf.Min(pool.Count - 1, (int)(Random01() * pool.Count))];
         }
@@ -548,7 +549,7 @@ namespace AdamsHaven.Tower
                 Emit("festival", 0, 0, "");
                 return true;
             }
-            if (roll < 0.26f * kind && BiologicalPopulation() + State.pendingVisitors < PopulationCap())
+            if (roll < 0.26f * kind && !IsLair && BiologicalPopulation() + State.pendingVisitors < PopulationCap())
             {
                 State.pendingVisitors = Mathf.Min(2, State.pendingVisitors + 1);
                 Note("A traveller has come to the Gate on their own.");

@@ -932,3 +932,63 @@ The tower is a town, so its people should live in it, not only work in it. The o
 - Visible non-resident walkers come in at the Gate, use venues (taking seats), pay prices and leave; appeal and the Open Gate draw more.
 - Travelling traders set up for a day with stock to buy (tools, weapons, blueprints, Tonics). Outpost caravans become visible arrivals at the Gate.
 - Ties to today's Gate wanderers (`pendingVisitors`), the caravan event and outpost caravans (section 18).
+
+## 20. Dungeon Mode (fork, slice 1 built 2026-10-04, TT 10.4.0)
+
+**Pivot (owner, 2026-10-03).** The Heart becomes the summoner's own **dungeon**, raided by adventurers (Dungeon Keeper x
+Kairosoft Dungeon Village). It is a **second mode in the same project**: Tower Mode stays playable and unchanged. MENU >
+DUNGEON MODE / TOWER MODE switches (two taps); each mode keeps its own saves (`AdamsHavenDungeon/` and `AdamsHavenTower/`)
+and remembers its own last slot. Code: `LairMode.cs` (switch, `TowerModes`), `LairDomain.cs` (state, rooms, every number in
+`LairBalance`), `LairLayout.cs`, `LairRoute.cs`, `LairMonsters.cs`, `LairRaids.cs`, `LairMilestones.cs`, `TowerHudLair.cs`,
+`LairView.cs`; tests `LairModeTests`.
+
+### 20.1 Owner rulings
+- The Heart sits centred on the shaft, on the **top or bottom floor**; the player picks at founding (summit: parties
+  climb; depths: parties descend). Relocation later at a cost (not built yet; `ShiftFloors` is ready).
+- **Living floors** sit right beside the Heart and use the Tower's buildings.
+- Adventurers are mostly random parties; named heroes come sometimes (elite leaders now). The player summons heroes as before.
+- **Notoriety:** killing too many brings an elite team. **Fame:** survivors bring more and stronger parties.
+- Monsters come from summoning (taming on expeditions later).
+
+### 20.2 Layout
+Founding builds: entrance (floor 0: Gates at both ends, Spike Trap Hall), two dungeon floors (Monster Lair + Snare Pit;
+Bait Vault + Spike Trap Hall), one living floor (Shack, Well, Kitchen) and the Heart floor (Lumber Mill). Depths mirror it.
+Labels: ENTRANCE / B1.. / LIVING / HEART. Dungeon rooms only on entrance and dungeon floors; everything else only on the
+living and Heart floors. DIG DUNGEON FLOOR (6 + 3 per dungeon floor Celestium; cap 2,3,4,6,8,10,13,16,20 by Heart rank)
+opens a dungeon floor and pushes the living floors and the Heart out; ADD LIVING FLOOR (10 + 8 per living floor; cap
+1,1,2,2,2,3,3,3,3). Neither runs while a party is inside.
+
+### 20.3 Monsters
+Their own list, not residents. Monster banner (5th SUMMON tab): 5 / 50 Sigils, Resident ladder (A+ every 20, B+ on
+ten-pulls), a random bestiary family at the rolled rank; duplicates +2 levels; cap 4,6,8,11,14,18,22,26,30 by Heart rank
+(pulls past the cap are released for Essence). Start at the rank's natural level (1 + 5 per rank). Power =
+(24+4r)(1+0.08r)(0.5+0.5 lv/50) x specimen factor (0.8-1.25). Lair capacity 1 + width (+1 at A, +1 at SS); monsters with
+no lair guard the Heart at half power. Food 0.004/s each (0.7x power when the larder is empty); regen 0.4%/s; at 5% hp
+wounded for 300 s; +10 XP per won fight.
+
+### 20.4 Adventurers
+Every 300 x (1.3 - fame/100) x storyteller pace seconds (90-480), at most 2 parties (3 from Heart C). Size 2-5 with Fame;
+rank about 0.7 x Heart rank + fame/30. Warrior, Rogue (worse trap odds for the dungeon, disarms), Mage, Cleric (heals 15%
+after each encounter, +10% party power), Ranger. Power on the HeroPower scale (F ~14, B ~40, SSR ~88).
+**Route:** parties enter at the Gate farthest from the Heart; stairs alternate ends on dungeon floors (the shaft is
+sealed below the living floors), so they cross every dungeon floor end to end; each room's encounter fires once.
+**Encounters:** Spike Trap Hall (60% +4%/rank, hits 1 + rank/3 for 14 x (1 + 0.35/rank) x width, wears 6%, off below
+20%); Snare Pit (35% +5%/rank, never the last member, ransom 30 x rank x (1 + 0.15/rank)); Monster Lair (AutoTier of
+lair power / party power; party loses 10/25/50/85% max hp, monsters 70/45/20/5%); Bait Vault (80 gold per rank, refilled
+from the treasury; a party that grabs enough grows careless and flees at 60% hp instead of 35%); other rooms: residents
+on defence on that floor fight on the same table (downed, never killed), or the party ransacks 10 gold each; the Heart:
+guards fight, then a breach of 25 x total rank Heart HP (x2.5 elite) and gold and Celestium stolen.
+**Outcomes:** each kill pays 15 x rank + 2 x level gold, rank Essence, ore from C, a share of the loot, Sigil progress, and
++5 + rank notoriety (+8 more for an elite). Wiped: fame -3. Fled: +5 x survivors x rank gold (town income placeholder),
+notoriety -2, fame +3..8. Breached: notoriety -5, fame +6. Offline: parties resolve at once, arrivals at half rate (8 per
+catch-up), a breach never takes the Heart below 30%.
+
+### 20.5 Notoriety, Fame and the elite team
+Notoriety (0-100) is the Tower's threat in Dungeon Mode, fading 1 a minute; Fame drifts to 10. At 75 notoriety the siege
+machinery runs as the **elite team**: a ten-minute warning ("ELITE TEAM IN mm:ss"), then 5 adventurers at Heart rank + 2
+with 1.5x hp, led by a named roster hero, walk in. DEFEND IN BATTLE meets them in Battle Mode first: a win is -30
+notoriety and +5 fame; a loss lets them in. Raiders and Gate visitors never come in Dungeon Mode.
+
+### 20.6 Not in slice 1
+Heart relocation UI, monster taming and evolution, prison and converts, walked retreats, town economy wiring, a lair
+research branch, room fights in Battle Mode, named-adventurer progression, dungeon art (Tower art tinted red), a tutorial.

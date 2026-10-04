@@ -184,6 +184,7 @@ public sealed class TowerArtDirector : MonoBehaviour
 
     private string RoomArt(string type, string grade, out Rect crop)
     {
+        type = LairCatalog.ArtType(type);   // dungeon rooms borrow Tower art until they get their own
         string path = "Rooms/" + type + "_" + grade;
         if (Resources.Load<Texture2D>(Root + path) == null)
             path = "Rooms/" + (type == "quarry" ? "warehouse" : "cottage") + "_F";
@@ -353,7 +354,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                     bool lit = tower.Rules.IsPowered(room);
                     Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
                         rw - 0.07f, 2.20f, crop,
-                        lit ? new Color(1.12f, 1.08f, 1.01f) : new Color(0.26f, 0.30f, 0.42f));
+                        lit ? (LairCatalog.Is(room.type) ? LairCatalog.Tint : new Color(1.12f, 1.08f, 1.01f)) : new Color(0.26f, 0.30f, 0.42f));
                     if (!lit) Label("NO FIREWOOD", new Vector3(cx, y + 0.35f, -1.2f), rw);
                 }
                 // Same-type neighbours read as one merged hall: no post between them.
@@ -376,18 +377,19 @@ public sealed class TowerArtDirector : MonoBehaviour
             }
             Post(left, y); Post(right, y);
             if (Overlay != "off") DrawOverlay(f, left, right, y);
-            if (f.number != 0)
+            if (f.number != tower.Rules.HeartFloor)
             {
                 Post(X(TowerRules.CoreX), y);
                 Post(X(TowerRules.CoreX + 1), y);
                 string landing = f.landing == "freight_lift" ? "freight_lift" : "stairwell";
-                if (f.landing != "energy")
+                bool sealedShaft = tower.Rules.ShaftSealed(f.number);   // Dungeon Mode: stairs sit at the wing ends
+                if (f.landing != "energy" && !sealedShaft)
                     Art("Core landing " + f.number, "Structure/" + landing, X(22.5f),
                         y + 0.06f, 1.7f, Cell * 0.90f, 2.24f);
-                Label(f.landing == "freight_lift" ? "FREIGHT" : f.landing == "stairs" ? "STAIRS" : "CELESTIUM",
+                Label(sealedShaft ? "SEALED" : f.landing == "freight_lift" ? "FREIGHT" : f.landing == "stairs" ? "STAIRS" : "CELESTIUM",
                     new Vector3(X(22.5f), y + 1.38f, -1.3f), Cell);
             }
-            Label(f.number == 0 ? "GROUND" : (f.number > 0 ? "+" : "") + f.number.ToString("00"),
+            Label(tower.Rules.FloorLabel(f.number),
                 new Vector3(left - 0.48f, y - 1.13f, -1), 0.7f);
             if (f.number == highest && tower.Rules.FloorWork(f.number + 1) == null)
                 Roof(center, y + 2.18f, width + 0.72f);

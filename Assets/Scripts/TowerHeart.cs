@@ -129,7 +129,7 @@ namespace AdamsHaven.Tower
         // rank earned so far gives the new run its start bonus.
         public static TowerState LegacyRun(TowerState fallen)
         {
-            var state = TowerMilestones.Create(1);
+            var state = fallen.mode == TowerModes.Lair ? LairMilestones.Create(1) : TowerMilestones.Create(1);
             state.slot = fallen.slot;
             state.runs = fallen.runs + 1;
             state.legacyPoints = fallen.legacyPoints + LegacyEarned(fallen);
