@@ -40,3 +40,15 @@
 TownModels/
 # Town reference pictures are generated art (regenerate with Tools/render_town_refs.py); never staged
 TownPrompts/**/*.png
+
+# Dev-only art/video (probes, retired cinematics, backups, takes, review strips, Seedance bundles).
+# Older copies are archived in ../Archive/AHCG_dev_art_2026-10-04.7z.
+/BattleMotion/_*/
+/BattleMotion/probe_*/
+/BattleMotion/cine_*/
+/BattleMotion/*.log
+/BattleMotion/*.png
+/BattleMotion/*.jpg
+/BattleMotion/fighter_*/review/
+/BattleMotion/fighter_*/segments/_takes/
+/SeedanceHandoff/
