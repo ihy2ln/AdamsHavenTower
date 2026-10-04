@@ -376,7 +376,7 @@ public sealed partial class BattleMode
         var rig = ClipRig(unit);
         Vector2 tip;
         if (rig != null && rig.Flip.TipAt(rig.Action, ClipFrame(rig), out tip))
-            return s.Foot + off + new Vector2(tip.x, -tip.y) * (s.H * .5f);
+            return s.Foot + off + new Vector2((unit.Enemy ? -1f : 1f) * tip.x, -tip.y) * (s.H * .5f);   // tips: x toward the foe
         return Chest(unit) + off + new Vector2((unit.Enemy ? -1f : 1f) * s.W * .3f, 0f);
     }
 
@@ -399,19 +399,22 @@ public sealed partial class BattleMode
         return Mathf.Clamp(impact * release / contact, 0f, impact - .05f);
     }
 
-    // A won battle: the standing fighters celebrate before the result panel (Busy holds it back until queueEnd).
+    // A finished battle: the winning side's standing units celebrate before the result panel (Busy holds it back
+    // until queueEnd): the fighters after a win, the monsters (BattleEnemyClips.cs) after a loss.
     void ScheduleVictory()
     {
-        if (victoryPlayed || battle == null || !battle.Finished || !battle.Victory) return;
+        if (victoryPlayed || battle == null || !battle.Finished) return;
         victoryPlayed = true;
+        bool winners = battle.Victory;
         bool any = false;
-        foreach (var entry in fieldRigs) if (entry.Value.Flip != null && entry.Key.Alive && slots.ContainsKey(entry.Key)) any = true;
+        foreach (var entry in fieldRigs)
+            if (entry.Value.Flip != null && entry.Key.Alive && slots.ContainsKey(entry.Key) && entry.Key.Enemy != winners) any = true;
         if (!any) return;
         float t = Mathf.Max(queueEnd, fx) + .15f;
         At(t, () =>
         {
             foreach (var entry in fieldRigs)
-                if (entry.Value.Flip != null && entry.Key.Alive && entry.Value.Flip.Has(BattleClipSet.Victory))
+                if (entry.Value.Flip != null && entry.Key.Alive && entry.Key.Enemy != winners && entry.Value.Flip.Has(BattleClipSet.Victory))
                     StartClip(entry.Value, BattleClipSet.Victory, true);
         });
         queueEnd = t + .8f;      // battle seconds: about 1.6 s at 1x, the clip plus a beat on the held pose

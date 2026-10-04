@@ -106,6 +106,7 @@ public sealed partial class BattleMode
         foreach (var u in battle.Allies) AddFieldRig(u);
         foreach (var u in battle.Reserves) AddFieldRig(u);
         AddFieldRig(battle.Summoner);
+        foreach (var u in battle.Enemies) AddEnemyClipRig(u);
     }
     void AddFieldRig(BattleUnit unit)
     {

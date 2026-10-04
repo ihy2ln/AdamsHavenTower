@@ -1,0 +1,10 @@
+{
+ "_doc": "Hand fixes merged over generated specs by build_enemy_clip_specs.py.",
+ "ashvein_goblin_scavenger": {
+  "keys": {
+   "crystal_shiv_hit": {
+    "seed": 31107
+   }
+  }
+ }
+}

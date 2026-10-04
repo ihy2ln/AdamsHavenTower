@@ -21,6 +21,16 @@ public static class BattleAutoPlayer
         if (b == null || b.Finished) return false;
         // An epiphany waits on a choice: take the first offer.
         if (b.EpiphanyCard != null) b.ChooseEpiphany(0);
+        // A joint ultimate first when two bonded fighters are both full (BattleCombos.cs): one SP cost for both meters.
+        foreach (BattleUnit ally in b.Allies)
+            foreach (BattleCard joint in b.JointUltimates(ally))
+            {
+                BattleUnit lead = b.OwnerOf(joint);
+                BattleUnit target = Target(b, joint, lead);
+                if (!b.IsTarget(joint, lead, target) || (joint.EffectivePower <= 0 && !Hurt(b, .6f))) continue;
+                move = new Move { Card = joint, Actor = lead, Target = target, Ultimate = -1 };
+                return true;
+            }
         foreach (BattleUnit ally in b.Allies)
         {
             if (!ally.Alive || ally.Ultimate < 100 || b.Sp < b.UltCost(ally)) continue;
@@ -138,6 +148,7 @@ public static class BattleAutoPlayer
     {
         if (move.Decree) return b.TrySummonerUltimate();
         if (move.Assist) return b.TryPartnerAssist(move.Actor, move.Target);
+        if (BattleCombos.IsJoint(move.Card)) return b.TryJointUltimate(move.Card, move.Target);
         if (move.Ultimate >= 0) return b.TryUltimate(move.Actor, move.Ultimate, move.Target);
         return b.TryPlay(move.Card, move.Target);
     }

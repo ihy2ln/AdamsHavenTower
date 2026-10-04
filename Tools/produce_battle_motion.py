@@ -179,8 +179,72 @@ def ult_job(card, unit, element, close, wide, seed):
     }
 
 
+# Joint ultimates (BattleCombos.cs, CM 10.3.4): both fighters in one shot. Two people in one H3 shot is where clones
+# appear, so every key and the motion name them and their sides, and say there are exactly two.
+JOINTS = [
+    # card id, lead, partner, element look, close-up beat, wide finishing shot, seed
+    ('ult_joint_ghislaine_kaela', 'ghislaine', 'kaela', 'fire and ice',
+     'they stand back to back, Ghislaine’s flaming greatsword and Kaela’s ice-claw gauntlets crossed between them, both '
+     'grinning fiercely, embers and frost swirling together',
+     'they charge forward together as a spectral white tiger of fire and a towering wave of ice crash down in front of '
+     'them, steam exploding across the frame', 9201),
+    ('ult_joint_elara_kaela', 'elara', 'kaela', 'lightning and ice',
+     'Elara’s glowing pen raised beside Kaela’s frosted fist, lightning and frost crackling in the air between them',
+     'Kaela slams the ground and a field of ice spikes bursts up in front of them as Elara calls down a storm of '
+     'lightning that shatters across the ice', 9202),
+    ('ult_joint_daisy_ghislaine', 'daisy', 'ghislaine', 'fire',
+     'Daisy’s fire spear and Ghislaine’s flaming greatsword crossed in an X between them, embers swirling, both '
+     'laughing',
+     'they swing together and two colossal waves of fire, one shaped like a roaring spectral tiger, sweep across the '
+     'whole battlefield in front of them', 9203),
+    ('ult_joint_elara_helda', 'elara', 'helda', 'aurora, frost and lightning',
+     'Helda’s crystal war hammer raised beside Elara’s open spellbook, frost and lightning swirling around them',
+     'Helda slams her hammer down as Elara writes a glowing sigil in the air, and an aurora storm of ice shards and '
+     'lightning rains across the sky in front of them', 9204),
+    ('ult_joint_clarity_elara', 'elara', 'clarity', 'golden light and lightning',
+     'Clarity’s glowing fist beside Elara’s glowing pen, golden light and lightning meeting between them',
+     'Elara draws a huge glowing prism sigil in the air and Clarity punches straight through it, a blinding beam of '
+     'golden lightning blasting forward across the frame', 9205),
+    ('ult_joint_clarity_helda', 'helda', 'clarity', 'warm golden hearth light',
+     'Helda and Clarity side by side, Helda’s hammer and Clarity’s open palm raised together, warm golden light '
+     'blooming between them',
+     'a great dome of warm golden hearth light and gentle snow rises over the battlefield around them, healing motes '
+     'pouring down', 9206),
+    ('ult_joint_clarity_daisy', 'daisy', 'clarity', 'sunfire and holy light',
+     'Daisy’s fire spear and Clarity’s glowing fist side by side, sunfire and golden light swirling around them',
+     'Daisy hurls her fire spear and Clarity strikes it with a punch, and it streaks forward as a blazing sun across '
+     'the frame', 9207),
+]
+
+
+def joint_job(card, lead, partner, element, close, wide, seed):
+    look_a, (guard_a, _, weapon_a) = field_look(lead)
+    look_b, (guard_b, _, _) = field_look(partner)
+    a, b = lead.capitalize(), partner.capitalize()
+    who = (f'Exactly two people are in the picture: {a} on the left and {b} on the right. {a} is {look_a}. {b} is '
+           f'{look_b}')
+    return {
+        'kind': 'ult', 'unit': lead, 'out': card, 'size': (1248, 704), 'length': 73, 'seed': seed,
+        'keys': [
+            ('first', [str(guard_a), str(guard_b)],
+             f'Image 1 is {a} as she looks in battle, image 2 is {b}. Recompose them together as a tight cinematic anime '
+             f'two-shot close-up for a joint ultimate cut-in, 16:9. {who}; keep each one’s exact face, hair and '
+             f'outfit from her image. {close}. Dark background with {element} energy and strong rim light. Sharp '
+             f'cel-shaded anime game illustration.'),
+            ('last', [str(guard_a), str(guard_b), str(weapon_a)],
+             f'Image 1 is {a} as she looks in battle, image 2 is {b}, image 3 is {a}’s weapon. A wide 16:9 cinematic '
+             f'anime shot of the two of them. {who}; keep each one’s exact face, hair, outfit and weapon. {wide}. '
+             f'Dynamic camera angle, speed lines, dramatic {element} lighting, sharp anime game illustration.'),
+        ],
+        'prompt': (f'Anime game joint ultimate cinematic. {who}. Starting on a tight two-shot: {close}. A white flash '
+                   f'and fast speed lines, then the camera whips back to a wide shot: {wide}. Punchy, fast, dramatic '
+                   f'camera, the same two characters throughout, no one else, no text, no UI.'),
+    }
+
+
 JOBS = {card: ult_job(card, unit, el, close, wide, seed) for card, unit, el, close, wide, seed in ULTS}
 JOBS.update({card: decree_job(card, el, close, wide, seed) for card, el, close, wide, seed in DECREES})
+JOBS.update({j[0]: joint_job(*j) for j in JOINTS})
 JOBS.update({
     'fx_slash': {
         'kind': 'fx', 'size': (704, 704), 'length': 56, 'seed': 311,

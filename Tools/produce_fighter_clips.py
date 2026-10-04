@@ -35,6 +35,7 @@ from produce_battle_motion import URL, frames_of, h3, node, qwen_edit, run, to_i
 
 PROJECT = Path(__file__).resolve().parent.parent
 SPECS = Path(__file__).resolve().parent / 'fighter_clips'
+ENEMY_SPECS = Path(__file__).resolve().parent / 'enemy_clips'      # Tools/build_enemy_clip_specs.py
 WORK = PROJECT / 'BattleMotion'
 OUT = PROJECT / 'Assets/Resources/AdamsHaven/BattleClips'
 CHARS = Path('S:/AI/Game/Game Assets/characters')
@@ -49,6 +50,18 @@ KEY_PROMPT = ('Image 1 shows the character standing in her fighting stance, imag
               'view facing the right side of the picture, the same scale, and her feet on the same ground line as in '
               'image 1. The whole figure is visible. Plain flat even grey background, no shadow, no floor, no effects, '
               'no motion lines, no text. Clean high-detail cel-shaded anime game character art, sharp lineart.')
+# Monsters (Tools/build_enemy_clip_specs.py, spec "kind": "monster"): painted creatures facing the left side of the
+# picture, references are the bestiary's own views (MonsterPrompts/<family>/<form>/).
+MONSTER_KEY_PROMPT = ('Image 1 shows the creature standing in its battle stance; image 2 is the same creature from the '
+                      'front. Draw exactly the same creature as in image 1, {look}, with the same anatomy, '
+                      'colours, crystal growths, core orb, proportions, size and painting style, in a new pose: {pose}. '
+                      'Keep the same camera and the same side view facing the left side of the picture, the same scale, '
+                      'and its feet on the same ground line as in image 1. The whole creature is visible. Plain flat even '
+                      'grey background, no shadow, no floor, no effects, no motion lines, no text. Polished hand-painted '
+                      'fantasy RPG creature art, crisp clean linework.')
+MONSTER_MOTION_TAIL = ('Fantasy RPG battle creature animation, full body, locked-off static camera, no zoom, no pan, no '
+                       'cuts. It stays in place on the same ground line. Plain flat even grey background, no shadow, no '
+                       'floor, no effects, no particles, no text. Polished hand-painted creature, consistent design.')
 MOTION_TAIL = ('Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. '
                'She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no '
                'effects, no particles, no text. Crisp cel-shaded anime character, consistent design.')
@@ -56,8 +69,11 @@ MOTION_TAIL = ('Anime fighting game character animation, full body, locked-off s
 
 # ---------------------------------------------------------------- spec + small helpers ------------
 def load(unit):
-    spec = json.loads((SPECS / f'{unit}.json').read_text(encoding='utf-8'))
-    d = WORK / f'fighter_{unit}'
+    path = SPECS / f'{unit}.json'
+    if not path.exists():
+        path = ENEMY_SPECS / f'{unit}.json'
+    spec = json.loads(path.read_text(encoding='utf-8'))
+    d = WORK / (f'enemy_{unit}' if spec.get('kind') == 'monster' else f'fighter_{unit}')
     for sub in ('keys', 'keys/raw', 'segments', 'review'):
         (d / sub).mkdir(parents=True, exist_ok=True)
     return spec, d
@@ -259,12 +275,14 @@ def keys(spec, d, only=None):
     bg = tuple(spec['bg'])
     g_name = to_input(Image.open(d / 'keys/guard.png').convert('RGB'), f"ahcg-clip-{spec['unit']}-guard.png")
     refs = [g_name]
-    for i, r in enumerate((spec['refs']['sheet'], spec['refs']['weapon'])):
-        refs.append(to_input(flat(Image.open(CHARS / r), bg), f"ahcg-clip-{spec['unit']}-ref{i}.png"))
+    files = [Path(r) for r in spec['ref_files']] if 'ref_files' in spec else         [CHARS / spec['refs']['sheet'], CHARS / spec['refs']['weapon']]
+    for i, r in enumerate(files):
+        refs.append(to_input(flat(Image.open(r), bg), f"ahcg-clip-{spec['unit']}-ref{i}.png"))
+    template = MONSTER_KEY_PROMPT if spec.get('kind') == 'monster' else KEY_PROMPT
     for name, k in spec['keys'].items():
         if only and name != only:
             continue
-        prompt = KEY_PROMPT.format(look=spec['look'], pose=k['pose'])
+        prompt = template.format(look=spec['look'], pose=k['pose'])
         raw = d / 'keys/raw' / f"{name}_{k['seed']}.png"
         raw_meta = raw.with_suffix('.json')
         # A raw key stays valid while its prompt and seed (in the file name) do: re-framing the guard only re-registers.
@@ -436,7 +454,10 @@ def motion(spec, d, only=None):
             if frames == 1:
                 snap(spec, d, sd, b)
                 continue
-            prompt = f"The character is {spec['look']}, facing the right side of the picture. {text} {MOTION_TAIL}"
+            if spec.get('kind') == 'monster':
+                prompt = f"The creature is {spec['look']}, facing the left side of the picture. {text} {MONSTER_MOTION_TAIL}"
+            else:
+                prompt = f"The character is {spec['look']}, facing the right side of the picture. {text} {MOTION_TAIL}"
             seg = dict(action=action, index=i, first=a, last=b, frames=frames, seed=seed, prompt=prompt,
                        size=spec['canvas'], fps=24, model='MiniMax H3 fl2va int8 + turbo 4-step',
                        keys=digest(first, last))
@@ -636,7 +657,7 @@ def pack(spec, d, only=None):
             alpha = f32(full.getchannel('A'))
             if alpha.max() > .5:
                 lows.append(figure_metrics(alpha)['bottom'])
-            tips.append(muzzle(alpha, spec, act.get('tip', 'right')))
+            tips.append(muzzle(alpha, spec, act.get('tip', 'left' if spec.get('kind') == 'monster' else 'right')))
             sprite = sprite_of(full, scale, fx0, fy0)
             sprites.append(sprite)
             rec['_sprites'].append(sprite)
@@ -716,6 +737,10 @@ def muzzle(alpha, spec, mode):
         ys_all, xs_all = np.nonzero(alpha > .5)
         i = np.argmin(ys_all)
         return float(xs_all[i]), float(ys_all[i])
+    if mode == 'left':           # a monster faces the left: its reach is the leftmost point
+        xmin = xs.min()
+        near = xs <= xmin + 6
+        return float(xmin), float(ys[near].mean() + max(0, y0))
     xmax = xs.max()
     near = xs >= xmax - 6
     return float(xmax), float(ys[near].mean() + max(0, y0))
@@ -727,9 +752,10 @@ def smooth_tips(tips, spec):
     if len(a) >= 3:
         a = np.stack([np.median(a[max(0, i - 1):i + 2], axis=0) for i in range(len(a))])
     half = spec['body_px'] / 2
+    toward = -1 if spec.get('kind') == 'monster' else 1      # x is measured toward the enemy line
     out = []
     for x, y in a:
-        out += [round(float((x - spec['body_x']) / half), 3), round(float((spec['feet_y'] - y) / half), 3)]
+        out += [round(float(toward * (x - spec['body_x']) / half), 3), round(float((spec['feet_y'] - y) / half), 3)]
     return out
 
 
