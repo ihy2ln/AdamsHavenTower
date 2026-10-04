@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Pyre Titan, a A-rank GKOM variant from the Cinder Motes family: giant of molten crystal and flame cracking the ground where it stands. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: large, heavy and imposing. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are ember-red cinder crystal. A grapefruit-sized GKOM core orb, near-black with a liquid shimmer, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, vivid sweeping embers, flame ribbons and heat shimmer",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\cinder_motes\\pyre_titan\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_pyre_titan\\guard_src.png",
   "source_bg": [
@@ -38,48 +36,48 @@
   "ember_hit": {
    "height": 1.0,
    "seed": 68476,
-   "pose": "the peak of its Ember Bolt: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Ember Bolt: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "self_destruct_hit": {
    "height": 1.0,
    "seed": 60200,
-   "pose": "the peak of its Swell: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Swell: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "flame_wave_hit": {
    "height": 1.05,
    "seed": 75852,
-   "pose": "the peak of its Flame Wave: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Flame Wave: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "stoke_hit": {
    "height": 1.08,
    "seed": 60102,
-   "pose": "using Stoke: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Stoke: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "cinder_lash_hit": {
    "height": 0.95,
    "seed": 63183,
-   "pose": "the peak of its Cinder Lash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Cinder Lash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 65865,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 79508,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 46163,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 49728,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -103,7 +101,7 @@
      "ember_hit",
      17,
      50545,
-     "It performs Ember Bolt: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "ember_hit",
@@ -125,7 +123,7 @@
      "self_destruct_hit",
      17,
      80058,
-     "It performs Swell: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "self_destruct_hit",
@@ -147,7 +145,7 @@
      "flame_wave_hit",
      17,
      77444,
-     "It performs Flame Wave: it rears up and unleashes a huge sweeping attack forward to the left."
+     "It performs its attack: without leaving the ground, it rears up and unleashes a huge sweeping attack forward to the left."
     ],
     [
      "flame_wave_hit",
@@ -169,7 +167,7 @@
      "stoke_hit",
      17,
      37473,
-     "It uses Stoke: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "stoke_hit",
@@ -188,7 +186,7 @@
      "cinder_lash_hit",
      17,
      89080,
-     "It performs Cinder Lash: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "cinder_lash_hit",

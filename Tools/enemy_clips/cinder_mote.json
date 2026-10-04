@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Cinder Mote, a F-rank GKOM variant from the Cinder Motes family: small grinning spark of black-and-red fire. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are ember-red cinder crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, tiny subtle embers, flame ribbons and heat shimmer",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\cinder_motes\\cinder_mote\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_cinder_mote\\guard_src.png",
   "source_bg": [
@@ -38,33 +36,33 @@
   "ember_hit": {
    "height": 1.0,
    "seed": 66478,
-   "pose": "the peak of its Ember Bolt: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Ember Bolt: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "self_destruct_hit": {
    "height": 1.0,
    "seed": 71423,
-   "pose": "the peak of its Swell: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Swell: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 57734,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 26459,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 37902,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 82762,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -88,7 +86,7 @@
      "ember_hit",
      17,
      74834,
-     "It performs Ember Bolt: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "ember_hit",
@@ -110,7 +108,7 @@
      "self_destruct_hit",
      17,
      44931,
-     "It performs Swell: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "self_destruct_hit",

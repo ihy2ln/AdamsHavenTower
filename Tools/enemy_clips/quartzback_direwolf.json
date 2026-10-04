@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Quartzback Direwolf, a C-rank GKOM variant from the Quartzbacks family: pony-sized dire wolf with a mane of frozen quartz. Family anatomy: wolves with frost-quartz spines along the back and pale icy fur. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are frost-white quartz. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\quartzbacks\\quartzback_direwolf\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_quartzback_direwolf\\guard_src.png",
   "source_bg": [
@@ -38,43 +36,43 @@
   "frost_fang_hit": {
    "height": 0.95,
    "seed": 66362,
-   "pose": "the peak of its Frost Fang attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Frost Fang attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "pack_howl_hit": {
    "height": 1.08,
    "seed": 22884,
-   "pose": "using Pack Howl: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Pack Howl: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "rime_rend_hit": {
    "height": 0.95,
    "seed": 46035,
-   "pose": "the peak of its Rime Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Rime Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "blizzard_howl_hit": {
    "height": 1.05,
    "seed": 35270,
-   "pose": "the peak of its Blizzard Howl: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Blizzard Howl: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 50113,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 59982,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 41930,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 70381,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -98,7 +96,7 @@
      "frost_fang_hit",
      17,
      41634,
-     "It performs Frost Fang: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "frost_fang_hit",
@@ -118,7 +116,7 @@
      "pack_howl_hit",
      17,
      82210,
-     "It uses Pack Howl: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "pack_howl_hit",
@@ -137,7 +135,7 @@
      "rime_rend_hit",
      17,
      54823,
-     "It performs Rime Rend: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "rime_rend_hit",
@@ -157,7 +155,7 @@
      "blizzard_howl_hit",
      17,
      55714,
-     "It performs Blizzard Howl: it rears up and unleashes a huge sweeping attack forward to the left."
+     "It performs its attack: without leaving the ground, it rears up and unleashes a huge sweeping attack forward to the left."
     ],
     [
      "blizzard_howl_hit",

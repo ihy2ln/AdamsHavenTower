@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Moonstone Cub, a E-rank GKOM variant from the Moonstone Ravagers family: playful bear cub with an owlish face and small moonstone claws. Family anatomy: hulking bear-like predators with owlish facial discs and moonstone claws. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are milky moonstone. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, small subtle ribbons of water, bubbles and moonlit spray",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\moonstone_ravagers\\moonstone_cub\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_moonstone_cub\\guard_src.png",
   "source_bg": [
@@ -38,33 +36,33 @@
   "moon_maul_hit": {
    "height": 0.95,
    "seed": 72331,
-   "pose": "the peak of its Moon Maul attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Moon Maul attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "lunar_roar_hit": {
    "height": 1.08,
    "seed": 76195,
-   "pose": "using Lunar Roar: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Lunar Roar: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 82559,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 81391,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 82092,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 51256,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -88,7 +86,7 @@
      "moon_maul_hit",
      17,
      29025,
-     "It performs Moon Maul: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "moon_maul_hit",
@@ -108,7 +106,7 @@
      "lunar_roar_hit",
      17,
      40197,
-     "It uses Lunar Roar: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "lunar_roar_hit",

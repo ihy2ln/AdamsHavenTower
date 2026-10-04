@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Gloomshade, a E-rank GKOM variant from the Gloomshades family: wispy humanoid shadow moving against the light. Family anatomy: ghostly translucent shades, banshees and wraiths trailing shadow smoke. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are violet shade crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, small subtle shadow smoke, star specks and dark sigils",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\gloomshades\\gloomshade\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_gloomshade\\guard_src.png",
   "source_bg": [
@@ -38,38 +36,38 @@
   "chill_touch_hit": {
    "height": 1.0,
    "seed": 39841,
-   "pose": "the peak of its Chill Touch: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Chill Touch: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "fade_hit": {
    "height": 1.08,
    "seed": 21898,
-   "pose": "using Fade: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Fade: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "wail_hit": {
    "height": 1.05,
    "seed": 38996,
-   "pose": "the peak of its Banshee Wail: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Banshee Wail: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 30486,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 83127,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 34723,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 46107,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -93,7 +91,7 @@
      "chill_touch_hit",
      17,
      78609,
-     "It performs Chill Touch: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "chill_touch_hit",
@@ -115,7 +113,7 @@
      "fade_hit",
      17,
      77948,
-     "It uses Fade: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "fade_hit",
@@ -134,7 +132,7 @@
      "wail_hit",
      17,
      42680,
-     "It performs Banshee Wail: it rears up and unleashes a huge sweeping attack forward to the left."
+     "It performs its attack: without leaving the ground, it rears up and unleashes a huge sweeping attack forward to the left."
     ],
     [
      "wail_hit",

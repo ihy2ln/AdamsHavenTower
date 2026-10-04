@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Mirage Panther, a A-rank GKOM variant from the Thorncrystal Stalkers family: crystal-sheathed great cat trailing a fan of false afterimages. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are teal thorn crystal. A grapefruit-sized GKOM core orb, near-black with a liquid shimmer, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, vivid sweeping spiralling leaves, gust lines and floating feathers",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\thorncrystal_stalkers\\mirage_panther\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_mirage_panther\\guard_src.png",
   "source_bg": [
@@ -38,48 +36,48 @@
   "pounce_hit": {
    "height": 0.95,
    "seed": 30683,
-   "pose": "the peak of its Thorn Pounce attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Thorn Pounce attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "wail_hit": {
    "height": 0.95,
    "seed": 43050,
-   "pose": "the peak of its Hollow Wail attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Hollow Wail attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "blur_hit": {
    "height": 1.08,
    "seed": 81066,
-   "pose": "using Mirage Blur: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Mirage Blur: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "phase_rend_hit": {
    "height": 0.95,
    "seed": 52067,
-   "pose": "the peak of its Phase Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Phase Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "gale_slash_hit": {
    "height": 0.95,
    "seed": 24822,
-   "pose": "the peak of its Gale Slash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Gale Slash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 30500,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 64136,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 62466,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 57695,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -103,7 +101,7 @@
      "pounce_hit",
      17,
      45240,
-     "It performs Thorn Pounce: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "pounce_hit",
@@ -123,7 +121,7 @@
      "wail_hit",
      17,
      56540,
-     "It performs Hollow Wail: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "wail_hit",
@@ -143,7 +141,7 @@
      "blur_hit",
      17,
      29673,
-     "It uses Mirage Blur: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "blur_hit",
@@ -162,7 +160,7 @@
      "phase_rend_hit",
      17,
      51887,
-     "It performs Phase Rend: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "phase_rend_hit",
@@ -182,7 +180,7 @@
      "gale_slash_hit",
      17,
      44755,
-     "It performs Gale Slash: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "gale_slash_hit",

@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Geode Treant, a B-rank GKOM variant from the Shardlings family: ancient oak treant split open to show a cavern of crystal inside its trunk. Family anatomy: living saplings and trees of bark and roots with crystal buds and geode hollows. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are pale green quartz. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, strong stone shards, crystal dust and drifting petals",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\shardlings\\geode_treant\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_geode_treant\\guard_src.png",
   "source_bg": [
@@ -38,43 +36,43 @@
   "bash_hit": {
    "height": 0.95,
    "seed": 37347,
-   "pose": "the peak of its Crystal Bash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Crystal Bash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "root_guard_hit": {
    "height": 1.08,
    "seed": 86333,
-   "pose": "using Root Guard: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Root Guard: it rears up tall and puffs itself up, chest out, head raised high, crystals flared, gathering power. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "bramble_lash_hit": {
    "height": 0.95,
    "seed": 54652,
-   "pose": "the peak of its Bramble Lash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Bramble Lash attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "sap_mend_hit": {
    "height": 1.0,
    "seed": 82931,
-   "pose": "using Sap Mend: it stands tall and still with its head bowed and its limbs drawn in, calm and focused. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "using Sap Mend: it stands tall and still with its head bowed and its limbs drawn in, calm and focused. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 60332,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 89370,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 83574,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 71148,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -98,7 +96,7 @@
      "bash_hit",
      17,
      30165,
-     "It performs Crystal Bash: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "bash_hit",
@@ -118,7 +116,7 @@
      "root_guard_hit",
      17,
      50264,
-     "It uses Root Guard: it rears up and swells with power."
+     "It uses its power: it rears up and swells with power."
     ],
     [
      "root_guard_hit",
@@ -137,7 +135,7 @@
      "bramble_lash_hit",
      17,
      28963,
-     "It performs Bramble Lash: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "bramble_lash_hit",
@@ -157,7 +155,7 @@
      "sap_mend_hit",
      17,
      50224,
-     "It uses Sap Mend: it stands still and gathers itself, calm and focused."
+     "It uses its power: it stands still and gathers itself, calm and focused."
     ],
     [
      "sap_mend_hit",

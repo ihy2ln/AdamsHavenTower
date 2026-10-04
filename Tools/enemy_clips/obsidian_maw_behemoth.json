@@ -23,9 +23,7 @@
  "ppu_out": 200,
  "ppu_hi": 240,
  "look": "Obsidian Maw Behemoth, a SS-rank GKOM variant from the Maw Behemoths family (FF Behemoth / King Behemoth, Diablo demonic beasts archetype reimagined for Adams Haven): gargantuan behemoth sealed in obsidian crystal, gravity distortion around its core. Family anatomy: massive horned quadruped calamity beasts with huge jaws and heavy clawed paws. Build: large, heavy and imposing. GKOM rank cue: sealed in GKOM crystal except its eyes, open mouth interior and core; the crystals are obsidian crystal. A basketball-sized GKOM core orb, void-black, warping light around it, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, elaborate layered shadow smoke, star specks and dark sigils",
- "ref_files": [
-  "S:\\AI\\Game\\Unity AHCG\\My project\\MonsterPrompts\\maw_behemoths\\obsidian_maw_behemoth\\battle_front.png"
- ],
+ "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_obsidian_maw_behemoth\\guard_src.png",
   "source_bg": [
@@ -38,48 +36,48 @@
   "gravitic_rend_hit": {
    "height": 0.95,
    "seed": 61801,
-   "pose": "the peak of its Gravitic Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Gravitic Rend attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "obsidian_quake_hit": {
    "height": 1.05,
    "seed": 80741,
-   "pose": "the peak of its Obsidian Quake: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Obsidian Quake: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "voidcore_pulse_hit": {
    "height": 1.0,
    "seed": 21233,
-   "pose": "the peak of its Voidcore Pulse: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Voidcore Pulse: it rears up and thrusts its head, hands or crystals forward toward the left side of the picture as if hurling power, mouth open, body braced. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "maw_of_ruin_hit": {
    "height": 1.05,
    "seed": 49866,
-   "pose": "the peak of its Maw of Ruin: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Maw of Ruin: a huge wide attack, it rears up tall and sweeps or slams its whole body forward toward the left side of the picture with its limbs spread wide. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "umbral_bite_hit": {
    "height": 0.95,
    "seed": 55668,
-   "pose": "the peak of its Umbral Bite attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "the peak of its Umbral Bite attack: it lunges forward toward the left side of the picture and strikes at full reach, body stretched into the blow, weight thrown onto its front. If it holds a weapon in image 1, the whole weapon is clearly visible in its hand, thrust forward; otherwise it strikes with claws, horns or jaws. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "hit": {
    "height": 0.95,
    "seed": 69616,
-   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "flinching from a heavy blow that came from the left: it hunches and leans its head and shoulders back, eyes squeezed shut, mouth open in pain, weight on its back legs. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "block": {
    "height": 0.88,
    "seed": 89139,
-   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a braced block: it hunches low behind its raised arms, shell or armoured side, head tucked in, braced for impact. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "down": {
    "width": 1.05,
    "anchor_x": "center",
    "seed": 54028,
-   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "defeated: it lies collapsed on its side on the ground, limp and still, eyes closed, the whole body lying along the same ground line. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   },
   "victory": {
    "height": 1.08,
    "seed": 31283,
-   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths it has in image 1, no new ones."
+   "pose": "a triumphant pose: it rears up tall, roaring, head raised high, roaring toward the left. It still faces the left side of the picture, exactly as in image 1, and keeps hold of any weapon it carries. Only the crystal growths and core it has in image 1, no new or larger ones."
   }
  },
  "actions": {
@@ -103,7 +101,7 @@
      "gravitic_rend_hit",
      17,
      89979,
-     "It performs Gravitic Rend: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "gravitic_rend_hit",
@@ -123,7 +121,7 @@
      "obsidian_quake_hit",
      17,
      33257,
-     "It performs Obsidian Quake: it rears up and unleashes a huge sweeping attack forward to the left."
+     "It performs its attack: without leaving the ground, it rears up and unleashes a huge sweeping attack forward to the left."
     ],
     [
      "obsidian_quake_hit",
@@ -143,7 +141,7 @@
      "voidcore_pulse_hit",
      17,
      45890,
-     "It performs Voidcore Pulse: it rears and hurls its power forward to the left."
+     "It performs its attack: it rears and hurls its power forward to the left."
     ],
     [
      "voidcore_pulse_hit",
@@ -165,7 +163,7 @@
      "maw_of_ruin_hit",
      17,
      24499,
-     "It performs Maw of Ruin: it rears up and unleashes a huge sweeping attack forward to the left."
+     "It performs its attack: without leaving the ground, it rears up and unleashes a huge sweeping attack forward to the left."
     ],
     [
      "maw_of_ruin_hit",
@@ -187,7 +185,7 @@
      "umbral_bite_hit",
      17,
      73596,
-     "It performs Umbral Bite: it lunges forward to the left and strikes hard."
+     "It performs its attack: keeping its feet on the ground, it steps forward to the left and strikes hard."
     ],
     [
      "umbral_bite_hit",

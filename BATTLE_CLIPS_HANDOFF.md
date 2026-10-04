@@ -204,6 +204,30 @@ One combo action and one joint ultimate for each of the 7 bonded pairs. Rules an
 - **Tests:** `BattleComboTests` (8).
 - **Owed:** 7 joint-ultimate videos (two fighters per shot) and the combos' own effect layers.
 
+## 5d. CM 10.3.5 (2026-10-04): monster movesets and clips, joint cut-ins
+
+- **Movesets by tier.** Every bestiary form has 2 moves at F-E, 3 at D-C, 4 at B-A and 5 at S and above
+  (`Tools/build_bestiary.py move_count`).
+  - A form that is short takes its family's locked moves first, then new element and role moves.
+  - In battle a monster uses the moves of its current rank's tier (`BattleCatalog.MoveCount`).
+  - Lair bosses count Gathering Fury and their signature toward the total.
+- **Monster clips.** Each form gets the same kinds of animation as a fighter: an idle loop, one action per move, hit,
+  block, knockdown and victory. All of them face the left. Monsters have no combos.
+  - Specs: `Tools/build_enemy_clip_specs.py` writes `Tools/enemy_clips/<form>.json` from `bestiary.json` and
+    `MonsterPrompts/` (guard = `battle_left.png`, reference = `battle_front.png`). Hand fixes go in
+    `Tools/enemy_clips/_overrides.json`.
+  - Rendering: `produce_fighter_clips.py` with `"kind": "monster"`. The batch is `python Tools/produce_enemy_clips.py`
+    (`--status`, `--from`, `--only`). Work files are in `BattleMotion/enemy_<form>/`, packs in
+    `Resources/AdamsHaven/BattleClips/<form>/`.
+  - Cost: 748 keys and 1,398 H3 segments, about 10 to 14 minutes per form on the local GPU (roughly a day for all 98).
+  - Field: `BattleEnemyClips.cs`. A monster with a complete set plays it; one without keeps its painted cutout.
+- **Prompt lessons from the pilot.** Without explicit wording Qwen turns a recoiling or roaring creature to face
+  right and drops held weapons. Every monster pose now ends with "still faces the left ... keeps hold of any weapon",
+  and the hit pose avoids "toward the right".
+- **Joint cut-ins.** `produce_battle_motion.py ult_joint_*` renders the 7 joint-ultimate videos, with both fighters
+  named and placed left and right, and "exactly two people".
+- **AUTO** plays a joint ultimate first when one is available.
+
 ## 5. Open items (priority order)
 
 1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.

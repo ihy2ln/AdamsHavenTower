@@ -52,8 +52,7 @@ KEY_PROMPT = ('Image 1 shows the character standing in her fighting stance, imag
               'no motion lines, no text. Clean high-detail cel-shaded anime game character art, sharp lineart.')
 # Monsters (Tools/build_enemy_clip_specs.py, spec "kind": "monster"): painted creatures facing the left side of the
 # picture, references are the bestiary's own views (MonsterPrompts/<family>/<form>/).
-MONSTER_KEY_PROMPT = ('Image 1 shows the creature standing in its battle stance; image 2 is the same creature from the '
-                      'front. Draw exactly the same creature as in image 1, {look}, with the same anatomy, '
+MONSTER_KEY_PROMPT = ('Image 1 shows the creature standing in its battle stance. Draw exactly the same creature as in image 1, {look}, with the same anatomy, '
                       'colours, crystal growths, core orb, proportions, size and painting style, in a new pose: {pose}. '
                       'Keep the same camera and the same side view facing the left side of the picture, the same scale, '
                       'and its feet on the same ground line as in image 1. The whole creature is visible. Plain flat even '
