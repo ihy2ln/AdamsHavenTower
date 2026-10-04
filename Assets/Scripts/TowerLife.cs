@@ -562,7 +562,8 @@ namespace AdamsHaven.Tower
         private float NextEventDelay()
         {
             float pace = Mathf.Lerp(1.2f, 0.65f, Mathf.Clamp01(State.threat / 100f));
-            return (190 + Random01() * 130 + State.incidents.Count * 50) * pace * Storyteller.delay;
+            float grace = State.day <= 3 ? 1.6f : 1f;   // TT 10.4.1: the first days were one fire or pest after another
+            return (190 + Random01() * 130 + State.incidents.Count * 50) * pace * Storyteller.delay * grace;
         }
     }
 }

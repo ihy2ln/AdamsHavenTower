@@ -450,7 +450,7 @@ public sealed class TowerFx : MonoBehaviour
         float night = NightFactor(hour);
         Color night_ = new Color(0.07f, 0.10f, 0.30f, 0.40f);
         Color dusk = new Color(1f, 0.52f, 0.28f, 0.17f);
-        Color dawn = new Color(1f, 0.74f, 0.58f, 0.12f);
+        Color dawn = new Color(1f, 0.86f, 0.74f, 0.05f);   // a faint warm wash; the old 0.12 orange read as a filter
         if (hour >= 17f && hour < 19f) return Color.Lerp(Color.clear, dusk, (hour - 17f) / 2f);
         if (hour >= 19f && hour < 21f) return Color.Lerp(dusk, night_, (hour - 19f) / 2f);
         if (hour >= 6f && hour < 8f) return Color.Lerp(dawn, Color.clear, (hour - 6f) / 2f);
@@ -474,7 +474,8 @@ public sealed class TowerFx : MonoBehaviour
         clock += dt;
         float hour = rules.Hour();
         nightFactor = NightFactor(hour);
-        if (rules.State.introPhase != "complete") { SetOverlay(Color.clear); }
+        // No sky tint while the founding and the guided lessons run: a new game starts at dawn.
+        if (rules.State.introPhase != "complete" || rules.State.tutorialStep < 7) { SetOverlay(Color.clear); }
         else SetOverlay(SkyTint(hour));
         UpdateClouds(dt, hour);
         UpdateAmbient(rules);

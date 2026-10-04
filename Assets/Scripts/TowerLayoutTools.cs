@@ -180,17 +180,6 @@ namespace AdamsHaven.Tower
 
         // ---- Demolishing -------------------------------------------------------------------------------------
 
-        // 40% of the catalogue price and a quarter of the upgrade gold spent come back.
-        public int DemolishRefund(TowerRoom room)
-        {
-            var def = room == null ? null : TowerCatalog.Get(room.type);
-            if (def == null || room.type == "heart" || room.type == "gate") return 0;
-            int spent = 0;
-            for (int level = 1; level < room.level; level++)
-                spent += (level == 1 ? 200 : 600 * (level - 1)) * TowerTiers.Bays(room.type, level + 1);
-            return Mathf.RoundToInt(def.cost * 0.4f + spent * 0.25f);
-        }
-
         // Everyone in or bound for a demolished room walks home (or to the Heart); the homeless get a free bed.
         private void Evacuate(int roomUid)
         {

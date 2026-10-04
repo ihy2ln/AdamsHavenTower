@@ -42,6 +42,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private Button dockBuild, dockPeople, dockHeart, dockExpeditions, dockBattle;
     private Button alertsButton, goalsButton, stewardTop;
     private Image toastPanel, chipPanel;
+    private Button chipCancel;
     private Text toastText, chipText;
     private string shownMessage = "";
     private float toastTimer;
@@ -117,7 +118,7 @@ public sealed partial class TowerHud : MonoBehaviour
         safeRoot = Rect("Safe UI", canvas.transform, Vector2.zero, Vector2.one,
             Vector2.zero, Vector2.zero, Color.clear).rectTransform;
         safeRoot.GetComponent<Image>().raycastTarget = false;
-        BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildDock(); BuildTutorial();
+        BuildTop(); BuildLeft(); BuildRight(); BuildToast(); BuildSiteCard(); BuildDock(); BuildTutorial();
         BuildBuildPopup(); BuildFloorsPopup(); BuildTasksPopup(); BuildMenuPopup(); BuildGuildPopup();
         BuildHeartPopup(); BuildAlertsPopup(); BuildWorkPopup(); BuildDistrictsPopup();
         BuildAutoPopup(); BuildOutpostsPopup(); BuildSiegeBanner(); BuildLairPopup();
@@ -316,7 +317,7 @@ public sealed partial class TowerHud : MonoBehaviour
             new Vector2(560, 38), new Color(0.10f, 0.07f, 0.03f, 0.92f));
         TowerUiSkin.ApplyPanel(chipPanel, new Color(1f, 0.85f, 0.55f), true);
         chipText = TextAt(chipPanel.transform, "Placing text", "", 14, 0, 400, 38, 14, Cream);
-        ButtonAt(chipPanel.transform, "Cancel placing", "CANCEL", 438, 4, 110, 30,
+        chipCancel = ButtonAt(chipPanel.transform, "Cancel placing", "CANCEL", 438, 4, 110, 30,
             () => { tower.CancelPlacing(); Refresh(); }, Alert, 13);
         chipPanel.gameObject.SetActive(false);
     }
@@ -546,15 +547,13 @@ public sealed partial class TowerHud : MonoBehaviour
         ButtonAt(popupFloors.transform, "Floor up", "FLOOR +", 326, 46, 130, 42,
             () => tower.FocusOnFloor(tower.FocusFloor + 1), Teal, 15);
         floorOpenAbove = ButtonAt(popupFloors.transform, "Open above", "OPEN ABOVE", 14, 98, 218, 46,
-            () => tower.Apply(tower.Rules.OpenFloor(tower.FocusFloor + 1)), Teal, 14);
+            () => TapOpenFloor(1), Teal, 14);
         floorOpenBelow = ButtonAt(popupFloors.transform, "Open below", "OPEN BELOW", 238, 98, 218, 46,
-            () => tower.Apply(tower.Rules.LairFounded ? tower.Rules.LairAddLivingFloor() :
-                tower.Rules.OpenFloor(tower.FocusFloor - 1)), Teal, 14);
+            () => TapOpenFloor(-1), Teal, 14);
         floorWest = ButtonAt(popupFloors.transform, "Expand west", "< WEST", 14, 152, 218, 46,
-            () => ExpandFocused(-1), Teal, 14);
+            () => TapWing(-1), Teal, 14);
         floorEast = ButtonAt(popupFloors.transform, "Expand east", "EAST >", 238, 152, 218, 46,
-            () => ExpandFocused(1), Teal, 14);
-        floorEast.gameObject.SetActive(false);   // the Heart and Gate are the right edge: no east wing
+            () => TapWing(1), Teal, 14);
         ButtonAt(popupFloors.transform, "Jump ground", "GROUND", 14, 206, 218, 36,
             () => tower.FocusOnFloor(0), Teal, 13);
         ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 238, 206, 218, 36,
@@ -768,7 +767,8 @@ public sealed partial class TowerHud : MonoBehaviour
             return;
         }
         demolishArmedRoom = 0;
-        tower.Apply(tower.Rules.Demolish(room.uid));
+        var teardown = tower.Rules.DeconstructWork(room.uid);
+        tower.Apply(teardown != null ? tower.Rules.CancelWork(teardown) : tower.Rules.Demolish(room.uid));
     }
 
     // ---------------------------------------------------------------- tutorial, overlays
@@ -998,7 +998,8 @@ public sealed partial class TowerHud : MonoBehaviour
         RefreshResidents(); RefreshRoom(); RefreshTutorial(); RefreshAdvice(state);
         RefreshDock(state);
         if (popupBuild.gameObject.activeSelf) RefreshBuild();
-        if (popupFloors.gameObject.activeSelf) RefreshFloors(state);
+        if (popupFloors.gameObject.activeSelf) { RefreshFloors(state); RefreshFloorWork(state); }
+        RefreshSiteCard();
         if (popupTasks.gameObject.activeSelf) RefreshTasks(state);
         if (popupGuild.gameObject.activeSelf) RefreshGuild();
         if (popupHeart.gameObject.activeSelf) RefreshHeart(state);
@@ -1030,6 +1031,7 @@ public sealed partial class TowerHud : MonoBehaviour
             tower.Rules.State.introPhase != "gate" && tower.Rules.State.introPhase != "choose";
         chipPanel.gameObject.SetActive(show);
         if (!show) return;
+        chipCancel.gameObject.SetActive(tower.Rules.State.introPhase != "shack");   // the founding Shack cannot be skipped
         var moving = tower.MovingRoom;
         if (moving != null)
         {
@@ -1381,7 +1383,7 @@ public sealed partial class TowerHud : MonoBehaviour
         LabelOf(moveRoom).text = fixedRoom ? "MOVE" : tower.Moving ? "MOVING..." : "MOVE " + tower.Rules.MoveCost(room) + "g";
         demolishRoom.interactable = !fixedRoom;
         if (demolishArmedRoom != room.uid || Time.unscaledTime > demolishArmedUntil)
-            LabelOf(demolishRoom).text = fixedRoom ? "DEMOLISH" : "DEMOLISH +" + tower.Rules.DemolishRefund(room) + "g";
+            LabelOf(demolishRoom).text = fixedRoom ? "DEMOLISH" : DemolishLabel(room);
         assign.interactable = tower.SelectedPerson != null && tower.SelectedPerson.ageStage == 0 &&
             !tower.SelectedPerson.downed && !tower.SelectedPerson.exploring &&
             room.type != "heart";
@@ -1468,8 +1470,9 @@ public sealed partial class TowerHud : MonoBehaviour
         {
             tutorialAction.gameObject.SetActive(false);
             foreach (var button in heroButtons) button.gameObject.SetActive(false);
-            tutorialTitle.fontSize = 17;
-            tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 82);
+            tutorialTitle.fontSize = 15;
+            tutorialTitle.rectTransform.anchoredPosition = new Vector2(44, -2);   // inside the banner's carved ends
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(522, 82);
             string[] lessons = {
                 "1 / BUILD  •  Open FLOORS and expand the foundation twice (WEST or EAST). Then open BUILD, choose Kitchen and tap the empty + lot.",
                 "2 / MATCH  •  In PEOPLE pick a resident, tap the Kitchen, compare the expected rate, then press ASSIGN.",
@@ -1482,6 +1485,7 @@ public sealed partial class TowerHud : MonoBehaviour
             if (step < lessons.Length) tutorialTitle.text = lessons[step];
             return;
         }
+        tutorialTitle.rectTransform.anchoredPosition = new Vector2(9, -2);
         if (RefreshLairFounding(phase)) return;
         tutorialTitle.fontSize = 20;
         tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 38);

@@ -223,6 +223,7 @@ namespace AdamsHaven.Tower
         // TT 10.4.0 Dungeon Mode (LairMode.cs and the Lair* files)
         public string mode = "tower";                            // "tower" or "lair"
         public TowerLairState lair = new TowerLairState();       // empty in a Tower save
+        public List<TowerReceipt> receipts = new List<TowerReceipt>();   // TT 10.4.1 sell-back window (TowerSellBack.cs)
     }
 
     public sealed class TowerRoomDef
@@ -332,6 +333,7 @@ namespace AdamsHaven.Tower
             if (State.counters == null) State.counters = new List<TowerCounter>();
             if (State.bonds == null) State.bonds = new List<TowerBond>();
             if (State.works == null) State.works = new List<TowerWork>();
+            if (State.receipts == null) State.receipts = new List<TowerReceipt>();
             NormalizeExpeditions();
             if (State.memorial == null) State.memorial = new List<TowerMemorial>();            if (State.randomState == 0) State.randomState = 77101;
             if (State.legacyHeroes == null) State.legacyHeroes = new List<TowerResident>();
@@ -578,18 +580,21 @@ namespace AdamsHaven.Tower
         {
             string error = CanBuild(type, floor, x);
             if (error != null) return error;
-            State.gold -= BuildCost(type);
-            State.wood -= BuildWoodCost(type);
-            State.stone -= BuildStoneCost(type);
+            int gold = BuildCost(type), wood = BuildWoodCost(type), stone = BuildStoneCost(type);
+            State.gold -= gold;
+            State.wood -= wood;
+            State.stone -= stone;
             if (Timed)
             {
                 float seconds = RoomBuildSeconds(type);
                 StartWork("room", floor, x, 0, type, seconds);
+                PriceLastWork(gold, wood, stone, 0);
                 Note("Started building " + TowerCatalog.Get(type).displayName + " on floor " + floor +
                     " (" + Clock(seconds) + ").");
                 return null;
             }
             var built = AddRoom(type, floor, x);
+            RecordReceipt(built, "build", gold, wood, stone);
             Bump("build");
             Emit("build", built.uid, 0, type);
             if (State.introPhase == "shack" && type == "house" && floor == 0) State.introPhase = "choose";
@@ -618,6 +623,7 @@ namespace AdamsHaven.Tower
             {
                 float seconds = FloorBuildSeconds(number);
                 StartWork("floor", number, 0, 0, null, seconds);
+                PriceLastWork(0, 0, 0, cost);
                 Note("Started building floor " + number + " (" + Clock(seconds) + ").");
                 return null;
             }
@@ -688,6 +694,8 @@ namespace AdamsHaven.Tower
             {
                 float seconds = WingBuildSeconds(number, side);
                 StartWork("wing", number, 0, side, null, seconds);
+                PriceLastWork(0, 0, 0, cost);
+                if (number == 0) PlaceGates();   // the Gate steps out of the way as soon as work starts
                 Note("Started extending floor " + number + (side < 0 ? " westward" : " eastward") +
                     " (" + Clock(seconds) + ").");
                 return null;
@@ -792,9 +800,11 @@ namespace AdamsHaven.Tower
             var def = TowerCatalog.Get(room.type);
             string best = "repair";
             int score = resident.might;
+            // Workplaces that produce or train always get a producer (TT 10.4.1: a strong newcomer used to be made the
+            // room's repairer and produced nothing); hauling only once auto-hauling is unlocked.
             if (def.kind == "gate" || def.kind == "train" || !string.IsNullOrEmpty(def.produces))
-            { best = "production"; score = resident.Stat(def.stat); if (resident.might > score) { best = "repair"; score = resident.might; } }
-            if (!string.IsNullOrEmpty(def.produces) && resident.grit > score) best = "haul";
+            { best = "production"; score = resident.Stat(def.stat); }
+            if (!string.IsNullOrEmpty(def.produces) && State.haulingUnlocked && resident.grit > score + 2) best = "haul";
             return best;
         }
 
@@ -872,7 +882,7 @@ namespace AdamsHaven.Tower
             }
             room.ready = false; room.progress = 0;
             if (State.tutorialStep == 2 && room.type == "kitchen") State.tutorialStep = 3;
-            if (room.type == "lumber_mill") State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5));
+            if (room.type == "lumber_mill") { State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5)); State.stone += 1; }   // cleared rubble: a trickle of early stone
             if (room.type == "quarry") { State.stone += room.level * 2; State.ore += room.level; }
             foreach (var resident in State.residents) if (resident.jobRoom == roomUid)
             {
@@ -950,28 +960,14 @@ namespace AdamsHaven.Tower
             int material = UpgradeMaterialCost(room);
             if (State.wood < material || State.stone < material)
                 return "Upgrades need wood and stone.";
+            int fromLevel = room.level, fromX = room.x, fromWidth = room.width;
             State.gold -= cost; State.wood -= material; State.stone -= material; room.level++;
             room.x = newX; room.width = newWidth;
+            RecordReceipt(room, "upgrade", cost, material, material, fromLevel, fromX, fromWidth);
             TouchLayout();
             Note("Upgraded" + TowerCatalog.Get(room.type).displayName + " to rank " + TowerTiers.Tier(room.level) + ".");
             Bump("upgrade");
             Emit("upgrade", room.uid, 0, room.level.ToString());
-            return null;
-        }
-
-        public string Demolish(int roomUid)
-        {
-            var room = Room(roomUid);
-            if (room == null || room.type == "heart" || room.type == "gate") return "The Heart and Gate stay.";
-            if (State.incidents.Exists(i => i.roomUid == roomUid)) return "Resolve the incident first.";
-            if (State.introPhase != "complete") return "Finish founding the Tower first.";
-            int refund = DemolishRefund(room);
-            State.rooms.Remove(room); roomIndex = null;
-            Evacuate(roomUid);
-            TouchLayout();
-            State.gold += refund;
-            Note("Demolished the " + TowerCatalog.Get(room.type).displayName + (refund > 0 ? " and recovered " + refund + " gold." : "."));
-            Emit("demolish", 0, 0, TowerCatalog.Get(room.type).displayName);
             return null;
         }
 

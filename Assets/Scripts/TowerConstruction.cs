@@ -13,6 +13,8 @@ namespace AdamsHaven.Tower
         public int side;         // wing: -1 west, +1 east
         public string type;      // room: catalogue id
         public float remaining, total;
+        public int room;         // deconstruct: the room coming down
+        public int gold, wood, stone, celestium;   // what it cost, returned if it is cancelled
 
         public float Progress { get { return total <= 0 ? 1 : Mathf.Clamp01(1 - remaining / total); } }
     }
@@ -86,6 +88,7 @@ namespace AdamsHaven.Tower
 
         private void TickConstruction(float dt)
         {
+            PruneReceipts();
             for (int i = State.works.Count - 1; i >= 0; i--)
             {
                 var work = State.works[i];
@@ -102,6 +105,7 @@ namespace AdamsHaven.Tower
             {
                 var built = AddRoom(work.type, work.floor, work.x);
                 if (built == null) return;
+                RecordReceipt(built, "build", work.gold, work.wood, work.stone);
                 Bump("build");
                 Emit("build", built.uid, 0, work.type);
                 if (State.introPhase == "complete" && State.tutorialStep == 0 && work.type == "kitchen")
@@ -116,6 +120,14 @@ namespace AdamsHaven.Tower
                 if (work.floor == 0) PlaceGates();
                 TouchLayout();
                 Note("Finished the " + (work.side < 0 ? "west" : "east") + " foundation of floor " + work.floor + ".");
+            }
+            else if (work.kind == "deconstruct")
+            {
+                var room = Room(work.room);
+                if (room == null) return;
+                RemoveRoom(room);
+                Note("Took down the " + TowerCatalog.Get(room.type).displayName + ".");
+                Emit("demolish", 0, 0, TowerCatalog.Get(room.type).displayName);
             }
             else if (work.kind == "floor")
             {

@@ -17,8 +17,10 @@ namespace AdamsHaven.Tower
         { return State.rooms.Find(r => r.type == "gate" && r.floor == 0 && (side < 0 ? r.x < CoreX : r.x > CoreX)); }
 
         // Cells a floor spans on screen, Gates included (the founded cells plus a Gate cell at each ground-floor end).
-        public int DrawnWest(TowerFloor floor) { return floor.west + (floor.number == 0 && GateOn(-1) != null ? 1 : 0); }
-        public int DrawnEast(TowerFloor floor) { return floor.east + (floor.number == 0 && GateOn(1) != null ? 1 : 0); }
+        // A foundation under construction on the ground floor already pushes its Gate one cell out (TT 10.4.1).
+        public int DrawnWest(TowerFloor floor) { return floor.west + (floor.number == 0 && GateOn(-1) != null ? 1 + PendingWing(-1) : 0); }
+        public int DrawnEast(TowerFloor floor) { return floor.east + (floor.number == 0 && GateOn(1) != null ? 1 + PendingWing(1) : 0); }
+        private int PendingWing(int side) { return WingWork(0, side) != null ? 1 : 0; }
 
         // Puts each Gate just outside its side's founded cells, creating the west Gate once the Tower is founded.
         public void PlaceGates()
@@ -33,7 +35,7 @@ namespace AdamsHaven.Tower
         {
             var gate = GateOn(side);
             if (gate == null && !create) return;
-            int x = side < 0 ? CoreX - ground.west - 1 : CoreX + ground.east + 1;
+            int x = side < 0 ? CoreX - ground.west - 1 - PendingWing(-1) : CoreX + ground.east + 1 + PendingWing(1);
             var there = RoomAt(0, x);
             if (there != null && there != gate) return;   // a room already stands there: leave the Gate where it is
             if (gate == null) gate = AddRoom("gate", 0, x);

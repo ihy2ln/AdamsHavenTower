@@ -136,7 +136,66 @@ public sealed class TowerManagementTests
     }
 
     [Test]
-    public void DemolishRefundsPartAndSendsOccupantsHome()
+    public void SellBackFallsToNothingThenDeconstructs()
+    {
+        var rules = Lot();
+        int gold = rules.State.gold, wood = rules.State.wood;
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
+        var kitchen = rules.RoomAt(0, 20);
+        int cost = gold - rules.State.gold;
+        Assert.AreEqual(cost, rules.DemolishRefund(kitchen));
+        rules.State.clock += TowerRules.SellWindow / 2;
+        Assert.AreEqual(cost / 2, rules.DemolishRefund(kitchen), 1, "half the window, half the money");
+        rules.State.clock += TowerRules.SellWindow;
+        Assert.AreEqual(0, rules.DemolishRefund(kitchen));
+        TowerRules.InstantConstruction = false;
+        int before = rules.State.gold;
+        Assert.IsNull(rules.Demolish(kitchen.uid), "past the window it is deconstructed");
+        Assert.IsNotNull(rules.Room(kitchen.uid), "deconstruction takes time");
+        Assert.IsNotNull(rules.DeconstructWork(kitchen.uid));
+        Assert.IsNotNull(rules.Demolish(kitchen.uid), "already coming down");
+        rules.Advance(rules.DeconstructSeconds(kitchen) + 2, false);
+        Assert.IsNull(rules.Room(kitchen.uid));
+        Assert.LessOrEqual(rules.State.gold, before + 50, "nothing comes back after the window");
+    }
+
+    [Test]
+    public void SellingAnUpgradeUndoesIt()
+    {
+        var rules = Lot();
+        rules.State.heartRank = 5;
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
+        var kitchen = rules.RoomAt(0, 20);
+        rules.State.clock += TowerRules.SellWindow + 1;   // the build itself is past its window
+        int gold = rules.State.gold;
+        Assert.IsNull(rules.UpgradeRoom(kitchen.uid));
+        Assert.AreEqual(2, kitchen.level);
+        Assert.IsTrue(rules.SellingUndoesUpgrade(kitchen));
+        Assert.IsNull(rules.Demolish(kitchen.uid));
+        Assert.AreEqual(1, kitchen.level, "the upgrade is undone, the room stays");
+        Assert.IsNotNull(rules.Room(kitchen.uid));
+        Assert.AreEqual(gold, rules.State.gold, "all of the upgrade gold back");
+    }
+
+    [Test]
+    public void CancellingConstructionRefundsEverything()
+    {
+        var rules = Lot();
+        TowerRules.InstantConstruction = false;
+        int gold = rules.State.gold, wood = rules.State.wood, stone = rules.State.stone, celestium = rules.State.celestium;
+        Assert.IsNull(rules.Build("kitchen", 0, 20));
+        Assert.IsNull(rules.ExpandFloor(0, 1));
+        Assert.AreEqual(2, rules.State.works.Count);
+        foreach (var work in rules.State.works.ToArray()) Assert.IsNull(rules.CancelWork(work));
+        Assert.AreEqual(0, rules.State.works.Count);
+        Assert.AreEqual(gold, rules.State.gold);
+        Assert.AreEqual(wood, rules.State.wood);
+        Assert.AreEqual(stone, rules.State.stone);
+        Assert.AreEqual(celestium, rules.State.celestium);
+    }
+
+    [Test]
+    public void DemolishSellsBackAndSendsOccupantsHome()
     {
         var rules = Lot();
         Assert.IsNull(rules.Build("kitchen", 0, 20));
@@ -149,12 +208,12 @@ public sealed class TowerManagementTests
         Assert.IsNull(rules.Assign(worker.id, kitchen.uid));
         worker.currentRoom = worker.targetRoom = kitchen.uid;
         worker.currentTask = "production";
-        Assert.AreEqual(40, rules.DemolishRefund(kitchen), "40% of the catalogue price");
-        kitchen.level = 3;
-        Assert.AreEqual(40 + 200, rules.DemolishRefund(kitchen), "plus a quarter of the 800 upgrade gold");
+        Assert.AreEqual(rules.State.receipts.Find(r => r.room == kitchen.uid).gold, rules.DemolishRefund(kitchen),
+            "sold back at 100% the moment it is built");
         int gold = rules.State.gold;
+        int refund = rules.DemolishRefund(kitchen);
         Assert.IsNull(rules.Demolish(kitchen.uid));
-        Assert.AreEqual(gold + 240, rules.State.gold);
+        Assert.AreEqual(gold + refund, rules.State.gold);
         Assert.IsNull(rules.Room(kitchen.uid));
         Assert.AreEqual(0, worker.jobRoom);
         Assert.AreEqual(shack.uid, worker.currentRoom, "walked home");

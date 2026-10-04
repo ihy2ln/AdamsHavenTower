@@ -235,6 +235,12 @@ public sealed class TowerArtDirector : MonoBehaviour
                 int cell = tower.Rules.NextExpansionX(work.floor, work.side);
                 left = X(cell); width = Cell;
             }
+            else if (work.kind == "deconstruct")
+            {
+                var coming = tower.Rules.Room(work.room);
+                if (coming == null) continue;
+                left = X(coming.x); width = coming.width * Cell;
+            }
             else
             {
                 left = X(21); width = 3 * Cell;

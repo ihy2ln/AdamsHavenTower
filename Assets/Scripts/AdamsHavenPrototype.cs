@@ -1092,7 +1092,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         if (site != null)
         {
             message = "Building " + TowerCatalog.Get(site.type).displayName + ": " + TowerRules.Clock(site.remaining) + " left.";
-            if (hud != null) hud.Refresh();
+            if (hud != null) hud.ShowSite(site);
             return;
         }
         if (number >= TowerRules.FloorMin && number <= TowerRules.FloorMax &&
@@ -1114,7 +1114,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
                 start = candidate;
                 error = null;
             }
-            Apply(error == null ? rules.Build(buildType, number, start) : error);
+            if (error == null) { error = rules.Build(buildType, number, start); if (error == null) placing = false; }   // one room per pick
+            Apply(error);
         }
     }
 
