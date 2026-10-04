@@ -899,6 +899,18 @@
        "duration": 1,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_quake_stomp",
+       "name": "Quake Stomp",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -966,6 +978,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_blur",
+       "name": "Mirage Blur",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Haste",
+       "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Skirmisher",
@@ -1022,6 +1046,18 @@
        "target": "Self",
        "status": "Haste",
        "magnitude": 1,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_phase_rend",
+       "name": "Phase Rend",
+       "ep": 2,
+       "power": 1.8,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.2,
        "duration": 2,
        "heal": 0,
        "magic": false
@@ -1094,6 +1130,18 @@
        "status": "DefenseDown",
        "magnitude": 0.2,
        "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_gale_slash",
+       "name": "Gale Slash",
+       "ep": 2,
+       "power": 1.45,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
        "heal": 0,
        "magic": false
       }
@@ -1210,6 +1258,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_rime_rend",
+       "name": "Rime Rend",
+       "ep": 2,
+       "power": 1.6,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -1267,6 +1327,18 @@
        "status": "",
        "magnitude": 0,
        "duration": 0,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_blizzard_howl",
+       "name": "Blizzard Howl",
+       "ep": 3,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
        "heal": 0,
        "magic": false
       }
@@ -1604,6 +1676,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_feather_storm",
+       "name": "Feather Storm",
+       "ep": 2,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Skirmisher",
@@ -1661,6 +1745,18 @@
        "status": "Burn",
        "magnitude": 6,
        "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_sky_drop",
+       "name": "Sky Drop",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
        "heal": 0,
        "magic": false
       }
@@ -1734,6 +1830,18 @@
        "duration": 1,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_cinder_lash",
+       "name": "Cinder Lash",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Skirmisher",
@@ -1801,18 +1909,6 @@
        "duration": 0,
        "heal": 26,
        "magic": true
-      },
-      {
-       "id": "e_prism_ward",
-       "name": "Prism Ward",
-       "ep": 2,
-       "power": 0,
-       "target": "AllAllies",
-       "status": "DefenseUp",
-       "magnitude": 0.25,
-       "duration": 2,
-       "heal": 0,
-       "magic": false
       }
      ],
      "role": "Caster",
@@ -2057,6 +2153,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_cave_in",
+       "name": "Cave-In",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Guardian",
@@ -2122,6 +2230,18 @@
        "name": "Swallow Whole",
        "ep": 3,
        "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_quake_stomp",
+       "name": "Quake Stomp",
+       "ep": 2,
+       "power": 1.4,
        "target": "Enemy",
        "status": "Stun",
        "magnitude": 1,
@@ -2240,6 +2360,30 @@
        "status": "AttackUp",
        "magnitude": 0.25,
        "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_crushing_hug",
+       "name": "Crushing Hug",
+       "ep": 2,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_tidal_swipe",
+       "name": "Tidal Swipe",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
        "heal": 0,
        "magic": false
       }
@@ -2379,6 +2523,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_static_scales",
+       "name": "Static Scales",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Skirmisher",
@@ -2426,6 +2582,30 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_static_scales",
+       "name": "Static Scales",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "DefenseUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_thunderclap",
+       "name": "Thunderclap",
+       "ep": 3,
+       "power": 1.2,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Skirmisher",
@@ -2497,6 +2677,18 @@
        "duration": 1,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_arc_strike",
+       "name": "Arc Strike",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Skirmisher",
@@ -2561,6 +2753,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_dark_core",
+       "name": "Dark Core",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 40,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -2608,6 +2812,30 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_dark_core",
+       "name": "Dark Core",
+       "ep": 1,
+       "power": 0,
+       "target": "Self",
+       "status": "Shield",
+       "magnitude": 40,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_orb_beam",
+       "name": "Orb Beam",
+       "ep": 3,
+       "power": 2.3,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Bruiser",
@@ -2679,6 +2907,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -3213,6 +3453,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Caster",
@@ -3279,6 +3531,18 @@
        "duration": 1,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_brood",
+       "name": "Spawn Brood",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Skirmisher",
@@ -3336,6 +3600,18 @@
        "status": "AttackUp",
        "magnitude": 0.2,
        "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_silk_storm",
+       "name": "Silk Storm",
+       "ep": 3,
+       "power": 0.9,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
        "heal": 0,
        "magic": false
       }
@@ -3407,6 +3683,18 @@
        "status": "Slow",
        "magnitude": 0.3,
        "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
        "heal": 0,
        "magic": false
       }
@@ -3676,6 +3964,18 @@
        "duration": 1,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_quake_stomp",
+       "name": "Quake Stomp",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Caster",
@@ -3742,6 +4042,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_tide_hymn",
+       "name": "Tide Hymn",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 30,
+       "magic": true
       }
      ],
      "role": "Skirmisher",
@@ -3800,6 +4112,18 @@
        "magnitude": 0,
        "duration": 0,
        "heal": 30,
+       "magic": true
+      },
+      {
+       "id": "e_drowning_aria",
+       "name": "Drowning Aria",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
        "magic": true
       }
      ],
@@ -3937,6 +4261,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_acid_spray",
+       "name": "Acid Spray",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 8,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -3994,6 +4330,18 @@
        "status": "Poison",
        "magnitude": 8,
        "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_hydra_fury",
+       "name": "Hydra Fury",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
        "heal": 0,
        "magic": false
       }
@@ -4067,6 +4415,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_quake_stomp",
+       "name": "Quake Stomp",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -4132,6 +4492,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_rally",
+       "name": "Rally",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Guardian",
@@ -4188,6 +4560,18 @@
        "target": "AllAllies",
        "status": "AttackUp",
        "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_judgement",
+       "name": "Crystal Judgement",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
        "duration": 2,
        "heal": 0,
        "magic": false
@@ -4262,6 +4646,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_glare_beam",
+       "name": "Glare Beam",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Guardian",
@@ -4327,6 +4723,30 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_voidcore_pulse",
+       "name": "Voidcore Pulse",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.4,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_maw_of_ruin",
+       "name": "Maw of Ruin",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Bruiser",
@@ -4386,6 +4806,30 @@
        "duration": 1,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_maw_of_ruin",
+       "name": "Maw of Ruin",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "DefenseDown",
+       "magnitude": 0.25,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -4457,6 +4901,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -4523,6 +4979,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_boulder_toss",
+       "name": "Boulder Toss",
+       "ep": 2,
+       "power": 1.7,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -4580,6 +5048,18 @@
        "status": "Stun",
        "magnitude": 1,
        "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_rockslide",
+       "name": "Rockslide",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
        "heal": 0,
        "magic": false
       }
@@ -4653,6 +5133,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_quake_stomp",
+       "name": "Quake Stomp",
+       "ep": 2,
+       "power": 1.4,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -4719,6 +5211,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_adhesive_tongue",
+       "name": "Sticky Tongue",
+       "ep": 2,
+       "power": 1.0,
+       "target": "Enemy",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Guardian",
@@ -4776,6 +5280,18 @@
        "status": "Stun",
        "magnitude": 1,
        "duration": 1,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_devour_hoard",
+       "name": "Devour Hoard",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
        "heal": 0,
        "magic": false
       }
@@ -5057,6 +5573,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_cinder_lash",
+       "name": "Cinder Lash",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -5182,6 +5710,18 @@
        "duration": 1,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_tidal_wave",
+       "name": "Tidal Wave",
+       "ep": 3,
+       "power": 1.15,
+       "target": "AllEnemies",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Caster",
@@ -5253,6 +5793,18 @@
        "duration": 0,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_rime_bite",
+       "name": "Rime Bite",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Slow",
+       "magnitude": 0.3,
+       "duration": 1,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -5378,6 +5930,18 @@
        "duration": 0,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_thunder_lance",
+       "name": "Thunder Lance",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Caster",
@@ -5443,6 +6007,18 @@
        "name": "Thunder Lance",
        "ep": 3,
        "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_arc_strike",
+       "name": "Arc Strike",
+       "ep": 2,
+       "power": 1.4,
        "target": "Enemy",
        "status": "",
        "magnitude": 0,
@@ -5769,6 +6345,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_granite_cry",
+       "name": "Granite Cry",
+       "ep": 3,
+       "power": 1.0,
+       "target": "AllEnemies",
+       "status": "AttackDown",
+       "magnitude": 0.2,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Guardian",
@@ -5906,6 +6494,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_wail",
+       "name": "Banshee Wail",
+       "ep": 2,
+       "power": 0.8,
+       "target": "AllEnemies",
+       "status": "Stun",
+       "magnitude": 1,
+       "duration": 1,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Caster",
@@ -5963,6 +6563,18 @@
        "status": "Stun",
        "magnitude": 1,
        "duration": 1,
+       "heal": 0,
+       "magic": true
+      },
+      {
+       "id": "e_soul_rend",
+       "name": "Soul Rend",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
        "heal": 0,
        "magic": true
       }
@@ -6036,6 +6648,18 @@
        "duration": 0,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Caster",
@@ -6102,6 +6726,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_fire_breath",
+       "name": "Fire Breath",
+       "ep": 3,
+       "power": 1.1,
+       "target": "AllEnemies",
+       "status": "Burn",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Skirmisher",
@@ -6161,6 +6797,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_three_heads",
+       "name": "Three Heads",
+       "ep": 3,
+       "power": 1.9,
+       "target": "Enemy",
+       "status": "",
+       "magnitude": 0,
+       "duration": 0,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -6232,6 +6880,18 @@
        "duration": 0,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_cinder_lash",
+       "name": "Cinder Lash",
+       "ep": 2,
+       "power": 1.3,
+       "target": "Enemy",
+       "status": "Burn",
+       "magnitude": 6,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Bruiser",
@@ -6298,6 +6958,18 @@
        "duration": 2,
        "heal": 0,
        "magic": false
+      },
+      {
+       "id": "e_creeping_rot",
+       "name": "Creeping Rot",
+       "ep": 2,
+       "power": 0.7,
+       "target": "AllEnemies",
+       "status": "Poison",
+       "magnitude": 7,
+       "duration": 2,
+       "heal": 0,
+       "magic": true
       }
      ],
      "role": "Caster",
@@ -6357,6 +7029,18 @@
        "duration": 2,
        "heal": 0,
        "magic": true
+      },
+      {
+       "id": "e_blood_pact",
+       "name": "Blood Pact",
+       "ep": 2,
+       "power": 0,
+       "target": "AllAllies",
+       "status": "AttackUp",
+       "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
       }
      ],
      "role": "Caster",
@@ -6425,6 +7109,18 @@
        "target": "AllAllies",
        "status": "AttackUp",
        "magnitude": 0.3,
+       "duration": 2,
+       "heal": 0,
+       "magic": false
+      },
+      {
+       "id": "e_umbral_bite",
+       "name": "Umbral Bite",
+       "ep": 2,
+       "power": 1.35,
+       "target": "Enemy",
+       "status": "Poison",
+       "magnitude": 5,
        "duration": 2,
        "heal": 0,
        "magic": false

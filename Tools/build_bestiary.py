@@ -72,6 +72,42 @@ def fam(id, name, inspiration, element, role, large, themes, lore, kit, forms, m
                 themes=themes, lore=lore, kit=kit, forms=forms, material=material)
 
 
+# Move count by tier (CM 10.3.5): a form has 2 moves at F-E, 3 at D-C, 4 at B-A and 5 at S and above (by its top
+# rank), and in battle a monster uses the moves of its current rank's tier (BattleCatalog.EnemyCards). A form short
+# of its count takes its family's locked moves first, then its element's moves, then its role's.
+def move_count(rank):
+    return 2 if rank <= 2 else 3 if rank <= 4 else 4 if rank <= 6 else 5
+
+
+ELEMENT_MOVES = {
+    'Neutral': [atk('crystal_rend', 'Crystal Rend', 2, 1.5), aoe('shard_burst', 'Shard Burst', 3, 1.0)],
+    'Fire': [atk('cinder_lash', 'Cinder Lash', 2, 1.3, 'Burn', 6, 2), aoe('ember_wave', 'Ember Wave', 3, .9, 'Burn', 5, 2)],
+    'Water': [atk('rime_bite', 'Rime Bite', 2, 1.3, 'Slow', .3, 1), aoe('frost_surge', 'Frost Surge', 3, .9, 'Slow', .2, 1)],
+    'Wind': [atk('gale_slash', 'Gale Slash', 2, 1.45), aoe('cutting_gust', 'Cutting Gust', 3, 1.0, 'AttackDown', .15, 2)],
+    'Earth': [atk('quake_stomp', 'Quake Stomp', 2, 1.4, 'Stun', 1, 1), buff('stone_skin', 'Stone Skin', 2, 'DefenseUp', .35, 2)],
+    'Lightning': [atk('arc_strike', 'Arc Strike', 2, 1.4, magic=True), aoe('chain_spark', 'Chain Spark', 3, .95, magic=True)],
+    'Light': [atk('glare_beam', 'Glare Beam', 2, 1.4, 'AttackDown', .2, 2, magic=True), mend('radiant_mend', 'Radiant Mend', 2, 26, 'AllAllies')],
+    'Dark': [atk('umbral_bite', 'Umbral Bite', 2, 1.35, 'Poison', 5, 2), aoe('dread_pulse', 'Dread Pulse', 3, .9, 'DefenseDown', .15, 2, magic=True)],
+}
+ROLE_MOVES = {
+    'Bruiser': [atk('crushing_blow', 'Crushing Blow', 3, 1.85), buff('frenzy', 'Frenzy', 1, 'AttackUp', .3, 2)],
+    'Skirmisher': [atk('flurry', 'Flurry', 2, 1.5), atk('hamstring', 'Hamstring', 1, .9, 'Slow', .3, 1)],
+    'Caster': [atk('hex_bolt', 'Hex Bolt', 2, 1.45, 'AttackDown', .2, 2, magic=True), aoe('crystal_storm', 'Crystal Storm', 3, 1.05, magic=True)],
+    'Guardian': [buff('bulwark', 'Bulwark', 1, 'DefenseUp', .4, 2), atk('shield_bash', 'Shield Bash', 2, 1.3, 'Stun', 1, 1)],
+}
+
+
+def sized(cards, n, family, form):
+    """The form's moves cut or padded to n."""
+    out = [dict(c) for c in cards[:n]]
+    for c in family['kit'] + ELEMENT_MOVES[form['element']] + ROLE_MOVES[form['role']]:
+        if len(out) >= n:
+            break
+        if all(o['id'] != c['id'] for o in out):
+            out.append(dict(c))
+    return out
+
+
 # Legacy species keep their exact cards (BattleCatalog.EnemyCards before the bestiary).
 LEGACY_CARDS = {
     'shardling_sprout': [atk('bash', 'Crystal Bash', 1, 1.2), buff('root_guard', 'Root Guard', 1, 'DefenseUp', .3, 2)],
@@ -434,7 +470,8 @@ def build():
                 fm['cards'] = LEGACY_CARDS.get(fm['id']) or [
                     {k: v for k, v in c.items() if k != 'unlock'}
                     for c in f['kit'] if c['unlock'] <= i]
-            fm['cards'] = [{k: v for k, v in c.items() if k != 'unlock'} for c in fm['cards']]
+            fm['cards'] = [{k: v for k, v in c.items() if k != 'unlock'}
+                           for c in sized(fm['cards'], move_count(fm['maxRank']), f, fm)]
             # New moves stay inside the pre-bestiary envelope (single target up to 1.9x, area up to 1.15x);
             # rank already scales the monster's stats.
             if fm['id'] not in LEGACY_CARDS:
@@ -495,7 +532,7 @@ def write_md(families, bosses):
         '- **Evolution:** when a monster\'s rank reaches the next form\'s minimum it becomes that form (Ashvein Goblin Scavenger → Ashvein Hobgoblin at D).',
         '- **Spawning:** an expedition depth has a natural rank (below); packs roll the rank one either side, weighted by the codex population share; elites are one rank up, lair bosses two (so only the deepest lair bosses, depth 12+, reach SSR).',
         '- **Stats:** a monster at its depth\'s natural rank has exactly the pre-bestiary numbers; each rank above or below adds or removes 8% health and offence.',
-        '- **Moves:** a form lists its family\'s moves unlocked by its stage. In battle a pack monster uses the first two; an **elite** (one rank up, with an affix) adds the form\'s signature (its last move); lair bosses use the first two plus Gathering Fury and their element signature. New moves stay within the original roster\'s power (1.9x single target, 1.15x area).',
+        "- **Moves:** a form has 2 moves at F-E, 3 at D-C, 4 at B-A and 5 at S and above (by its top rank): its family's moves unlocked by its stage, then the family's locked moves, its element's and its role's. In battle a monster uses the moves of its current rank's tier; an **elite** (one rank up, with an affix) always adds the form's signature (its last move); lair bosses add Gathering Fury and their element signature. New moves stay within the original roster's power (1.9x single target, 1.15x area).",
         '',
         '| Rank | Core orb | Look | Crystal coverage | Threat | Population | Depths |',
         '|---|---|---|---|---|---|---|',

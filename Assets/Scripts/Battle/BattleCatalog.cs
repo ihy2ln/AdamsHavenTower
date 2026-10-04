@@ -720,11 +720,13 @@ public static class BattleCatalog
         var form = BattleBestiary.Form(enemy.Species);
         if (form != null && form.cards != null && form.cards.Length > 0)
         {
-            // Two moves, as before the bestiary: the family's first two. Elites (evolved, with an affix) add the form's
-            // signature, its highest unlocked move; lair bosses get Gathering Fury and their own signature instead.
+            // The moves of its rank's tier (2 at F-E, 3 at D-C, 4 at B-A, 5 at S and above; the form lists that many
+            // for its top rank). Elites (evolved, with an affix) always add the form's signature, its last move. Lair
+            // bosses count Gathering Fury and their own signature in: at least 2 form moves, 4 or 5 in all.
             var picked = new List<BestiaryCard>();
-            for (int i = 0; i < form.cards.Length && i < 2; i++) picked.Add(form.cards[i]);
-            if (enemy.Affix.Length > 0 && form.cards.Length > 2) picked.Add(form.cards[form.cards.Length - 1]);
+            int count = enemy.Boss ? Math.Max(2, MoveCount(enemy.Rank) - 2) : MoveCount(enemy.Rank);
+            for (int i = 0; i < form.cards.Length && i < count; i++) picked.Add(form.cards[i]);
+            if (enemy.Affix.Length > 0 && form.cards.Length > count) picked.Add(form.cards[form.cards.Length - 1]);
             foreach (var c in picked)
             {
                 BattleTarget target;
@@ -784,6 +786,9 @@ public static class BattleCatalog
         foreach (BattleCard card in cards) card.Element = enemy.Element;
         return cards;
     }
+
+    // Moves a monster fights with at this rank (Tools/build_bestiary.py move_count; rank 0 = unranked: 2).
+    public static int MoveCount(int rank) { return rank <= 2 ? 2 : rank <= 4 ? 3 : rank <= 6 ? 4 : 5; }
 
     // A boss's charged move: only ever played the round after "Gathering Fury" (the intent shows it coming).
     public static BattleCard BossSignature(BattleUnit boss)
