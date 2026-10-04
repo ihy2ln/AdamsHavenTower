@@ -14,8 +14,9 @@ Assets/Resources/AdamsHaven/Bestiary/Cards/:
                      without their own battle sprite yet (cutouts that kept painted background get none)
 It also gives every form its own battle cutout: battle_left.png (the sprite facing the party, like the original
 cutouts; battle_front.png when there is no left view) goes to Assets/Resources/AdamsHaven/FieldModels/<form>.png,
-trimmed, longest side 1024. The 12 original hand-placed cutouts are kept. Run Tools/build_bestiary.py afterwards so
-bestiary.json points each form at its own art.
+trimmed, longest side 1024. An original hand-made cutout is kept only while its border is fully transparent; one that
+kept a box of painted background (it shows as a hard rectangle in battle) is replaced by the sprite. Run
+Tools/build_bestiary.py afterwards so bestiary.json points each form at its own art.
 and panels.json: for each moves card, the four blank text panels found on it (normalised x, y, w, h from the
 top-left, 16 numbers), so the game writes each move into its own panel. A card whose panels cannot be found gets no
 entry and the game draws its own panels instead. MonsterPrompts is read only; art still being generated is picked up
@@ -32,16 +33,15 @@ BESTIARY = os.path.join(PROJECT, 'Assets', 'Resources', 'AdamsHaven', 'Bestiary'
 SIZE, THUMB = (640, 960), (256, 384)
 SHADOW = 384
 FIELD_MAX = 1024
-# The original cutouts, placed and sized by hand in BattleMode.EnemyHeight: the sprites never replace these.
-KEEP_FIELD = {'amberhide_grazer', 'ashvein_goblin_scavenger', 'blood_opal_siren', 'cobalt_burrower', 'crowned_geode_knight',
-              'eclipse_core_golem', 'flintjaw_skitterer', 'glasswing_mite', 'moonstone_ravager', 'obsidian_maw_behemoth',
-              'obsidian_talon', 'quartzback_hound', 'shardling_sprout', 'stormglass_wyvern', 'thorncrystal_stalker',
-              'verdant_cathedral_hydra', 'viridian_prism_warden'}
+def clean_border(path):
+    """True when a cutout's outer pixel ring is transparent (no box of painted background around the figure)."""
+    a = np.asarray(Image.open(path).convert('RGBA').getchannel('A'))
+    border = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]])
+    return (border < 20).mean() >= .95
 
 
 def field_cutout(src, dst):
     """The battle sprite as a field cutout: trimmed to its alpha with a small margin, longest side FIELD_MAX."""
-    if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src): return
     im = Image.open(src).convert('RGBA')
     box = im.getchannel('A').point(lambda v: 255 if v > 20 else 0).getbbox()
     if box:
@@ -144,9 +144,11 @@ def main():
                 if not check: shadow(sprite, os.path.join(OUT, form['id'] + '_shadow.png'))
             side = os.path.join(folder, 'battle_left.png')
             side = side if os.path.exists(side) else sprite
-            if os.path.exists(side) and form['id'] not in KEEP_FIELD:
+            dst = os.path.join(FIELD, form['id'] + '.png')
+            # A clean cutout already there stays (the hand-made originals, and earlier syncs: delete one to refresh it).
+            if os.path.exists(side) and not (os.path.exists(dst) and clean_border(dst)):
                 fields += 1
-                if not check: field_cutout(side, os.path.join(FIELD, form['id'] + '.png'))
+                if not check: field_cutout(side, dst)
             card, moves = os.path.join(folder, 'playing_card.png'), os.path.join(folder, 'action_card.png')
             if not os.path.exists(card):
                 missing += 1

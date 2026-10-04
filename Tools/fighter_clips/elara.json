@@ -14,7 +14,8 @@
   "body_x": 400,
   "feet_y": 896,
   "fps_out": 12,
-  "ppu_out": 160,
+  "ppu_out": 240,
+  "ppu_hi": 320,
   "look": "the elf mage-scholar with light brown hair in a bun, pointed ears, a navy cropped coat with gold trim, a white corseted blouse, a white pleated skirt, thigh-high stockings, tall brown boots, a spellbook and a glowing crystal fountain pen",
   "refs": {
     "sheet": "Elara/elara_battle_tpose_book_quill_v12.png",

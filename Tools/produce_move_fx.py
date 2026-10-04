@@ -2,6 +2,7 @@
 
   python Tools/produce_move_fx.py el_piercing_shot      # every layer of one card (or a prefix with *, or 'all')
   python Tools/produce_move_fx.py manifest              # only rewrite Fx/Moves/moves.json
+  python Tools/produce_move_fx.py repack                # re-cut every sheet from its kept render (no ComfyUI)
 
 The layers and their wording live in Tools/move_specs.py (charge at the muzzle, travel to the target, impact).
 Every layer is rendered on pure black (H3 first and last frame black), then turned into transparent art:
@@ -10,6 +11,10 @@ Every layer is rendered on pure black (H3 first and last frame black), then turn
   - travel 'bolt': a projectile pointing right, 16 frames in a 4x4 grid -> <card>_travel.png
   - 'video' (long auras): H.264 with the matte stacked under the colour (Fx/StackedAlpha.shader) -> <card>.mp4
 Work files: BattleMotion/fx_<card>[_<layer>]/ (h3_24.mp4 is kept: delete it to re-render).
+H3 letterboxes a square or tall request (black bands above and below the picture), and a frame cut from that shows
+the picture's straight edges as a box in battle. Every layer is therefore cropped to the band its light actually
+occupies (content_box) before the matte, so the cell is the whole effect and nothing else, with the edge fade on the
+effect's own edges.
 """
 import colorsys
 import json
@@ -121,14 +126,42 @@ def matte(rgb, floor, fade, fade_x=True, round_=False, ends=0.0):
     return colour, alpha
 
 
+def content_box(files, floor):
+    """The rows and columns the effect ever lights up (over its active frames): H3 letterboxes square and tall
+    requests, so the picture sits in a band with black above and below. Cropping to that band keeps the whole effect
+    and drops the straight edges that would show as a box. None when the effect uses the whole frame."""
+    a, b = active_range(files)
+    pick = np.linspace(a, b, min(12, b - a + 1)).round().astype(int)
+    peak = None
+    for k in pick:
+        rgb = np.asarray(Image.open(files[k]).convert('RGB'), np.float32) / 255
+        lum = rgb.max(axis=2)
+        peak = lum if peak is None else np.maximum(peak, lum)
+    h, w = peak.shape
+    lit = peak > max(0.06, floor * 0.5)
+    rows = np.where(lit.mean(axis=1) > 0.004)[0]
+    cols = np.where(lit.mean(axis=0) > 0.004)[0]
+    if len(rows) == 0 or len(cols) == 0:
+        return None
+    pad_y, pad_x = int(h * .02), int(w * .02)
+    y0, y1 = max(0, rows[0] - pad_y), min(h, rows[-1] + 1 + pad_y)
+    x0, x1 = max(0, cols[0] - pad_x), min(w, cols[-1] + 1 + pad_x)
+    if (y1 - y0) > h * .92 and (x1 - x0) > w * .92:
+        return None
+    return (x0, y0, x1, y1)
+
+
 def active_range(files):
     lum = np.array([np.asarray(Image.open(f).convert('L'), np.float32).mean() for f in files])
     act = np.where(lum > max(2.0, lum.max() * 0.10))[0]
     return (int(act[0]), int(act[-1])) if len(act) else (0, len(files) - 1)
 
 
-def cell(rgb_file, size, floor, fade, fade_x=True, round_=False, ends=0.0):
-    rgb = np.asarray(Image.open(rgb_file).convert('RGB').resize(size, Image.Resampling.LANCZOS), np.float32) / 255
+def cell(rgb_file, size, floor, fade, fade_x=True, round_=False, ends=0.0, box=None):
+    img = Image.open(rgb_file).convert('RGB')
+    if box:
+        img = img.crop(box)
+    rgb = np.asarray(img.resize(size, Image.Resampling.LANCZOS), np.float32) / 255
     colour, alpha = matte(rgb, floor, fade, fade_x, round_, ends)
     return Image.fromarray((np.dstack([colour, alpha]) * 255 + .5).astype(np.uint8), 'RGBA')
 
@@ -137,14 +170,17 @@ def sheet(job, spec, d, files):
     """16 frames, 4x4. Cells 256 wide (square / tall), 512 (wide strips) or 320 (other)."""
     a, b = active_range(files)
     pick = np.linspace(a, b, 16).round().astype(int)
-    w, h = spec['size']
+    box = content_box(files, spec['floor'])
+    w, h = (box[2] - box[0], box[3] - box[1]) if box else spec['size']
+    if box:
+        print('  crop', spec['file'], box, f'{w}x{h} of {spec["size"][0]}x{spec["size"][1]}')
     cw = 256 if h >= w else 512 if w / h > 2 else 320
     if spec['kind'] == 'bolt':
         cw = 256
     ch = round(cw * h / w)
     out = Image.new('RGBA', (cw * 4, ch * 4))
     for i, k in enumerate(pick):
-        out.paste(cell(files[k], (cw, ch), spec['floor'], 0.06, round_=True), ((i % 4) * cw, (i // 4) * ch))
+        out.paste(cell(files[k], (cw, ch), spec['floor'], 0.06, round_=True, box=box), ((i % 4) * cw, (i // 4) * ch))
     return save(job, spec, d, out, 16, 4, 4)
 
 
@@ -175,10 +211,16 @@ def video(job, spec, d, files):
     stack = d / '_stack'
     shutil.rmtree(stack, ignore_errors=True)
     stack.mkdir()
-    w, h = spec['size']
+    box = content_box(files, spec['floor'])
+    w, h = (box[2] - box[0], box[3] - box[1]) if box else spec['size']
+    if box:
+        print('  crop', spec['file'], box)
     w2, h2 = 384, round(384 * h / w / 2) * 2
     for i, k in enumerate(range(a, b + 1)):
-        rgb = np.asarray(Image.open(files[k]).convert('RGB').resize((w2, h2), Image.Resampling.LANCZOS), np.float32) / 255
+        img = Image.open(files[k]).convert('RGB')
+        if box:
+            img = img.crop(box)
+        rgb = np.asarray(img.resize((w2, h2), Image.Resampling.LANCZOS), np.float32) / 255
         colour, alpha = matte(rgb, spec['floor'], 0.05, round_=True)
         frame = np.vstack([colour * alpha[..., None], np.dstack([alpha] * 3)])   # premultiplied colour over its matte
         Image.fromarray((frame * 255 + .5).astype(np.uint8), 'RGB').save(stack / f's_{i:04d}.png')
@@ -246,6 +288,8 @@ def main(which):
     if which != 'manifest':
         if which == 'all':
             todo = list(JOBS)
+        elif which == 'repack':
+            todo = [j for j in JOBS if (WORK / j / 'h3_24.mp4').exists()]
         elif which.endswith('*'):
             todo = [j for j in JOBS if JOBS[j]['card'].startswith(which[:-1])]
         else:

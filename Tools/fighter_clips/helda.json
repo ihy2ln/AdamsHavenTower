@@ -14,7 +14,8 @@
   "body_x": 400,
   "feet_y": 896,
   "fps_out": 12,
-  "ppu_out": 160,
+  "ppu_out": 240,
+  "ppu_hi": 320,
   "look": "the stocky dwarf brewmaster with white braided hair and brass goggles, blue earrings, a blue patterned bandeau top with a leather harness, leather gauntlets, denim shorts, knee guards, heavy boots and a glowing crystal dwarf war hammer",
   "refs": {
     "sheet": "Helda/exec-09495746-06b2-44ce-8fcf-12e72dc9a306.png",

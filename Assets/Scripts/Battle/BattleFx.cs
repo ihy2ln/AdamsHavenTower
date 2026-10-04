@@ -40,6 +40,8 @@ public sealed partial class BattleMode
         // melee fighter is already at the target (Arrive) instead of dashing in again.
         public float ClipFrom = -1f, ClipStart;
         public bool Arrive;
+        // Summon battles (BattleSummons.cs): the battle-time window a fighter is out of their contract.
+        public float SummonIn = -9f, SummonOut = -9f;
     }
 
     private struct Particle
@@ -429,8 +431,9 @@ public sealed partial class BattleMode
                 i++;
                 continue;
             }
+            if (IsSummonFact(head)) { ScheduleSummonFact(head); i++; continue; }
             int j = i + 1;
-            while (j < list.Count && list[j].Actor == head.Actor && list[j].Card == head.Card) j++;
+            while (j < list.Count && list[j].Actor == head.Actor && list[j].Card == head.Card && !IsSummonFact(list[j])) j++;
             ScheduleGroup(list.GetRange(i, j - i));
             i = j;
         }
@@ -504,7 +507,7 @@ public sealed partial class BattleMode
             BattleUnit fxTarget = group[0].Target;
             At(t + lead, () => SpawnMoveFx(card, actor, fxTarget));
         }
-        float impact = t + 0.05f;
+        float impact = t + 0.05f, actionAt = t;
         if (actor != null && card != null && !tick)
         {
             bool ranged = rangedAct, handed = payoff;
@@ -518,6 +521,7 @@ public sealed partial class BattleMode
             At(impact + i * 0.085f, () => ApplyFact(fact));
         }
         queueEnd = Mathf.Max(impact + group.Count * 0.085f + (offense ? 0.52f : tick ? 0.22f : 0.40f), staged);
+        SummonForGroup(group, actionAt, lead, queueEnd);
     }
 
     // handed: picked up from an ultimate's video (the clip starts on its key pose, a melee fighter is already there).

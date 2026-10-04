@@ -14,7 +14,8 @@
   "body_x": 340,
   "feet_y": 896,
   "fps_out": 12,
-  "ppu_out": 160,
+  "ppu_out": 240,
+  "ppu_hi": 320,
   "look": "the white-tiger beastfolk swordswoman with long silver-white hair, white tiger ears, golden eyes, a striped ringed tail, silver plate armor over a dark green bodysuit, armored boots and a glowing flaming crystal greatsword",
   "refs": {
     "sheet": "Ghislaine/Ghislaine (2).png",

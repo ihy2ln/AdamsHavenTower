@@ -4334,8 +4334,8 @@
      "element": "Dark",
      "evolvesTo": "maw_behemoth",
      "stage": 0,
-     "art": "obsidian_maw_behemoth",
-     "ownArt": false,
+     "art": "maw_cub",
+     "ownArt": true,
      "core": "softball",
      "crystal": "half the body armoured in crystal",
      "drops": [

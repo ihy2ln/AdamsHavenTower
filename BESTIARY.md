@@ -791,7 +791,7 @@ Suits of armour filled with crystal instead of men. They still salute, still hol
 Horned calamity beasts. Even the cub is a B-rank threat; the full-grown Obsidian Maw is sealed in obsidian crystal and bends gravity around its beach-ball core.
 
 ### Maw Cub  ·  B → evolves into **Maw Behemoth** at A
-`maw_cub`  ·  Dark Bruiser  ·  art owed (uses `obsidian_maw_behemoth`)
+`maw_cub`  ·  Dark Bruiser  ·  art ✓
 
 > Already the size of a horse.
 
@@ -1195,9 +1195,8 @@ People who survived GKOM and chose to serve it. They command lower-rank variants
 
 ## Art status
 
-66 of 98 forms have their own art in `Resources/AdamsHaven/FieldModels`. The rest borrow the nearest family form's art until theirs is made:
+67 of 98 forms have their own art in `Resources/AdamsHaven/FieldModels`. The rest borrow the nearest family form's art until theirs is made:
 
-- Maw Cub (`maw_cub`) → uses `obsidian_maw_behemoth`
 - Maw Behemoth (`maw_behemoth`) → uses `obsidian_maw_behemoth`
 - Cragling Ogre (`cragling_ogre`) → uses `moonstone_ravager`
 - Crag Troll (`crag_troll`) → uses `moonstone_ravager`

@@ -966,6 +966,8 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         battleMode.RewardLine = "The spoils go into the expedition haul.";
         battleMode.WithdrawLine = "The party falls back without spoils.";
         battleMode.Seed = seed;
+        // Expedition fights are summon battles: the fighters are JD's contracts, called out card by card (BattleSummons.cs).
+        battleMode.SummonMode = true;
         // Expedition fights can bring an epiphany (CZN): one card glows, and the upgrades taken last for the run.
         if (encounter != null && rules != null) { encounter.CardMods = rules.CardMods(); encounter.Epiphany = true; }
         battleMode.Encounter = encounter;

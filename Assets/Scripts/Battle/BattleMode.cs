@@ -218,7 +218,7 @@ public sealed partial class BattleMode : MonoBehaviour
         battle = new BattleState(Seed != 0 ? Seed : Environment.TickCount, field, reserve,
             Encounter != null ? Encounter.Enemies : BattleCatalog.Encounter(floor), deck,
             jd, Encounter != null ? Encounter.Commander : BattleCatalog.EnemyCommander(floor),
-            null, Encounter != null ? Encounter.Modifiers : null);
+            null, Encounter != null ? Encounter.Modifiers : null, SummonMode || (Encounter == null && SummonSandbox));
         background = BackgroundFor(Encounter);
         stageOverride = MediaLibrary.PickStage(Encounter != null ? (Encounter.Kind == "boss" ? "boss" : Encounter.Theme) : "any",
             Encounter != null && Encounter.Kind == "boss", StageIdFor(background), Seed != 0 ? Seed : floor * 31 + 7);
@@ -233,6 +233,7 @@ public sealed partial class BattleMode : MonoBehaviour
             if (glow.Count > 0) battle.GlowCard = glow[(int)((uint)(Seed != 0 ? Seed : Environment.TickCount) % (uint)glow.Count)].Id;
         }
         lastChain = 0; chainAt = -9f; enemyPhaseUntil = -1f; discarding.Clear(); assistUnit = null; ultReadySounded.Clear();
+        ResetSummons();
         reward = Mathf.Abs(floor) >= 8 ? 300 : Mathf.Abs(floor) >= 3 ? 160 : 80;
         moteSeed = new float[48 * 4];
         for (int i = 0; i < moteSeed.Length; i++) moteSeed[i] = UnityEngine.Random.value;
@@ -358,6 +359,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         if (battle == null) return;
         float dt = Mathf.Min(Time.deltaTime, 0.05f);
+        UpdateSoftStage();
         TickFx(dt);
         LayoutField();
         TickFieldRigs();
@@ -521,6 +523,7 @@ public sealed partial class BattleMode : MonoBehaviour
         ReleaseUltClip();
         ReleaseMoveFx();
         ReleaseFieldRigs();
+        ReleaseSoftStage();
         BattleClipSet.UnloadAll();
         // Silence the drums; an expedition puts its own ambience back when it redraws.
         AdamsHaven.Tower.TowerAudio.Ambience("");
@@ -638,17 +641,25 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         Texture2D picture = FieldPicture(unit);
         Cutout sprite = picture != null ? Trim(picture) : Spr(unit.Art);
-        Texture2D clip = picture != null ? null : AnimeClip(ModelId(unit), "idle");
+        bool summoner = Summons && unit == battle.Summoner && SummonerBody().Valid;
+        if (summoner) sprite = SummonerBody();
+        Texture2D clip = picture != null || summoner ? null : AnimeClip(ModelId(unit), "idle");
         if (clip) sprite = AnimeCell(clip, 0);
         float aspect = sprite.Valid ? sprite.Aspect : 0.75f;
         slots[unit] = new SlotInfo { Foot = foot, H = height, W = height * aspect, Sprite = sprite };
     }
 
     // Field layout runs every frame: the tables and buffers are kept, not reallocated.
-    private static readonly float[] laneX = { 604f, 408f, 212f };
-    private static readonly float[] laneY = { 584f, 536f, 576f };
+    // FieldScale sizes every unit on the field (the lane heights below are the 1x originals). Feet stay on the lanes,
+    // so units grow upward; a unit never grows past the headroom under the HUD (its head, the intent badge above an
+    // enemy and the turn-order row must all stay clear).
+    public static float FieldScale = 1.5f;
+    const float HeadroomTop = 172f;
+    private static readonly float[] laneX = { 640f, 430f, 222f };
+    private static readonly float[] laneY = { 600f, 548f, 590f };
     private static readonly float[] laneH = { 268f, 252f, 262f };
-    private static readonly float[] footY = { 588f, 538f, 580f, 542f, 582f, 540f };
+    private static readonly float[] footY = { 604f, 552f, 596f, 556f, 598f, 554f };
+    static float Grown(float h, float foot) { return Mathf.Min(h * FieldScale, foot - HeadroomTop); }
     private readonly List<BattleUnit> foes = new List<BattleUnit>();
     private static readonly Comparison<BattleUnit> ByLane = (a, b) => a.Lane.CompareTo(b.Lane);
     private Comparison<BattleUnit> byFoot;
@@ -660,31 +671,38 @@ public sealed partial class BattleMode : MonoBehaviour
         {
             BattleUnit unit = battle.Allies[i];
             int lane = Mathf.Clamp(unit.Lane, 0, 2);
-            AddSlot(unit, new Vector2(laneX[lane], laneY[lane]), laneH[lane]);
+            if (Summons) { Vector2 spot = SummonPos(unit); AddSlot(unit, spot, Grown(laneH[0], spot.y) * (unit == shownMate ? .92f : 1f)); continue; }
+            AddSlot(unit, new Vector2(laneX[lane], laneY[lane]), Grown(laneH[lane], laneY[lane]));
         }
         foes.Clear(); foes.AddRange(battle.Enemies);
         foes.Sort(ByLane);
-        float total = 0f;
+        // The pack's full span: each beast 0.72 of its width after the one before, the last one whole. It is fitted
+        // into PackLeft..PackRight (shrunk only when it would not fit) and centred there, so the last beast, its name
+        // and its intent badge never run off the right edge.
+        float span = 0f;
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
             float aspect = s.Valid ? s.Aspect : 0.85f;
-            total += EnemyHeight(foes[i].Species, aspect, foes[i].Boss) * aspect * 0.84f;
+            float w0 = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footY[i % footY.Length]) * aspect;
+            span += i < foes.Count - 1 ? w0 * 0.72f : w0;
         }
-        float fit = Mathf.Min(1f, 640f / Mathf.Max(1f, total));
-        // A wide pack starts a little further left, so its last beast and intent badge stay clear of the edge.
-        float cursor = Mathf.Clamp(1210f - total * fit * .5f, 880f, 912f);
+        // A summon battle's party side holds only JD and one summon: the enemies get more of the field.
+        float PackLeft = Summons ? 840f : 868f, PackRight = 1572f;
+        float fit = Mathf.Min(1f, (PackRight - PackLeft) / Mathf.Max(1f, span));
+        float cursor = PackLeft + ((PackRight - PackLeft) - span * fit) * .5f;
         for (int i = 0; i < foes.Count; i++)
         {
             Cutout s = Spr(foes[i].Art);
             float aspect = s.Valid ? s.Aspect : 0.85f;
-            float h = EnemyHeight(foes[i].Species, aspect, foes[i].Boss) * fit;
+            float h = Grown(EnemyHeight(foes[i].Species, aspect, foes[i].Boss), footY[i % footY.Length]) * fit;
             float w = h * aspect;
             AddSlot(foes[i], new Vector2(cursor + w * 0.5f, footY[i % footY.Length]), h);
-            cursor += w * 0.84f;
+            cursor += w * 0.72f;
         }
-        AddSlot(battle.Summoner, new Vector2(115f, 450f), 205f);
-        if (battle.EnemySummoner != null) AddSlot(battle.EnemySummoner, new Vector2(1490f, 462f), 244f);
+        if (Summons) AddSlot(battle.Summoner, JdSpot, Grown(262f, JdSpot.y));
+        else AddSlot(battle.Summoner, new Vector2(118f, 470f), Mathf.Min(205f * Mathf.Sqrt(FieldScale), 470f - HeadroomTop));
+        if (battle.EnemySummoner != null) AddSlot(battle.EnemySummoner, new Vector2(1490f, 476f), Mathf.Min(244f * Mathf.Sqrt(FieldScale), 476f - HeadroomTop));
         // A reserve partner stepping in stands just behind the fighter they partner while their assist plays.
         if (assistUnit != null && fx < assistUntil && battle.Reserves.Contains(assistUnit))
         {
@@ -777,6 +795,7 @@ public sealed partial class BattleMode : MonoBehaviour
         float sw = Screen.width / ppp, sh = Screen.height / ppp;
         float scale = Mathf.Min(sw / VW, sh / VH);
         Vector2 offset = new Vector2((sw - VW * scale) * 0.5f, (sh - VH * scale) * 0.5f);
+        screenView = new Rect(-offset.x / scale, -offset.y / scale, sw / scale, sh / scale);
         if (e.type != EventType.Layout) mouse = (e.mousePosition - offset) / scale;
         pressed = e.type == EventType.MouseDown && e.button == 0;
         rightPressed = e.type == EventType.MouseDown && e.button == 1;
@@ -863,10 +882,13 @@ public sealed partial class BattleMode : MonoBehaviour
         {
             BattleUnit u = drawOrder[i];
             if (!ShownAlive(u) && u.Enemy) continue;
+            if (SummonAlpha(u) < .5f) continue;
             SlotInfo s = slots[u];
             Rect hit = new Rect(s.Foot.x - s.W * 0.36f, s.Foot.y - s.H, s.W * 0.72f, s.H + 48f);
             if (hit.Contains(mouse)) { hoverUnit = u; return; }
         }
+        BattleUnit tile = TileHover();
+        if (tile != null) { hoverUnit = tile; return; }
         // The commander plates in the top corners are targetable too.
         if (new Rect(16f, 12f, 356f, 88f).Contains(mouse)) hoverUnit = battle.Summoner;
         else if (battle.EnemySummoner != null && CommanderPlate.Contains(mouse)) hoverUnit = battle.EnemySummoner;
@@ -883,15 +905,58 @@ public sealed partial class BattleMode : MonoBehaviour
 
     // ---- stage -------------------------------------------------------------------------------
 
+    // The whole window in canvas units: wider or taller than 1600x900 when the screen is not 16:9. The stage art fills
+    // all of it (the letterbox bands show more of the stage); the HUD stays on the 16:9 canvas.
+    private Rect screenView = new Rect(0f, 0f, VW, VH);
+    // The stage art softened (downsampled, so it reads as out of focus) to keep the sharp fighters the clear subject.
+    private RenderTexture softStage;
+    private Texture softSource;
+
+    private Texture2D StageArt() { return stageOverride ?? Art(background) ?? Art(DefaultBackground); }
+
+    // Built outside OnGUI (Blit changes the active target): halving three times blurs without a shader.
+    private void UpdateSoftStage()
+    {
+        Texture2D bg = StageArt();
+        if (bg == null || (softStage != null && softSource == bg)) return;
+        ReleaseSoftStage();
+        int w = Mathf.Max(64, bg.width / 2), h = Mathf.Max(36, bg.height / 2);
+        var a = RenderTexture.GetTemporary(w, h, 0); a.filterMode = FilterMode.Bilinear;
+        var b = RenderTexture.GetTemporary(w / 2, h / 2, 0); b.filterMode = FilterMode.Bilinear;
+        softStage = new RenderTexture(Mathf.Max(32, w / 4), Mathf.Max(18, h / 4), 0) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+        var keep = RenderTexture.active;
+        Graphics.Blit(bg, a); Graphics.Blit(a, b); Graphics.Blit(b, softStage);
+        RenderTexture.active = keep;
+        RenderTexture.ReleaseTemporary(a); RenderTexture.ReleaseTemporary(b);
+        softSource = bg;
+    }
+
+    private void ReleaseSoftStage()
+    {
+        if (softStage != null) { softStage.Release(); Destroy(softStage); }
+        softStage = null; softSource = null;
+    }
+
     private void DrawBackground()
     {
-        Fill(new Rect(0, 0, VW, VH), new Color(.02f, .03f, .05f));
-        Texture2D bg = stageOverride ?? Art(background) ?? Art(DefaultBackground);
+        Rect view = screenView;
+        Fill(new Rect(view.x - 40f, view.y - 40f, view.width + 80f, view.height + 80f), new Color(.02f, .03f, .05f));
+        Texture2D bg = StageArt();
         float zoom = 1.06f + Mathf.Sin(Time.time * 0.17f) * 0.006f;
         Vector2 par = new Vector2(Mathf.Clamp((mouse.x - 800f) / 800f, -1f, 1f) * -16f, Mathf.Clamp((mouse.y - 450f) / 450f, -1f, 1f) * -8f);
-        Rect r = new Rect(-VW * (zoom - 1f) * 0.5f + par.x, -VH * (zoom - 1f) * 0.5f + par.y - 10f, VW * zoom, VH * zoom);
-        if (bg != null) GUI.DrawTexture(r, bg, ScaleMode.ScaleAndCrop);
-        Fill(new Rect(-40, -40, VW + 80, VH + 80), new Color(.02f, .03f, .08f, .16f));
+        // Cover the whole window, centred on the canvas (the ground line stays where the units stand).
+        float vw = Mathf.Max(VW, view.width) * zoom, vh = Mathf.Max(VH, view.height) * zoom;
+        Rect r = new Rect(VW * .5f - vw * .5f + par.x, VH * .5f - vh * .5f + par.y - 10f, vw, vh);
+        if (bg != null)
+        {
+            // Soft stage under a faint sharp copy: depth of field without a shader.
+            if (softStage != null) GUI.DrawTexture(r, softStage, ScaleMode.ScaleAndCrop);
+            Color was = GUI.color;
+            GUI.color = new Color(1f, 1f, 1f, softStage != null ? .38f : 1f);
+            GUI.DrawTexture(r, bg, ScaleMode.ScaleAndCrop);
+            GUI.color = was;
+        }
+        Fill(new Rect(view.x - 40f, view.y - 40f, view.width + 80f, view.height + 80f), new Color(.02f, .03f, .08f, .24f));
         // Team light pools give each side ground to stand on.
         DrawGlow(new Rect(20f, 500f, 780f, 250f), new Color(.20f, .52f, .95f, .20f));
         DrawGlow(new Rect(820f, 500f, 780f, 250f), new Color(.95f, .28f, .30f, .17f));
@@ -922,9 +987,11 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawVignette()
     {
-        GUI.DrawTexture(new Rect(0, 0, VW, VH), Vignette);
-        GradientDown(new Rect(0, 0, VW, 150f), new Color(0f, 0f, .02f, .62f));
-        GradientUp(new Rect(0, 610f, VW, 290f), new Color(0f, .01f, .03f, .82f));
+        Rect view = screenView;
+        GUI.DrawTexture(view, Vignette);
+        // The HUD bands: dark behind the top bar and the hand, reaching into the letterbox bands.
+        GradientDown(new Rect(view.x, view.y, view.width, 150f - view.y), new Color(0f, 0f, .02f, .62f));
+        GradientUp(new Rect(view.x, 610f, view.width, view.yMax - 610f), new Color(0f, .01f, .03f, .82f));
     }
 
     // ---- units -------------------------------------------------------------------------------
@@ -1004,6 +1071,8 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawUnitBody(BattleUnit u, SlotInfo s)
     {
+        float summoned = SummonAlpha(u);
+        if (summoned <= .001f) return;
         UnitVis v = V(u);
         s.Sprite = AnimeFrame(u, v, s.Sprite);
         bool alive = ShownAlive(u);
@@ -1022,6 +1091,7 @@ public sealed partial class BattleMode : MonoBehaviour
         if (death >= 0f && u.Enemy) { alpha = 1f - death / 0.85f; off.y += death * 26f; off.x += Mathf.Sin(death * 60f) * 4f * (1f - death); }
         else if (!alive) { tint = new Color(.55f, .55f, .62f); alpha = .55f; }
         if (hurt > 0f) tint = Color.Lerp(tint, new Color(1f, .35f, .35f), Mathf.Clamp01(hurt * 1.4f));
+        alpha *= summoned;
         float faded = StageFade(u);
         if (faded > 0f) tint = Color.Lerp(tint, new Color(.42f, .43f, .52f), faded);
         bool offered = Offered(u);
@@ -1073,13 +1143,16 @@ public sealed partial class BattleMode : MonoBehaviour
         RotateAround(ClipRig(u) != null ? lean * .3f : lean, new Vector2(foot.x, foot.y));   // painted frames already lean
         Color before = GUI.color;
         GUI.color = new Color(tint.r, tint.g, tint.b, alpha * (covered ? 0.72f : 1f));
-        if (!DrawFieldRig(u, foot, s.H) && s.Sprite.Valid) DrawSprite(r, s.Sprite);
+        // A summon battle shows JD's full figure: the rig (made for the small summoner) stands aside.
+        bool fullJd = Summons && u == battle.Summoner && SummonerBody().Valid;
+        if ((fullJd || !DrawFieldRig(u, foot, s.H)) && s.Sprite.Valid) DrawSprite(r, s.Sprite);
         GUI.color = before;
         GUI.matrix = keep;
     }
 
     private void DrawUnitPlate(BattleUnit u, SlotInfo s)
     {
+        if (SummonAlpha(u) < .5f) return;
         UnitVis v = V(u);
         bool alive = ShownAlive(u);
         bool commander = u == battle.Summoner || u == battle.EnemySummoner;
@@ -1098,16 +1171,16 @@ public sealed partial class BattleMode : MonoBehaviour
         Bar(bar, v.ShownHp / max, v.GhostHp / max, fill, new Color(1f, .88f, .7f, .9f));
         DrawShieldOverlay(bar, u);
         Text(new Rect(bar.x, bar.y - 1f, bar.width, bar.height + 2f), Mathf.CeilToInt(v.ShownHp) + " / " + u.MaxHp, 11, Color.white, TextAnchor.MiddleCenter, true, false, 1f);
-        float chipY = y + 48f;
-        if (u.Enemy && u.MaxTenacity > 0 && alive) { DrawTenacity(new Rect(bar.x, y + 45f, bw, 8f), u); chipY = y + 57f; }
+        if (u.Enemy && u.MaxTenacity > 0 && alive) DrawTenacity(new Rect(bar.x, y + 45f, bw, 8f), u);
         if (!u.Enemy && !commander)
         {
             Rect sb = new Rect(bar.x, y + 46f, bw, 6f);
             Color sc = u.CollapseRounds > 0 ? new Color(1f, .3f, .75f) : u.Stress >= 75 ? new Color(.95f, .4f, .45f) : new Color(.6f, .4f, .9f);
             Bar(sb, u.Stress / 100f, 0f, sc, sc);
-            chipY = y + 56f;
         }
-        DrawChips(u, cx - bw * 0.5f, chipY, bw);
+        // Statuses sit on the feet line above the name, not under the plate: the hand rises over the plates while a
+        // card is picking its target, which is exactly when a TAUNT or a debuff matters.
+        DrawChips(u, cx, y + 2f, Mathf.Max(bw, 150f) + 40f);
         GUI.color = old;
         // Card-name banner while the unit acts.
         float bt = fx - v.BannerStart;
@@ -1140,33 +1213,59 @@ public sealed partial class BattleMode : MonoBehaviour
         return status.Length > 4 ? status.Substring(0, 4).ToUpperInvariant() : status.ToUpperInvariant();
     }
 
-    private void DrawChips(BattleUnit u, float x, float y, float width)
+    // Status chips centred on cx, in rows of at most `width`, stacked upward from `bottom` (the newest row lowest).
+    private readonly List<string> chipText = new List<string>();
+    private readonly List<Color> chipColor = new List<Color>();
+    private readonly List<int> rowStarts = new List<int>();
+    private void DrawChips(BattleUnit u, float cx, float bottom, float width)
     {
-        float cx = x, cy = y;
+        chipText.Clear(); chipColor.Clear();
+        if (u.Taunting) { chipText.Add("TAUNT"); chipColor.Add(Gold); }
         for (int i = 0; i < u.Statuses.Count; i++)
         {
             BattleStatus st = u.Statuses[i];
-            if (st.Name == "Taunt" && u.InnateTaunt) continue;
-            string text = ChipLabel(st.Name) + " " + st.Turns;
-            float w = 24f + text.Length * 6.4f;
-            if (cx + w > x + width + 24f) { cx = x; cy += 22f; }
-            bool buff = IsBuff(st.Name);
-            Color c = buff ? new Color(.40f, .92f, .78f) : new Color(1f, .46f, .55f);
-            Rect r = new Rect(cx, cy, w, 19f);
-            Round(r, new Color(.02f, .04f, .07f, .9f), 6f);
-            Outline(r, BattleGui.Alpha(c, .9f), 1.5f, 6f);
-            Text(r, text, 11, c, TextAnchor.MiddleCenter, true);
-            cx += w + 4f;
+            if (st.Name == "Taunt") continue;
+            chipText.Add(ChipLabel(st.Name) + " " + st.Turns);
+            chipColor.Add(IsBuff(st.Name) ? new Color(.40f, .92f, .78f) : new Color(1f, .46f, .55f));
         }
-        if (u.Taunting)
+        if (chipText.Count == 0) return;
+        const float h = 20f, gap = 4f;
+        // Rows first (left to right), then drawn bottom-up so the plate's name never moves.
+        int start = 0, rows = 0;
+        rowStarts.Clear();
+        while (start < chipText.Count)
         {
-            Rect r = new Rect(cx, cy, 52f, 19f);
-            if (cx + 52f > x + width + 24f) { r.x = x; r.y = cy + 22f; }
-            Round(r, new Color(.02f, .04f, .07f, .9f), 6f);
-            Outline(r, new Color(1f, .8f, .35f, .9f), 1.5f, 6f);
-            Text(r, "TAUNT", 11, Gold, TextAnchor.MiddleCenter, true);
+            rowStarts.Add(start);
+            float used = 0f;
+            int i = start;
+            while (i < chipText.Count)
+            {
+                float w = ChipWidth(chipText[i]);
+                if (i > start && used + gap + w > width) break;
+                used += (i > start ? gap : 0f) + w; i++;
+            }
+            start = i; rows++;
+        }
+        for (int row = 0; row < rows; row++)
+        {
+            int a = rowStarts[row], b = row + 1 < rows ? rowStarts[row + 1] : chipText.Count;
+            float total = 0f;
+            for (int i = a; i < b; i++) total += ChipWidth(chipText[i]) + (i > a ? gap : 0f);
+            float x = cx - total * .5f, y = bottom - (rows - row) * (h + 3f);
+            for (int i = a; i < b; i++)
+            {
+                float w = ChipWidth(chipText[i]);
+                Rect r = new Rect(x, y, w, h);
+                bool taunt = chipText[i] == "TAUNT";
+                Round(r, new Color(.02f, .04f, .07f, .92f), 6f);
+                if (taunt) Round(new Rect(r.x + 2f, r.y + 2f, r.width - 4f, r.height - 4f), BattleGui.Alpha(chipColor[i], .18f), 5f);
+                Outline(r, BattleGui.Alpha(chipColor[i], .95f), taunt ? 2f : 1.5f, 6f);
+                Text(r, chipText[i], 11, chipColor[i], TextAnchor.MiddleCenter, true, false, 1f);
+                x += w + gap;
+            }
         }
     }
+    private static float ChipWidth(string text) { return text == "TAUNT" ? 58f : 24f + text.Length * 6.4f; }
 
     private void DrawPreviews()
     {
@@ -1634,6 +1733,16 @@ public sealed partial class BattleMode : MonoBehaviour
             float pulse = 0.65f + 0.35f * Mathf.Sin(Time.time * 6f);
             Round(tile, new Color(.02f, .04f, .07f, .88f), 12f);
             Outline(tile, actorNow ? Gold : focusUnit == u ? Ice : BattleGui.Alpha(accent, .6f), actorNow ? 3f : 1.6f, 12f);
+            // A summon battle targets fighters through their tiles (their bodies are in the contract).
+            if (Summons && selected != null && Offered(u))
+                Outline(new Rect(tile.x - 3f, tile.y - 3f, tile.width + 6f, tile.height + 6f), new Color(.45f, 1f, .78f, .5f + .45f * pulse), 2.5f, 14f);
+            if (Summons && u == shownVanguard && alive)
+            {
+                Rect tag = new Rect(tile.xMax - 74f, tile.y - 9f, 70f, 18f);
+                Round(tag, new Color(.25f, .18f, .04f, .95f), 9f);
+                Outline(tag, Gold, 1.2f, 9f);
+                Text(tag, "VANGUARD", 10, Gold, TextAnchor.MiddleCenter, true);
+            }
             Rect face = new Rect(tile.x + 7f, tile.y + 8f, 62f, 62f);
             Round(face, new Color(.02f, .03f, .06f), 10f);
             Color old = GUI.color; GUI.color = alive ? Color.white : new Color(.5f, .5f, .55f, .6f);
@@ -1735,7 +1844,7 @@ public sealed partial class BattleMode : MonoBehaviour
             if (why.Length > 0) hint = why + ".";
         }
         else if (battle.Round == 1 && battle.CardsThisTurn == 0 && fx > 2.5f && fx < 16f && !Busy)
-            hint = "Each card you play brings the enemies' counters down; at 0 they act at once. Break their tenacity bar to stagger them.";
+            hint = "Each fighter card brings the enemies' counters down (JD's cards don't); at 0 they act at once. Break their tenacity bar to stagger them.";
         if (hint == null || Event.current.type != EventType.Repaint) return;
         float w = Mathf.Min(900f, 40f + hint.Length * 8.4f);
         Rect r = new Rect(806f - w * 0.5f, 640f, w, 34f);
@@ -1782,7 +1891,7 @@ public sealed partial class BattleMode : MonoBehaviour
             lines.Add((IsBuff(u.Statuses[i].Name) ? "+ " : "- ") + StatusLabel(u.Statuses[i].Name) + " (" + u.Statuses[i].Turns + " rounds)");
         if (u.Enemy && u.MaxTenacity > 0)
             lines.Add("Tenacity " + u.Tenacity + "/" + u.MaxTenacity + (u.HasStatus("Broken") ? "  -  BROKEN" : "") +
-                "  -  acts after " + u.ActionCount + " more card" + (u.ActionCount == 1 ? "" : "s") + (u.ActedThisRound ? " (has acted this round)" : ""));
+                "  -  acts after " + u.ActionCount + " more fighter card" + (u.ActionCount == 1 ? "" : "s") + (u.ActedThisRound ? " (has acted this round)" : ""));
         if (u.StatusValue("Shield") > 0) lines.Add("Shield " + Mathf.RoundToInt(u.StatusValue("Shield")));
         if (!u.Enemy && battle.Allies.Contains(u) && battle.PartnerOf(u) != null)
             lines.Add("Partner " + battle.PartnerOf(u).Name.Split(' ')[0] + (battle.PartnerOf(u).Alive ? "  (+8%)" : "  (down)"));

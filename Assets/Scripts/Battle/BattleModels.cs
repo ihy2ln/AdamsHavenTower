@@ -89,6 +89,7 @@ public sealed partial class BattleMode
         float age = fx - v.LungeStart;
         bool dashing = !v.Ranged && v.LungeTo != Vector2.zero && age >= 0f && age < v.LungeDur;
         if (FieldPicture(u) != null) return fallback;
+        if (Summons && u == battle.Summoner && SummonerBody().Valid) return fallback;    // full figure, not the chibi
         string model = ModelId(u);
         Texture2D tex = dashing ? AnimeClip(model, "walk_in_place") : null;
         if (!tex) tex = AnimeClip(model, "idle");

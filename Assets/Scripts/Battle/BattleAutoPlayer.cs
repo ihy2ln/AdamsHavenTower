@@ -2,7 +2,8 @@ using System.Collections.Generic;
 
 // The AUTO button's player, and the policy the balance simulation fights with: fire a ready ultimate, then JD's
 // decree when the SP bar is full, then the strongest affordable card, then basic attacks. Targets the weakest
-// exposed enemy, heals the most hurt ally. Pure rules: BattleMode animates whatever it picks.
+// exposed enemy, heals the most hurt ally. In a summon battle it first raises a Vanguard when the coming enemy
+// turn would hurt JD, and counts JD among the hurt. Pure rules: BattleMode animates whatever it picks.
 public static class BattleAutoPlayer
 {
     public struct Move
@@ -49,6 +50,7 @@ public static class BattleAutoPlayer
             move = new Move { Card = assist, Actor = reserve, Target = target, Ultimate = -1, Assist = true };
             return true;
         }
+        if (b.SummonMode && (b.Vanguard == null || !b.Vanguard.Alive) && JdThreatened(b) && Hold(b, out move)) return true;
         BattleCard best = null; BattleUnit bestActor = null, bestTarget = null; float bestValue = 0f;
         foreach (BattleCard card in b.Hand)
         {
@@ -73,6 +75,47 @@ public static class BattleAutoPlayer
             { move = new Move { Card = basic, Actor = ally, Target = target, Ultimate = -1 }; return true; }
         }
         return false;
+    }
+
+    // Summon battles: the enemies' attacks this round would cost JD a sixth of their health or more.
+    private static bool JdThreatened(BattleState b)
+    {
+        if (b.Summoner == null || !b.Summoner.Alive) return false;
+        int total = 0;
+        foreach (BattleUnit enemy in b.Enemies)
+        {
+            BattleCard card;
+            if (!enemy.Alive || !b.Intents.TryGetValue(enemy.Id, out card) || card.EffectivePower <= 0) continue;
+            float element;
+            total += b.PreviewDamage(card, enemy, b.Summoner, out element);
+        }
+        return total * 6 >= b.Summoner.Hp;
+    }
+
+    // Calls a fighter out to hold the line: an anchoring card from the hand (tanks first), else the sturdiest
+    // fighter's Guard.
+    private static bool Hold(BattleState b, out Move move)
+    {
+        move = new Move { Ultimate = -1 };
+        BattleCard pick = null; BattleUnit pickActor = null; float pickScore = 0f;
+        foreach (BattleCard card in b.Hand)
+        {
+            if (!BattleState.Anchors(card)) continue;
+            BattleUnit actor = b.OwnerOf(card);
+            if (actor == null || !b.CanPay(card, actor)) continue;
+            float score = actor.MaxHp * (actor.Role == BattleRole.Tank ? 2f : 1f) * (actor.Hp / (float)actor.MaxHp);
+            if (score > pickScore) { pick = card; pickActor = actor; pickScore = score; }
+        }
+        if (pick != null) { move = new Move { Card = pick, Actor = pickActor, Target = pickActor, Ultimate = -1 }; return true; }
+        BattleUnit sturdy = null;
+        foreach (BattleUnit ally in b.Allies)
+        {
+            if (!ally.Alive || !b.CanPay(BattleCatalog.Guard(ally), ally)) continue;
+            if (sturdy == null || ally.Hp * (ally.Role == BattleRole.Tank ? 2 : 1) > sturdy.Hp * (sturdy.Role == BattleRole.Tank ? 2 : 1)) sturdy = ally;
+        }
+        if (sturdy == null) return false;
+        move = new Move { Card = BattleCatalog.Guard(sturdy), Actor = sturdy, Target = sturdy, Ultimate = -1 };
+        return true;
     }
 
     // An enemy's attack this round aims at the fighter for a fifth of their health or more.
@@ -123,7 +166,7 @@ public static class BattleAutoPlayer
     private static bool Hurt(BattleState b, float below)
     {
         foreach (BattleUnit unit in b.Allies) if (unit.Alive && unit.Hp < unit.MaxHp * below) return true;
-        return false;
+        return b.SummonMode && b.Summoner != null && b.Summoner.Alive && b.Summoner.Hp < b.Summoner.MaxHp * below;
     }
 
     public static BattleUnit Target(BattleState b, BattleCard card, BattleUnit actor)
@@ -134,6 +177,9 @@ public static class BattleAutoPlayer
             BattleUnit weakest = null;
             foreach (BattleUnit unit in b.Allies)
                 if (unit.Alive && (weakest == null || unit.Hp * (long)weakest.MaxHp < weakest.Hp * (long)unit.MaxHp)) weakest = unit;
+            // In a summon battle JD takes most of the hits, so JD is mended too.
+            BattleUnit jd = b.Summoner;
+            if (b.SummonMode && jd != null && jd.Alive && (weakest == null || jd.Hp * (long)weakest.MaxHp < weakest.Hp * (long)jd.MaxHp)) weakest = jd;
             return weakest;
         }
         if (card.Target == BattleTarget.Enemy)

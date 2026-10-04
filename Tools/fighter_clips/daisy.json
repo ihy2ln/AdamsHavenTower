@@ -14,7 +14,8 @@
   "body_x": 340,
   "feet_y": 896,
   "fps_out": 12,
-  "ppu_out": 160,
+  "ppu_out": 240,
+  "ppu_hi": 320,
   "look": "the elf wild-woman with long curly strawberry-orange hair and a red hibiscus flower, pointed ears, golden eyes, a red floral bikini top and red floral sarong skirt, gold bracelets, laced sandals and a glowing crystal fire spear",
   "refs": {
     "sheet": "Daisy/daisy-bonfire-wildheart-short-skirt-v7.png",

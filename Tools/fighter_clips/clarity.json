@@ -14,7 +14,8 @@
   "body_x": 400,
   "feet_y": 896,
   "fps_out": 12,
-  "ppu_out": 160,
+  "ppu_out": 240,
+  "ppu_hi": 320,
   "look": "the martial artist with short brown hair, a red and white wrap top with short sleeves, a red sash, red shorts, fishnet stockings and wooden sandals, carrying glowing crystal kunai",
   "refs": {
     "sheet": "Clarity/exec-912aa06f-476a-47dd-abf8-aa6049150ce0.png",

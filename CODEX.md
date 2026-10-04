@@ -78,7 +78,8 @@ python Tools/sync_codex_cards.py --check  # report only
 The tool never writes to `MonsterPrompts`. It saves 640x960 JPEGs plus 256x384 grid thumbnails, the silhouettes of
 unmet beasts (`<form>_shadow.png`, from `battle_front.png`), and each form's **battle cutout**: `battle_left.png`
 (the view facing the party) goes to `Resources/AdamsHaven/FieldModels/<form>.png`, so every form fights as itself
-instead of borrowing another family's picture. The 17 original hand-placed cutouts are kept. After a sync, run
+instead of borrowing another family's picture. A hand-made original is kept only while its border is fully
+transparent; the 12 that kept a box of painted background (a hard rectangle in battle) were replaced by the sprites. After a sync, run
 `python Tools/build_bestiary.py` so `bestiary.json` points each form at its own art (and `BESTIARY.md` lists the
 rest as owed). `BattleMode.EnemyHeight` sizes the new sprites from the bestiary: large forms 400, others 320, wide
 four-legged ones 20% lower, lair bosses never under 440.

@@ -464,7 +464,8 @@ public static class BattleCatalog
     // Enemy offence after the CZN rules (BM 10.3.0) gave the party more power (breaks, partners, fresh hands): a
     // multiplier from danger 1 (shallow) to 13 (deep), and an extra factor for lair bosses. Tuned with the balance sim
     // (ExpeditionBalanceTests); the party's growth is mostly survivability, so shallow fights needed the bigger lift.
-    public static float OffenseShallow = 1.5f, OffenseDeep = 1f, BossOffenseScale = 1.25f;
+    // Lair bosses 1.25 -> 1.2 once JD's cards stopped moving the enemy counters (the Gate boss had crept past 75% HP lost).
+    public static float OffenseShallow = 1.5f, OffenseDeep = 1f, BossOffenseScale = 1.2f;
     private static float OffenseCurve(int depth, bool boss)
     {
         float t = Math.Max(0f, Math.Min(1f, (depth - 1) / 12f));

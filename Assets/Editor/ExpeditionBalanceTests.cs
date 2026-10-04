@@ -6,6 +6,7 @@ using UnityEngine;
 
 // Expedition review step 2: encounters per theme / kind / region, and a headless balance check that auto-plays
 // fights in every region with the party a player would have there (BattleAutoPlayer, the AUTO button's policy).
+// Expedition fights are summon battles (BattleState.SummonMode): health lost is JD's and the fighters' together.
 public sealed class ExpeditionBalanceTests
 {
     private static readonly (string id, int depth, int boss)[] Regions =
@@ -46,11 +47,12 @@ public sealed class ExpeditionBalanceTests
             var jd = BattleCatalog.JD();
             float vigor = .02f * (Level(depth) - 1) + .06f * Gear(depth);
             jd.MaxHp = jd.Hp = Mathf.RoundToInt(jd.MaxHp * (1 + vigor)); jd.Defense *= 1 + vigor * .5f; jd.Resistance *= 1 + vigor * .5f;
-            var b = new BattleState(1000 + i * 7919 + depth, field, party.Skip(3), enc.Enemies, BattleCatalog.Deck(party), jd, enc.Commander);
-            float max = field.Sum(u => u.MaxHp);
+            var b = new BattleState(1000 + i * 7919 + depth, field, party.Skip(3), enc.Enemies, BattleCatalog.Deck(party), jd, enc.Commander,
+                null, null, true);
+            float max = field.Sum(u => u.MaxHp) + b.Summoner.MaxHp;
             rounds += BattleAutoPlayer.PlayOut(b);
             if (b.Victory) wins++;
-            lost += 1f - field.Sum(u => Mathf.Max(0, u.Hp)) / max;
+            lost += 1f - (field.Sum(u => Mathf.Max(0, u.Hp)) + Mathf.Max(0, b.Summoner.Hp)) / max;
         }
         return (wins / (float)fights, rounds / fights, lost / fights);
     }

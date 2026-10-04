@@ -157,6 +157,24 @@ public sealed class BattleState
     public readonly BattleRunModifiers RunModifiers;
     public BattleUnit Summoner, EnemySummoner;
     public int Round, Sp, Cp, EnemySp, EnemyCp;
+    // ---- summon battles (expeditions) --------------------------------------------------------------------------
+    // The fighters are JD's contracts, not bodies on the field: playing a fighter's card summons them to act, and
+    // they leave again. A card that anchors (a self shield or Guard, Taunt, a counter stance, a defense buff, a
+    // charge) keeps its fighter out as the Vanguard, one at a time, until that hold runs out. Enemy hits land on the
+    // Vanguard, else on JD. A card whose bond partner already acted this turn (or holds the line) is a team-up.
+    public readonly bool SummonMode;
+    public BattleUnit Vanguard;
+    public readonly List<BattleUnit> ActedThisTurn = new List<BattleUnit>();
+    // Fighters already used as a team-up partner this turn: each one joins one team-up per turn.
+    public readonly List<BattleUnit> TeamedThisTurn = new List<BattleUnit>();
+    public BattleUnit LastTeamUp;
+    public static float TeamUpPower = 1.25f;
+    // Summon battle tuning (balance sim): JD's health as a multiple of the base summoner (JD takes every hit no
+    // Vanguard catches), and the enemies' damage (their blows no longer spread over three bodies). Lair bosses get
+    // their own factor: their charged area blow lands whole on JD and the Vanguard.
+    public static float SummonJdVitality = 1.6f, SummonEnemyPower = 1.6f, SummonBossPower = 1.05f;
+    private static readonly string[] AnchorStatuses = { "Taunt", "Shield", "IceCounter", "DefenseUp", "Charging" };
+    private float teamUpMultiplier = 1f;
     // Counts every fact ever recorded; Facts itself is capped, so presentation reads the tail by serial.
     public int FactSerial;
     public bool Finished, Victory, Withdrawn;
@@ -167,9 +185,10 @@ public sealed class BattleState
 
     public BattleState(int seed, IEnumerable<BattleUnit> allies, IEnumerable<BattleUnit> reserves,
         IEnumerable<BattleUnit> enemies, IEnumerable<BattleCard> deck, BattleUnit summoner, BattleUnit enemySummoner = null,
-        Dictionary<string, int> bondRanks = null, BattleRunModifiers runModifiers = null)
+        Dictionary<string, int> bondRanks = null, BattleRunModifiers runModifiers = null, bool summonMode = false)
     {
         rng = new Random(seed);
+        SummonMode = summonMode;
         BondRanks = bondRanks ?? new Dictionary<string, int>();
         RunModifiers = runModifiers ?? new BattleRunModifiers();
         foreach (BattleUnit unit in allies) if (Allies.Count < FieldMax) Allies.Add(unit);
@@ -184,6 +203,12 @@ public sealed class BattleState
         foreach (BattleCard card in opening) { DrawPile.Remove(card); DrawPile.Add(card); }
         Summoner = summoner;
         EnemySummoner = enemySummoner;
+        if (SummonMode && Summoner != null)
+        {
+            float hp = Summoner.Hp / (float)Math.Max(1, Summoner.MaxHp);
+            Summoner.MaxHp = Math.Max(1, (int)Math.Round(Summoner.MaxHp * SummonJdVitality));
+            Summoner.Hp = Math.Max(1, (int)Math.Round(Summoner.MaxHp * hp));
+        }
         StartRound();
     }
 
@@ -252,6 +277,8 @@ public sealed class BattleState
     {
         Round++;
         CardsThisTurn = 0;
+        ActedThisTurn.Clear();
+        TeamedThisTurn.Clear();
         // Stun and Slow bite on the round after they land, so they are read before durations tick down.
         var stunned = new HashSet<BattleUnit>();
         var slowed = new HashSet<BattleUnit>();
@@ -287,6 +314,7 @@ public sealed class BattleState
                 }
             }
         }
+        if (SummonMode && Vanguard != null && (!Vanguard.Alive || !Anchored(Vanguard))) Recall();
         if (Round == 1 && Allies.Count > 0 && Allies[0].Alive)
         {
             if (RunModifiers.Scout) Allies[0].Ep++;
@@ -418,6 +446,7 @@ public sealed class BattleState
     {
         if (target == null || !target.Alive) return false;
         if (target == Summoner || target == EnemySummoner) return true;
+        if (SummonMode && !target.Enemy) return target == Vanguard;
         List<BattleUnit> side = target.Enemy ? Enemies : Allies;
         if (!side.Contains(target)) return false;
         if (target.Taunting) return true;
@@ -434,12 +463,23 @@ public sealed class BattleState
         else if (card.Kind == BattleCardKind.Awakening) actor.AwakeningReady = false;
         else { actor.Ap -= card.Ap; actor.Ep -= card.Ep; actor.Charge(18); }
         Say((actor == null ? Summoner.Name : actor.Name) + " uses " + card.Name + ".");
+        LastTeamUp = SummonMode ? TeamUpPartner(card, actor) : null;
+        if (LastTeamUp != null)
+        {
+            TeamedThisTurn.Add(LastTeamUp);
+            Fact("teamup", actor, LastTeamUp, card, 0, false, 1f, 1f);
+            Say(actor.Name + " and " + LastTeamUp.Name + " team up!");
+        }
+        teamUpMultiplier = LastTeamUp != null ? TeamUpPower : 1f;
         Resolve(card, actor, target);
+        teamUpMultiplier = 1f;
+        if (SummonMode) AfterSummon(card, actor, target);
         if (Hand.Remove(card)) (card.Exhaust ? Exhausted : Discard).Add(card);
         if (GlowCard.Length > 0 && card.Id == GlowCard) OfferEpiphany(card);
         CheckEnd();
-        // Ego moves (ultimates, awakenings) do not move the enemies' action counts; every other card does.
-        if (card.Kind != BattleCardKind.Ultimate && card.Kind != BattleCardKind.Awakening)
+        // Only the fighters' own cards move the enemies' action counts and the chain: ego moves (ultimates, awakenings)
+        // and JD's command cards and decrees (the summoner's turn) do not.
+        if (card.Kind != BattleCardKind.Ultimate && card.Kind != BattleCardKind.Awakening && card.Kind != BattleCardKind.Summoner)
         {
             CardsThisTurn++;
             TickActionCounts();
@@ -504,6 +544,88 @@ public sealed class BattleState
         Resolve(card, reserve, card.Target == BattleTarget.Self ? reserve : target);
         CheckEnd();
         return true;
+    }
+
+    // ---- summons ---------------------------------------------------------------------------------------------
+
+    // Does this card keep its fighter on the field (the Vanguard)? A self shield or Guard, or a hold on themselves:
+    // Taunt, a counter stance, a defense buff, a charge.
+    public static bool Anchors(BattleCard card)
+    {
+        if (card == null || card.Kind == BattleCardKind.Summoner) return false;
+        if (card.SelfShield > 0) return true;
+        return card.Target == BattleTarget.Self && Array.IndexOf(AnchorStatuses, card.Status) >= 0;
+    }
+
+    private static bool Anchored(BattleUnit unit)
+    {
+        foreach (string status in AnchorStatuses) if (unit.HasStatus(status)) return true;
+        return false;
+    }
+
+    // The bond partner who makes this card a team-up: the Vanguard, or the latest bonded fighter to act this turn.
+    public BattleUnit TeamUpPartner(BattleCard card, BattleUnit actor)
+    {
+        if (!SummonMode || card == null || actor == null || !Allies.Contains(actor) || card.Partners.Length == 0) return null;
+        if (Vanguard != null && Vanguard != actor && Vanguard.Alive && !TeamedThisTurn.Contains(Vanguard)
+            && Array.IndexOf(card.Partners, Vanguard.Id) >= 0) return Vanguard;
+        for (int i = ActedThisTurn.Count - 1; i >= 0; i--)
+        {
+            BattleUnit u = ActedThisTurn[i];
+            if (u != actor && u.Alive && !TeamedThisTurn.Contains(u) && Array.IndexOf(card.Partners, u.Id) >= 0) return u;
+        }
+        return null;
+    }
+
+    private float TeamUpScale(BattleUnit actor)
+    {
+        if (actor == null) return 1f;
+        if (!actor.Enemy) return teamUpMultiplier;
+        return SummonMode ? (actor.Boss ? SummonBossPower : SummonEnemyPower) : 1f;
+    }
+
+    // After a summoned fighter acts: an anchoring card makes them the Vanguard (replacing the one out), and JD's
+    // Taunt calls the chosen fighter out to hold the line.
+    private void AfterSummon(BattleCard card, BattleUnit actor, BattleUnit target)
+    {
+        if (actor != null && Allies.Contains(actor))
+        {
+            ActedThisTurn.Remove(actor); ActedThisTurn.Add(actor);
+            if (Anchors(card) && actor.Alive) SetVanguard(actor, card);
+        }
+        else if (card.Kind == BattleCardKind.Summoner && card.Status == "Taunt" && target != null && Allies.Contains(target) && target.Alive)
+            SetVanguard(target, card);
+    }
+
+    private void SetVanguard(BattleUnit unit, BattleCard card)
+    {
+        if (Vanguard == unit) return;
+        if (Vanguard != null) Recall();
+        Vanguard = unit;
+        Fact("vanguard", unit, unit, card, 0, false, 1f, 1f);
+        Say(unit.Name + " holds the line.");
+        // Intents aimed at JD (or at the old Vanguard) now meet the new one.
+        foreach (BattleUnit enemy in Enemies)
+        {
+            BattleCard intent; BattleUnit aimed;
+            if (!Intents.TryGetValue(enemy.Id, out intent) || intent.Target != BattleTarget.Enemy) continue;
+            if (IntentTargets.TryGetValue(enemy.Id, out aimed) && aimed != null && !aimed.Enemy) IntentTargets[enemy.Id] = unit;
+        }
+    }
+
+    private void Recall()
+    {
+        BattleUnit was = Vanguard;
+        Vanguard = null;
+        if (was == null) return;
+        Fact("recall", was, was, null, 0, false, 1f, 1f);
+        Say(was.Name + " returns to the contract.");
+        foreach (BattleUnit enemy in Enemies)
+        {
+            BattleCard intent; BattleUnit aimed;
+            if (!Intents.TryGetValue(enemy.Id, out intent) || intent.Target != BattleTarget.Enemy) continue;
+            if (IntentTargets.TryGetValue(enemy.Id, out aimed) && aimed == was) IntentTargets[enemy.Id] = Summoner;
+        }
     }
 
     // ---- epiphany --------------------------------------------------------------------------------------------
@@ -648,9 +770,18 @@ public sealed class BattleState
     private IEnumerable<BattleUnit> Targets(BattleCard card, BattleUnit actor, BattleUnit chosen)
     {
         if (card.Target == BattleTarget.Self || card.Target == BattleTarget.Ally || card.Target == BattleTarget.Enemy) { if (chosen != null) yield return chosen; yield break; }
+        // A summon battle's field holds only JD and the Vanguard: an enemy's area attack hits those two.
+        if (SummonMode && actor != null && actor.Enemy && card.Target == BattleTarget.AllEnemies)
+        {
+            if (Vanguard != null && Vanguard.Alive) yield return Vanguard;
+            if (Summoner != null && Summoner.Alive) yield return Summoner;
+            yield break;
+        }
         List<BattleUnit> side = actor != null && actor.Enemy ? Enemies : Allies;
         List<BattleUnit> foe = actor != null && actor.Enemy ? Allies : Enemies;
         if (card.Target == BattleTarget.AllAllies) for (int i = 0; i < side.Count; i++) if (side[i].Alive) yield return side[i];
+        // JD stands on a summon battle's field with the party, so the party's "all allies" covers JD too.
+        if (SummonMode && side == Allies && card.Target == BattleTarget.AllAllies && Summoner != null && Summoner.Alive) yield return Summoner;
         if (card.Target == BattleTarget.AllEnemies) for (int i = 0; i < foe.Count; i++) if (foe[i].Alive) yield return foe[i];
     }
 
@@ -697,6 +828,7 @@ public sealed class BattleState
 
     private bool Covered(BattleUnit unit)
     {
+        if (SummonMode && !unit.Enemy) return Vanguard != null && Vanguard != unit && Vanguard.Alive;
         List<BattleUnit> side = unit.Enemy ? Enemies : Allies;
         for (int i = 0; i < side.Count; i++) if (side[i] != unit && side[i].Alive && side[i].Taunting) return true;
         return false;
@@ -743,7 +875,7 @@ public sealed class BattleState
         float defense = card.Magic ? target.Resistance : target.Defense;
         float synergy = card.Synergy == "combo_marked" && target.HasStatus("DefenseDown") ? 1f + card.SynergyScale : 1f;
         float rage = actor.Affix == "Enraged" && actor.Hp * 2 <= actor.MaxHp ? 1.5f : 1f;
-        float raw = Math.Max(1f, card.EffectivePower * synergy * bond * runMultiplier * attack * rage * actor.AttackMultiplier * StrikeMultiplier(actor) - defense * target.DefenseMultiplier * GuardMultiplier(target));
+        float raw = Math.Max(1f, card.EffectivePower * synergy * bond * runMultiplier * TeamUpScale(actor) * attack * rage * actor.AttackMultiplier * StrikeMultiplier(actor) - defense * target.DefenseMultiplier * GuardMultiplier(target));
         // A broken enemy takes more from everything until it recovers.
         return raw * element * (target.HasStatus("Broken") ? 1f + target.StatusValue("Broken") : 1f);
     }
@@ -792,6 +924,7 @@ public sealed class BattleState
             Say(actor.Name + " is cut by thorns for " + thorns + ".");
         }
         if (target.Boss && target.Phase == 1 && target.Alive && target.Hp * 2 <= target.MaxHp) EnterSecondPhase(target);
+        if (SummonMode && target == Vanguard && !target.Alive) Recall();
         if (!target.Enemy)
         {
             Sp = Math.Min(SpMax, Sp + 1);
@@ -932,6 +1065,8 @@ public sealed class BattleState
     // Enemies go for the weakest exposed fighter more often than not; JD is a rarer, opportunistic target.
     private BattleUnit EnemyVictim(BattleCard card)
     {
+        // Summon battles: the Vanguard holds the line; with nobody summoned, JD is hit.
+        if (SummonMode) return Vanguard != null && Vanguard.Alive ? Vanguard : Summoner != null && Summoner.Alive ? Summoner : null;
         List<BattleUnit> available = new List<BattleUnit>();
         for (int i = 0; i < Allies.Count; i++) if (Exposed(Allies[i])) available.Add(Allies[i]);
         if (Summoner != null && Summoner.Alive && card.Target == BattleTarget.Enemy && (available.Count == 0 || rng.NextDouble() < 0.12)) return Summoner;
