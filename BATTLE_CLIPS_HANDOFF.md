@@ -157,6 +157,29 @@ Skills are now **staged inside the live battle** from transparent layers.
   (every lookup guarded). Note that the default scene now starts its own "Adams Haven Battle Sandbox" BattleMode;
   probes must drive that instance (a second BattleMode draws under it).
 
+## 5b. CM 10.3.3 (2026-10-04): summon-to-cinematic transitions
+
+With summon battles (BM 10.3.1, `SUMMON_BATTLES.md`) the fighters are off the field until their card plays, so an
+ultimate used to cut straight from an empty spot to the video and then flash a second summon after it.
+`BattleTransitions.cs` now runs each ultimate, awakening and decree video as one shot on the battle clock:
+
+1. **Summon.** In a summon battle the fighter's circle opens and she rises out of it: she grows from 78% to full size,
+   lit in her element's light.
+2. **Push-in.** The camera pushes in on her (zoom 1.8) and the HUD steps aside. Her light swells from her chest until it
+   fills the screen on the video's opening flash, which is now tinted to her element instead of white.
+3. **Video.** Unchanged.
+4. **Hand-back.** The closing flash fades back onto the field, which is still framed on her. A ring of her element
+   goes out at her feet, and the camera follows the payoff to the targets and pulls back.
+5. **Dissolve.** She dissolves only after the camera has pulled back. There is no second summon.
+
+Also:
+- Classic battles get the same push-in and flash, without the summon.
+- A staged skill in a summon battle starts its push on her circle and waits until she has formed.
+- Taps during the push-in are ignored, since the video's own tap-to-skip follows a beat later.
+- A summon window that was extended no longer dissolves her at its old end (`DissolveAt`, `BattleSummons.cs`).
+
+Tests: `BattleTransitionTests` (2). Verified by battle-clock tests only; nobody has watched it in the Editor yet.
+
 ## 5. Open items (priority order)
 
 1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.

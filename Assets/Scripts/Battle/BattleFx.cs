@@ -462,6 +462,9 @@ public sealed partial class BattleMode
         MediaLibrary.Entry mediaCine = MediaCineFor(actor, card);
         VideoClip clip = mediaCine != null ? null : CinematicFor(actor, card);
         bool cine = actor != null && card != null && !actor.Enemy && (IsUltimate(card) || clip != null || mediaCine != null) && Cinematics != CinematicMode.Off;
+        // The way in (BattleTransitions.cs): the summon rise, the push into the fighter and her light up to the cut.
+        float cineFrom = t, cinePush = t, cutAt = t;
+        if (cine) { cutAt = CineLeadIn(actor, t, out cinePush); t = cutAt; }
         if (cine && mediaCine != null)
         {
             // An imported cinematic: played by URL at real time, like the rendered ones (no match cut).
@@ -494,12 +497,16 @@ public sealed partial class BattleMode
         else if (def != null && def.stage && !cine && StageWanted(card))
         {
             // A skill staged in battle (BattleStage.cs): the camera pushes in, the clip plays large, slightly slowed.
+            // In a summon battle the push starts on her circle, and the action waits until she has formed.
             lead = StageLead(actor, card, lead);
             float t0 = t;
-            t += Mathf.Max(.2f, .25f * speed) * .5f;
+            bool rise = FreshSummon(actor, t0);
+            t += Mathf.Max(.2f, .25f * speed) * .5f + (rise ? SummonRiseTime * .7f : 0f);
+            if (rise) SummonEarly(actor, t0, t);
             staged = BeginStage(actor, card, group, t0, t, t + (rangedAct ? ReleaseLead(actor, card, lead) : lead), t + lead, rangedAct);
             cinematicsSeen.Add(card.Id);
         }
+        if (cine) staged = BeginCineStage(actor, card, group, cineFrom, cinePush, cutAt, t, t + lead, rangedAct);
         if (def != null)
             ScheduleMoveLayers(def, actor, card, group, t, t + (payoff ? 0f : rangedAct ? ReleaseLead(actor, card, lead) : lead), t + lead, rangedAct);
         else if (actor != null && card != null && !actor.Enemy)

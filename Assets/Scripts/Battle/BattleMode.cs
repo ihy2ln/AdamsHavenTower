@@ -1092,6 +1092,12 @@ public sealed partial class BattleMode : MonoBehaviour
         else if (!alive) { tint = new Color(.55f, .55f, .62f); alpha = .55f; }
         if (hurt > 0f) tint = Color.Lerp(tint, new Color(1f, .35f, .35f), Mathf.Clamp01(hurt * 1.4f));
         alpha *= summoned;
+        // A summoned fighter rises out of her circle in her element's light, and goes back to it as she dissolves.
+        float rise = SummonRise(u), leave = SummonLeave(u);
+        float glow = Mathf.Max(1f - rise, leave);
+        if (glow > 0f) tint = Color.Lerp(tint, CineLight(ElementColor(u.Element)), glow * .85f);
+        float grow = (.78f + .22f * EaseOut(rise)) * (1f + .08f * leave);
+        off.y -= leave * 22f;
         float faded = StageFade(u);
         if (faded > 0f) tint = Color.Lerp(tint, new Color(.42f, .43f, .52f), faded);
         bool offered = Offered(u);
@@ -1117,7 +1123,7 @@ public sealed partial class BattleMode : MonoBehaviour
             Outline(new Rect(s.Foot.x - s.W * 0.46f, s.Foot.y - 13f, s.W * 0.92f, 34f), new Color(1f, .9f, .5f, .95f), 3f, 17f);
         if (focusUnit == u) Outline(new Rect(s.Foot.x - s.W * 0.46f, s.Foot.y - 13f, s.W * 0.92f, 34f), Ice, 3f, 17f);
 
-        float hh = s.H * breathe, ww = s.W * breathe;
+        float hh = s.H * breathe * grow, ww = s.W * breathe * grow;
         Rect r = new Rect(foot.x - ww * 0.5f, foot.y - hh + bob, ww, hh);
         // Two faint earlier poses make the placeholder cutout read as a fast dash.
         float dashAge = fx - v.LungeStart;
@@ -1145,7 +1151,7 @@ public sealed partial class BattleMode : MonoBehaviour
         GUI.color = new Color(tint.r, tint.g, tint.b, alpha * (covered ? 0.72f : 1f));
         // A summon battle shows JD's full figure: the rig (made for the small summoner) stands aside.
         bool fullJd = Summons && u == battle.Summoner && SummonerBody().Valid;
-        if ((fullJd || !DrawFieldRig(u, foot, s.H)) && s.Sprite.Valid) DrawSprite(r, s.Sprite);
+        if ((fullJd || !DrawFieldRig(u, foot, s.H * grow)) && s.Sprite.Valid) DrawSprite(r, s.Sprite);
         GUI.color = before;
         GUI.matrix = keep;
     }
@@ -1917,6 +1923,7 @@ public sealed partial class BattleMode : MonoBehaviour
 
     private void DrawCutIn()
     {
+        DrawCineFlash();
         if (cutUnit == null || cutCard == null) return;
         float t = (fx - cutStart) / cutLen;
         if (t < 0f || t > 1f) return;
@@ -1924,7 +1931,8 @@ public sealed partial class BattleMode : MonoBehaviour
         Color accent = ElementColor(cutUnit.Element);
         if (CutVideoReady)
         {
-            // Cinematic ultimate: letterboxed video, quick white pop in/out, name plate bottom-left.
+            // Cinematic ultimate: letterboxed video, a pop of the fighter's light in/out (it carries on from the
+            // field's push-in and back out to it, BattleTransitions.cs), name plate bottom-left.
             float va = t < 0.06f ? t / 0.06f : t > 0.93f ? (1f - t) / 0.07f : 1f;
             Rect cover = new Rect(-VW, -VH, VW * 3f, VH * 3f);   // past the virtual canvas, for non-16:9 screens
             Fill(cover, new Color(0, 0, 0, va));
@@ -1932,7 +1940,7 @@ public sealed partial class BattleMode : MonoBehaviour
             GUI.DrawTexture(new Rect(0, 0, VW, VH), ultTexture, ScaleMode.ScaleAndCrop, false);
             GUI.color = was;
             float pop = Mathf.Max(0f, 1f - t / 0.05f) + Mathf.Max(0f, (t - 0.95f) / 0.05f);
-            if (pop > 0f) Fill(cover, new Color(1, 1, 1, pop * 0.85f));
+            if (pop > 0f) Fill(cover, BattleGui.Alpha(CineLight(accent), pop * CinePop));
             Fill(new Rect(-VW, -VH, VW * 3f, VH + 70f), new Color(0, 0, 0, va));
             Fill(new Rect(-VW, VH - 70f, VW * 3f, VH + 70f), new Color(0, 0, 0, va));
             float nx = Mathf.Lerp(-500f, 60f, EaseOut(Mathf.Clamp01((t - 0.08f) / 0.2f)));

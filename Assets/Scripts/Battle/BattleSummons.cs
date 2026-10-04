@@ -161,12 +161,22 @@ public sealed partial class BattleMode
     {
         UnitVis v = V(u);
         bool showing = u == shownVanguard || (fx >= v.SummonIn && fx <= v.SummonOut + SummonFadeOut) || from <= v.SummonOut;
-        if (showing && v.SummonIn > -8f) { v.SummonOut = Mathf.Max(v.SummonOut, to); return; }
+        if (showing && v.SummonIn > -8f)
+        {
+            if (to > v.SummonOut) { v.SummonOut = to; DissolveAt(u, to); }
+            return;
+        }
         summonSpot[u] = spot;
         v.SummonIn = Mathf.Max(fx, from);
         v.SummonOut = to;
         At(v.SummonIn, () => SummonFlash(u));
-        At(to, () => { if (u != shownVanguard && u.Alive) Dissolve(u); });
+        DissolveAt(u, to);
+    }
+
+    // The dissolve at the window's end; a window that was extended since leaves it to the later one.
+    void DissolveAt(BattleUnit u, float to)
+    {
+        At(to, () => { if (u != shownVanguard && u.Alive && fx >= V(u).SummonOut - .001f) Dissolve(u); });
     }
 
     void SummonFlash(BattleUnit u)

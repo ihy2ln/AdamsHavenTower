@@ -195,6 +195,7 @@ public sealed partial class BattleMode
     // Tap while staged: the camera returns at once and the rest of the action runs fast; no beat is skipped.
     void SkipStage()
     {
+        if (CineLeadHolding) return;          // the cut is a beat away: the video's own tap-to-skip takes over
         EvalCamera(out camFocus, out camZoom);
         camKeys.Clear();
         camKeys.Add(new CamKey { At = fx, Focus = camFocus, Zoom = camZoom });
@@ -240,6 +241,7 @@ public sealed partial class BattleMode
     {
         camKeys.Clear(); stageTargets.Clear(); stageActor = null; stageCard = null; stageAction = null;
         stageEnd = -9f; stageRushUntil = -9f; stageHold = -9f; camFocus = Center; camZoom = 1f; camJolt = Vector2.zero;
+        ResetCine();
     }
 
 #if UNITY_EDITOR
