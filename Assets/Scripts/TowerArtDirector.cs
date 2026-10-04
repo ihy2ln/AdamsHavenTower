@@ -180,16 +180,20 @@ public sealed class TowerArtDirector : MonoBehaviour
         return true;
     }
 
-    private string RoomArt(string type, string grade, out Rect crop)
+    // Rank art: every building has F, E and D pictures (C and up reuse D). The furnished Shack and Kitchen interiors
+    // are rank B and above: shown at F they made a starting room look finished (TT 10.4.3).
+    private const int InteriorFromLevel = 5;
+
+    private string RoomArt(string type, string grade, out Rect crop, int level = 1)
     {
         type = LairCatalog.ArtType(type);   // dungeon rooms borrow Tower art until they get their own
         string path = "Rooms/" + type + "_" + grade;
         if (Resources.Load<Texture2D>(Root + path) == null)
             path = "Rooms/" + (type == "quarry" ? "warehouse" : "cottage") + "_F";
         crop = type == "barn" ? Full : new Rect(0.035f, 0.14f, 0.93f, 0.57f);
-        if (type == "house" && Resources.Load<Texture2D>(Root + "Rooms/living_interior_v1") != null)
+        if (type == "house" && level >= InteriorFromLevel && Resources.Load<Texture2D>(Root + "Rooms/living_interior_v1") != null)
         { path = "Rooms/living_interior_v1"; crop = new Rect(0.2f, 0, 0.6f, 1); }
-        if (type == "kitchen" && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
+        if (type == "kitchen" && level >= InteriorFromLevel && Resources.Load<Texture2D>(Root + "Rooms/kitchen_interior_v1") != null)
         { path = "Rooms/kitchen_interior_v1"; crop = Full; }
         // Transparent guild hall cutaway (Game Assets/buildings/tower/buildings/Guild Hall); cropped to the hall itself.
         if (type == "guild_hall" && grade == "F" && Resources.Load<Texture2D>(Root + "Rooms/guild_hall_F_v2") != null)
@@ -357,7 +361,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                 else
                 {
                     Rect crop;
-                    string path = RoomArt(room.type, grade, out crop);
+                    string path = RoomArt(room.type, grade, out crop, room.level);
                     // Rooms the hearths cannot light go dark, Fallout Shelter style.
                     bool lit = tower.Rules.IsPowered(room);
                     Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
