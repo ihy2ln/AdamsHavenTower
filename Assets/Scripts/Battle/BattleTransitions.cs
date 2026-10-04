@@ -52,6 +52,7 @@ public sealed partial class BattleMode
         float cutEnd, float contact, bool ranged)
     {
         SummonEarly(actor, summonAt, cutEnd);
+        SummonJointPartner(summonAt, cutEnd);
         var targets = LayerTargets(group, actor);
         bool damaging = group.Exists(f => f.Kind == "damage" || f.Kind == "blocked");
         float back = Mathf.Max(.3f, .35f * speed);
@@ -142,6 +143,7 @@ public sealed partial class BattleMode
     void ResetCine()
     {
         cineActor = null; cinePushAt = cineCutAt = cineCutEnd = -9f;
+        ResetCombos();
     }
 
 #if UNITY_EDITOR

@@ -127,7 +127,7 @@ public sealed class BattleRunModifiers
     public float DamageBonus, CritBonus, StressScale = 1f;
 }
 
-public sealed class BattleState
+public sealed partial class BattleState
 {
     public const int FieldMax = 3, ReserveMax = 3, EnemyMax = 6;
     public const int AllyHandMax = 10, SummonerHandMax = 3, SpMax = 10, UltimateSpCost = 3;
@@ -172,7 +172,7 @@ public sealed class BattleState
     // Summon battle tuning (balance sim): JD's health as a multiple of the base summoner (JD takes every hit no
     // Vanguard catches), and the enemies' damage (their blows no longer spread over three bodies). Lair bosses get
     // their own factor: their charged area blow lands whole on JD and the Vanguard.
-    public static float SummonJdVitality = 1.6f, SummonEnemyPower = 1.6f, SummonBossPower = 1.05f;
+    public static float SummonJdVitality = 1.6f, SummonEnemyPower = 1.6f, SummonBossPower = 1.15f;   // 1.05 -> 1.15 with combos (CM 10.3.4)
     private static readonly string[] AnchorStatuses = { "Taunt", "Shield", "IceCounter", "DefenseUp", "Charging" };
     private float teamUpMultiplier = 1f;
     // Summon battles: AP and EP are JD's, one pool the whole contract draws on (the field fighters' maxima added up).
@@ -476,17 +476,20 @@ public sealed class BattleState
         else if (card.Kind == BattleCardKind.Awakening) actor.AwakeningReady = false;
         else { BattleUnit wallet = Wallet(actor); wallet.Ap -= card.Ap; wallet.Ep -= card.Ep; actor.Charge(18); }
         Say((actor == null ? Summoner.Name : actor.Name) + " uses " + card.Name + ".");
-        LastTeamUp = SummonMode ? TeamUpPartner(card, actor) : null;
+        LastTeamUp = TeamUpPartner(card, actor);
         if (LastTeamUp != null)
         {
             TeamedThisTurn.Add(LastTeamUp);
             Fact("teamup", actor, LastTeamUp, card, 0, false, 1f, 1f);
             Say(actor.Name + " and " + LastTeamUp.Name + " team up!");
         }
-        teamUpMultiplier = LastTeamUp != null ? TeamUpPower : 1f;
+        // A pair with a combo gets the combo instead of the team-up bonus on the card (BattleCombos.cs).
+        teamUpMultiplier = LastTeamUp != null && !ComboFollows(card, actor, LastTeamUp) ? TeamUpPower : 1f;
         Resolve(card, actor, target);
         teamUpMultiplier = 1f;
+        ComboFollowUp(card, actor, LastTeamUp, target);          // the pair's combo (BattleCombos.cs)
         if (SummonMode) AfterSummon(card, actor, target);
+        else if (actor != null && Allies.Contains(actor)) { ActedThisTurn.Remove(actor); ActedThisTurn.Add(actor); }
         if (Hand.Remove(card)) (card.Exhaust ? Exhausted : Discard).Add(card);
         if (GlowCard.Length > 0 && card.Id == GlowCard) OfferEpiphany(card);
         CheckEnd();
@@ -576,10 +579,11 @@ public sealed class BattleState
         return false;
     }
 
-    // The bond partner who makes this card a team-up: the Vanguard, or the latest bonded fighter to act this turn.
+    // The bond partner who makes this card a team-up: the Vanguard, or the latest bonded fighter to act this turn
+    // (classic battles too: there the partner is already standing).
     public BattleUnit TeamUpPartner(BattleCard card, BattleUnit actor)
     {
-        if (!SummonMode || card == null || actor == null || !Allies.Contains(actor) || card.Partners.Length == 0) return null;
+        if (card == null || actor == null || !Allies.Contains(actor) || card.Partners.Length == 0) return null;
         if (Vanguard != null && Vanguard != actor && Vanguard.Alive && !TeamedThisTurn.Contains(Vanguard)
             && Array.IndexOf(card.Partners, Vanguard.Id) >= 0) return Vanguard;
         for (int i = ActedThisTurn.Count - 1; i >= 0; i--)

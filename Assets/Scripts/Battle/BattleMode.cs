@@ -414,7 +414,8 @@ public sealed partial class BattleMode : MonoBehaviour
             queueEnd = fx + FlyLen;
         }
         int chainBefore = battle.CardsThisTurn, factsBefore = battle.FactSerial;
-        bool ok = ultimate >= 0 ? battle.TryUltimate(actor, ultimate, target) : battle.TryPlay(card, target);
+        bool ok = BattleCombos.IsJoint(card) ? battle.TryJointUltimate(card, target)
+            : ultimate >= 0 ? battle.TryUltimate(actor, ultimate, target) : battle.TryPlay(card, target);
         if (ok && battle.CardsThisTurn > chainBefore) { int chain = battle.CardsThisTurn; At(Mathf.Max(fx, queueEnd), () => { lastChain = chain; chainAt = fx; }); }
         if (!ok)
         {
@@ -1893,9 +1894,10 @@ public sealed partial class BattleMode : MonoBehaviour
         }
     }
 
-    private static Rect UltimatePopupRect(BattleUnit u, Rect tile)
+    private Rect UltimatePopupRect(BattleUnit u, Rect tile)
     {
-        return new Rect(tile.xMax + 10f, tile.y - 40f - BattleCatalog.Ultimates(u).Count * 40f + 40f, 250f, 26f + BattleCatalog.Ultimates(u).Count * 40f);
+        int n = BattleCatalog.Ultimates(u).Count + battle.JointUltimates(u).Count;
+        return new Rect(tile.xMax + 10f, tile.y - 40f - n * 40f + 40f, 250f, 26f + n * 40f);
     }
 
     private void DrawUltimateChoices(BattleUnit u, Rect tile)
@@ -1907,6 +1909,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Text(new Rect(box.x + 10f, box.y + 2f, box.width - 20f, 22f), "CHOOSE " + u.Name.Split(' ')[0].ToUpperInvariant() + "'S ULTIMATE", 12, Gold, TextAnchor.MiddleLeft, true);
         for (int i = 0; i < options.Count && i < 2; i++)
             if (MiniButton(new Rect(box.x + 10f, box.y + 26f + i * 40f, box.width - 20f, 34f), options[i].Name, true, false, Gold, -1f, 14)) SelectUltimate(u, i);
+        DrawJointChoices(u, box, Mathf.Min(options.Count, 2));
     }
 
     // ---- hint, toast, tooltip ----------------------------------------------------------------
@@ -2017,9 +2020,9 @@ public sealed partial class BattleMode : MonoBehaviour
             Fill(new Rect(-VW, -VH, VW * 3f, VH + 70f), new Color(0, 0, 0, va));
             Fill(new Rect(-VW, VH - 70f, VW * 3f, VH + 70f), new Color(0, 0, 0, va));
             float nx = Mathf.Lerp(-500f, 60f, EaseOut(Mathf.Clamp01((t - 0.08f) / 0.2f)));
-            Text(new Rect(nx, VH - 190f, 900f, 34f), cutCard.Kind == BattleCardKind.Awakening ? "AWAKENING" : "ULTIMATE", 24, BattleGui.Alpha(Gold, va), TextAnchor.MiddleLeft, true, false, 2f);
+            Text(new Rect(nx, VH - 190f, 900f, 34f), CutKindLabel(), 24, BattleGui.Alpha(Gold, va), TextAnchor.MiddleLeft, true, false, 2f);
             Text(new Rect(nx, VH - 160f, 1100f, 80f), cutCard.Name.ToUpperInvariant(), 58, new Color(1, 1, 1, va), TextAnchor.MiddleLeft, true, false, 4f);
-            Text(new Rect(nx, VH - 92f, 900f, 30f), cutUnit.Name.ToUpperInvariant(), 22, BattleGui.Alpha(accent, va), TextAnchor.MiddleLeft, true, false, 2f);
+            Text(new Rect(nx, VH - 92f, 900f, 30f), CutNames(), 22, BattleGui.Alpha(accent, va), TextAnchor.MiddleLeft, true, false, 2f);
             DrawSkipHint(va);
             return;
         }
@@ -2035,6 +2038,7 @@ public sealed partial class BattleMode : MonoBehaviour
         Texture2D art = Art("FullCards/" + cutUnit.Id);
         float slide = EaseOut(Mathf.Min(1f, t / 0.28f));
         float x = Mathf.Lerp(-560f, 120f, slide) + t * 46f;
+        DrawJointArt(t, a, old);          // a joint ultimate's partner, behind the lead
         if (art != null)
         {
             Color before = GUI.color; GUI.color = new Color(1, 1, 1, a);
@@ -2046,9 +2050,9 @@ public sealed partial class BattleMode : MonoBehaviour
             GUI.color = before;
         }
         float tx = Mathf.Lerp(1500f, 700f, EaseOut(Mathf.Min(1f, t / 0.3f)));
-        Text(new Rect(tx, 372f, 900f, 40f), cutCard.Kind == BattleCardKind.Awakening ? "AWAKENING" : "ULTIMATE", 26, BattleGui.Alpha(Gold, a), TextAnchor.MiddleLeft, true, false, 2f);
+        Text(new Rect(tx, 372f, 900f, 40f), CutKindLabel(), 26, BattleGui.Alpha(Gold, a), TextAnchor.MiddleLeft, true, false, 2f);
         Text(new Rect(tx, 408f, 900f, 90f), cutCard.Name.ToUpperInvariant(), 66, new Color(1, 1, 1, a), TextAnchor.MiddleLeft, true, false, 4f);
-        Text(new Rect(tx, 496f, 900f, 34f), cutUnit.Name.ToUpperInvariant(), 24, BattleGui.Alpha(accent, a), TextAnchor.MiddleLeft, true, false, 2f);
+        Text(new Rect(tx, 496f, 900f, 34f), CutNames(), 24, BattleGui.Alpha(accent, a), TextAnchor.MiddleLeft, true, false, 2f);
         DrawSkipHint(a);
     }
 

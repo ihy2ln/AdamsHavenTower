@@ -54,6 +54,7 @@ public sealed partial class BattleMode
     bool StageWanted(BattleCard card)
     {
         var mode = Cinematics;
+        if (BattleCombos.IsCombo(card)) return mode != CinematicMode.Off;     // a combo is always its own shot
         if (mode == CinematicMode.Always) return true;
         return mode == CinematicMode.FirstUse && !cinematicsSeen.Contains(card.Id);
     }

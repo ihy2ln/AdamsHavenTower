@@ -180,6 +180,30 @@ Also:
 
 Tests: `BattleTransitionTests` (2). Verified by battle-clock tests only; nobody has watched it in the Editor yet.
 
+## 5c. CM 10.3.4 (2026-10-04): combos and joint ultimates
+
+One combo action and one joint ultimate for each of the 7 bonded pairs. Rules and table: `BattleCombos.cs`. Field:
+`BattleCombosFx.cs`.
+
+- **Combo action.**
+  - A team-up (a bond partner holds the line or has already acted this turn) is followed by the pair's named combo,
+    performed by the partner. Team-ups now happen in classic battles too.
+  - The card itself no longer gets the 1.25x team-up bonus; the combo is the reward. Combos hit at 0.65x the table's
+    numbers (`ComboScale`).
+  - Each combo is always staged. It borrows the performer's own move (clip and moves.json layers, `BattleCombos.LookFor`)
+    until it gets layers of its own under its id `combo_<a>_<b>`.
+- **Joint ultimate.**
+  - Offered in the ULT menu when both bonded fighters on the field have full meters. It spends both meters and one
+    ultimate's SP, and hits about 1.35x a solo ultimate.
+  - In summon battles both fighters are called out before the push-in, and the partner strikes beside the lead on the
+    hand-back.
+  - Its video is `UltCutIns/ult_joint_<a>_<b>.mp4`, and none exist yet. Until then the card-art cut-in shows both
+    fighters; it never falls back to the lead's solo video.
+- **Balance.** Combos pushed the rootside_camp and moon_shrine lair bosses under the 15% health-lost floor, so
+  `SummonBossPower` went from 1.05 to 1.15 (`BattleRules.cs`, BM's file). All 39 cells are inside the bands again.
+- **Tests:** `BattleComboTests` (8).
+- **Owed:** 7 joint-ultimate videos (two fighters per shot) and the combos' own effect layers.
+
 ## 5. Open items (priority order)
 
 1. **User review** of `BattleMotion/_cm1031/staged_<unit>.jpg` and the 18 new ultimate/awakening videos.

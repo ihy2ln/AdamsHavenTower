@@ -41,6 +41,8 @@ public sealed partial class BattleMode
         var mode = Cinematics;
         if (mode == CinematicMode.Off) return null;
         // Skills are staged in battle now (BattleStage.cs); only ultimates and awakenings cut to video.
+        // A joint ultimate has its own video or none: never the lead's solo one.
+        if (BattleCombos.IsJoint(card)) return JointClip(card);
         return IsUltimate(card) || IsDecree(card) ? UltClip(actor, card) : null;
     }
 

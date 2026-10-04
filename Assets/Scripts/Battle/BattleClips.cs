@@ -192,6 +192,9 @@ public sealed class BattleClipSet
         string mapped;
         if (card.Id != null && cards.TryGetValue(card.Id, out mapped) && Has(mapped) && !(card.Power > 0 && mapped == Support))
             return mapped;
+        // A combo plays its performer's own move (BattleCombos.LookFor); a joint ultimate plays the lead's finisher.
+        string look = BattleCombos.IsCombo(card) ? BattleCombos.LookFor(card) : null;
+        if (look != null && cards.TryGetValue(look, out mapped) && Has(mapped)) return mapped;
         if (card.Kind == BattleCardKind.Ultimate) return Has(UltFinish) ? UltFinish : card.Power > 0 ? FirstSkill() : Has(Support) ? Support : null;
         if (card.Kind == BattleCardKind.Awakening) return Has(Support) ? Support : null;
         if (card.Id != null && card.Id.StartsWith("basic_", StringComparison.Ordinal)) return Basic;

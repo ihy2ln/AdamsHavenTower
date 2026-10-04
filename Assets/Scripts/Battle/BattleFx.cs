@@ -417,6 +417,7 @@ public sealed partial class BattleMode
         int start = Mathf.Max(0, battle.Facts.Count - fresh);
         List<BattleFact> list = battle.Facts.GetRange(start, battle.Facts.Count - start);
         queueEnd = Mathf.Max(queueEnd, fx);
+        PrepareCombos(list);
         int i = 0;
         while (i < list.Count)
         {
@@ -432,6 +433,7 @@ public sealed partial class BattleMode
                 continue;
             }
             if (IsSummonFact(head)) { ScheduleSummonFact(head); i++; continue; }
+            if (head.Kind == "combo" || head.Kind == "joint") { ScheduleComboMark(head, list); i++; continue; }
             int j = i + 1;
             while (j < list.Count && list[j].Actor == head.Actor && list[j].Card == head.Card && !IsSummonFact(list[j])) j++;
             ScheduleGroup(list.GetRange(i, j - i));
@@ -529,6 +531,7 @@ public sealed partial class BattleMode
         }
         queueEnd = Mathf.Max(impact + group.Count * 0.085f + (offense ? 0.52f : tick ? 0.22f : 0.40f), staged);
         SummonForGroup(group, actionAt, lead, queueEnd);
+        ComboForGroup(group, actionAt, lead, queueEnd);
     }
 
     // handed: picked up from an ultimate's video (the clip starts on its key pose, a melee fighter is already there).

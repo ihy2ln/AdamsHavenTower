@@ -63,6 +63,9 @@ public sealed partial class BattleMode
         if (card == null || actor == null || actor.Enemy) return null;
         MoveDef def;
         if (card.Id != null && MoveDefs.TryGetValue(card.Id, out def)) return def;
+        // A combo borrows its performer's own move until it has layers of its own (BattleCombos.LookFor).
+        string look = BattleCombos.IsCombo(card) ? BattleCombos.LookFor(card) : null;
+        if (look != null && MoveDefs.TryGetValue(look, out def)) return def;
         return MoveDefs.TryGetValue("default_" + actor.Id, out def) ? def : null;
     }
 

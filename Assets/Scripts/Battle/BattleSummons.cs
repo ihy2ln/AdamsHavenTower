@@ -148,7 +148,8 @@ public sealed partial class BattleMode
                 Spawn(1, Chest(mate), new Color(1f, .86f, .4f), 380f, .5f);
                 Sfx("Sfx/epiphany", "chime", .8f);
             });
-            if (damaging) At(start, () => { BeginAction(mate, strike, snapshot, ranged, mateLead); V(mate).Banner = "TEAM-UP"; });
+            // A pair with a combo strikes with it right after (BattleCombos.cs), so the partner only stands by here.
+            if (damaging && !comboMates.Contains(mate)) At(start, () => { BeginAction(mate, strike, snapshot, ranged, mateLead); V(mate).Banner = "TEAM-UP"; });
             At(end + .1f, () => { if (shownMate == mate) shownMate = null; });
         }
         else if (pendingMateFor == actor) { pendingMate = null; pendingMateFor = null; }
