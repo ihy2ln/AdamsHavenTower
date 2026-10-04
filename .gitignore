@@ -38,3 +38,5 @@
 
 # Town asset work files (GLBs, Blender output, chain log); the game copies live in Assets/Resources
 TownModels/
+# Town reference pictures are generated art (regenerate with Tools/render_town_refs.py); never staged
+TownPrompts/**/*.png
