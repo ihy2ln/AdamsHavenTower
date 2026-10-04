@@ -321,6 +321,10 @@ namespace AdamsHaven.Tower
         {
             if (State.introPhase == "complete" && State.day >= 10 && State.tutorialStep == 0)
                 State.tutorialStep = 7; // Older populated saves predate the guided opening.
+            if (State.introPhase == "complete" && State.tutorialStep == 1 && State.residents != null && State.rooms != null &&
+                State.residents.Exists(r => { var job = State.rooms.Find(x => x.uid == r.jobRoom); var d = job == null ? null : TowerCatalog.Get(job.type);
+                    return d != null && !string.IsNullOrEmpty(d.produces); }))
+                State.tutorialStep = 2;   // someone already works a producing room: the MATCH lesson is done
             if (State.floors == null) State.floors = new List<TowerFloor>();
             if (State.rooms == null) State.rooms = new List<TowerRoom>();
             if (State.residents == null) State.residents = new List<TowerResident>();
@@ -788,7 +792,8 @@ namespace AdamsHaven.Tower
             if (home) resident.homeRoom = roomUid; else resident.jobRoom = roomUid;
             if (!home) resident.duty = BestDuty(resident, room);
             if (resident.currentRoom == 0) resident.currentRoom = roomUid;
-            if (State.tutorialStep == 1 && room.type == "kitchen" && !home)
+            // Any producing room counts for the MATCH lesson, by button or by dragging the resident there (TT 10.4.3).
+            if (State.tutorialStep == 1 && !home && !string.IsNullOrEmpty(def.produces))
                 State.tutorialStep = 2;
             Note(resident.name + " assigned to " + def.displayName +
                 (home ? "." : ": " + DutyLabel(resident, room) + "."));
@@ -882,7 +887,7 @@ namespace AdamsHaven.Tower
                 default: return "This room has nothing to collect.";
             }
             room.ready = false; room.progress = 0;
-            if (State.tutorialStep == 2 && room.type == "kitchen") State.tutorialStep = 3;
+            if (State.tutorialStep == 2 && (room.type == "kitchen" || room.type == "well")) State.tutorialStep = 3;
             if (room.type == "lumber_mill") { State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5)); State.stone += 1; }   // cleared rubble: a trickle of early stone
             if (room.type == "quarry") { State.stone += room.level * 2; State.ore += room.level; }
             foreach (var resident in State.residents) if (resident.jobRoom == roomUid)

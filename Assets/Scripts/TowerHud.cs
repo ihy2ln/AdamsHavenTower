@@ -1480,8 +1480,8 @@ public sealed partial class TowerHud : MonoBehaviour
             tutorialTitle.rectTransform.sizeDelta = new Vector2(522, 82);
             string[] lessons = {
                 "1 / FOOD  •  Everyone eats FOOD all day. Open FLOORS, expand the foundation (EAST first, then WEST), then BUILD a Kitchen on the + lot.",
-                "2 / MATCH  •  In PEOPLE pick a resident, tap the Kitchen, compare the expected rate, then press ASSIGN. Idle hands cook nothing.",
-                "3 / COLLECT  •  Let the Kitchen finish, then tap its food bubble (or COLLECT). FOOD and WATER at the top drop every minute.",
+                "2 / MATCH  •  Drag a resident onto the Kitchen (or pick them, tap the room, ASSIGN). Idle hands cook nothing.",
+                "3 / COLLECT  •  Let the room finish, then tap its bubble (or COLLECT). FOOD and WATER at the top drop every minute.",
                 "4 / WATER  •  BUILD a Stone Well on a free + lot: it draws WATER. Then RUSH the Kitchen once (check the odds first).",
                 "5 / PRIORITIES  •  In PEOPLE > WORK, tap a priority button (PROD, HAUL, REPAIR...) to change it.",
                 "6 / INCIDENT  •  Watch the alert and responders travel to the affected room.",
