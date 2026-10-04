@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Gloomshade, a E-rank GKOM variant from the Gloomshades family: wispy humanoid shadow moving against the light. Family anatomy: ghostly translucent shades, banshees and wraiths trailing shadow smoke. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are violet shade crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, small subtle shadow smoke, star specks and dark sigils",
+ "look": "Gloomshade, a E-rank GKOM variant from the Gloomshades family: wispy humanoid shadow moving against the light. Family anatomy: ghostly translucent shades, banshees and wraiths trailing shadow smoke. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are violet shade crystal. Element Dark: violet, black and magenta accents, small subtle shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_gloomshade\\guard_src.png",

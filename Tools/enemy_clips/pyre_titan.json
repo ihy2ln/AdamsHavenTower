@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Pyre Titan, a A-rank GKOM variant from the Cinder Motes family: giant of molten crystal and flame cracking the ground where it stands. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: large, heavy and imposing. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are ember-red cinder crystal. A grapefruit-sized GKOM core orb, near-black with a liquid shimmer, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, vivid sweeping embers, flame ribbons and heat shimmer",
+ "look": "Pyre Titan, a A-rank GKOM variant from the Cinder Motes family: giant of molten crystal and flame cracking the ground where it stands. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: large, heavy and imposing. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are ember-red cinder crystal. Element Fire: ember red, orange and gold accents, vivid sweeping embers, flame ribbons and heat shimmer",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_pyre_titan\\guard_src.png",

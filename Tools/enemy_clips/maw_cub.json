@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Maw Cub, a B-rank GKOM variant from the Maw Behemoths family (FF Behemoth / King Behemoth, Diablo demonic beasts archetype reimagined for Adams Haven): horse-sized horned behemoth cub with oversized jaws. Family anatomy: massive horned quadruped calamity beasts with huge jaws and heavy clawed paws. Build: compact and agile. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are obsidian crystal. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
+ "look": "Maw Cub, a B-rank GKOM variant from the Maw Behemoths family (FF Behemoth / King Behemoth, Diablo demonic beasts archetype reimagined for Adams Haven): horse-sized horned behemoth cub with oversized jaws. Family anatomy: massive horned quadruped calamity beasts with huge jaws and heavy clawed paws. Build: compact and agile. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are obsidian crystal. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_maw_cub\\guard_src.png",

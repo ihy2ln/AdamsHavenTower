@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Spore Shambler, a D-rank GKOM variant from the Rotcaps family: fungus-overgrown husk still walking, mushrooms sprouting from its back. Family anatomy: waddling mushrooms and fungus-overgrown shamblers with spore gills. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are sickly lilac spore crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, modest stone shards, crystal dust and drifting petals",
+ "look": "Spore Shambler, a D-rank GKOM variant from the Rotcaps family: fungus-overgrown husk still walking, mushrooms sprouting from its back. Family anatomy: waddling mushrooms and fungus-overgrown shamblers with spore gills. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are sickly lilac spore crystal. Element Earth: amber, moss green and slate accents, modest stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_spore_shambler\\guard_src.png",

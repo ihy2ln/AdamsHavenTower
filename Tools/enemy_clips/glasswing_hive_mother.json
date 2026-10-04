@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Glasswing Hive Mother, a C-rank GKOM variant from the Glasswings family: walking crystal hive on many legs with glass wasps swarming from it. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are green bottle-glass crystal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, clear spiralling leaves, gust lines and floating feathers",
+ "look": "Glasswing Hive Mother, a C-rank GKOM variant from the Glasswings family: walking crystal hive on many legs with glass wasps swarming from it. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are green bottle-glass crystal. Element Wind: teal, pale green and silver accents, clear spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_glasswing_hive_mother\\guard_src.png",

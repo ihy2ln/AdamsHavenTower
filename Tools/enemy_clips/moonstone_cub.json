@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Moonstone Cub, a E-rank GKOM variant from the Moonstone Ravagers family: playful bear cub with an owlish face and small moonstone claws. Family anatomy: hulking bear-like predators with owlish facial discs and moonstone claws. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are milky moonstone. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, small subtle ribbons of water, bubbles and moonlit spray",
+ "look": "Moonstone Cub, a E-rank GKOM variant from the Moonstone Ravagers family: playful bear cub with an owlish face and small moonstone claws. Family anatomy: hulking bear-like predators with owlish facial discs and moonstone claws. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are milky moonstone. Element Water: aqua, deep blue and pearl accents, small subtle ribbons of water, bubbles and moonlit spray",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_moonstone_cub\\guard_src.png",

@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Ashvein Hobgoblin, a D-rank GKOM variant from the Ashvein Goblinkin family: taller disciplined hobgoblin in mismatched scavenged plate with a round shield and short spear. Family anatomy: wiry olive-grey goblinoids with long pointed ears, black GKOM veins and ragged scavenged cloth. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are smoky-grey quartz. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
+ "look": "Ashvein Hobgoblin, a D-rank GKOM variant from the Ashvein Goblinkin family: taller disciplined hobgoblin in mismatched scavenged plate with a round shield and short spear. Family anatomy: wiry olive-grey goblinoids with long pointed ears, black GKOM veins and ragged scavenged cloth. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are smoky-grey quartz. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_ashvein_hobgoblin\\guard_src.png",

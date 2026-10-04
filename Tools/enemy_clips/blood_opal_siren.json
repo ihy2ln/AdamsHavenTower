@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Blood Opal Siren, a C-rank GKOM variant from the Opal Sirens family: beautiful winged siren with a glowing blood-opal heart, flowing modest robes. Family anatomy: winged women-shaped sirens and harpies with opal-feathered wings and taloned feet. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are blood-red opal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
+ "look": "Blood Opal Siren, a C-rank GKOM variant from the Opal Sirens family: beautiful winged siren with a glowing blood-opal heart, flowing modest robes. Family anatomy: winged women-shaped sirens and harpies with opal-feathered wings and taloned feet. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are blood-red opal. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_blood_opal_siren\\guard_src.png",

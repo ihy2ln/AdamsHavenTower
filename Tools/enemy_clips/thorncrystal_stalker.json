@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Thorncrystal Stalker, a E-rank GKOM variant from the Thorncrystal Stalkers family: sleek panther with a ridge of crystal thorns, its outline slightly doubled. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are teal thorn crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, small subtle spiralling leaves, gust lines and floating feathers",
+ "look": "Thorncrystal Stalker, a E-rank GKOM variant from the Thorncrystal Stalkers family: sleek panther with a ridge of crystal thorns, its outline slightly doubled. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are teal thorn crystal. Element Wind: teal, pale green and silver accents, small subtle spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_thorncrystal_stalker\\guard_src.png",

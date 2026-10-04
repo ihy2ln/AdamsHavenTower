@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Prism Warden, a D-rank GKOM variant from the Prism Wardens family: faceted crystal sentinel with a healing green light at its centre. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are green-gold prism crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Light: warm gold, white and soft rose accents, modest sun motes, feather-like light and halo rings",
+ "look": "Prism Warden, a D-rank GKOM variant from the Prism Wardens family: faceted crystal sentinel with a healing green light at its centre. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are green-gold prism crystal. Element Light: warm gold, white and soft rose accents, modest sun motes, feather-like light and halo rings",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_viridian_prism_warden\\guard_src.png",

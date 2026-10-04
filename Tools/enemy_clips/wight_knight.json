@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Wight Knight, a B-rank GKOM variant from the Husks family: undead soldier in rusted oath-armour with a notched sword. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are bone-white crystal. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
+ "look": "Wight Knight, a B-rank GKOM variant from the Husks family: undead soldier in rusted oath-armour with a notched sword. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are bone-white crystal. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_wight_knight\\guard_src.png",

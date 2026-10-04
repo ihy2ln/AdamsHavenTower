@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Thornshade Prowler, a C-rank GKOM variant from the Thorncrystal Stalkers family: larger shadowy panther accompanied by a translucent reflection of itself. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are teal thorn crystal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, clear spiralling leaves, gust lines and floating feathers",
+ "look": "Thornshade Prowler, a C-rank GKOM variant from the Thorncrystal Stalkers family: larger shadowy panther accompanied by a translucent reflection of itself. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are teal thorn crystal. Element Wind: teal, pale green and silver accents, clear spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_thornshade_prowler\\guard_src.png",

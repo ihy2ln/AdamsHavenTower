@@ -47,6 +47,9 @@ def look_of(form_dir, name):
         if j > 0:
             body = body[:j]
     body = re.sub(r' \(D&D[^)]*\)', '', body)
+    # The side-view guard is the identity: the front view's "core orb embedded visibly in its chest" made Qwen paint
+    # an orb (and extra crystals) the guard does not show, which H3 then grew in mid-move.
+    body = re.sub(r' A [a-z -]+-sized GKOM core orb[^.]*\.', '', body)
     return body.strip().rstrip('.')
 
 

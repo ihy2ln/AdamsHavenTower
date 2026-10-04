@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Ruin Gargoyle, a C-rank GKOM variant from the Ruin Gargoyles family: classic stone gargoyle with bat wings, crouched and ready to pounce. Family anatomy: stone gargoyles and imps with bat wings, horns and pebbled stone skin. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are slate-grey grit crystal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, clear stone shards, crystal dust and drifting petals",
+ "look": "Ruin Gargoyle, a C-rank GKOM variant from the Ruin Gargoyles family: classic stone gargoyle with bat wings, crouched and ready to pounce. Family anatomy: stone gargoyles and imps with bat wings, horns and pebbled stone skin. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are slate-grey grit crystal. Element Earth: amber, moss green and slate accents, clear stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_ruin_gargoyle\\guard_src.png",

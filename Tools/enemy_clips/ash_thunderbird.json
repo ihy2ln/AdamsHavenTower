@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Ash Thunderbird, a S-rank GKOM variant from the Obsidian Talons family: firestorm thunderbird with white-hot crystal plumage and lightning in its wake. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: large, heavy and imposing. GKOM rank cue: a near-complete GKOM crystal hide with thin bare seams; the crystals are glossy black obsidian with ember edges. A volleyball-sized GKOM core orb, black-red, radiating heat, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, dramatic sweeping embers, flame ribbons and heat shimmer",
+ "look": "Ash Thunderbird, a S-rank GKOM variant from the Obsidian Talons family: firestorm thunderbird with white-hot crystal plumage and lightning in its wake. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: large, heavy and imposing. GKOM rank cue: a near-complete GKOM crystal hide with thin bare seams; the crystals are glossy black obsidian with ember edges. Element Fire: ember red, orange and gold accents, dramatic sweeping embers, flame ribbons and heat shimmer",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_ash_thunderbird\\guard_src.png",

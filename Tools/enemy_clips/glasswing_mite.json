@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Glasswing Mite, a F-rank GKOM variant from the Glasswings family: tiny glinting mite with glass wings. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are green bottle-glass crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, tiny subtle spiralling leaves, gust lines and floating feathers",
+ "look": "Glasswing Mite, a F-rank GKOM variant from the Glasswings family: tiny glinting mite with glass wings. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are green bottle-glass crystal. Element Wind: teal, pale green and silver accents, tiny subtle spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_glasswing_mite\\guard_src.png",

@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Crystal Ghoul, a D-rank GKOM variant from the Husks family: fast crouching ghoul with crystal teeth and claws. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are bone-white crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
+ "look": "Crystal Ghoul, a D-rank GKOM variant from the Husks family: fast crouching ghoul with crystal teeth and claws. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are bone-white crystal. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_crystal_ghoul\\guard_src.png",

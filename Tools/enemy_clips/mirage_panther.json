@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Mirage Panther, a A-rank GKOM variant from the Thorncrystal Stalkers family: crystal-sheathed great cat trailing a fan of false afterimages. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are teal thorn crystal. A grapefruit-sized GKOM core orb, near-black with a liquid shimmer, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, vivid sweeping spiralling leaves, gust lines and floating feathers",
+ "look": "Mirage Panther, a A-rank GKOM variant from the Thorncrystal Stalkers family: crystal-sheathed great cat trailing a fan of false afterimages. Family anatomy: lean panther-like hunting cats with a ridge of crystal thorns along the back and a faint afterimage. Build: compact and agile. GKOM rank cue: most of the body sheathed in GKOM crystal, natural surface only at the seams; the crystals are teal thorn crystal. Element Wind: teal, pale green and silver accents, vivid sweeping spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_mirage_panther\\guard_src.png",

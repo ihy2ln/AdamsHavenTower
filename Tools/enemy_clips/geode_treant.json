@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Geode Treant, a B-rank GKOM variant from the Shardlings family: ancient oak treant split open to show a cavern of crystal inside its trunk. Family anatomy: living saplings and trees of bark and roots with crystal buds and geode hollows. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are pale green quartz. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, strong stone shards, crystal dust and drifting petals",
+ "look": "Geode Treant, a B-rank GKOM variant from the Shardlings family: ancient oak treant split open to show a cavern of crystal inside its trunk. Family anatomy: living saplings and trees of bark and roots with crystal buds and geode hollows. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are pale green quartz. Element Earth: amber, moss green and slate accents, strong stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_geode_treant\\guard_src.png",

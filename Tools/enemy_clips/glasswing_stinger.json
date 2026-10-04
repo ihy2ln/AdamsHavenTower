@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Glasswing Stinger, a D-rank GKOM variant from the Glasswings family: fist-sized wasp with a green glass stinger. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are green bottle-glass crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Wind: teal, pale green and silver accents, modest spiralling leaves, gust lines and floating feathers",
+ "look": "Glasswing Stinger, a D-rank GKOM variant from the Glasswings family: fist-sized wasp with a green glass stinger. Family anatomy: insects with wings of beaten green glass and needle stingers. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are green bottle-glass crystal. Element Wind: teal, pale green and silver accents, modest spiralling leaves, gust lines and floating feathers",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_glasswing_stinger\\guard_src.png",

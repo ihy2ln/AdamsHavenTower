@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Prism Archon, a B-rank GKOM variant from the Prism Wardens family: tall floating archon made of a crown of rotating prisms around a core of light. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are green-gold prism crystal. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Light: warm gold, white and soft rose accents, strong sun motes, feather-like light and halo rings",
+ "look": "Prism Archon, a B-rank GKOM variant from the Prism Wardens family: tall floating archon made of a crown of rotating prisms around a core of light. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are green-gold prism crystal. Element Light: warm gold, white and soft rose accents, strong sun motes, feather-like light and halo rings",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_prism_archon\\guard_src.png",

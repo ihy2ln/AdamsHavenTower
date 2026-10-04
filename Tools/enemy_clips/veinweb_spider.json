@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Veinweb Spider, a E-rank GKOM variant from the Veinweb Spiders family: dog-sized spider with crystal-tipped legs. Family anatomy: giant spiders with crystal-tipped legs and black vein-like silk. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are black vein crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, small subtle shadow smoke, star specks and dark sigils",
+ "look": "Veinweb Spider, a E-rank GKOM variant from the Veinweb Spiders family: dog-sized spider with crystal-tipped legs. Family anatomy: giant spiders with crystal-tipped legs and black vein-like silk. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are black vein crystal. Element Dark: violet, black and magenta accents, small subtle shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_veinweb_spider\\guard_src.png",

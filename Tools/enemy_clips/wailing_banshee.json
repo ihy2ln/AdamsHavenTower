@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Wailing Banshee, a C-rank GKOM variant from the Gloomshades family: translucent banshee with streaming hair, mouth open in a scream. Family anatomy: ghostly translucent shades, banshees and wraiths trailing shadow smoke. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are violet shade crystal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, clear shadow smoke, star specks and dark sigils",
+ "look": "Wailing Banshee, a C-rank GKOM variant from the Gloomshades family: translucent banshee with streaming hair, mouth open in a scream. Family anatomy: ghostly translucent shades, banshees and wraiths trailing shadow smoke. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are violet shade crystal. Element Dark: violet, black and magenta accents, clear shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_wailing_banshee\\guard_src.png",

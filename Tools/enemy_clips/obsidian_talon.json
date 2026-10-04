@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Obsidian Talon, a E-rank GKOM variant from the Obsidian Talons family: hawk with feathers like knapped black glass. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are glossy black obsidian with ember edges. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, small subtle embers, flame ribbons and heat shimmer",
+ "look": "Obsidian Talon, a E-rank GKOM variant from the Obsidian Talons family: hawk with feathers like knapped black glass. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are glossy black obsidian with ember edges. Element Fire: ember red, orange and gold accents, small subtle embers, flame ribbons and heat shimmer",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_obsidian_talon\\guard_src.png",

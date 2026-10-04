@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Hollow Husk, a F-rank GKOM variant from the Husks family: shambling male corpse with a grey orb in its open chest. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are bone-white crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, tiny subtle shadow smoke, star specks and dark sigils",
+ "look": "Hollow Husk, a F-rank GKOM variant from the Husks family: shambling male corpse with a grey orb in its open chest. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are bone-white crystal. Element Dark: violet, black and magenta accents, tiny subtle shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_hollow_husk\\guard_src.png",

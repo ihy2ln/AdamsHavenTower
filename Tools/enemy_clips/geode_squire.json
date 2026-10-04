@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Geode Squire, a D-rank GKOM variant from the Geode Knights family: empty helmet and half-armour glowing from within. Family anatomy: suits of plate armour with no body inside, filled and fused with geode crystal light. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are amethyst geode crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Light: warm gold, white and soft rose accents, modest sun motes, feather-like light and halo rings",
+ "look": "Geode Squire, a D-rank GKOM variant from the Geode Knights family: empty helmet and half-armour glowing from within. Family anatomy: suits of plate armour with no body inside, filled and fused with geode crystal light. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are amethyst geode crystal. Element Light: warm gold, white and soft rose accents, modest sun motes, feather-like light and halo rings",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_geode_squire\\guard_src.png",

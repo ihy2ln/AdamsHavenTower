@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Orb Lich, a SS-rank GKOM variant from the Husks family: robed lich whose orb floats above an open ribcage, holding a crystal staff. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: sealed in GKOM crystal except its eyes, open mouth interior and core; the crystals are bone-white crystal. A basketball-sized GKOM core orb, void-black, warping light around it, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, elaborate layered shadow smoke, star specks and dark sigils",
+ "look": "Orb Lich, a SS-rank GKOM variant from the Husks family: robed lich whose orb floats above an open ribcage, holding a crystal staff. Family anatomy: undead male husks of GKOM victims, gaunt grey flesh, black veins, torn clothing, the orb where the heart was. Build: compact and agile. GKOM rank cue: sealed in GKOM crystal except its eyes, open mouth interior and core; the crystals are bone-white crystal. Element Dark: violet, black and magenta accents, elaborate layered shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_orb_lich\\guard_src.png",

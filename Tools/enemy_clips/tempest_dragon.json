@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Tempest Dragon, a SS-rank GKOM variant from the Stormglass Drakes family: four-legged tempest dragon wreathed in a living thunderhead, crystal scales ringing. Family anatomy: dragons and wyverns with storm-glass scales crackling with lightning. Build: large, heavy and imposing. GKOM rank cue: sealed in GKOM crystal except its eyes, open mouth interior and core; the crystals are storm-blue glass crystal. A basketball-sized GKOM core orb, void-black, warping light around it, is embedded visibly in its chest or body centre. Element Lightning: electric yellow, cyan and indigo accents, elaborate layered branching arcs, static sparks and crackling halos",
+ "look": "Tempest Dragon, a SS-rank GKOM variant from the Stormglass Drakes family: four-legged tempest dragon wreathed in a living thunderhead, crystal scales ringing. Family anatomy: dragons and wyverns with storm-glass scales crackling with lightning. Build: large, heavy and imposing. GKOM rank cue: sealed in GKOM crystal except its eyes, open mouth interior and core; the crystals are storm-blue glass crystal. Element Lightning: electric yellow, cyan and indigo accents, elaborate layered branching arcs, static sparks and crackling halos",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_tempest_dragon\\guard_src.png",

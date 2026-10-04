@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Obsidian Roc, a B-rank GKOM variant from the Obsidian Talons family: enormous roc with obsidian-bladed wings spread wide. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are glossy black obsidian with ember edges. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, strong embers, flame ribbons and heat shimmer",
+ "look": "Obsidian Roc, a B-rank GKOM variant from the Obsidian Talons family: enormous roc with obsidian-bladed wings spread wide. Family anatomy: raptor birds whose feathers harden into knapped obsidian blades. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are glossy black obsidian with ember edges. Element Fire: ember red, orange and gold accents, strong embers, flame ribbons and heat shimmer",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_obsidian_roc\\guard_src.png",

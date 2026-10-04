@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Quartzback Direwolf, a C-rank GKOM variant from the Quartzbacks family: pony-sized dire wolf with a mane of frozen quartz. Family anatomy: wolves with frost-quartz spines along the back and pale icy fur. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are frost-white quartz. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
+ "look": "Quartzback Direwolf, a C-rank GKOM variant from the Quartzbacks family: pony-sized dire wolf with a mane of frozen quartz. Family anatomy: wolves with frost-quartz spines along the back and pale icy fur. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are frost-white quartz. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_quartzback_direwolf\\guard_src.png",

@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Stormglass Drake, a D-rank GKOM variant from the Stormglass Drakes family: young drake crackling with static, storm-glass scales. Family anatomy: dragons and wyverns with storm-glass scales crackling with lightning. Build: large, heavy and imposing. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are storm-blue glass crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Lightning: electric yellow, cyan and indigo accents, modest branching arcs, static sparks and crackling halos",
+ "look": "Stormglass Drake, a D-rank GKOM variant from the Stormglass Drakes family: young drake crackling with static, storm-glass scales. Family anatomy: dragons and wyverns with storm-glass scales crackling with lightning. Build: large, heavy and imposing. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are storm-blue glass crystal. Element Lightning: electric yellow, cyan and indigo accents, modest branching arcs, static sparks and crackling halos",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_stormglass_drake\\guard_src.png",

@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Hollow Acolyte, a D-rank GKOM variant from the Whisperers family (GKOM-A cultists (Weaververse \"Whisperers\"), D&D cult fanatics archetype reimagined for Adams Haven): robed initiate cultist with black-veined hands and a hood. Family anatomy: hooded human GKOM-A cultists with black-veined hands, cracked-marble skin and red-tinged energy. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are crimson crystal. A tennis-ball-sized GKOM core orb, dark amber with visible cracks, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
+ "look": "Hollow Acolyte, a D-rank GKOM variant from the Whisperers family (GKOM-A cultists (Weaververse \"Whisperers\"), D&D cult fanatics archetype reimagined for Adams Haven): robed initiate cultist with black-veined hands and a hood. Family anatomy: hooded human GKOM-A cultists with black-veined hands, cracked-marble skin and red-tinged energy. Build: compact and agile. GKOM rank cue: GKOM crystals crust its joints and run along the spine; about a quarter of the body crystallised; the crystals are crimson crystal. Element Dark: violet, black and magenta accents, modest shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_hollow_acolyte\\guard_src.png",

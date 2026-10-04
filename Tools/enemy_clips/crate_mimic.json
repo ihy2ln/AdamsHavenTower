@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Crate Mimic, a E-rank GKOM variant from the Hoard Mimics family: supply crate mimic with too many teeth and a sticky tongue. Family anatomy: mimics disguised as crates, chests and vault doors with toothy lids and sticky tongues. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are gold-flecked citrine crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Neutral: weathered brown, iron grey and brass accents, small subtle dust motes and glinting coins",
+ "look": "Crate Mimic, a E-rank GKOM variant from the Hoard Mimics family: supply crate mimic with too many teeth and a sticky tongue. Family anatomy: mimics disguised as crates, chests and vault doors with toothy lids and sticky tongues. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are gold-flecked citrine crystal. Element Neutral: weathered brown, iron grey and brass accents, small subtle dust motes and glinting coins",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_crate_mimic\\guard_src.png",

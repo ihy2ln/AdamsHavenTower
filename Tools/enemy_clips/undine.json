@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Undine, a C-rank GKOM variant from the Tide Wisps family: water maiden made of living water with crystal eyes, flowing water gown. Family anatomy: living water: wisps, water maidens and serpents of black lake water. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are pearl-white tide crystal. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
+ "look": "Undine, a C-rank GKOM variant from the Tide Wisps family: water maiden made of living water with crystal eyes, flowing water gown. Family anatomy: living water: wisps, water maidens and serpents of black lake water. Build: compact and agile. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are pearl-white tide crystal. Element Water: aqua, deep blue and pearl accents, clear ribbons of water, bubbles and moonlit spray",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_undine\\guard_src.png",

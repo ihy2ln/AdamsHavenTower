@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Prism Wisp, a F-rank GKOM variant from the Prism Wardens family: small floating mote of green light inside a faceted prism shell. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are green-gold prism crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Light: warm gold, white and soft rose accents, tiny subtle sun motes, feather-like light and halo rings",
+ "look": "Prism Wisp, a F-rank GKOM variant from the Prism Wardens family: small floating mote of green light inside a faceted prism shell. Family anatomy: floating faceted light-spirits and prism sentinels built of rotating crystal plates. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are green-gold prism crystal. Element Light: warm gold, white and soft rose accents, tiny subtle sun motes, feather-like light and halo rings",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_prism_wisp\\guard_src.png",

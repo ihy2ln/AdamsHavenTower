@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Cobalt Grub, a E-rank GKOM variant from the Cobalt Burrowers family: cart-sized cobalt larva with ringed mandibles. Family anatomy: armoured segmented worms and grubs with ringed crystal teeth and cobalt shell plates. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are deep cobalt-blue crystal. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, small subtle stone shards, crystal dust and drifting petals",
+ "look": "Cobalt Grub, a E-rank GKOM variant from the Cobalt Burrowers family: cart-sized cobalt larva with ringed mandibles. Family anatomy: armoured segmented worms and grubs with ringed crystal teeth and cobalt shell plates. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are deep cobalt-blue crystal. Element Earth: amber, moss green and slate accents, small subtle stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_cobalt_grub\\guard_src.png",

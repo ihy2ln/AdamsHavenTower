@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Cinder Mote, a F-rank GKOM variant from the Cinder Motes family: small grinning spark of black-and-red fire. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are ember-red cinder crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Fire: ember red, orange and gold accents, tiny subtle embers, flame ribbons and heat shimmer",
+ "look": "Cinder Mote, a F-rank GKOM variant from the Cinder Motes family: small grinning spark of black-and-red fire. Family anatomy: living sparks and fire elementals of black flame around a red orb. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are ember-red cinder crystal. Element Fire: ember red, orange and gold accents, tiny subtle embers, flame ribbons and heat shimmer",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_cinder_mote\\guard_src.png",

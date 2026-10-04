@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Amberhide Grazer, a E-rank GKOM variant from the Amberhides family: placid deer-like grazer with amber plates along its back. Family anatomy: stocky horned grazing beasts like aurochs with amber plates growing through their hide. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are honey amber. A golf-ball-sized GKOM core orb, cloudy amber, faint glow, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, small subtle stone shards, crystal dust and drifting petals",
+ "look": "Amberhide Grazer, a E-rank GKOM variant from the Amberhides family: placid deer-like grazer with amber plates along its back. Family anatomy: stocky horned grazing beasts like aurochs with amber plates growing through their hide. Build: compact and agile. GKOM rank cue: scattered small GKOM crystal clusters on shoulders and back; most of the body still natural; the crystals are honey amber. Element Earth: amber, moss green and slate accents, small subtle stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_amberhide_grazer\\guard_src.png",

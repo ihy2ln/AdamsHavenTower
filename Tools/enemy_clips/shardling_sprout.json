@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Shardling Sprout, a F-rank GKOM variant from the Shardlings family: knee-high crystal-budded sapling waddling on root feet. Family anatomy: living saplings and trees of bark and roots with crystal buds and geode hollows. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are pale green quartz. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, tiny subtle stone shards, crystal dust and drifting petals",
+ "look": "Shardling Sprout, a F-rank GKOM variant from the Shardlings family: knee-high crystal-budded sapling waddling on root feet. Family anatomy: living saplings and trees of bark and roots with crystal buds and geode hollows. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are pale green quartz. Element Earth: amber, moss green and slate accents, tiny subtle stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_shardling_sprout\\guard_src.png",

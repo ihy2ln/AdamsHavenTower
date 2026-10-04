@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Ashvein Bugbrute, a B-rank GKOM variant from the Ashvein Goblinkin family: huge hairy hunched bugbear-like goblinoid with long arms and a spiked crystal-studded club. Family anatomy: wiry olive-grey goblinoids with long pointed ears, black GKOM veins and ragged scavenged cloth. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are smoky-grey quartz. A softball-sized GKOM core orb, dark crimson with a steady pulse, is embedded visibly in its chest or body centre. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
+ "look": "Ashvein Bugbrute, a B-rank GKOM variant from the Ashvein Goblinkin family: huge hairy hunched bugbear-like goblinoid with long arms and a spiked crystal-studded club. Family anatomy: wiry olive-grey goblinoids with long pointed ears, black GKOM veins and ragged scavenged cloth. Build: large, heavy and imposing. GKOM rank cue: half the body armoured in GKOM crystal, natural patches between the plates; the crystals are smoky-grey quartz. Element Dark: violet, black and magenta accents, strong shadow smoke, star specks and dark sigils",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_ashvein_bugbrute\\guard_src.png",

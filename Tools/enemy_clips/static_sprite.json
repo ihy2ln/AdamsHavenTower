@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Static Sprite, a F-rank GKOM variant from the Static Sprites family: tiny crackling spark sprite with a mischievous face. Family anatomy: crackling spark sprites and storm spirits stitched with lightning. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are electric-yellow static crystal. A marble-sized GKOM core orb, murky grey, dim faint pulse, is embedded visibly in its chest or body centre. Element Lightning: electric yellow, cyan and indigo accents, tiny subtle branching arcs, static sparks and crackling halos",
+ "look": "Static Sprite, a F-rank GKOM variant from the Static Sprites family: tiny crackling spark sprite with a mischievous face. Family anatomy: crackling spark sprites and storm spirits stitched with lightning. Build: compact and agile. GKOM rank cue: only a few small GKOM crystal growths (two or three finger-length points); most of its natural skin, hide or surface is exposed; the crystals are electric-yellow static crystal. Element Lightning: electric yellow, cyan and indigo accents, tiny subtle branching arcs, static sparks and crackling halos",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_static_sprite\\guard_src.png",

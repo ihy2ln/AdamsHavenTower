@@ -55,3 +55,6 @@ TownPrompts/**/*.png
 
 # Monster generation workspace (source for Tools/sync_codex_cards.py). Kept on disk, not in git; snapshot in ../Archive/MonsterPrompts_2026-10-04.7z.
 /MonsterPrompts/
+
+# monster clip batch logs
+BattleMotion/_enemy_batch.*

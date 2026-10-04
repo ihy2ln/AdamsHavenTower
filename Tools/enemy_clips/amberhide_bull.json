@@ -22,7 +22,7 @@
  "fps_out": 12,
  "ppu_out": 200,
  "ppu_hi": 240,
- "look": "Amberhide Bull, a C-rank GKOM variant from the Amberhides family: massive bull with amber horns as long as spears. Family anatomy: stocky horned grazing beasts like aurochs with amber plates growing through their hide. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are honey amber. A fist-sized GKOM core orb, deep red with internal light, is embedded visibly in its chest or body centre. Element Earth: amber, moss green and slate accents, clear stone shards, crystal dust and drifting petals",
+ "look": "Amberhide Bull, a C-rank GKOM variant from the Amberhides family: massive bull with amber horns as long as spears. Family anatomy: stocky horned grazing beasts like aurochs with amber plates growing through their hide. Build: large, heavy and imposing. GKOM rank cue: GKOM crystal plates over shoulders, back and limbs; about a third of the body crystallised; the crystals are honey amber. Element Earth: amber, moss green and slate accents, clear stone shards, crystal dust and drifting petals",
  "ref_files": [],
  "guard": {
   "source": "S:\\AI\\Game\\Unity AHCG\\My project\\BattleMotion\\enemy_amberhide_bull\\guard_src.png",
