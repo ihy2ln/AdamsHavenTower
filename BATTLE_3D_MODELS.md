@@ -14,7 +14,7 @@
 > JD falls back to the painted `Chibi/jd.png`. The 3D rigs below are kept but disabled by `Use3DRigs` in `BattleModels.cs`.
 
 ## Play
-Open `Assets/Scenes/AdamsHavenBattleSandbox.unity` in Unity and press Play.
+Open `Assets/Scenes/AdamsHavenTower.unity` (the only scene) in Unity, press Play, and start a battle from the Tower or the debug menu.
 The six current party members load real skinned FBX models, with cards retained in hand.
 JD now uses a rigged chibi model behind the allies, with card draw and placement gestures.
 

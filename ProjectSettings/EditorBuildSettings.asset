@@ -8,12 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AdamsHavenTower.unity
     guid: caca58826f9cfba40aba1d0e8e643591
-  - enabled: 1
-    path: Assets/Scenes/AdamsHavenTowerBattle.unity
-    guid: 39d42f71a7e1de7499cf12fae48d9feb
-  - enabled: 1
-    path: Assets/Scenes/AdamsHavenBattleSandbox.unity
-    guid: 846a04b35c4c41a188037c944f479e74
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -104,13 +104,8 @@ public static class AndroidReleaseBuilder
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
         EditorUserBuildSettings.buildAppBundle = false;
         EditorUserBuildSettings.development = false;
-        // Every Adams Haven scene ships in the one APK (Tower first = the launch scene).
-        var scenes = new System.Collections.Generic.List<string>
-        {
-            "Assets/Scenes/AdamsHavenTower.unity",
-            "Assets/Scenes/AdamsHavenTowerBattle.unity",
-            "Assets/Scenes/AdamsHavenBattleSandbox.unity"
-        };
+        // One scene: AdamsHavenTower runs the Tower, town, expeditions and battles (and the debug menu).
+        var scenes = new System.Collections.Generic.List<string> { "Assets/Scenes/AdamsHavenTower.unity" };
         var settingsScenes = new EditorBuildSettingsScene[scenes.Count];
         for (int i = 0; i < scenes.Count; i++) settingsScenes[i] = new EditorBuildSettingsScene(scenes[i], true);
         EditorBuildSettings.scenes = settingsScenes;

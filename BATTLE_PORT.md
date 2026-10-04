@@ -1,6 +1,6 @@
 # Adams Haven Battle Mode (Unity)
 
-Open `Assets/Scenes/AdamsHavenBattleSandbox.unity` and press Play to test Battle Mode directly. The scene's **Adams Haven Battle Sandbox** object has a `BattleSandboxLauncher` component; set **Tower Floor** in the Inspector before Play to choose an encounter. Floors 0–2 are a grove fight, floors 3–7 an elite fight, and floor 8 or deeper a boss fight (negative floors use their depth). **EXIT** or withdrawal starts a new sandbox fight on the same floor. The current Tower scene is being ported separately and has no Battle Mode entry button yet.
+The project has one scene, `Assets/Scenes/AdamsHavenTower.unity`: it runs the Tower, town, expeditions and battles. To test Battle Mode, press Play there and start a fight from the Tower or the debug menu. (The old `AdamsHavenBattleSandbox` scene was retired on 2026-10-04; `BattleSandboxLauncher` still works if you add it to a GameObject.)
 
 The battle implementation is in `Assets/Scripts/Battle/`. `BattleRules.cs` contains the engine-independent combat state and rules; `BattleCatalog.cs` contains the six fighter kits, JD support kit, ultimates, and encounter data. The screen is three files: `BattleMode.cs` (layout, input, HUD, hand), `BattleFx.cs` (the presentation timeline that replays `BattleFacts` as lunges, projectiles, impacts, floating numbers, HP drains and ultimate cut-ins) and `BattleGui.cs` (procedural textures, rounded panels, outlined text, alpha-trimmed sprites). The Tower script only starts the mode and receives its result.
 
