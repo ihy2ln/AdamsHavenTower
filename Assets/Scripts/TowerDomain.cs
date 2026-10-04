@@ -83,6 +83,7 @@ namespace AdamsHaven.Tower
         public string mealMemory = "";         // venue type of the last meal, or "cold" for cold rations
         public string funMemory = "";          // venue type of the last outing
         public float mealMemorySeconds, funMemorySeconds;
+        public float playerAssignedAt = -1;    // TT 10.4.3: game clock of the player's last job pick; the Steward leaves it alone a day
 
         public int Stat(string key)
         {

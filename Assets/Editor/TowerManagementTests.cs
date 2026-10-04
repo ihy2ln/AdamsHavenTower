@@ -136,6 +136,23 @@ public sealed class TowerManagementTests
     }
 
     [Test]
+    public void StewardLeavesThePlayersPickAlone()
+    {
+        // TT 10.4.3: dragging Kaela to the Kitchen was undone 20 s later by the Steward re-staffing the Well.
+        var rules = Lot();
+        Assert.IsNull(rules.Build("kitchen", 0, 23));
+        Assert.IsNull(rules.Build("well", 0, 20));
+        var kaela = rules.State.residents[0];
+        var kitchen = rules.RoomAt(0, 23);
+        rules.State.water = 3; rules.State.food = 90;   // water is the urgent stock
+        Assert.IsNull(rules.AssignByPlayer(kaela.id, kitchen.uid));
+        rules.Advance(60, true);
+        Assert.AreEqual(kitchen.uid, kaela.jobRoom, "the Steward undid the player's assignment");
+        rules.State.clock += TowerRules.PlayerAssignRespect;
+        Assert.IsFalse(rules.PlayerPinned(kaela), "after a day the Steward may step in again");
+    }
+
+    [Test]
     public void TiredResidentRestsInsteadOfFlippingEveryTick()
     {
         // TT 10.4.3 regression: rest hovering at 25 flipped the plan between "rest" and a meal errand every

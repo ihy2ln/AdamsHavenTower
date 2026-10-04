@@ -1056,7 +1056,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
     public void AssignSelectedToRoom(int uid)
     {
         var person = SelectedPerson;
-        Apply(person == null ? "Select a resident first." : rules.Assign(person.id, uid));
+        Apply(person == null ? "Select a resident first." : rules.AssignByPlayer(person.id, uid));
     }
 
     public void DragAssign(int residentId, Vector2 screen)
@@ -1065,7 +1065,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         var room = RoomAtScreen(screen);
         if (room == null) { message = "Drop the resident onto a room."; hud.Refresh(); return; }
         SelectPerson(residentId);
-        Apply(rules.Assign(residentId, room.uid));
+        Apply(rules.AssignByPlayer(residentId, room.uid));
     }
 
     private TowerRoom RoomAtScreen(Vector2 screen)

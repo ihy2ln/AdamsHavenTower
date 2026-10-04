@@ -483,9 +483,27 @@ namespace AdamsHaven.Tower
             return stock / -net < 10f || stock < StockCap() * 0.3f;
         }
 
+        // How long the Steward leaves a resident where the player put them (one game day).
+        public const float PlayerAssignRespect = DaySeconds;
+
+        public bool PlayerPinned(TowerResident r)
+        { return r != null && r.playerAssignedAt >= 0 && State.clock - r.playerAssignedAt < PlayerAssignRespect; }
+
+        // The player's own assignment (ASSIGN button or a drag onto a room): the Steward will not undo it for a day.
+        public string AssignByPlayer(int residentId, int roomUid)
+        {
+            string error = Assign(residentId, roomUid);
+            var resident = Resident(residentId);
+            var room = Room(roomUid);
+            if (error == null && resident != null && room != null && TowerCatalog.Get(room.type).kind != "living")
+                resident.playerAssignedAt = State.clock;
+            return error;
+        }
+
         private bool Movable(TowerResident r)
         {
             if (r.ageStage != 0 || r.downed || r.exploring || r.away || r.breakSeconds > 0) return false;
+            if (PlayerPinned(r)) return false;   // the player's choice wins over the Steward's (TT 10.4.3)
             var job = Room(r.jobRoom);
             if (job == null) return true;
             if (job.type == "gate") return false;
