@@ -35,3 +35,6 @@
 /BattleRig2D/*/assembled.png
 /BattleRig2D/*/compare.png
 /BattleRig2D/*/preview/
+
+# Town asset work files (GLBs, Blender output, chain log); the game copies live in Assets/Resources
+TownModels/
