@@ -2,7 +2,7 @@
 
 **Status:** canonical design document for Tower Mode (v1 scope plus DLC roadmap).
 **Supersedes:** `TOWER_LIFE.md` (as design authority; it remains a build log), the Godot `GDD.md` Tower Tycoon sections, `Tycoon-Tower.md`, `Tycoon-Tower-Handoff.md`.
-**Decisions dated:** 2026-09-30; revised 2026-10-03 (TT 10.30.0: RimWorld depth is core, districts, outposts, floor caps, auto expeditions, sieges). Anything marked **[TBD]** is an open balance or content item, listed again in section 16.
+**Decisions dated:** 2026-09-30; revised 2026-10-03 (TT 10.30.0: RimWorld depth is core, districts, outposts, floor caps, auto expeditions, sieges); revised 2026-10-04 (one world: the dungeon below the Tower, section 21). Anything marked **[TBD]** is an open balance or content item, listed again in section 16.
 
 ---
 
@@ -16,6 +16,7 @@
 3. **Every upgrade is visible.** A building grows from one bay to three and gains new furniture at every rank (F to SSR). The player can read progress off the tower.
 4. **Manage the town, not just the rooms.** Cities: Skylines-style tools sit on top: districts zone floor bands with a specialisation and policies, service coverage and appeal make placement matter, and outposts in conquered regions extend the economy beyond the tower (sections 17 and 18).
 5. **AAA feel on mobile.** Juice on every tap, a premium summon cinematic, a consistent art-directed UI, free rotation.
+6. **One world, two sides, one Heart (owner, 2026-10-04).** The Tower grows up from the ground, the summoner's dungeon is dug beneath it, and the town around both is where the two sides meet: its visitors become the adventurers who raid the dungeon (section 21).
 
 **Platform and model:** Unity, Android first, offline single-player, premium (no IAP, no ads in v1). Free rotation (portrait and landscape) in both Tower and Battle modes.
 
@@ -826,6 +827,7 @@ The old note that traits, mood breaks, bonds, the storyteller and schedules sat 
 15. **TT 10.30.0 follow-ups: all closed.** District appeal does **not** lower Threat (owner, 2026-10-03). (Built in TT 10.30.1: the Atlas outpost marker, sieges in Battle Mode, the founding storyteller pick, long-press to move. Built in TT 10.30.2: region elements and counters, the dweller cap by Heart rank, a third active incident from rank C.)
 16. **Town (section 19), owner to decide before slices 3-4:** decided 2026-10-03: own view, circle-ish ring, assets from reference pictures, auto growth plus full manual override. Still open: growth speed per Heart rank; can raiders damage town buildings; a closed gold loop or keep the Market minting; wages and rent per resident or per room; who sets prices (player or district policy); do visitors and traders replace or extend the caravan event; can a good visit turn a visitor into a recruit; visible queues at full venues; the cold-rations penalty (-3 today).
 17. **Town slice 1 balance (draft):** errands start below 50 and fill to 99; meal 10, drink 15, joy 5 points a second at a venue; joy drains 0.07 a second; free hours 19-22 (day) and 07-10 (night). Checkpoint 10 measured 58.4% to 52.7% of resident time on production (TOWER_BALANCE_REPORT section 7). Measure the Heart pacing again with it on.
+18. **One world (section 21), owner to decide per batch:** the underground cap split between dungeon and living floors inside the Tower down-caps (TT 10.5.0); Dungeon rank XP curve, pest swarm timer and yields (TT 10.5.1); beast families per region and capture odds (TT 10.5.2); which lot types count as homes against the dweller cap, growth speed, raider damage to lots (TT 10.6.0); adventurer purses, inn and shop prices, shrine healing (TT 10.6.1); party size and rank from town buildings (TT 10.6.2); the day Dungeon rank C should land (target day 5 to 10).
 
 ---
 
@@ -935,6 +937,11 @@ The tower is a town, so its people should live in it, not only work in it. The o
 
 ## 20. Dungeon Mode (fork, slice 1 built 2026-10-04, TT 10.4.0)
 
+> **Superseded in part by section 21 (owner, 2026-10-04).** The fork is folded into one world: the dungeon is dug beneath
+> the Tower in the same save, and this separate mode is retired once the merge plays (roadmap 21.8, TT 10.7.0). The rooms,
+> monsters, route, encounters, notoriety and elite team below carry over; the separate saves, the summit option, the
+> Lair-only founding and the "no raiders, no visitors" rules do not.
+
 **Pivot (owner, 2026-10-03).** The Heart becomes the summoner's own **dungeon**, raided by adventurers (Dungeon Keeper x
 Kairosoft Dungeon Village). It is a **second mode in the same project**: Tower Mode stays playable and unchanged. MENU >
 DUNGEON MODE / TOWER MODE switches (two taps); each mode keeps its own saves (`AdamsHavenDungeon/` and `AdamsHavenTower/`)
@@ -992,3 +999,105 @@ notoriety and +5 fame; a loss lets them in. Raiders and Gate visitors never come
 ### 20.6 Not in slice 1
 Heart relocation UI, monster taming and evolution, prison and converts, walked retreats, town economy wiring, a lair
 research branch, room fights in Battle Mode, named-adventurer progression, dungeon art (Tower art tinted red), a tutorial.
+
+---
+
+## 21. One world: the Tower above, the dungeon below, the town around (design, owner 2026-10-04)
+
+**Owner rulings (2026-10-04).** One world with two sides in **one save**. The dungeon is dug **below** the Tower. It exists
+**from the start** but draws no adventurers at first: it lures **pests**, then levels up until it can take on **humans**.
+Adventurers are **town visitors**. The Dungeon Mode fork (section 20) is **retired** once the merge plays; its four slots are
+dev checkpoints and are not migrated.
+
+**What carries over from the code:** the dungeon state already rides inside every Tower save (`TowerState.lair`,
+`TowerLairState`), floors use the Tower's signed numbering, and `ShiftFloors`, `LairDigFloor`, `LairAddLivingFloor`,
+`FloorKind`, `LairRoute`, `LairCatalog`, `LairMonsters`, `LairRaids` and `LairBalance` all keep working. No schema bump:
+the merge migrates through `ColonyVersion` 3.
+
+### 21.1 The vertical world
+
+| Band | Floors | What lives there | What reaches it |
+| --- | --- | --- | --- |
+| Tower | +1 .. +24 | Every Tower room, as today | Fire, pests, illness |
+| Ground | 0 | Gates, Heart chamber, ground rooms | Raiders and sieges at the Gates (unchanged) |
+| Dungeon | B1 .. Bn (-1 down) | Dungeon rooms only (traps, lairs, vaults); the shaft is sealed | Prey on the route |
+| Living | below the dungeon | Monster keepers, Stone Quarry, any underground room | Prey that get through; residents on defence |
+| Heart vault | the lowest floor | The Heart cell, the breach target from below | Breaches |
+
+- **Dungeon Gate:** a stair down at one wing end of B1, reached from a town road. Prey never use the Tower Gates.
+- **Two breach points, one Heart:** the chamber on floor 0 (raiders, as today) and the vault (prey from below). Both hurt
+  the same Heart HP; a vault breach also steals gold and Celestium (20.4).
+- **Digging down:** the Tower's underground DIG becomes **DIG DUNGEON FLOOR** (inserts a floor above the living band) and
+  **ADD LIVING FLOOR** (inserts one above the vault). The whole underground stays inside the Tower down-caps
+  (1, 3, 5, 7, 9, 12, 15, 19, 24 by Heart rank); the dungeon / living split **[TBD]**. Neither runs while prey are inside.
+- **New game:** floor 0, an empty B1 and the vault at -2. The opening lessons add the first trap (21.3).
+- **Existing Tower saves:** the `ColonyVersion` 3 step inserts B1 at -1 with `ShiftFloors`; the old basements become the
+  living band and the lowest floor's shaft cell becomes the vault.
+
+### 21.2 Prey ladder: the dungeon levels up
+The dungeon has its own **Dungeon rank F to SSR**, raised by XP from kills and captures and capped by the Heart rank. The
+rank sets what the lure draws in.
+
+| Dungeon rank | Prey | Comes from | Pays |
+| --- | --- | --- | --- |
+| F-E | **Pests** (vermin swarms) | The forest, to the Dungeon Gate on a timer | Essence, a little food; fewer Tower pest incidents |
+| D | **Beasts** (bestiary monsters) | Silverwood | Essence, ore; a Snare Pit capture becomes a monster (**taming**) |
+| C+ | **Humans** (adventurer parties) | The town (21.4) | Gold, loot, Sigil progress |
+| B+ | Named heroes lead parties; notoriety brings the **elite team** | The town and the roster | As in 20.5 |
+
+- Pests that get past the traps start the existing **pest incident** on the living floor: the dungeon is also the Tower's
+  pest defence.
+- **Monsters** come from the Monster banner (from Dungeon rank E) and from captured beasts (from D).
+
+### 21.3 Opening
+The TT 10.4.1-10.4.3 lesson chain stays. After the FOOD and WATER lessons come four dungeon lessons: **DIG B1**, **place a
+Spike Trap Hall**, **the first pest swarm**, **Dungeon rank E**. Humans stay locked until Dungeon rank C, around day 5 to
+10 **[TBD]**.
+
+### 21.4 The town is where the two sides meet
+- **Lots become rules data.** Residential types are homes; the inn lodges visitors (more parties a day); stall and bazaar
+  are shops; the library is a quest board beside the Tower's Guild; shrine and bathhouse heal; gatehouse, wall and
+  watchtower defend. (Whether town homes count toward the dweller cap is still open, section 16 item 18.)
+- **Visitors are visible walkers** coming in by the roads: **wanderers** (today's `pendingVisitors`, recruitable) and,
+  from Dungeon rank C, **adventurers**. Traders come later.
+- **The adventurer loop:** arrive, lodge at the inn, shop, take a quest at the Guild or library (a party forms), walk to the
+  Dungeon Gate, run the `LairRoute` encounters, and the survivors walk back, heal at the shrine, spend their loot, then return
+  or leave. This replaces the `FinishParty` placeholder (`5 x survivors x rank` gold).
+- **Town buildings set the parties:** inn capacity sets parties a day, Guild / library rank caps party rank; Fame scales
+  arrivals.
+- **Gold loop:** adventurers bring their own purses, so gold flows in from outside. Resident wages and rent stay open (19.3).
+
+### 21.5 Two meters, one siege slot
+**Threat** stays the Tower's (raiders, sieges). **Notoriety** is the dungeon's (fades; at 75 the elite team comes). Both
+show on the HUD. Sieges and the elite team share the `TowerSiege` machinery through a siege kind; one runs at a time and the
+other waits.
+
+### 21.6 What happens to the Dungeon Mode branches
+`TowerRules.IsLair` (`mode == "lair"`) goes away. Each branch becomes one of:
+- **By room kind** (unchanged in effect): dungeon rooms are never staffed, burn no firewood, skip brownouts and are not
+  incident targets.
+- **By floor kind** (`FloorKind` over the whole tower): zoning, dig buttons, floor labels, the sealed shaft, the red tint
+  on dungeon floors only, the stair badges.
+- **Back to Tower behaviour:** `StartRaid` (raiders return), the raider incident pool, the traveller event,
+  `TickVisitors`, `ThreatTarget` (Threat is not notoriety), the expedition return floor, and the founding (`lair_site`,
+  `LairFoundedNow`).
+
+`TickLair` always runs, gated by the Dungeon rank.
+
+### 21.7 Not decided yet
+Section 16 item 18 lists the numbers each batch asks the owner first.
+
+### 21.8 Roadmap (one TT batch per session)
+
+| # | Batch | Content |
+| --- | --- | --- |
+| 0 | TT 10.4.4 docs | This section; section 20 marked superseded; handoff section 0 |
+| 1 | TT 10.5.0 merge foundations | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8) |
+| 2 | TT 10.5.1 pest lure | Dungeon rank and XP; prey tiers; pest swarms; pest-incident spillover; Monster banner from E; the four dungeon lessons |
+| 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters |
+| 4 | TT 10.6.0 town lots as rules | Lot functions; homes and the dweller cap; growth speed; raider damage to lots |
+| 5 | TT 10.6.1 town walkers and economy | Visible wanderers; purses; inn, shop and shrine spending through `TickErrand` / `VenuePrice` |
+| 6 | TT 10.6.2 humans in the dungeon | Parties formed in town from Dungeon rank C; town buildings set size and rank; survivors walk back; Fame |
+| 7 | TT 10.6.3 elite and sieges together | Siege kind, queueing, both meters on the HUD, named heroes |
+| 8 | TT 10.7.0 retire the fork | Remove the MENU switch, `AdamsHavenDungeon/`, `LairMilestones`; regenerate Tower checkpoints with the dungeon band |
+| later | | Prison and converts, walked retreats, real dungeon art, traders, wages and rent, room fights in Battle Mode |

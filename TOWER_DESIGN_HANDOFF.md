@@ -1,8 +1,33 @@
 # Tower Mode handoff (for the next TT session)
 
-Updated 2026-10-04 after TT 10.4.3. Read this first, then `TOWER_MODE_GDD.md` (design authority; section 20 is Dungeon Mode, 19 the town), `TOWER_LIFE.md` (build log, newest at the bottom) and `TOWER_BALANCE_REPORT.md` (measured numbers).
+Updated 2026-10-04 after TT 10.4.4 (docs: one world). Read this first, then `TOWER_MODE_GDD.md` (design authority; **section 21 is the one-world plan and the roadmap**, 20 the Dungeon Mode fork, 19 the town), `TOWER_LIFE.md` (build log, newest at the bottom) and `TOWER_BALANCE_REPORT.md` (measured numbers).
 
-## 0. Start here: one game, two modes, one town
+## 0. Start here: one world, two sides, one town
+
+### The direction (owner, 2026-10-04)
+
+**One world, two sides, one save.** The Tower grows up from the ground; the summoner's **dungeon is dug beneath it** (ENTRANCE via a Dungeon Gate from the town, B1..Bn, LIVING, then the HEART VAULT at the bottom). The dungeon exists **from the start** but first lures **pests**; it levels up (Dungeon rank) until it can take on **humans**. **Adventurers are town visitors**: they lodge, shop, take quests in town, raid the dungeon, and survivors come back and spend. The separate Dungeon Mode fork is **retired** once the merge plays (its saves are dev checkpoints, not migrated). Full design: GDD section 21.
+
+### Roadmap (GDD 21.8): one batch per session, in order
+
+| # | Batch | What | Ask the owner first |
+| --- | --- | --- | --- |
+| 1 | **TT 10.5.0 merge foundations** (next) | `ColonyVersion` 3 migration (insert B1 with `ShiftFloors`, basements become the living band, vault = lowest floor); `FloorKind` over the whole tower; zoning by band; Dungeon Gate in `RouteEntry`; dig buttons below ground; new game with B1 + vault; every `TowerRules.IsLair` branch per GDD 21.6 | Underground cap split (dungeon vs living inside the down-caps) |
+| 2 | TT 10.5.1 pest lure | Dungeon rank + XP, prey tiers, pest swarms, pest-incident spillover, Monster banner from E, four dungeon lessons in the opening | Pest timer and yields |
+| 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters | Beast families per region |
+| 4 | TT 10.6.0 town lots as rules | Lot functions (homes, inn, shops, quest board, healing, defence); dweller cap; growth speed; raider damage | Section 3 Q2 |
+| 5 | TT 10.6.1 town walkers and economy | Visible wanderers; purses; inn / shop / shrine spending via `TickErrand` / `VenuePrice` | Section 3 Q3-5 |
+| 6 | TT 10.6.2 humans in the dungeon | Parties form in town from Dungeon rank C; town buildings set size and rank; survivors walk back; replaces the `FinishParty` placeholder | Party balance |
+| 7 | TT 10.6.3 elite and sieges together | Siege kind + queue, Threat and Notoriety both on the HUD, named heroes | none |
+| 8 | TT 10.7.0 retire the fork | Remove the MENU switch, `AdamsHavenDungeon/`, `LairMilestones`; regenerate Tower checkpoints with the dungeon band | none |
+
+Track A (playing the Tower opening and fixing what breaks) pauses until batch 2 lands, because the opening gains the dungeon lessons there; urgent opening bugs can still be fixed any time.
+
+> TT 10.5.0. Tower Tycoon, one world batch 1: merge foundations. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 21 (and 20 for the Lair code), ask me the underground cap split, then build: the `ColonyVersion` 3 migration, `FloorKind` over the whole tower, zoning by band, the Dungeon Gate entry, dig buttons below ground, a new game with B1 and the vault, and the `IsLair` branches per 21.6. Keep the Dungeon Mode fork working on its own saves.
+
+**Where the code is today (survey 2026-10-04):** `TowerState.lair` (`TowerLairState`, LairDomain.cs) is already in every Tower save; `TowerState.mode` is "tower" except saves made by `NewLair`. Rules read `TowerRules.IsLair` (LairLayout.cs, `State.mode == "lair"`); HUD, view, save folder and checkpoints read the static `TowerModes.IsLair` (LairMode.cs). About 25 rules branches, 25 HUD and 6 view branches (list in the GDD 21.6 dispositions). `Load` never checks that a save's mode matches its folder. Town lots have **no gameplay effect yet** (`TowerTownLots.cs` says so) and the town files have no mode branches; `TickTown` grows a town in both modes. The caravan event has no `IsLair` check.
+
+### Today: two playable modes and the town view (until batch 8)
 
 There are **two playable modes** in the same Unity project, and **the town is a view inside each of them**, not a third mode.
 
@@ -17,7 +42,7 @@ Every Tower file edit for the dungeon is an `IsLair` branch, so Tower Mode plays
 
 ### What the owner asked for (2026-10-03/04), and where it stands
 
-- **The pivot (2026-10-03):** the Heart becomes the summoner's **dungeon**, raided by adventurers (Dungeon Keeper x Kairosoft Dungeon Village). **The town stays and becomes the adventurer economy.** Ruled: a separate mode, so the Tower stays playable. Built as Dungeon Mode slice 1; **the town is not yet wired to the dungeon** (see Track B).
+- **The pivot (2026-10-03):** the Heart becomes the summoner's **dungeon**, raided by adventurers (Dungeon Keeper x Kairosoft Dungeon Village). **The town stays and becomes the adventurer economy.** Ruled then: a separate mode, so the Tower stays playable. Built as Dungeon Mode slice 1; **the town is not yet wired to the dungeon**. **Revised 2026-10-04: one world** (the dungeon below the Tower in the same save; see the roadmap above and GDD 21).
 - **Town (GDD 19):** its own view, a circle-ish ring on a square grid around the tower, growing with the Heart; it runs itself and the player can override any lot or group of lots. Reference picture first, then the 3D shell. **Done:** view, lots, the 48-picture pack and all 48 models. **Next:** lots as rules data, then economy and visitors.
 
 ### Recent batches (2026-10-04)
@@ -31,7 +56,9 @@ Every Tower file edit for the dungeon is an `IsLair` branch, so Tower Mode plays
 
 Tests: `LairModeTests` + `TowerManagementTests` + `TowerSimulationTests` = **216 green** (EditMode, 2026-10-04).
 
-### Three tracks, pick one per session
+### The old three tracks (2026-10-04 morning), now folded into the roadmap
+
+Track A is the opening play-through (paused until batch 2); Track B became batches 1-3, 6 and 7; Track C became batches 4 and 5. Their notes and owner questions stay here for reference.
 
 **Track A: Tower Mode, keep playing the opening.** The owner plays new games and reports what breaks. Open items:
 - C to SSR rank pictures for every building (only F/E/D exist; C+ reuse D).
@@ -42,8 +69,8 @@ Tests: `LairModeTests` + `TowerManagementTests` + `TowerSimulationTests` = **216
 
 **Track B: Dungeon Mode slice 2 (GDD 20.6), and tie the town to it.** Slice 1 is playable but untuned. Ask the owner first:
 1. Did the raid loop feel right? Tune `LairBalance` (one file of numbers).
-2. **Town as the adventurer economy:** parties that flee spend gold in town (placeholder: `5 x survivors x rank` gold in `FinishParty`). Should adventurers visibly arrive through the town, shop, rest at the inn, and pick quests there? Should the town's buildings set party size and rank (an inn draws bigger parties, a temple heals them)?
-3. Order of the slice-2 list: Heart relocation (`ShiftFloors` is ready), monster taming on expeditions, prison and converts, walked retreats, real dungeon art, a dungeon tutorial.
+2. **Town as the adventurer economy:** parties that flee spend gold in town (placeholder: `5 x survivors x rank` gold in `FinishParty`). Should adventurers visibly arrive through the town, shop, rest at the inn, and pick quests there? Should the town's buildings set party size and rank (an inn draws bigger parties, a temple heals them)? **Answered 2026-10-04: yes, adventurers are town visitors (GDD 21.4).**
+3. Order of the slice-2 list (**now set by the roadmap**: taming in batch 3 as Snare captures; relocation is moot because the vault moves as floors are dug): Heart relocation (`ShiftFloors` is ready), monster taming on expeditions, prison and converts, walked retreats, real dungeon art, a dungeon tutorial.
 
 > TT <next>. Tower Tycoon, Track B: Dungeon Mode slice 2 and the town as the adventurer economy. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 20, then ask me the Track B questions before coding.
 
@@ -90,6 +117,7 @@ Tower Mode is a **Fallout Shelter x RimWorld** tower town in Unity (`S:\AI\Game\
 - Heart pacing target: SSR in about 60 to 90 days of play.
 - Rank-specific building functions need a **deep-dive session with the owner** first.
 - **Banners (2026-10-03):** Standard keeps its 60/40 hero/resident mix; SSR pity is shared by Standard, Featured and Pick; Featured rotates weekly (local calendar), automatically; the Pick target changes freely and a pending guarantee carries over.
+- **One world (2026-10-04):** one save; the dungeon is dug below the Tower (Dungeon Gate from the town, B1..Bn, living band, Heart vault at the bottom); it exists from the start and lures pests first, humans from Dungeon rank C; adventurers are town visitors; the Dungeon Mode fork retires after the merge, no dungeon-save migration (GDD 21).
 - **Town (2026-10-03):** the town sim has four pillars (residents live in town, street outside the Gates, economy, visitors and traders). Venues are self-serve until wages exist; free hours are soft blocks for day / night schedules, and flexible residents go out on joy; joy shows in the resident detail only; the global "Tower amenities" bonus stays alongside venue thoughts.
 
 ## 3. Next: town slices 2 to 4 (GDD 19.2-19.4)
