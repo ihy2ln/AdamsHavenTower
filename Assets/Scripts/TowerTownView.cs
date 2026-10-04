@@ -407,8 +407,8 @@ public sealed class TowerTownView : MonoBehaviour
             BuildLot(lot, def, at);
             if (lot.manual)   // a small banner pole marks lots the player controls
             {
-                LotBlock("Flag pole", PrimitiveType.Cube, at + new Vector3(0.38f, 0.75f, 0.38f), new Vector3(0.04f, 1.5f, 0.04f), new Color(0.3f, 0.25f, 0.2f));
-                LotBlock("Flag", PrimitiveType.Cube, at + new Vector3(0.38f, 1.38f, 0.28f), new Vector3(0.03f, 0.2f, 0.2f), new Color(0.95f, 0.78f, 0.3f));
+                LotBlock("Flag pole", PrimitiveType.Cube, at + new Vector3(0.42f, 0.42f, 0.42f), new Vector3(0.025f, 0.84f, 0.025f), new Color(0.3f, 0.25f, 0.2f));
+                LotBlock("Flag", PrimitiveType.Cube, at + new Vector3(0.42f, 0.76f, 0.35f), new Vector3(0.02f, 0.13f, 0.14f), new Color(0.95f, 0.78f, 0.3f));
             }
         }
         Buildings = built;
@@ -517,14 +517,14 @@ public sealed class TowerTownView : MonoBehaviour
             var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             Destroy(body.GetComponent<Collider>());
             body.transform.SetParent(figure, false);
-            body.transform.localPosition = new Vector3(0, 0.26f, 0);
-            body.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);
+            body.transform.localPosition = new Vector3(0, 0.12f, 0);
+            body.transform.localScale = new Vector3(0.1f, 0.11f, 0.1f);
             body.GetComponent<Renderer>().sharedMaterial = Mat(cloaks[i % cloaks.Length]);
             var head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Destroy(head.GetComponent<Collider>());
             head.transform.SetParent(figure, false);
-            head.transform.localPosition = new Vector3(0, 0.6f, 0);
-            head.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            head.transform.localPosition = new Vector3(0, 0.29f, 0);
+            head.transform.localScale = new Vector3(0.09f, 0.09f, 0.09f);
             head.GetComponent<Renderer>().sharedMaterial = Mat(skin);
             walkers.Add(figure);
         }
@@ -640,6 +640,19 @@ public sealed class TowerTownView : MonoBehaviour
         // Shorter than true scale so the landmark never hides the town behind it (a tall tower is the cutaway's job).
         float height = Mathf.Min(7.5f, 3f + FloorsAbove() * 0.25f);
         float width = TowerTownMap.TowerHalf * 2 + 1;
+        // The modelled Tower (TownPrompts/tower, by Heart rank band) when it exists: fit the 5x5 centre, cap the height.
+        var prefab = TownPrefab("tower", TowerRules.RankBand(ShownRank));
+        if (prefab != null)
+        {
+            var model = Instantiate(prefab, root);
+            model.name = "Tower model";
+            model.transform.localPosition = Vector3.zero;
+            float tall = 1f;
+            foreach (var r in model.GetComponentsInChildren<Renderer>()) tall = Mathf.Max(tall, r.bounds.size.y / model.transform.lossyScale.y);
+            float k = Mathf.Min(width - 0.4f, 7.5f / tall);
+            model.transform.localScale = prefab.transform.localScale * k;
+            return;
+        }
         Block("Tower", PrimitiveType.Cube, new Vector3(0, height / 2, 0), new Vector3(width - 0.4f, height, width - 0.4f),
             new Color(0.40f, 0.38f, 0.44f));
         Block("Tower crown", PrimitiveType.Cube, new Vector3(0, height + 0.3f, 0), new Vector3(width, 0.6f, width),
