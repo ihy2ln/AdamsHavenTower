@@ -23,6 +23,26 @@ public sealed class BattleCznTests
     }
 
     [Test]
+    public void FinalHeavenHealsClarityNotTheEnemyItHits()
+    {
+        var party = BattleCatalog.Party();
+        var clarity = party.First(u => u.Id == "clarity");
+        var field = new List<BattleUnit> { clarity }.Concat(party.Where(u => u.Id != "clarity").Take(2)).ToList();
+        var foe = Dummy("dummy", 2000);
+        var b = new BattleState(5, field, party.Except(field), new List<BattleUnit> { foe }, BattleCatalog.Deck(party), BattleCatalog.JD());
+        clarity.Hp = clarity.MaxHp - 60;
+        clarity.Ultimate = 100; b.Sp = BattleState.SpMax;
+        int clarityBefore = clarity.Hp;
+        int from = b.Facts.Count;
+        Assert.IsTrue(b.TryUltimate(clarity, 0, foe), "Final Heaven plays");
+        var heals = b.Facts.Skip(from).Where(f => f.Kind == "heal").ToList();
+        Assert.IsFalse(heals.Any(f => f.Target == foe), "the enemy it hits is not healed");
+        Assert.IsTrue(heals.Any(f => f.Target == clarity), "Clarity mends herself");
+        Assert.Greater(clarity.Hp, clarityBefore);
+        Assert.Less(foe.Hp, foe.MaxHp, "the punch still lands");
+    }
+
+    [Test]
     public void TheHandRefillsToFiveAndUnretainedCardsAreDiscarded()
     {
         var b = Fight();

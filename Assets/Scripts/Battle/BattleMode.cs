@@ -1679,7 +1679,7 @@ public sealed partial class BattleMode : MonoBehaviour
     {
         List<string> effects = new List<string>();
         if (card.Power > 0) effects.Add(card.EffectivePower.ToString("0.#") + "x damage");
-        if (card.Heal > 0) effects.Add("heal " + Mathf.RoundToInt(card.EffectiveHeal));
+        if (card.Heal > 0) effects.Add((BattleState.HealsSelf(card) ? "self-heal " : "heal ") + Mathf.RoundToInt(card.EffectiveHeal));
         if (!string.IsNullOrEmpty(card.Status))
         {
             string status = card.Status.Replace("Up", " up").Replace("Down", " down");
@@ -1938,7 +1938,7 @@ public sealed partial class BattleMode : MonoBehaviour
     private static string Description(BattleCard card)
     {
         string line = card.Power > 0 ? card.EffectivePower.ToString("0.0") + "x damage. " : "";
-        if (card.Heal > 0) line += "Heal " + Mathf.RoundToInt(card.EffectiveHeal) + ". ";
+        if (card.Heal > 0) line += (BattleState.HealsSelf(card) ? "Heals the user " : "Heal ") + Mathf.RoundToInt(card.EffectiveHeal) + ". ";
         if (!string.IsNullOrEmpty(card.Status)) line += StatusLabel(card.Status) + " " + card.Duration + "t. ";
         if (card.Draw > 0) line += "Draw " + card.Draw + ". ";
         if (card.TransferEp) line += "Donate remaining EP. ";

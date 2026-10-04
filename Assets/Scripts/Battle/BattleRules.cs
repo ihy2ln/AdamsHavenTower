@@ -764,17 +764,13 @@ public sealed partial class BattleState
             foreach (BattleUnit target in Targets(card, actor, chosen))
                 if (target != null && target.Alive) { relicSpent = true; break; }
         }
+        // A heal on a card aimed at the other side (Final Heaven) mends its user once, never the foe it hits.
+        bool selfHeal = HealsSelf(card) && actor != null;
         foreach (BattleUnit target in Targets(card, actor, chosen))
         {
             if (target == null || !target.Alive) continue;
             if (card.EffectivePower > 0 && actor != null) Deal(card, actor, target, bond, true);
-            if (card.EffectiveHeal > 0)
-            {
-                int amount = Math.Max(1, (int)Math.Round(card.EffectiveHeal * bond * MendMultiplier(actor)));
-                int before = target.Hp; target.HealBy(amount);
-                target.Stress = Math.Max(0, target.Stress - Math.Max(8, amount / 3));
-                Fact("heal", actor, target, card, target.Hp - before, false, 1f, bond);
-            }
+            if (card.EffectiveHeal > 0 && !selfHeal) Mend(card, actor, target, bond);
             if (!string.IsNullOrEmpty(card.Status))
             {
                 float magnitude = card.Status == "IceCounter" ? card.Magnitude : card.Magnitude * bond * MendMultiplier(actor);
@@ -784,6 +780,21 @@ public sealed partial class BattleState
                 Say(target.Name + " gains " + card.Status + ".");
             }
         }
+        if (selfHeal && card.EffectiveHeal > 0 && actor.Alive) Mend(card, actor, actor, bond);
+    }
+
+    // A card aimed at the other side carries its heal back to its user.
+    public static bool HealsSelf(BattleCard card)
+    {
+        return card != null && card.Heal > 0 && (card.Target == BattleTarget.Enemy || card.Target == BattleTarget.AllEnemies);
+    }
+
+    private void Mend(BattleCard card, BattleUnit actor, BattleUnit target, float bond)
+    {
+        int amount = Math.Max(1, (int)Math.Round(card.EffectiveHeal * bond * MendMultiplier(actor)));
+        int before = target.Hp; target.HealBy(amount);
+        target.Stress = Math.Max(0, target.Stress - Math.Max(8, amount / 3));
+        Fact("heal", actor, target, card, target.Hp - before, false, 1f, bond);
     }
 
     private IEnumerable<BattleUnit> Targets(BattleCard card, BattleUnit actor, BattleUnit chosen)
