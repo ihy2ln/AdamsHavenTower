@@ -1,7 +1,7 @@
 """Unattended: render every missing TownPrompts picture, then turn every picture into a game model.
 Safe to re-run; both steps skip work already done. Logs to TownModels/chain.log.
 
-  python Tools/town_assets_chain.py            # wait for a running render_town_refs.py first, then do both steps
+  python Tools/town_assets_chain.py [--quick]   # wait for a running render_town_refs.py first, then do both steps
 """
 from pathlib import Path
 import subprocess, sys, time
@@ -34,5 +34,5 @@ if __name__ == '__main__':
         if step('render_town_refs.py', 'all') == 0: break
         time.sleep(120)
     for attempt in range(3):
-        if step('town_to_3d.py', 'all') == 0: break
+        if step('town_to_3d.py', 'all', *sys.argv[1:]) == 0: break   # e.g. --quick
         time.sleep(120)
