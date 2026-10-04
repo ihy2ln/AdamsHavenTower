@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 3.21,
+  "low_share": 0.64,
+  "eq_cut_db": 3.2,
+  "low_share_eq": 0.46,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -8.4,
+  "dur": 0.797,
+  "peak_db": -2.93,
+  "rms_db": -18.58,
+  "lufs_m": -15.13,
+  "tail_ratio": 0.026,
+  "flatness": 0.15,
+  "centroid_hz": 1659,
+  "voiced": 0.0,
+  "id": "sfx_enemy_bite",
+  "out": "Sfx/enemy_bite.ogg",
+  "sound": "a monster bite, jaws snapping shut with a sharp crunchy chomp",
+  "secs": 0.1
+}

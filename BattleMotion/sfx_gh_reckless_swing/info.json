@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -5.25,
+  "low_share": 0.93,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.71,
+  "start_s": 0.249,
+  "capped": true,
+  "gain_db": 1.9,
+  "dur": 1.5,
+  "peak_db": -3.09,
+  "rms_db": -15.66,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.235,
+  "flatness": 0.106,
+  "centroid_hz": 756,
+  "voiced": 0.0,
+  "id": "gh_reckless_swing",
+  "out": "Moves/gh_reckless_swing.ogg",
+  "sound": "Reckless Hit: an enormous overhead greatsword smash, a heavy whoosh into a booming fiery impact with crumbling stone debris",
+  "secs": 0.2
+}

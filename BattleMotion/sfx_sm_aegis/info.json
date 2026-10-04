@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.1,
+  "low_share": 0.82,
+  "eq_cut_db": 7.0,
+  "low_share_eq": 0.5,
+  "start_s": 0.219,
+  "capped": true,
+  "gain_db": -4.8,
+  "dur": 1.2,
+  "peak_db": -4.29,
+  "rms_db": -17.7,
+  "lufs_m": -15.05,
+  "tail_ratio": 0.124,
+  "flatness": 0.138,
+  "centroid_hz": 1892,
+  "voiced": 0.0,
+  "id": "sm_aegis",
+  "out": "Moves/sm_aegis.ogg",
+  "sound": "Aegis: a magical shield dome forming with a deep resonant hum and a glassy shimmer",
+  "secs": 0.2
+}

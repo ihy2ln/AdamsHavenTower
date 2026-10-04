@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -1.77,
+  "low_share": 0.83,
+  "eq_cut_db": 7.3,
+  "low_share_eq": 0.55,
+  "start_s": 0.02,
+  "capped": true,
+  "gain_db": -2.9,
+  "dur": 2.8,
+  "peak_db": -2.95,
+  "rms_db": -17.48,
+  "lufs_m": -15.05,
+  "tail_ratio": 0.461,
+  "flatness": 0.13,
+  "centroid_hz": 1045,
+  "voiced": 0.05,
+  "id": "ult_clarity",
+  "out": "Moves/ult_clarity.ogg",
+  "sound": "Final Heaven: a charged glowing hum, then a colossal punch impact with a blinding holy light explosion and a booming shockwave",
+  "secs": 0.2
+}

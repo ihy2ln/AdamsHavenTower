@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.94,
+  "low_share": 0.48,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.48,
+  "start_s": 0.115,
+  "capped": true,
+  "gain_db": -4.7,
+  "dur": 1.3,
+  "peak_db": -4.0,
+  "rms_db": -16.4,
+  "lufs_m": -15.02,
+  "tail_ratio": 0.258,
+  "flatness": 0.021,
+  "centroid_hz": 837,
+  "voiced": 0.06,
+  "id": "sm_mend",
+  "out": "Moves/sm_mend.ogg",
+  "sound": "Blessing: a gentle sparkling healing shimmer of tiny tinkling crystals and a warm glow",
+  "secs": 0.2
+}

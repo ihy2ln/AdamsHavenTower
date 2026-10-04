@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.86,
+  "low_share": 0.87,
+  "eq_cut_db": 8.1,
+  "low_share_eq": 0.66,
+  "start_s": 0.135,
+  "capped": true,
+  "gain_db": -2.1,
+  "dur": 0.997,
+  "peak_db": -4.32,
+  "rms_db": -16.24,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.137,
+  "flatness": 0.046,
+  "centroid_hz": 437,
+  "voiced": 0.0,
+  "id": "da_bonfire_brand",
+  "out": "Moves/da_bonfire_brand.ogg",
+  "sound": "Bonfire Brand: a spear thrust whoosh and a fire igniting with a whump and crackle",
+  "secs": 0.2
+}

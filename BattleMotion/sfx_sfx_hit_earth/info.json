@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -4.28,
+  "low_share": 0.94,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.73,
+  "start_s": 0.15,
+  "capped": true,
+  "gain_db": 0.7,
+  "dur": 0.697,
+  "peak_db": -1.07,
+  "rms_db": -15.38,
+  "lufs_m": -15.32,
+  "tail_ratio": 0.215,
+  "flatness": 0.055,
+  "centroid_hz": 710,
+  "voiced": 0.0,
+  "id": "sfx_hit_earth",
+  "out": "Sfx/hit_earth.ogg",
+  "sound": "a rock hitting its target, a heavy thud of stone with crumbling gravel",
+  "secs": 0.1
+}

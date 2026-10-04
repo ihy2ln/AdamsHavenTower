@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.56,
+  "low_share": 0.93,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.71,
+  "start_s": 0.095,
+  "capped": true,
+  "gain_db": 0.3,
+  "dur": 0.597,
+  "peak_db": -1.04,
+  "rms_db": -15.13,
+  "lufs_m": -15.49,
+  "tail_ratio": 0.13,
+  "flatness": 0.091,
+  "centroid_hz": 687,
+  "voiced": 0.0,
+  "id": "sfx_hit_neutral",
+  "out": "Sfx/hit_neutral.ogg",
+  "sound": "a solid physical punch impact, a meaty thud",
+  "secs": 0.1
+}

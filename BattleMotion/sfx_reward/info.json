@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.05,
+  "raw_peak_db": 3.02,
+  "low_share": 0.36,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.36,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -8.6,
+  "dur": 2.0,
+  "peak_db": -4.58,
+  "rms_db": -18.04,
+  "lufs_m": -15.0,
+  "tail_ratio": 0.041,
+  "flatness": 0.042,
+  "centroid_hz": 1082,
+  "voiced": 0.0,
+  "id": "reward",
+  "out": "reward.ogg",
+  "sound": "a short happy reward jingle: quick ascending glockenspiel notes and sparkling chimes",
+  "secs": 0.2
+}

@@ -1,0 +1,10 @@
+{
+  "folder": "move",
+  "cap": 1.4,
+  "look": "light",
+  "sound": "Smite: a thrown kunai whistling through the air into a powerful holy light impact boom with a ringing shimmer",
+  "music": false,
+  "frames": 56,
+  "prompt": "Abstract anime game VFX: a burst of golden holy light and sparkles flashes in the center of a pure black frame at the very first instant, in sync with the sound, then fades back to pure black. Locked camera, no character, no text.\n\nAudio: Smite: a thrown kunai whistling through the air into a powerful holy light impact boom with a ringing shimmer. One single isolated game sound effect that starts immediately at 0.0 seconds and is followed by silence. No music, no melody, no speech, no voice, no singing, no vocal sounds, no breathing, no ambience bed, no background noise, no room tone. Clean, crisp, punchy, close-miked studio foley for a fantasy anime card battle game. The sound lasts about 1.4 seconds.",
+  "seed": 12504
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -3.85,
+  "low_share": 0.91,
+  "eq_cut_db": 8.9,
+  "low_share_eq": 0.58,
+  "start_s": 0.165,
+  "capped": true,
+  "gain_db": -1.0,
+  "dur": 0.997,
+  "peak_db": -4.93,
+  "rms_db": -18.3,
+  "lufs_m": -15.14,
+  "tail_ratio": 0.167,
+  "flatness": 0.279,
+  "centroid_hz": 1951,
+  "voiced": 0.0,
+  "id": "gh_tiger_cleave",
+  "out": "Moves/gh_tiger_cleave.ogg",
+  "sound": "Tiger Cleave: a heavy greatsword swing whoosh and a meaty slash impact with a burst of fire",
+  "secs": 0.2
+}

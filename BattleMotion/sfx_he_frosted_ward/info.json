@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -1.4,
+  "low_share": 0.81,
+  "eq_cut_db": 6.8,
+  "low_share_eq": 0.48,
+  "start_s": 0.319,
+  "capped": true,
+  "gain_db": -1.7,
+  "dur": 1.4,
+  "peak_db": -1.11,
+  "rms_db": -16.64,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.148,
+  "flatness": 0.356,
+  "centroid_hz": 2003,
+  "voiced": 0.0,
+  "id": "he_frosted_ward",
+  "out": "Moves/he_frosted_ward.ogg",
+  "sound": "Frost Ward: a war hammer taps stone, then a glassy ring of ice forms with a protective shimmering hum",
+  "secs": 0.2
+}

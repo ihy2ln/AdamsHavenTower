@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.47,
+  "low_share": 0.84,
+  "eq_cut_db": 7.5,
+  "low_share_eq": 0.5,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.5,
+  "dur": 1.2,
+  "peak_db": -3.08,
+  "rms_db": -17.23,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.26,
+  "flatness": 0.205,
+  "centroid_hz": 1958,
+  "voiced": 0.02,
+  "id": "sfx_ult_ready",
+  "out": "Sfx/ult_ready.ogg",
+  "sound": "an ultimate skill becoming ready, a powerful charging whoosh into a bright sparkling flash",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 2.57,
+  "low_share": 0.73,
+  "eq_cut_db": 5.1,
+  "low_share_eq": 0.43,
+  "start_s": 0.165,
+  "capped": true,
+  "gain_db": -6.9,
+  "dur": 0.897,
+  "peak_db": -3.29,
+  "rms_db": -18.48,
+  "lufs_m": -15.14,
+  "tail_ratio": 0.056,
+  "flatness": 0.393,
+  "centroid_hz": 3167,
+  "voiced": 0.0,
+  "id": "he_chilling_touch",
+  "out": "Moves/he_chilling_touch.ogg",
+  "sound": "Chilling Touch: a cold hiss of frost and a crisp freezing crackle",
+  "secs": 0.1
+}

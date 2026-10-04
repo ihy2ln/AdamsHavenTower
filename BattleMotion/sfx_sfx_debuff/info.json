@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -1.28,
+  "low_share": 0.84,
+  "eq_cut_db": 7.4,
+  "low_share_eq": 0.56,
+  "start_s": 0.015,
+  "capped": true,
+  "gain_db": -3.7,
+  "dur": 0.897,
+  "peak_db": -4.32,
+  "rms_db": -17.48,
+  "lufs_m": -15.1,
+  "tail_ratio": 0.199,
+  "flatness": 0.073,
+  "centroid_hz": 1038,
+  "voiced": 0.0,
+  "id": "sfx_debuff",
+  "out": "Sfx/debuff.ogg",
+  "sound": "a negative curse, a quick descending warbling magical drain",
+  "secs": 0.1
+}

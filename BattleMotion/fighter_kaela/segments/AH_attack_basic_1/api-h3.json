@@ -1,0 +1,174 @@
+{
+  "289": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "MiniMaxH3\\minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "160": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "119": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "MiniMaxH3\\minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "323": {
+    "class_type": "MiniMaxH3TurboLoRA",
+    "inputs": {
+      "model": [
+        "289",
+        0
+      ],
+      "lora_name": "H3\\minimax_h3_turbo_4step_ckpt500.safetensors",
+      "strength": 1.0,
+      "low_vram": false
+    }
+  },
+  "324": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "323",
+        0
+      ],
+      "shift_video": 11.0,
+      "shift_audio": 3.0
+    }
+  },
+  "280": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "160",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "prompt": "The character is the muscular snow-leopard beastfolk brawler woman with long sky-blue hair, snow-leopard ears and a spotted tail, a star-marked eyepatch, leopard-spot tattoos, white top, belt, black shorts, white side cloths, strapped sandals and glowing ice-crystal claw gauntlets on both hands, facing the right side of the picture. She pulls the punch back and settles into her fighting stance. Anime fighting game character animation, full body, locked-off static camera, no zoom, no pan, no cuts. She stays in place on the same ground line. Plain flat even grey background, no shadow, no floor, no effects, no particles, no text. Crisp cel-shaded anime character, consistent design.",
+      "width": 960,
+      "height": 960,
+      "length": 17,
+      "first_frame": [
+        "f1",
+        0
+      ],
+      "last_frame": [
+        "f2",
+        0
+      ]
+    }
+  },
+  "299": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "324",
+        0
+      ],
+      "conditioning": [
+        "280",
+        0
+      ]
+    }
+  },
+  "298": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "324",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1.0
+    }
+  },
+  "325": {
+    "class_type": "MiniMaxH3TurboSampler",
+    "inputs": {}
+  },
+  "179": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 8212
+    }
+  },
+  "125": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "179",
+        0
+      ],
+      "guider": [
+        "299",
+        0
+      ],
+      "sampler": [
+        "325",
+        0
+      ],
+      "sigmas": [
+        "298",
+        0
+      ],
+      "latent_image": [
+        "280",
+        1
+      ]
+    }
+  },
+  "122": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ]
+    }
+  },
+  "218": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "images": [
+        "122",
+        0
+      ],
+      "frame_rate": 24.0,
+      "loop_count": 0,
+      "filename_prefix": "AdamsHaven/BattleClips/kaela_AH_attack_basic_1",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 15,
+      "save_metadata": false,
+      "pingpong": false,
+      "save_output": true
+    }
+  },
+  "f1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "ahcg-clip-kaela-AH_attack_basic-1-first.png"
+    }
+  },
+  "f2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "ahcg-clip-kaela-AH_attack_basic-1-last.png"
+    }
+  }
+}

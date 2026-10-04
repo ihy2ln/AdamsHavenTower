@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 1.6,
+  "low_share": 0.66,
+  "eq_cut_db": 3.5,
+  "low_share_eq": 0.49,
+  "start_s": 0.2,
+  "capped": true,
+  "gain_db": -5.1,
+  "dur": 1.4,
+  "peak_db": -3.81,
+  "rms_db": -17.46,
+  "lufs_m": -15.01,
+  "tail_ratio": 0.086,
+  "flatness": 0.056,
+  "centroid_hz": 1126,
+  "voiced": 0.03,
+  "id": "cy_uplift",
+  "out": "Moves/cy_uplift.ogg",
+  "sound": "Uplift: an ascending magical shimmer that swells brighter, a rising glow",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.07,
+  "low_share": 0.65,
+  "eq_cut_db": 3.4,
+  "low_share_eq": 0.48,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -6.1,
+  "dur": 1.2,
+  "peak_db": -3.2,
+  "rms_db": -17.69,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.129,
+  "flatness": 0.205,
+  "centroid_hz": 1439,
+  "voiced": 0.0,
+  "id": "gh_ember_chain",
+  "out": "Moves/gh_ember_chain.ogg",
+  "sound": "Ember Chain: two fast greatsword slashes in a row, each with a crackling burst of embers",
+  "secs": 0.2
+}

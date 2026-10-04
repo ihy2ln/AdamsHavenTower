@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.46,
+  "low_share": 0.87,
+  "eq_cut_db": 8.1,
+  "low_share_eq": 0.57,
+  "start_s": 0.279,
+  "capped": true,
+  "gain_db": -2.3,
+  "dur": 1.5,
+  "peak_db": -3.77,
+  "rms_db": -17.33,
+  "lufs_m": -15.05,
+  "tail_ratio": 0.091,
+  "flatness": 0.13,
+  "centroid_hz": 1335,
+  "voiced": 0.0,
+  "id": "ult",
+  "out": "ult.ogg",
+  "sound": "an ultimate skill unleashed, a big rising whoosh into a powerful bright burst",
+  "secs": 0.2
+}

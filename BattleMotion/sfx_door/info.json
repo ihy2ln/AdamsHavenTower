@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.58,
+  "low_share": 0.88,
+  "eq_cut_db": 8.5,
+  "low_share_eq": 0.65,
+  "start_s": 0.2,
+  "capped": true,
+  "gain_db": -2.3,
+  "dur": 0.997,
+  "peak_db": -1.53,
+  "rms_db": -16.87,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.06,
+  "flatness": 0.031,
+  "centroid_hz": 498,
+  "voiced": 0.0,
+  "id": "door",
+  "out": "door.ogg",
+  "sound": "a heavy wooden dungeon door opening with a creak and a solid thud",
+  "secs": 0.2
+}

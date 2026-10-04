@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.8,
+  "low_share": 0.87,
+  "eq_cut_db": 8.2,
+  "low_share_eq": 0.67,
+  "start_s": 0.374,
+  "capped": true,
+  "gain_db": -3.7,
+  "dur": 1.6,
+  "peak_db": -3.98,
+  "rms_db": -18.33,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.013,
+  "flatness": 0.022,
+  "centroid_hz": 341,
+  "voiced": 0.0,
+  "id": "da_matriarch_pyre",
+  "out": "Moves/da_matriarch_pyre.ogg",
+  "sound": "Matriarch Pyre: a large bonfire erupting with a deep fiery whoosh and a roaring crackle",
+  "secs": 0.2
+}

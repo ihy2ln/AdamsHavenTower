@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": 2.05,
+  "low_share": 0.68,
+  "eq_cut_db": 4.0,
+  "low_share_eq": 0.53,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -5.9,
+  "dur": 3.0,
+  "peak_db": -4.2,
+  "rms_db": -19.23,
+  "lufs_m": -15.03,
+  "tail_ratio": 0.03,
+  "flatness": 0.051,
+  "centroid_hz": 565,
+  "voiced": 0.01,
+  "id": "defeat",
+  "out": "defeat.ogg",
+  "sound": "a short sad stinger for losing a battle: a slow descending minor phrase on low strings and piano fading out",
+  "secs": 0.2
+}

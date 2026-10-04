@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -1.41,
+  "low_share": 0.86,
+  "eq_cut_db": 7.9,
+  "low_share_eq": 0.64,
+  "start_s": 0.259,
+  "capped": true,
+  "gain_db": -3.8,
+  "dur": 1.4,
+  "peak_db": -4.15,
+  "rms_db": -17.37,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.141,
+  "flatness": 0.119,
+  "centroid_hz": 800,
+  "voiced": 0.0,
+  "id": "gh_fireline_cut",
+  "out": "Moves/gh_fireline_cut.ogg",
+  "sound": "Fireline Cut: a long sweeping blade swish followed by a roaring line of flame igniting across the ground",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.81,
+  "low_share": 0.89,
+  "eq_cut_db": 8.6,
+  "low_share_eq": 0.61,
+  "start_s": 0.414,
+  "capped": true,
+  "gain_db": -2.4,
+  "dur": 1.1,
+  "peak_db": -2.27,
+  "rms_db": -16.79,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.135,
+  "flatness": 0.096,
+  "centroid_hz": 985,
+  "voiced": 0.0,
+  "id": "sm_hush",
+  "out": "Moves/sm_hush.ogg",
+  "sound": "Hush: a soft muffling whoosh that sucks inward, a dampening low swell",
+  "secs": 0.1
+}

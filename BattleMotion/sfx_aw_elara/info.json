@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.62,
+  "low_share": 0.64,
+  "eq_cut_db": 3.0,
+  "low_share_eq": 0.46,
+  "start_s": 0.289,
+  "capped": true,
+  "gain_db": -6.9,
+  "dur": 1.4,
+  "peak_db": -2.6,
+  "rms_db": -17.43,
+  "lufs_m": -15.1,
+  "tail_ratio": 0.187,
+  "flatness": 0.257,
+  "centroid_hz": 2051,
+  "voiced": 0.06,
+  "id": "aw_elara",
+  "out": "Moves/aw_elara.ogg",
+  "sound": "Clear Script: a quick pen scratch, an electric spark crackle and a bright magical ping",
+  "secs": 0.2
+}

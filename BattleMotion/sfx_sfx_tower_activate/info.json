@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.44,
+  "low_share": 0.86,
+  "eq_cut_db": 7.9,
+  "low_share_eq": 0.55,
+  "start_s": 0.314,
+  "capped": true,
+  "gain_db": -2.7,
+  "dur": 1.5,
+  "peak_db": -4.29,
+  "rms_db": -17.94,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.101,
+  "flatness": 0.114,
+  "centroid_hz": 1631,
+  "voiced": 0.0,
+  "id": "sfx_tower_activate",
+  "out": "Sfx/tower_activate.ogg",
+  "sound": "an ancient stone tower activating, a deep rumble and grinding stone with a rising magical hum",
+  "secs": 0.2
+}

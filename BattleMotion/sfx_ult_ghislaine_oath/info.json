@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -1.65,
+  "low_share": 0.88,
+  "eq_cut_db": 8.4,
+  "low_share_eq": 0.61,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -2.7,
+  "dur": 2.8,
+  "peak_db": -2.76,
+  "rms_db": -18.21,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.198,
+  "flatness": 0.093,
+  "centroid_hz": 928,
+  "voiced": 0.07,
+  "id": "ult_ghislaine_oath",
+  "out": "Moves/ult_ghislaine_oath.ogg",
+  "sound": "Warden's Oath: a greatsword driven into stone with a heavy metallic impact, then a great wall of fire roaring up",
+  "secs": 0.2
+}

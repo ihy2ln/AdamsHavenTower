@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.71,
+  "low_share": 0.76,
+  "eq_cut_db": 5.7,
+  "low_share_eq": 0.5,
+  "start_s": 0.259,
+  "capped": true,
+  "gain_db": -5.2,
+  "dur": 1.3,
+  "peak_db": -2.22,
+  "rms_db": -17.66,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.055,
+  "flatness": 0.282,
+  "centroid_hz": 1577,
+  "voiced": 0.0,
+  "id": "mv_whiteout_counter",
+  "out": "Moves/mv_whiteout_counter.ogg",
+  "sound": "Whiteout Counter: a swirling blizzard gust whooshing in a circle that ends in one sharp icy snap",
+  "secs": 0.2
+}

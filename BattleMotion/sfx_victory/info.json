@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -0.43,
+  "low_share": 0.37,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.37,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -4.4,
+  "dur": 3.0,
+  "peak_db": -3.68,
+  "rms_db": -16.39,
+  "lufs_m": -15.0,
+  "tail_ratio": 0.16,
+  "flatness": 0.049,
+  "centroid_hz": 832,
+  "voiced": 0.02,
+  "id": "victory",
+  "out": "victory.ogg",
+  "sound": "a short triumphant fanfare stinger for winning a battle: bright brass and strings rising to a major chord with a cymbal swell",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": 0.63,
+  "low_share": 0.74,
+  "eq_cut_db": 5.3,
+  "low_share_eq": 0.52,
+  "start_s": 0.219,
+  "capped": true,
+  "gain_db": -4.3,
+  "dur": 2.6,
+  "peak_db": -3.1,
+  "rms_db": -17.41,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.432,
+  "flatness": 0.103,
+  "centroid_hz": 933,
+  "voiced": 0.04,
+  "id": "ult_sum_a",
+  "out": "Moves/ult_sum_a.ogg",
+  "sound": "Rally Decree: a burst of dozens of playing cards fluttering, then a bright powerful rising magical surge with a shimmering crescendo",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -1.92,
+  "low_share": 0.95,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.81,
+  "start_s": 0.01,
+  "capped": true,
+  "gain_db": -0.4,
+  "dur": 1.5,
+  "peak_db": -3.77,
+  "rms_db": -16.72,
+  "lufs_m": -14.99,
+  "tail_ratio": 0.05,
+  "flatness": 0.027,
+  "centroid_hz": 327,
+  "voiced": 0.09,
+  "id": "aw_daisy",
+  "out": "Moves/aw_daisy.ogg",
+  "sound": "Wildheart Surge: two deep heartbeat thumps and a fiery surging whoosh",
+  "secs": 0.2
+}

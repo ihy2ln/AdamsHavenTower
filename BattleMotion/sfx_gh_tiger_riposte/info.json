@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.35,
+  "low_share": 0.8,
+  "eq_cut_db": 6.6,
+  "low_share_eq": 0.5,
+  "start_s": 0.01,
+  "capped": true,
+  "gain_db": -4.8,
+  "dur": 1.1,
+  "peak_db": -2.88,
+  "rms_db": -17.76,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.153,
+  "flatness": 0.17,
+  "centroid_hz": 1463,
+  "voiced": 0.0,
+  "id": "gh_tiger_riposte",
+  "out": "Moves/gh_tiger_riposte.ogg",
+  "sound": "Tiger Riposte: a sharp metal parry clang, instantly followed by a fast counter-slash with a flaming whoosh",
+  "secs": 0.2
+}

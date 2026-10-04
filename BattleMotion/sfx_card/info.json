@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 2.47,
+  "low_share": 0.02,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.02,
+  "start_s": 0.279,
+  "capped": true,
+  "gain_db": 1.3,
+  "dur": 0.397,
+  "peak_db": -1.02,
+  "rms_db": -19.92,
+  "lufs_m": -17.21,
+  "tail_ratio": 0.39,
+  "flatness": 0.328,
+  "centroid_hz": 3204,
+  "voiced": 0.47,
+  "id": "card",
+  "out": "card.ogg",
+  "sound": "a playing card flicked, a short crisp papery snap",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -1.37,
+  "low_share": 0.71,
+  "eq_cut_db": 4.7,
+  "low_share_eq": 0.47,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -4.3,
+  "dur": 0.497,
+  "peak_db": -4.0,
+  "rms_db": -16.14,
+  "lufs_m": -15.03,
+  "tail_ratio": 0.309,
+  "flatness": 0.104,
+  "centroid_hz": 1379,
+  "voiced": 0.0,
+  "id": "hit",
+  "out": "hit.ogg",
+  "sound": "a weapon hitting its target, a punchy solid impact thud",
+  "secs": 0.1
+}

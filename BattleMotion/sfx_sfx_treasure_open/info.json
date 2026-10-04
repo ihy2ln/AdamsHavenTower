@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.01,
+  "low_share": 0.77,
+  "eq_cut_db": 5.9,
+  "low_share_eq": 0.52,
+  "start_s": 0.239,
+  "capped": true,
+  "gain_db": -4.4,
+  "dur": 1.2,
+  "peak_db": -1.2,
+  "rms_db": -16.46,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.26,
+  "flatness": 0.138,
+  "centroid_hz": 1792,
+  "voiced": 0.0,
+  "id": "sfx_treasure_open",
+  "out": "Sfx/treasure_open.ogg",
+  "sound": "a wooden treasure chest creaking open with a clunk and a jingle of gold coins",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.61,
+  "low_share": 0.76,
+  "eq_cut_db": 5.7,
+  "low_share_eq": 0.51,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -5.5,
+  "dur": 1.5,
+  "peak_db": -3.65,
+  "rms_db": -18.34,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.107,
+  "flatness": 0.147,
+  "centroid_hz": 1449,
+  "voiced": 0.0,
+  "id": "aw_ghislaine",
+  "out": "Moves/aw_ghislaine.ogg",
+  "sound": "Tiger's Return: a fire igniting with a whoosh and a determined ring of a greatsword blade",
+  "secs": 0.2
+}

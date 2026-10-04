@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -2.23,
+  "low_share": 0.91,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.6,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -1.5,
+  "dur": 2.6,
+  "peak_db": -1.64,
+  "rms_db": -19.27,
+  "lufs_m": -15.16,
+  "tail_ratio": 0.28,
+  "flatness": 0.245,
+  "centroid_hz": 1591,
+  "voiced": 0.04,
+  "id": "ult_sum_b",
+  "out": "Moves/ult_sum_b.ogg",
+  "sound": "Sunder Decree: cards slam down with a sharp snap, then a massive dark magical shockwave with deep cracking rumble",
+  "secs": 0.2
+}

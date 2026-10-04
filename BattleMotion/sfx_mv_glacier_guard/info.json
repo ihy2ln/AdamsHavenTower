@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 1.87,
+  "low_share": 0.75,
+  "eq_cut_db": 5.5,
+  "low_share_eq": 0.47,
+  "start_s": 0.21,
+  "capped": true,
+  "gain_db": -6.0,
+  "dur": 1.4,
+  "peak_db": -3.15,
+  "rms_db": -18.12,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.056,
+  "flatness": 0.301,
+  "centroid_hz": 2052,
+  "voiced": 0.0,
+  "id": "mv_glacier_guard",
+  "out": "Moves/mv_glacier_guard.ogg",
+  "sound": "Glacier Guard: thick ice plates forming with a crystalline creak and crunch, then a solid glassy clunk and a cold shimmer",
+  "secs": 0.2
+}

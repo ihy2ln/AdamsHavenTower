@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -0.3,
+  "low_share": 0.88,
+  "eq_cut_db": 8.3,
+  "low_share_eq": 0.66,
+  "start_s": 0.015,
+  "capped": true,
+  "gain_db": -2.6,
+  "dur": 2.8,
+  "peak_db": -3.79,
+  "rms_db": -18.42,
+  "lufs_m": -15.01,
+  "tail_ratio": 0.189,
+  "flatness": 0.047,
+  "centroid_hz": 876,
+  "voiced": 0.0,
+  "id": "ult_helda",
+  "out": "Moves/ult_helda.ogg",
+  "sound": "Hearth Renewal: a warm roaring hearth fire swelling up with a soft magical healing shimmer and gentle sparkles",
+  "secs": 0.2
+}

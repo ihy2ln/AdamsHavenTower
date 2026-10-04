@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -0.61,
+  "low_share": 0.83,
+  "eq_cut_db": 7.3,
+  "low_share_eq": 0.56,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -2.5,
+  "dur": 0.797,
+  "peak_db": -1.96,
+  "rms_db": -15.91,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.213,
+  "flatness": 0.127,
+  "centroid_hz": 935,
+  "voiced": 0.03,
+  "id": "crit",
+  "out": "crit.ogg",
+  "sound": "a critical hit, a heavy punchy impact with a bright sharp metallic ring",
+  "secs": 0.1
+}

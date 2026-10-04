@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 0.05,
+  "low_share": 0.36,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.36,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.3,
+  "dur": 0.597,
+  "peak_db": -1.85,
+  "rms_db": -16.08,
+  "lufs_m": -15.02,
+  "tail_ratio": 0.279,
+  "flatness": 0.077,
+  "centroid_hz": 765,
+  "voiced": 0.29,
+  "id": "status",
+  "out": "status.ogg",
+  "sound": "a status effect applied, a quick short magical blip and shimmer",
+  "secs": 0.1
+}

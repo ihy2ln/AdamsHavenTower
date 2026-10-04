@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -1.29,
+  "low_share": 0.92,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.64,
+  "start_s": 0.589,
+  "capped": true,
+  "gain_db": -2.3,
+  "dur": 2.8,
+  "peak_db": -2.28,
+  "rms_db": -19.37,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.036,
+  "flatness": 0.227,
+  "centroid_hz": 1282,
+  "voiced": 0.0,
+  "id": "ult_helda_sanctuary",
+  "out": "Moves/ult_helda_sanctuary.ogg",
+  "sound": "Winter Sanctuary: a war hammer slams the ground with a deep boom, ice pillars erupt with crystalline crackles and a resonant cold hum",
+  "secs": 0.2
+}

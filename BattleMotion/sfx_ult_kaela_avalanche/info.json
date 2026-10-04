@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -3.36,
+  "low_share": 0.92,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.65,
+  "start_s": 0.519,
+  "capped": true,
+  "gain_db": -1.1,
+  "dur": 3.0,
+  "peak_db": -1.51,
+  "rms_db": -18.31,
+  "lufs_m": -15.07,
+  "tail_ratio": 0.057,
+  "flatness": 0.148,
+  "centroid_hz": 983,
+  "voiced": 0.0,
+  "id": "ult_kaela_avalanche",
+  "out": "Moves/ult_kaela_avalanche.ogg",
+  "sound": "Avalanche Breaker: two gauntlet fists slam into frozen ground, a colossal eruption of ice, roaring avalanche rumble and shattering ice shards",
+  "secs": 0.2
+}

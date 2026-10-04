@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 2.86,
+  "low_share": 0.59,
+  "eq_cut_db": 2.1,
+  "low_share_eq": 0.47,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -7.8,
+  "dur": 0.797,
+  "peak_db": -5.04,
+  "rms_db": -18.03,
+  "lufs_m": -15.07,
+  "tail_ratio": 0.18,
+  "flatness": 0.221,
+  "centroid_hz": 2279,
+  "voiced": 0.03,
+  "id": "sfx_trap_spring",
+  "out": "Sfx/trap_spring.ogg",
+  "sound": "a trap springing, a sharp metallic click and a fast spring snap",
+  "secs": 0.1
+}

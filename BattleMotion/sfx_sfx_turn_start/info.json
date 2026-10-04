@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 1.61,
+  "low_share": 0.74,
+  "eq_cut_db": 5.2,
+  "low_share_eq": 0.46,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.9,
+  "dur": 0.897,
+  "peak_db": -4.27,
+  "rms_db": -17.34,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.194,
+  "flatness": 0.181,
+  "centroid_hz": 2121,
+  "voiced": 0.0,
+  "id": "sfx_turn_start",
+  "out": "Sfx/turn_start.ogg",
+  "sound": "a bright short magical whoosh with a clear swelling shimmer, signalling the start of a turn",
+  "secs": 0.1
+}

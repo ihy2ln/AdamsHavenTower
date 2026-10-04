@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 3.12,
+  "low_share": 0.59,
+  "eq_cut_db": 1.9,
+  "low_share_eq": 0.5,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -7.2,
+  "dur": 1.6,
+  "peak_db": -2.89,
+  "rms_db": -19.55,
+  "lufs_m": -15.0,
+  "tail_ratio": 0.011,
+  "flatness": 0.048,
+  "centroid_hz": 1003,
+  "voiced": 0.09,
+  "id": "sfx_atlas_complete",
+  "out": "Sfx/atlas_complete.ogg",
+  "sound": "a region completed, a bright magical sparkle swell ending in a clear shimmering bell-like ping",
+  "secs": 0.2
+}

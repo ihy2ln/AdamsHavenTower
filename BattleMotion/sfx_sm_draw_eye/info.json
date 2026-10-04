@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -0.64,
+  "low_share": 0.87,
+  "eq_cut_db": 8.2,
+  "low_share_eq": 0.54,
+  "start_s": 0.015,
+  "capped": true,
+  "gain_db": -2.9,
+  "dur": 1.0,
+  "peak_db": -3.34,
+  "rms_db": -17.9,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.098,
+  "flatness": 0.238,
+  "centroid_hz": 1750,
+  "voiced": 0.11,
+  "id": "sm_draw_eye",
+  "out": "Moves/sm_draw_eye.ogg",
+  "sound": "Taunt: a sharp magical sigil ping followed by a pulsing aggressive low throb",
+  "secs": 0.1
+}

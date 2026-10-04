@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 2.6,
+  "low_share": 0.06,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.06,
+  "start_s": 0.135,
+  "capped": true,
+  "gain_db": -0.4,
+  "dur": 0.897,
+  "peak_db": -0.92,
+  "rms_db": -20.21,
+  "lufs_m": -15.85,
+  "tail_ratio": 0.261,
+  "flatness": 0.523,
+  "centroid_hz": 3140,
+  "voiced": 0.29,
+  "id": "el_forest_scout",
+  "out": "Moves/el_forest_scout.ogg",
+  "sound": "Forest Scout: a quick scratch of a pen nib on paper and two soft paper card flicks with a tiny magic sparkle",
+  "secs": 0.1
+}

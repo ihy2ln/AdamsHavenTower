@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.98,
+  "low_share": 0.76,
+  "eq_cut_db": 5.7,
+  "low_share_eq": 0.49,
+  "start_s": 0.349,
+  "capped": true,
+  "gain_db": -5.5,
+  "dur": 1.2,
+  "peak_db": -4.02,
+  "rms_db": -18.27,
+  "lufs_m": -15.0,
+  "tail_ratio": 0.025,
+  "flatness": 0.068,
+  "centroid_hz": 1419,
+  "voiced": 0.0,
+  "id": "sfx_epiphany",
+  "out": "Sfx/epiphany.ogg",
+  "sound": "a sudden insight, a bright magical shimmer with a clear rising chime",
+  "secs": 0.1
+}

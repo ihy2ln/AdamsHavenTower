@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.55,
+  "low_share": 0.75,
+  "eq_cut_db": 5.5,
+  "low_share_eq": 0.56,
+  "start_s": 0.155,
+  "capped": true,
+  "gain_db": -5.5,
+  "dur": 1.5,
+  "peak_db": -3.15,
+  "rms_db": -18.2,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.387,
+  "flatness": 0.105,
+  "centroid_hz": 745,
+  "voiced": 0.0,
+  "id": "el_storm_tally",
+  "out": "Moves/el_storm_tally.ogg",
+  "sound": "Storm Tally: a quick pen tick on paper, then a rolling crackle of thunder and spreading electric hum",
+  "secs": 0.2
+}

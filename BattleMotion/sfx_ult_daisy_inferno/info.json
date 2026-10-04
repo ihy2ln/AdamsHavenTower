@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -2.18,
+  "low_share": 0.88,
+  "eq_cut_db": 8.4,
+  "low_share_eq": 0.69,
+  "start_s": 0.703,
+  "capped": false,
+  "gain_db": -2.6,
+  "dur": 2.734,
+  "peak_db": -3.43,
+  "rms_db": -17.58,
+  "lufs_m": -15.05,
+  "tail_ratio": 0.011,
+  "flatness": 0.012,
+  "centroid_hz": 316,
+  "voiced": 0.0,
+  "id": "ult_daisy_inferno",
+  "out": "Moves/ult_daisy_inferno.ogg",
+  "sound": "Matriarch's Inferno: a deep rumble building into a towering pillar of flame erupting with a roaring blaze",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.05,
+  "raw_peak_db": 3.09,
+  "low_share": 0.58,
+  "eq_cut_db": 1.8,
+  "low_share_eq": 0.48,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -6.9,
+  "dur": 1.8,
+  "peak_db": -4.69,
+  "rms_db": -19.6,
+  "lufs_m": -14.99,
+  "tail_ratio": 0.021,
+  "flatness": 0.041,
+  "centroid_hz": 1479,
+  "voiced": 0.05,
+  "id": "chime",
+  "out": "chime.ogg",
+  "sound": "a single clear magical chime: two soft bell tones ringing out",
+  "secs": 0.2
+}

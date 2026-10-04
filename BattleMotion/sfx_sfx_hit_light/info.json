@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -0.19,
+  "low_share": 0.83,
+  "eq_cut_db": 7.2,
+  "low_share_eq": 0.54,
+  "start_s": 0.025,
+  "capped": true,
+  "gain_db": -3.0,
+  "dur": 0.721,
+  "peak_db": -1.23,
+  "rms_db": -17.1,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.304,
+  "flatness": 0.103,
+  "centroid_hz": 1099,
+  "voiced": 0.0,
+  "id": "sfx_hit_light",
+  "out": "Sfx/hit_light.ogg",
+  "sound": "a holy light spell hitting its target, a bright radiant impact with a shimmering ring",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.47,
+  "low_share": 0.85,
+  "eq_cut_db": 7.6,
+  "low_share_eq": 0.53,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -4.8,
+  "dur": 1.2,
+  "peak_db": -3.4,
+  "rms_db": -18.27,
+  "lufs_m": -15.16,
+  "tail_ratio": 0.107,
+  "flatness": 0.201,
+  "centroid_hz": 1586,
+  "voiced": 0.09,
+  "id": "gh_guard_stance",
+  "out": "Moves/gh_guard_stance.ogg",
+  "sound": "Guard Stance: a greatsword planted into stone with a heavy metallic clang and ring, and a crackle of embers",
+  "secs": 0.2
+}

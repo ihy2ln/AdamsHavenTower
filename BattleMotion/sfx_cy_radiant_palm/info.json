@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 0.81,
+  "low_share": 0.8,
+  "eq_cut_db": 6.7,
+  "low_share_eq": 0.5,
+  "start_s": 0.224,
+  "capped": true,
+  "gain_db": -5.5,
+  "dur": 0.897,
+  "peak_db": -2.81,
+  "rms_db": -17.54,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.037,
+  "flatness": 0.187,
+  "centroid_hz": 1461,
+  "voiced": 0.17,
+  "id": "cy_radiant_palm",
+  "out": "Moves/cy_radiant_palm.ogg",
+  "sound": "Radiant Palm: a quick palm strike thump with a bright shimmering burst of light",
+  "secs": 0.1
+}

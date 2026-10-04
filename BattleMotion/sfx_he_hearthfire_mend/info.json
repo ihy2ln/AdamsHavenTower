@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.86,
+  "low_share": 0.74,
+  "eq_cut_db": 5.4,
+  "low_share_eq": 0.4,
+  "start_s": 0.01,
+  "capped": true,
+  "gain_db": -4.4,
+  "dur": 1.3,
+  "peak_db": -3.42,
+  "rms_db": -19.85,
+  "lufs_m": -15.1,
+  "tail_ratio": 0.414,
+  "flatness": 0.317,
+  "centroid_hz": 4397,
+  "voiced": 0.0,
+  "id": "he_hearthfire_mend",
+  "out": "Moves/he_hearthfire_mend.ogg",
+  "sound": "Hearth Mend: a soft warm whoosh of hearth fire with a gentle sparkling healing shimmer",
+  "secs": 0.2
+}

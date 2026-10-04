@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -5.74,
+  "low_share": 0.95,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.77,
+  "start_s": 0.115,
+  "capped": true,
+  "gain_db": 3.1,
+  "dur": 0.823,
+  "peak_db": -1.93,
+  "rms_db": -15.21,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.159,
+  "flatness": 0.108,
+  "centroid_hz": 833,
+  "voiced": 0.0,
+  "id": "sfx_enemy_slam",
+  "out": "Sfx/enemy_slam.ogg",
+  "sound": "a huge monster body slam, a heavy booming thud with the ground shaking",
+  "secs": 0.2
+}

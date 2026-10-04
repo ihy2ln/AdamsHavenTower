@@ -1,0 +1,10 @@
+{
+  "folder": "synth",
+  "cap": 1.8,
+  "look": "light",
+  "sound": "a single clear magical chime: two soft bell tones ringing out",
+  "music": true,
+  "frames": 73,
+  "prompt": "Abstract anime game VFX: a burst of golden holy light and sparkles flashes in the center of a pure black frame at the very first instant, in sync with the sound, then fades back to pure black. Locked camera, no character, no text.\n\nAudio: a single clear magical chime: two soft bell tones ringing out. A short game music stinger that starts immediately at 0.0 seconds and ends cleanly, followed by silence. No speech, no voice, no singing, no choir, no ambience bed, no background noise. The sound lasts about 1.8 seconds.",
+  "seed": 16230
+}

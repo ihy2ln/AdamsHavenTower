@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -1.86,
+  "low_share": 0.92,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.63,
+  "start_s": 0.359,
+  "capped": true,
+  "gain_db": 0.4,
+  "dur": 2.8,
+  "peak_db": -0.89,
+  "rms_db": -16.7,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.22,
+  "flatness": 0.207,
+  "centroid_hz": 1225,
+  "voiced": 0.0,
+  "id": "ult_kaela_bastion",
+  "out": "Moves/ult_kaela_bastion.ogg",
+  "sound": "Winter Bastion: huge ice walls rising with deep crunching creaks, then a resonant crystalline dome hum and glittering frost",
+  "secs": 0.3
+}

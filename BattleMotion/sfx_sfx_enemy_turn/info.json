@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.32,
+  "low_share": 0.91,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.7,
+  "start_s": 0.155,
+  "capped": true,
+  "gain_db": -1.8,
+  "dur": 0.897,
+  "peak_db": -3.45,
+  "rms_db": -16.43,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.076,
+  "flatness": 0.066,
+  "centroid_hz": 540,
+  "voiced": 0.0,
+  "id": "sfx_enemy_turn",
+  "out": "Sfx/enemy_turn.ogg",
+  "sound": "a low ominous whoosh with a deep dark pulse, signalling danger",
+  "secs": 0.1
+}

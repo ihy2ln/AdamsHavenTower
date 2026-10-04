@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 1.12,
+  "low_share": 0.83,
+  "eq_cut_db": 7.2,
+  "low_share_eq": 0.48,
+  "start_s": 0.224,
+  "capped": true,
+  "gain_db": -6.2,
+  "dur": 1.2,
+  "peak_db": -4.66,
+  "rms_db": -18.5,
+  "lufs_m": -15.13,
+  "tail_ratio": 0.053,
+  "flatness": 0.409,
+  "centroid_hz": 2625,
+  "voiced": 0.0,
+  "id": "mv_rime_sweep",
+  "out": "Moves/mv_rime_sweep.ogg",
+  "sound": "Rime Sweep: a wide sweeping whoosh of freezing wind with a crackle of frost spreading and a scrape of ice",
+  "secs": 0.2
+}

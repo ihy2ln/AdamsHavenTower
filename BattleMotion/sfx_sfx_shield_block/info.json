@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -1.22,
+  "low_share": 0.88,
+  "eq_cut_db": 8.4,
+  "low_share_eq": 0.61,
+  "start_s": 0.135,
+  "capped": true,
+  "gain_db": -3.1,
+  "dur": 0.697,
+  "peak_db": -2.79,
+  "rms_db": -16.1,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.115,
+  "flatness": 0.108,
+  "centroid_hz": 940,
+  "voiced": 0.0,
+  "id": "sfx_shield_block",
+  "out": "Sfx/shield_block.ogg",
+  "sound": "a hit blocked by a magical shield, a solid glassy thunk with a short metallic ring",
+  "secs": 0.1
+}

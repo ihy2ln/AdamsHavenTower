@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.05,
+  "low_share": 0.59,
+  "eq_cut_db": 2.0,
+  "low_share_eq": 0.5,
+  "start_s": 0.244,
+  "capped": true,
+  "gain_db": -6.4,
+  "dur": 1.2,
+  "peak_db": -3.52,
+  "rms_db": -18.23,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.252,
+  "flatness": 0.191,
+  "centroid_hz": 1552,
+  "voiced": 0.0,
+  "id": "sfx_atlas_travel",
+  "out": "Sfx/atlas_travel.ogg",
+  "sound": "quick travel across a map, a brisk whoosh with light rustling footsteps on a path",
+  "secs": 0.2
+}

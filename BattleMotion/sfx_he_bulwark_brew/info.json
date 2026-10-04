@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -3.25,
+  "low_share": 0.93,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.65,
+  "start_s": 0.249,
+  "capped": true,
+  "gain_db": -0.1,
+  "dur": 1.6,
+  "peak_db": -1.14,
+  "rms_db": -16.61,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.094,
+  "flatness": 0.177,
+  "centroid_hz": 1148,
+  "voiced": 0.0,
+  "id": "he_bulwark_brew",
+  "out": "Moves/he_bulwark_brew.ogg",
+  "sound": "Bulwark Brew: a heavy war hammer strikes the ground with a deep thud, then thick ice walls rise with a crunching creak and a cold shimmer",
+  "secs": 0.2
+}

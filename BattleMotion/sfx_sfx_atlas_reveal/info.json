@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.23,
+  "low_share": 0.67,
+  "eq_cut_db": 3.8,
+  "low_share_eq": 0.47,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -5.1,
+  "dur": 1.2,
+  "peak_db": -4.78,
+  "rms_db": -18.41,
+  "lufs_m": -15.03,
+  "tail_ratio": 0.103,
+  "flatness": 0.144,
+  "centroid_hz": 1830,
+  "voiced": 0.12,
+  "id": "sfx_atlas_reveal",
+  "out": "Sfx/atlas_reveal.ogg",
+  "sound": "an old parchment map unrolling with a papery rustle and a soft magical sparkle as a new region is revealed",
+  "secs": 0.1
+}

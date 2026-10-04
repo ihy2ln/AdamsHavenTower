@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -0.85,
+  "low_share": 0.82,
+  "eq_cut_db": 7.1,
+  "low_share_eq": 0.57,
+  "start_s": 0.115,
+  "capped": true,
+  "gain_db": -3.7,
+  "dur": 3.0,
+  "peak_db": -3.14,
+  "rms_db": -18.46,
+  "lufs_m": -15.15,
+  "tail_ratio": 0.058,
+  "flatness": 0.158,
+  "centroid_hz": 931,
+  "voiced": 0.0,
+  "id": "ult_elara",
+  "out": "Moves/ult_elara.ogg",
+  "sound": "Stormfall Barrage: rolling thunder and many lightning bolts striking one after another with sharp electric crackles",
+  "secs": 0.2
+}

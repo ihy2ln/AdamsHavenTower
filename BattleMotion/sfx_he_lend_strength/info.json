@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.62,
+  "low_share": 0.82,
+  "eq_cut_db": 6.9,
+  "low_share_eq": 0.51,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -4.3,
+  "dur": 1.1,
+  "peak_db": -2.4,
+  "rms_db": -17.31,
+  "lufs_m": -15.05,
+  "tail_ratio": 0.242,
+  "flatness": 0.152,
+  "centroid_hz": 1388,
+  "voiced": 0.0,
+  "id": "he_lend_strength",
+  "out": "Moves/he_lend_strength.ogg",
+  "sound": "Lend Strength: a rising warm magical whoosh ending in a soft pulse of energy",
+  "secs": 0.2
+}

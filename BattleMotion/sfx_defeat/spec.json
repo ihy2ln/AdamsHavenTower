@@ -1,0 +1,10 @@
+{
+  "folder": "synth",
+  "cap": 3.0,
+  "look": "dark",
+  "sound": "a short sad stinger for losing a battle: a slow descending minor phrase on low strings and piano fading out",
+  "music": true,
+  "frames": 90,
+  "prompt": "Abstract anime game VFX: a burst of dark purple smoke and violet sparks flashes in the center of a pure black frame at the very first instant, in sync with the sound, then fades back to pure black. Locked camera, no character, no text.\n\nAudio: a short sad stinger for losing a battle: a slow descending minor phrase on low strings and piano fading out. A short game music stinger that starts immediately at 0.0 seconds and ends cleanly, followed by silence. No speech, no voice, no singing, no choir, no ambience bed, no background noise. The sound lasts about 3 seconds.",
+  "seed": 38893
+}

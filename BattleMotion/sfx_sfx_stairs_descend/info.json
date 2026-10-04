@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.69,
+  "low_share": 0.87,
+  "eq_cut_db": 8.2,
+  "low_share_eq": 0.6,
+  "start_s": 0.259,
+  "capped": true,
+  "gain_db": -2.6,
+  "dur": 1.2,
+  "peak_db": -0.97,
+  "rms_db": -17.81,
+  "lufs_m": -16.13,
+  "tail_ratio": 0.071,
+  "flatness": 0.023,
+  "centroid_hz": 507,
+  "voiced": 0.0,
+  "id": "sfx_stairs_descend",
+  "out": "Sfx/stairs_descend.ogg",
+  "sound": "footsteps quickly descending stone stairs, echoing slightly",
+  "secs": 24.3
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 1.15,
+  "low_share": 0.86,
+  "eq_cut_db": 7.9,
+  "low_share_eq": 0.68,
+  "start_s": 0.319,
+  "capped": true,
+  "gain_db": -4.3,
+  "dur": 1.5,
+  "peak_db": -3.32,
+  "rms_db": -18.79,
+  "lufs_m": -15.01,
+  "tail_ratio": 0.007,
+  "flatness": 0.01,
+  "centroid_hz": 279,
+  "voiced": 0.03,
+  "id": "aw_helda",
+  "out": "Moves/aw_helda.ogg",
+  "sound": "Hearth Reprieve: a warm fire crackle swelling with a soft healing sparkle",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -1.1,
+  "low_share": 0.9,
+  "eq_cut_db": 8.8,
+  "low_share_eq": 0.62,
+  "start_s": 0.18,
+  "capped": true,
+  "gain_db": -2.6,
+  "dur": 1.2,
+  "peak_db": -2.75,
+  "rms_db": -17.34,
+  "lufs_m": -15.12,
+  "tail_ratio": 0.091,
+  "flatness": 0.132,
+  "centroid_hz": 1164,
+  "voiced": 0.0,
+  "id": "sm_wither",
+  "out": "Moves/sm_wither.ogg",
+  "sound": "Wither: a dark descending magical hiss with a crumbling, decaying crackle",
+  "secs": 0.1
+}

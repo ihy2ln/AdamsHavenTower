@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -2.0,
+  "low_share": 0.91,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.73,
+  "start_s": 0.244,
+  "capped": true,
+  "gain_db": -1.7,
+  "dur": 3.0,
+  "peak_db": -3.45,
+  "rms_db": -17.94,
+  "lufs_m": -15.01,
+  "tail_ratio": 0.011,
+  "flatness": 0.022,
+  "centroid_hz": 339,
+  "voiced": 0.0,
+  "id": "ult_daisy",
+  "out": "Moves/ult_daisy.ogg",
+  "sound": "Island Conflagration: a huge whooshing firestorm sweeping across, roaring flames, crackling embers and an explosion",
+  "secs": 0.2
+}

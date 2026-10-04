@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": -2.68,
+  "low_share": 0.86,
+  "eq_cut_db": 8.0,
+  "low_share_eq": 0.6,
+  "start_s": 0.249,
+  "capped": true,
+  "gain_db": -2.4,
+  "dur": 2.8,
+  "peak_db": -2.72,
+  "rms_db": -17.84,
+  "lufs_m": -15.02,
+  "tail_ratio": 0.468,
+  "flatness": 0.162,
+  "centroid_hz": 1087,
+  "voiced": 0.01,
+  "id": "ult_ghislaine",
+  "out": "Moves/ult_ghislaine.ogg",
+  "sound": "White Tiger Rend: a rising roar of flame along a greatsword, a giant tearing slash and an explosive fiery impact",
+  "secs": 0.2
+}

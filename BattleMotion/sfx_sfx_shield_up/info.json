@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 1.25,
+  "low_share": 0.67,
+  "eq_cut_db": 3.8,
+  "low_share_eq": 0.47,
+  "start_s": 0.02,
+  "capped": true,
+  "gain_db": -5.4,
+  "dur": 0.897,
+  "peak_db": -3.18,
+  "rms_db": -17.85,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.306,
+  "flatness": 0.131,
+  "centroid_hz": 1838,
+  "voiced": 0.06,
+  "id": "sfx_shield_up",
+  "out": "Sfx/shield_up.ogg",
+  "sound": "a magical barrier shield powering up, a quick rising whoosh into a glassy resonant hum",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -4.98,
+  "low_share": 0.91,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.71,
+  "start_s": 0.13,
+  "capped": true,
+  "gain_db": 1.2,
+  "dur": 0.697,
+  "peak_db": -2.09,
+  "rms_db": -15.16,
+  "lufs_m": -15.02,
+  "tail_ratio": 0.184,
+  "flatness": 0.018,
+  "centroid_hz": 358,
+  "voiced": 0.0,
+  "id": "sfx_hit_fire",
+  "out": "Sfx/hit_fire.ogg",
+  "sound": "a fire spell hitting its target, a punchy fiery whump with crackling embers",
+  "secs": 0.1
+}

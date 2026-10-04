@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 1.28,
+  "low_share": 0.8,
+  "eq_cut_db": 6.6,
+  "low_share_eq": 0.48,
+  "start_s": 0.234,
+  "capped": true,
+  "gain_db": -6.0,
+  "dur": 0.997,
+  "peak_db": -3.61,
+  "rms_db": -18.28,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.051,
+  "flatness": 0.237,
+  "centroid_hz": 2051,
+  "voiced": 0.0,
+  "id": "sm_second",
+  "out": "Moves/sm_second.ogg",
+  "sound": "Second Wind: a fresh rushing gust of wind with a light airy sparkle",
+  "secs": 0.1
+}

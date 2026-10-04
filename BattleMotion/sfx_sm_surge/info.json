@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -1.03,
+  "low_share": 0.76,
+  "eq_cut_db": 5.8,
+  "low_share_eq": 0.47,
+  "start_s": 0.01,
+  "capped": true,
+  "gain_db": -1.1,
+  "dur": 0.997,
+  "peak_db": -3.28,
+  "rms_db": -17.06,
+  "lufs_m": -15.08,
+  "tail_ratio": 0.263,
+  "flatness": 0.191,
+  "centroid_hz": 1763,
+  "voiced": 0.0,
+  "id": "sm_surge",
+  "out": "Moves/sm_surge.ogg",
+  "sound": "Surge: a quick energy charge-up whoosh ending in a bright magical pulse",
+  "secs": 0.1
+}

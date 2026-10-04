@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -3.05,
+  "low_share": 0.92,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.69,
+  "start_s": 0.165,
+  "capped": true,
+  "gain_db": 0.2,
+  "dur": 1.5,
+  "peak_db": -3.86,
+  "rms_db": -16.16,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.156,
+  "flatness": 0.058,
+  "centroid_hz": 618,
+  "voiced": 0.0,
+  "id": "sfx_decree",
+  "out": "Sfx/decree.ogg",
+  "sound": "a commanding magical decree, a deep resonant gong-like boom with a wave of shimmering energy",
+  "secs": 0.2
+}

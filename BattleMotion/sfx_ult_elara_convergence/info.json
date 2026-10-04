@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": 0.14,
+  "low_share": 0.74,
+  "eq_cut_db": 5.3,
+  "low_share_eq": 0.54,
+  "start_s": 0.214,
+  "capped": true,
+  "gain_db": -6.0,
+  "dur": 2.8,
+  "peak_db": -3.52,
+  "rms_db": -19.01,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.008,
+  "flatness": 0.113,
+  "centroid_hz": 788,
+  "voiced": 0.0,
+  "id": "ult_elara_convergence",
+  "out": "Moves/ult_elara_convergence.ogg",
+  "sound": "Lightning Convergence: a rising high electric charge whine, then a colossal lightning beam blast with a huge thunder crack",
+  "secs": 0.2
+}

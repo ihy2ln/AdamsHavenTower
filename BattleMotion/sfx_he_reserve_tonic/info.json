@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 3.73,
+  "low_share": 0.47,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.47,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -5.8,
+  "dur": 0.997,
+  "peak_db": -1.4,
+  "rms_db": -18.73,
+  "lufs_m": -15.04,
+  "tail_ratio": 0.097,
+  "flatness": 0.208,
+  "centroid_hz": 2794,
+  "voiced": 0.27,
+  "id": "he_reserve_tonic",
+  "out": "Moves/he_reserve_tonic.ogg",
+  "sound": "Reserve Tonic: a glass bottle cork pop and a short liquid slosh with a small magic sparkle",
+  "secs": 0.1
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.62,
+  "low_share": 0.93,
+  "eq_cut_db": 9.0,
+  "low_share_eq": 0.72,
+  "start_s": 0.175,
+  "capped": true,
+  "gain_db": -0.5,
+  "dur": 0.697,
+  "peak_db": -4.25,
+  "rms_db": -15.35,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.195,
+  "flatness": 0.078,
+  "centroid_hz": 731,
+  "voiced": 0.0,
+  "id": "sfx_hit_dark",
+  "out": "Sfx/hit_dark.ogg",
+  "sound": "a dark magic spell hitting its target, a deep warped thump with a hissing shadowy crackle",
+  "secs": 0.1
+}

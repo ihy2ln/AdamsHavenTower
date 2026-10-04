@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 2.0,
+  "low_share": 0.55,
+  "eq_cut_db": 1.1,
+  "low_share_eq": 0.5,
+  "start_s": 0.05,
+  "capped": true,
+  "gain_db": -7.3,
+  "dur": 0.997,
+  "peak_db": -4.25,
+  "rms_db": -16.82,
+  "lufs_m": -15.01,
+  "tail_ratio": 0.06,
+  "flatness": 0.046,
+  "centroid_hz": 901,
+  "voiced": 0.0,
+  "id": "heal",
+  "out": "heal.ogg",
+  "sound": "healing, a soft rising sparkling shimmer of tiny crystal tinkles",
+  "secs": 0.2
+}

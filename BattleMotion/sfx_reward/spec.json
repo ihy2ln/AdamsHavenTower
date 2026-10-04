@@ -1,0 +1,10 @@
+{
+  "folder": "synth",
+  "cap": 2.0,
+  "look": "gold",
+  "sound": "a short happy reward jingle: quick ascending glockenspiel notes and sparkling chimes",
+  "music": true,
+  "frames": 73,
+  "prompt": "Abstract anime game VFX: a burst of golden coins and sparkles flashes in the center of a pure black frame at the very first instant, in sync with the sound, then fades back to pure black. Locked camera, no character, no text.\n\nAudio: a short happy reward jingle: quick ascending glockenspiel notes and sparkling chimes. A short game music stinger that starts immediately at 0.0 seconds and ends cleanly, followed by silence. No speech, no voice, no singing, no choir, no ambience bed, no background noise. The sound lasts about 2 seconds.",
+  "seed": 76139
+}

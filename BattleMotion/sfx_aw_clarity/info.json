@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.68,
+  "low_share": 0.67,
+  "eq_cut_db": 3.7,
+  "low_share_eq": 0.54,
+  "start_s": 0.249,
+  "capped": true,
+  "gain_db": -5.3,
+  "dur": 1.5,
+  "peak_db": -3.46,
+  "rms_db": -17.09,
+  "lufs_m": -14.99,
+  "tail_ratio": 0.077,
+  "flatness": 0.032,
+  "centroid_hz": 928,
+  "voiced": 0.01,
+  "id": "aw_clarity",
+  "out": "Moves/aw_clarity.ogg",
+  "sound": "Recovery: a soft rising shimmer of holy light with a gentle crystal tinkle",
+  "secs": 0.2
+}

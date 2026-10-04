@@ -1,0 +1,10 @@
+{
+  "folder": "sfx",
+  "cap": 0.9,
+  "look": "dark",
+  "sound": "a low ominous whoosh with a deep dark pulse, signalling danger",
+  "music": false,
+  "frames": 39,
+  "prompt": "Abstract anime game VFX: a burst of dark purple smoke and violet sparks flashes in the center of a pure black frame at the very first instant, in sync with the sound, then fades back to pure black. Locked camera, no character, no text.\n\nAudio: a low ominous whoosh with a deep dark pulse, signalling danger. One single isolated game sound effect that starts immediately at 0.0 seconds and is followed by silence. No music, no melody, no speech, no voice, no singing, no vocal sounds, no breathing, no ambience bed, no background noise, no room tone. Clean, crisp, punchy, close-miked studio foley for a fantasy anime card battle game. The sound lasts about 0.9 seconds.",
+  "seed": 15770
+}

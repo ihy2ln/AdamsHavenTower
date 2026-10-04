@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 1.35,
+  "low_share": 0.43,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.43,
+  "start_s": 0.015,
+  "capped": true,
+  "gain_db": -2.3,
+  "dur": 1.2,
+  "peak_db": -1.49,
+  "rms_db": -17.86,
+  "lufs_m": -15.0,
+  "tail_ratio": 0.251,
+  "flatness": 0.049,
+  "centroid_hz": 1186,
+  "voiced": 0.45,
+  "id": "cy_rejuvenating_draught",
+  "out": "Moves/cy_rejuvenating_draught.ogg",
+  "sound": "Draught: a bubbly potion fizz and a soft warm healing sparkle",
+  "secs": 0.2
+}

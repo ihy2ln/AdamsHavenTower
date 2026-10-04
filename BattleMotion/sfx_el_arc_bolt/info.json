@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 0.04,
+  "low_share": 0.77,
+  "eq_cut_db": 5.9,
+  "low_share_eq": 0.45,
+  "start_s": 0.16,
+  "capped": true,
+  "gain_db": -5.7,
+  "dur": 0.823,
+  "peak_db": -4.39,
+  "rms_db": -17.46,
+  "lufs_m": -15.23,
+  "tail_ratio": 0.123,
+  "flatness": 0.41,
+  "centroid_hz": 2326,
+  "voiced": 0.0,
+  "id": "el_arc_bolt",
+  "out": "Moves/el_arc_bolt.ogg",
+  "sound": "Arc Bolt: a quick crackling electric zap and a sharp snap of a small lightning bolt",
+  "secs": 0.1
+}

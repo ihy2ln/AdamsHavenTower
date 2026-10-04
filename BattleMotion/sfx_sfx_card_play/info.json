@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": 3.14,
+  "low_share": 0.31,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.31,
+  "start_s": 0.17,
+  "capped": true,
+  "gain_db": -1.9,
+  "dur": 0.597,
+  "peak_db": -0.8,
+  "rms_db": -17.56,
+  "lufs_m": -15.2,
+  "tail_ratio": 0.47,
+  "flatness": 0.065,
+  "centroid_hz": 1960,
+  "voiced": 0.46,
+  "id": "sfx_card_play",
+  "out": "Sfx/card_play.ogg",
+  "sound": "a playing card slapped down onto a wooden table with a crisp snap and a tiny magic sparkle",
+  "secs": 0.1
+}

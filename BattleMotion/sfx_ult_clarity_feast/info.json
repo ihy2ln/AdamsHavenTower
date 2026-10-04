@@ -1,0 +1,22 @@
+{
+  "raw_dur": 3.75,
+  "raw_peak_db": 2.08,
+  "low_share": 0.72,
+  "eq_cut_db": 4.8,
+  "low_share_eq": 0.53,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -4.7,
+  "dur": 2.6,
+  "peak_db": -3.73,
+  "rms_db": -18.87,
+  "lufs_m": -14.97,
+  "tail_ratio": 0.009,
+  "flatness": 0.056,
+  "centroid_hz": 981,
+  "voiced": 0.02,
+  "id": "ult_clarity_feast",
+  "out": "Moves/ult_clarity_feast.ogg",
+  "sound": "Luminous Feast: a radiant ascending shimmer of holy light swelling warmly with sparkling crystal tinkles",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.01,
+  "low_share": 0.77,
+  "eq_cut_db": 5.9,
+  "low_share_eq": 0.5,
+  "start_s": 0.274,
+  "capped": true,
+  "gain_db": -6.8,
+  "dur": 1.1,
+  "peak_db": -3.75,
+  "rms_db": -18.45,
+  "lufs_m": -15.11,
+  "tail_ratio": 0.018,
+  "flatness": 0.068,
+  "centroid_hz": 1148,
+  "voiced": 0.0,
+  "id": "sm_banner",
+  "out": "Moves/sm_banner.ogg",
+  "sound": "Banner: a heavy cloth banner unfurling with a strong flapping snap and a glowing magical rise",
+  "secs": 0.1
+}

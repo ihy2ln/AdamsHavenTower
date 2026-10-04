@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.93,
+  "low_share": 0.84,
+  "eq_cut_db": 7.4,
+  "low_share_eq": 0.5,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.2,
+  "dur": 1.4,
+  "peak_db": -4.57,
+  "rms_db": -17.91,
+  "lufs_m": -15.06,
+  "tail_ratio": 0.191,
+  "flatness": 0.18,
+  "centroid_hz": 1718,
+  "voiced": 0.0,
+  "id": "cy_flare",
+  "out": "Moves/cy_flare.ogg",
+  "sound": "Flare: a bright flash-bang of holy light, a whooshing radiant burst with a sparkly shimmer",
+  "secs": 0.2
+}

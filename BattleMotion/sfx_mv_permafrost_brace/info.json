@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.51,
+  "low_share": 0.81,
+  "eq_cut_db": 6.9,
+  "low_share_eq": 0.45,
+  "start_s": 0.239,
+  "capped": true,
+  "gain_db": -2.5,
+  "dur": 1.5,
+  "peak_db": -2.86,
+  "rms_db": -18.22,
+  "lufs_m": -15.19,
+  "tail_ratio": 0.055,
+  "flatness": 0.487,
+  "centroid_hz": 2932,
+  "voiced": 0.03,
+  "id": "mv_permafrost_brace",
+  "out": "Moves/mv_permafrost_brace.ogg",
+  "sound": "Perma Brace: deep cracking ice spikes growing out of stone with a low crunch, then a soft sparkling healing shimmer",
+  "secs": 0.2
+}

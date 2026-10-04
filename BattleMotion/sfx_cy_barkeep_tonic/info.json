@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 2.86,
+  "low_share": 0.43,
+  "eq_cut_db": 0.0,
+  "low_share_eq": 0.43,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.4,
+  "dur": 1.1,
+  "peak_db": -0.95,
+  "rms_db": -19.72,
+  "lufs_m": -15.25,
+  "tail_ratio": 0.277,
+  "flatness": 0.245,
+  "centroid_hz": 2994,
+  "voiced": 0.12,
+  "id": "cy_barkeep_tonic",
+  "out": "Moves/cy_barkeep_tonic.ogg",
+  "sound": "Tonic: a glass bottle cork pop, a short liquid pour and a soft healing sparkle",
+  "secs": 0.1
+}

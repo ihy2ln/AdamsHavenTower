@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": 0.87,
+  "low_share": 0.77,
+  "eq_cut_db": 5.9,
+  "low_share_eq": 0.45,
+  "start_s": 0.16,
+  "capped": false,
+  "gain_db": -6.3,
+  "dur": 1.581,
+  "peak_db": -3.4,
+  "rms_db": -19.29,
+  "lufs_m": -15.22,
+  "tail_ratio": 0.014,
+  "flatness": 0.421,
+  "centroid_hz": 2214,
+  "voiced": 0.0,
+  "id": "el_artillery_barrage",
+  "out": "Moves/el_artillery_barrage.ogg",
+  "sound": "Barrage: many crackling lightning bolts striking in rapid succession with sharp thunder cracks",
+  "secs": 0.2
+}

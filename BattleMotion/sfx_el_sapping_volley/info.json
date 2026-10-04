@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -0.78,
+  "low_share": 0.81,
+  "eq_cut_db": 6.9,
+  "low_share_eq": 0.52,
+  "start_s": 0.005,
+  "capped": true,
+  "gain_db": -3.8,
+  "dur": 1.2,
+  "peak_db": -2.41,
+  "rms_db": -18.83,
+  "lufs_m": -15.17,
+  "tail_ratio": 0.065,
+  "flatness": 0.234,
+  "centroid_hz": 1540,
+  "voiced": 0.0,
+  "id": "el_sapping_volley",
+  "out": "Moves/el_sapping_volley.ogg",
+  "sound": "Sap Volley: a rapid volley of three small electric zaps and a draining downward electric buzz",
+  "secs": 0.2
+}

@@ -1,0 +1,22 @@
+{
+  "raw_dur": 2.325,
+  "raw_peak_db": -1.3,
+  "low_share": 0.88,
+  "eq_cut_db": 8.4,
+  "low_share_eq": 0.65,
+  "start_s": 0.269,
+  "capped": true,
+  "gain_db": -3.4,
+  "dur": 1.4,
+  "peak_db": -3.0,
+  "rms_db": -17.36,
+  "lufs_m": -15.09,
+  "tail_ratio": 0.126,
+  "flatness": 0.038,
+  "centroid_hz": 826,
+  "voiced": 0.0,
+  "id": "da_spearflame_rush",
+  "out": "Moves/da_spearflame_rush.ogg",
+  "sound": "Flame Rush: a rapid charging dash whoosh into a fiery spear impact explosion",
+  "secs": 0.2
+}

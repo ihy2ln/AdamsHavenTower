@@ -1,0 +1,22 @@
+{
+  "raw_dur": 1.625,
+  "raw_peak_db": -2.48,
+  "low_share": 0.78,
+  "eq_cut_db": 6.2,
+  "low_share_eq": 0.49,
+  "start_s": 0.105,
+  "capped": true,
+  "gain_db": -3.4,
+  "dur": 0.797,
+  "peak_db": -4.32,
+  "rms_db": -17.67,
+  "lufs_m": -15.14,
+  "tail_ratio": 0.135,
+  "flatness": 0.144,
+  "centroid_hz": 1635,
+  "voiced": 0.0,
+  "id": "sfx_enemy_claw",
+  "out": "Sfx/enemy_claw.ogg",
+  "sound": "a monster claw swipe, a fast tearing whoosh and three raking scratches",
+  "secs": 0.1
+}
