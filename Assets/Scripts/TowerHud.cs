@@ -1452,8 +1452,9 @@ public sealed partial class TowerHud : MonoBehaviour
             tower.Rules.RushChance(room.uid) > 0;
         LabelOf(rush).text = string.IsNullOrEmpty(def.produces) ? "RUSH" :
             "RUSH " + Mathf.RoundToInt(tower.Rules.RushChance(room.uid) * 100) + "%";
-        upgrade.interactable = room.level < tower.Rules.MaxLevel(room) && room.type != "heart" && room.type != "gate";
-        LabelOf(upgrade).text = room.type == "heart" || room.type == "gate" ? "UPGRADE" :
+        // The Gate ranks F-SSR like any building (TT 10.5.0b); only the Heart ranks up at its own hub.
+        upgrade.interactable = room.level < tower.Rules.MaxLevel(room) && room.type != "heart";
+        LabelOf(upgrade).text = room.type == "heart" ? "UPGRADE" :
             room.level >= tower.Rules.MaxLevel(room) ? "RANK SSR" :
             room.level >= tower.Rules.RankCap() ? "HEART " + TowerTiers.Tier(room.level + 1) + "+" :
             "TO " + TowerTiers.Tier(room.level + 1) + " " + tower.Rules.UpgradeGoldCost(room) + "g";

@@ -120,7 +120,7 @@ namespace AdamsHaven.Tower
             foreach (var room in State.rooms)
             {
                 var def = TowerCatalog.Get(room.type);
-                if (def == null || string.IsNullOrEmpty(def.produces) || room.ready) continue;
+                if (def == null || string.IsNullOrEmpty(Product(room)) || room.ready) continue;
                 room.progress = 1; room.ready = true; count++;
             }
             Note("DEV: " + count + " rooms ready to collect.");

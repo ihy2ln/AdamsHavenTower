@@ -404,9 +404,9 @@ namespace AdamsHaven.Tower
             foreach (var room in State.rooms)
             {
                 var def = TowerCatalog.Get(room.type);
-                if (def == null || def.produces != resource || State.incidents.Exists(i => i.roomUid == room.uid))
+                if (def == null || !Makes(room, resource) || State.incidents.Exists(i => i.roomUid == room.uid))
                     continue;
-                perSecond += ProductionRate(room) / 90f * CollectAmount(room);
+                perSecond += ProductionRate(room) / 90f * YieldOf(room, resource);
             }
             return perSecond * 60f;
         }
@@ -458,7 +458,7 @@ namespace AdamsHaven.Tower
             if (worst != null)
             {
                 string label = worst.ToUpperInvariant();
-                bool built = State.rooms.Exists(r => TowerCatalog.Get(r.type).produces == worst);
+                bool built = State.rooms.Exists(r => Makes(r, worst));
                 string when = worstMinutes < 1f ? "is nearly gone" : "lasts about " + Mathf.CeilToInt(worstMinutes) + " min";
                 if (!built)
                 {

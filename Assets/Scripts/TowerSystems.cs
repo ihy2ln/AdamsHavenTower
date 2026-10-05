@@ -38,7 +38,7 @@ namespace AdamsHaven.Tower
                 room.condition < 20 || State.incidents.Exists(i => i.roomUid == room.uid) ||
                 !IsPowered(room)) return 0;
             var def = TowerCatalog.Get(room.type);
-            if (def == null || string.IsNullOrEmpty(def.produces) && def.kind != "train") return 0;
+            if (def == null || string.IsNullOrEmpty(Product(room)) && def.kind != "train") return 0;
             if (resident.currentRoom == room.uid && resident.currentTask == "production") return 0;
             float need = Mathf.Clamp01(Mathf.Min(resident.hunger, resident.thirst, resident.rest) / 50f);
             return (0.35f + MatchScore(resident, room) * 0.19f) *
@@ -89,7 +89,7 @@ namespace AdamsHaven.Tower
         {
             var room = Room(roomUid);
             var def = room == null ? null : TowerCatalog.Get(room.type);
-            if (def == null || string.IsNullOrEmpty(def.produces) || room.ready) return "That room cannot be rushed.";
+            if (def == null || string.IsNullOrEmpty(Product(room)) || room.ready) return "That room cannot be rushed.";
             if (RushChance(roomUid) <= 0) return "Assign an adult worker first.";
             if (room.rushFatigue >= 2.5f) return "Let this room recover before rushing again.";
             bool success = Random01() < RushChance(roomUid);

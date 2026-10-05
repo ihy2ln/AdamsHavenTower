@@ -245,3 +245,14 @@ management on top. Design: `TOWER_MODE_GDD.md` 6.3, 8.4, 9.3, 9.6, 10.3, 17, 18.
 - Play check: Tower slot 1 -> DUNGEON MODE -> summit slot -> a party fled after spike, snare (ransom), lair and vault ->
   TOWER MODE back to slot 1 day 212, Tower save folder untouched.
 - Tests: `LairModeTests` 19 new; `TowerManagementTests` 73 + `TowerSimulationTests` 119 and Expedition/Battle/Bestiary 79 green.
+
+## TT 10.5.0 room builder R1 (2026-10-05): furniture makes the rank (rules only)
+- Owner: rooms are furnished by the player, Sims-style; furniture and amenities set the rank; walls change per rank;
+  stylized 3D rooms walked front and back; all residents 3D; any item in any room, matching items do better (GDD 22).
+- `TowerFurnishing.cs`: 24 items (beds, cradle, wash tub, a station per producing type, quest board, loading cart,
+  grain bin, stock rack, crate, table, rug, plant, lamp, window, shelf, painting). Slot grid 4 columns per bay on wall,
+  back and front rows; items take 1-2 columns. Rank = coverage (3 weighted columns per bay at tier r or better).
+- Every room built or loaded with the builder on gets a preset at its rank that keeps today's rank, places (+0-5),
+  housing, stock cap and collect exactly (`PresetsKeepTodaysRankPlacesStorageAndOutput` checks every type x rank).
+- Off in Play (`TowerRules.RoomBuilder`) until the R3 furnish UI; `RoomBuilderTests` opt in. 233 Tower tests green.
+

@@ -28,6 +28,8 @@ namespace AdamsHaven.Tower
         public float repairProgress;
         public float rushFatigue;
         public bool flip;   // barn only: the anchor bay is on the left, so the barn grows right
+        public bool furnished;   // room builder (GDD 22): furniture placed or preset given; never re-preset on load
+        public List<TowerFurniture> furniture = new List<TowerFurniture>();
     }
 
     [Serializable] public sealed class TowerResident
@@ -360,6 +362,8 @@ namespace AdamsHaven.Tower
             State.heartRank = Mathf.Clamp(State.heartRank, 1, TowerTiers.MaxRank);
             foreach (var room in State.rooms)
             {
+                if (room.furniture == null) room.furniture = new List<TowerFurniture>();
+                if (Furnished(room)) continue;   // furnished rooms choose their own width (GDD 22.2)
                 // Older saves placed rooms at their full catalogue width; a room is now only as wide as
                 // its rank's bays. The rightmost bay stays put and the extra cells on its left are freed.
                 int bays = TowerTiers.Bays(room.type, room.level);
@@ -415,6 +419,7 @@ namespace AdamsHaven.Tower
                 x = x, width = TowerTiers.Bays(type, level), level = level };
             // East of the Heart a room grows its new bays outward (to the right), away from the shaft.
             if (x > CoreX && type != "gate" && type != "heart") room.flip = true;
+            if (Furnished(room)) FurnishPreset(room, level);   // a new room comes with its starter furniture
             State.rooms.Add(room);
             roomIndex = null;
             TouchLayout();
@@ -731,7 +736,8 @@ namespace AdamsHaven.Tower
         // Two places per bay, plus one more for every rank above F (GDD 5.3; counts are a first pass).
         public int Capacity(TowerRoom room)
         {
-            int places = room.width * 2 + room.level - 1;
+            int places = Furnished(room) ? (HousesByDefault(room) ? HomePlaces(room) : JobPlaces(room)) :
+                room.width * 2 + room.level - 1;
             var def = TowerCatalog.Get(room.type);
             if (def != null && def.kind == "living" && Researched("SET-3")) places = Mathf.CeilToInt(places * 1.1f);   // Better beds
             if (room.type == "gate" && Researched("DEF-3")) places++;                                                    // third guard
@@ -747,7 +753,10 @@ namespace AdamsHaven.Tower
         {
             int total = 0;
             foreach (var room in State.rooms)
-                if (TowerCatalog.Get(room.type).kind == "living") total += Capacity(room);
+            {
+                if (Furnished(room)) total += BedsIn(room);   // beds count in any room (GDD 22.3)
+                else if (TowerCatalog.Get(room.type).kind == "living") total += Capacity(room);
+            }
             return total;
         }
 
@@ -769,10 +778,11 @@ namespace AdamsHaven.Tower
         {
             foreach (var room in State.rooms)
             {
-                if (TowerCatalog.Get(room.type).kind != "living") continue;
+                int beds = Furnished(room) ? BedsIn(room) : TowerCatalog.Get(room.type).kind == "living" ? Capacity(room) : 0;
+                if (beds <= 0) continue;
                 int used = 0;
                 foreach (var resident in State.residents) if (resident.homeRoom == room.uid) used++;
-                if (used < Capacity(room)) return room;
+                if (used < beds) return room;
             }
             return null;
         }
@@ -788,7 +798,7 @@ namespace AdamsHaven.Tower
             if (def.kind == "heart") return "The Heart is not a workplace.";
             if (def.kind == "lair") return "Dungeon rooms are run by traps and monsters.";
             if (def.kind == "gate" && resident.origin == "body") return "Celestium Bodies cannot stand guard.";
-            bool home = def.kind == "living";
+            bool home = HousesByDefault(room);
             int used = 0;
             foreach (var other in State.residents)
                 if (other.id != residentId && (home ? other.homeRoom : other.jobRoom) == roomUid) used++;
@@ -797,7 +807,7 @@ namespace AdamsHaven.Tower
             if (!home) resident.duty = BestDuty(resident, room);
             if (resident.currentRoom == 0) resident.currentRoom = roomUid;
             // Any producing room counts for the MATCH lesson, by button or by dragging the resident there (TT 10.4.3).
-            if (State.tutorialStep == 1 && !home && !string.IsNullOrEmpty(def.produces))
+            if (State.tutorialStep == 1 && !home && !string.IsNullOrEmpty(Product(room)))
                 State.tutorialStep = 2;
             Note(resident.name + " assigned to " + def.displayName +
                 (home ? "." : ": " + DutyLabel(resident, room) + "."));
@@ -812,9 +822,9 @@ namespace AdamsHaven.Tower
             int score = resident.might;
             // Workplaces that produce or train always get a producer (TT 10.4.1: a strong newcomer used to be made the
             // room's repairer and produced nothing); hauling only once auto-hauling is unlocked.
-            if (def.kind == "gate" || def.kind == "train" || !string.IsNullOrEmpty(def.produces))
+            if (def.kind == "gate" || def.kind == "train" || !string.IsNullOrEmpty(Product(room)))
             { best = "production"; score = resident.Stat(def.stat); }
-            if (!string.IsNullOrEmpty(def.produces) && State.haulingUnlocked && resident.grit > score + 2) best = "haul";
+            if (!string.IsNullOrEmpty(Product(room)) && State.haulingUnlocked && resident.grit > score + 2) best = "haul";
             return best;
         }
 
@@ -844,19 +854,33 @@ namespace AdamsHaven.Tower
         {
             float cap = 120;
             foreach (var room in State.rooms)
-                if (TowerCatalog.Get(room.type).kind == "storage") cap += 60 * OutputBays(room) * room.level;
+            {
+                if (Furnished(room)) cap += TowerFurnishing.StoragePerUnit * room.level * StorageWeight(room);
+                else if (TowerCatalog.Get(room.type).kind == "storage") cap += 60 * OutputBays(room) * room.level;
+            }
             return cap * StockCapBonus();
         }
 
+        // Everything one collect yields (a furnished room may make several resources).
         public float CollectAmount(TowerRoom room)
         {
-            var def = TowerCatalog.Get(room.type);
+            var def = room == null ? null : TowerCatalog.Get(room.type);
             if (def == null) return 0;
-            float mult = (1 + 0.5f * (room.level - 1)) * YieldBonus(def.produces);
+            if (!Furnished(room)) return BaseCollect(room, def.produces);
+            float total = 0;
+            foreach (var resource in ProductWeights(room).Keys) total += YieldOf(room, resource);
+            return total;
+        }
+
+        // A full collect of one resource at this room's rank and width.
+        private float BaseCollect(TowerRoom room, string resource)
+        {
+            if (string.IsNullOrEmpty(resource)) return 0;
+            float mult = (1 + 0.5f * (room.level - 1)) * YieldBonus(resource);
             // Quarries: one Celestium per collect per rank up to D, then half a rank's worth (slower Heart climb).
-            return def.produces == "celestium" ? QuarryCelestium(room.level) :
-                (def.produces == "firewood" ? 5 :
-                    def.produces == "water" ? 6 : def.produces == "gold" ? 6 : 4) * OutputBays(room) * mult;
+            return resource == "celestium" ? QuarryCelestium(room.level) :
+                (resource == "firewood" ? 5 :
+                    resource == "water" ? 6 : resource == "gold" ? 6 : 4) * OutputBays(room) * mult;
         }
 
         public static int QuarryCelestium(int level) { return level <= 2 ? level : 2 + (level - 2) / 2; }
@@ -879,30 +903,47 @@ namespace AdamsHaven.Tower
             var room = Room(roomUid);
             if (room == null || !room.ready) return "That room is not ready.";
             var def = TowerCatalog.Get(room.type);
-            float amount = CollectAmount(room);
-            switch (def.produces)
+            var products = new List<string>();
+            if (Furnished(room)) products.AddRange(ProductWeights(room).Keys);
+            else if (!string.IsNullOrEmpty(def.produces)) products.Add(def.produces);
+            var parts = new List<string>();
+            float total = 0;
+            foreach (var resource in products)
             {
-                case "food": State.food = Mathf.Min(StockCap(), State.food + amount); break;
-                case "water": State.water = Mathf.Min(StockCap(), State.water + amount); break;
-                case "firewood": State.firewood = Mathf.Min(StockCap(), State.firewood + amount); break;
-                case "celestium": State.celestium += Mathf.RoundToInt(amount) + (Researched("PRO-8") ? 1 : 0); break;
-                case "gold": State.gold += Mathf.RoundToInt(amount); break;
-                case "tonics": State.tonics = Mathf.Min(30, State.tonics + Mathf.RoundToInt(amount / 3) + (Researched("DEF-6") ? 1 : 0)); break;
-                default: return "This room has nothing to collect.";
+                float amount = YieldOf(room, resource);
+                if (!AddCollected(resource, amount)) continue;
+                total += amount;
+                parts.Add(Mathf.RoundToInt(amount) + " " + resource);
+                // Side yields follow what was made, wherever it was made.
+                if (resource == "firewood") { State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5)); State.stone += 1; }   // cleared rubble: a trickle of early stone
+                if (resource == "celestium") { State.stone += room.level * 2; State.ore += room.level; }
             }
+            if (parts.Count == 0) return "This room has nothing to collect.";
             room.ready = false; room.progress = 0;
             if (State.tutorialStep == 2 && (room.type == "kitchen" || room.type == "well")) State.tutorialStep = 3;
-            if (room.type == "lumber_mill") { State.wood += Mathf.Max(1, Mathf.RoundToInt(amount / 5)); State.stone += 1; }   // cleared rubble: a trickle of early stone
-            if (room.type == "quarry") { State.stone += room.level * 2; State.ore += room.level; }
             foreach (var resident in State.residents) if (resident.jobRoom == roomUid)
             {
                 resident.happiness = Mathf.Min(100, resident.happiness + 2);
                 GiveXp(resident, 10 + room.level * 2);
             }
-            Note("Collected " + Mathf.RoundToInt(amount) + " " + def.produces + ".");
+            Note("Collected " + string.Join(", ", parts.ToArray()) + ".");
             Bump("collect");
-            Emit("collect", room.uid, 0, def.produces + ":" + Mathf.RoundToInt(amount));
+            Emit("collect", room.uid, 0, products[0] + ":" + Mathf.RoundToInt(total));
             return null;
+        }
+
+        private bool AddCollected(string resource, float amount)
+        {
+            switch (resource)
+            {
+                case "food": State.food = Mathf.Min(StockCap(), State.food + amount); return true;
+                case "water": State.water = Mathf.Min(StockCap(), State.water + amount); return true;
+                case "firewood": State.firewood = Mathf.Min(StockCap(), State.firewood + amount); return true;
+                case "celestium": State.celestium += Mathf.RoundToInt(amount) + (Researched("PRO-8") ? 1 : 0); return true;
+                case "gold": State.gold += Mathf.RoundToInt(amount); return true;
+                case "tonics": State.tonics = Mathf.Min(30, State.tonics + Mathf.RoundToInt(amount / 3) + (Researched("DEF-6") ? 1 : 0)); return true;
+            }
+            return false;
         }
 
         public int MaxLevel(TowerRoom room) { return TowerTiers.MaxLevel(room.type); }
@@ -949,6 +990,7 @@ namespace AdamsHaven.Tower
             var room = Room(roomUid);
             if (room == null || room.type == "heart" || room.type == "gate" || room.level >= MaxLevel(room))
                 return "That room cannot be upgraded.";
+            if (Furnished(room)) return "Furnish the room to raise its rank.";   // GDD 22.4: furniture makes the rank
             if (room.level >= RankCap())
             {
                 int needed = State.heartRank;
@@ -992,6 +1034,7 @@ namespace AdamsHaven.Tower
         public void Advance(float seconds, bool live)
         {
             if (State.introPhase != "complete" || State.defeated) return;
+            RefreshAllRoomRanks();   // the Heart or CON-7 may have lifted a furnished room's cap
             RefreshDaily();
             TickResearch();
             TickAutoExpedition();

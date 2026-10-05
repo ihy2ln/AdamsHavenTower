@@ -90,7 +90,7 @@ namespace AdamsHaven.Tower
                 venues.Add(new TowerVenue { room = room, def = def });
                 if (def.Serves(VenueLeisure)) hasLeisureVenue = true;
             }
-            foreach (var venue in venues) venue.seats = Capacity(venue.room);   // rank and bays add seats
+            foreach (var venue in venues) venue.seats = VenueSeats(venue.room);   // rank, bays and tables add seats
         }
 
         private bool VenueOpen(TowerVenue venue, int service)

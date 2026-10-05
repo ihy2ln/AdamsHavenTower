@@ -462,12 +462,12 @@ namespace AdamsHaven.Tower
             foreach (var room in State.rooms)
             {
                 var def = TowerCatalog.Get(room.type);
-                if (def == null || def.produces != resource) continue;
+                if (def == null || !Makes(room, resource)) continue;
                 float rate = 0;
                 foreach (var r in State.residents)
                     if (r.jobRoom == room.uid && r.ageStage == 0 && !r.downed && !r.exploring && !r.away)
                         rate += WorkerRate(r, room);
-                perSecond += rate * 0.75f / 90f * CollectAmount(room);
+                perSecond += rate * 0.75f / 90f * YieldOf(room, resource);
             }
             return perSecond * 60f;
         }
@@ -507,10 +507,10 @@ namespace AdamsHaven.Tower
             var job = Room(r.jobRoom);
             if (job == null) return true;
             if (job.type == "gate") return false;
-            var def = TowerCatalog.Get(job.type);
+            string made = Product(job);
             // Never pull someone off a stock that is itself running short.
-            return System.Array.IndexOf(Stocks, def.produces) < 0 || !Urgent(def.produces) &&
-                StockOf(def.produces) > StockCap() * 0.5f && PlannedNetPerMinute(def.produces) > 2f;
+            return System.Array.IndexOf(Stocks, made) < 0 || !Urgent(made) &&
+                StockOf(made) > StockCap() * 0.5f && PlannedNetPerMinute(made) > 2f;
         }
 
         // Moves one worker towards the most urgent shortage. Returns true when it moved someone.
@@ -529,7 +529,7 @@ namespace AdamsHaven.Tower
             foreach (var room in State.rooms)
             {
                 var def = TowerCatalog.Get(room.type);
-                if (def == null || def.produces != worst || room.condition < 20 ||
+                if (def == null || !Makes(room, worst) || room.condition < 20 ||
                     State.incidents.Exists(i => i.roomUid == room.uid) || AssignedTo(room, false) >= Capacity(room)) continue;
                 if (target == null || AdjacencyBonus(room) > AdjacencyBonus(target)) target = room;
             }
@@ -579,10 +579,11 @@ namespace AdamsHaven.Tower
                 foreach (var room in State.rooms)
                 {
                     var def = TowerCatalog.Get(room.type);
-                    if (def == null || (string.IsNullOrEmpty(def.produces) && def.kind != "train") ||
+                    string made = Product(room);
+                    if (def == null || (string.IsNullOrEmpty(made) && def.kind != "train") ||
                         AssignedTo(room, false) >= Capacity(room)) continue;
-                    float score = MatchScore(r, room) + (System.Array.IndexOf(Stocks, def.produces) >= 0 &&
-                        PlannedNetPerMinute(def.produces) < 0 ? 6 : 0);
+                    float score = MatchScore(r, room) + (System.Array.IndexOf(Stocks, made) >= 0 &&
+                        PlannedNetPerMinute(made) < 0 ? 6 : 0);
                     if (score > bestScore) { best = room; bestScore = score; }
                 }
                 if (best != null && Assign(r.id, best.uid) == null) placed++;

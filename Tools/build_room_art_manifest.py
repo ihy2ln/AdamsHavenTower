@@ -23,12 +23,16 @@ CELL_ASPECT = 2.0 / 2.2
 # The painted buildings: the room interior sits between the stone base and the roof.
 BAND = {'left': 0.035, 'right': 0.965, 'bottom': 0.14, 'top': 0.71}
 FULL = {'left': 0.0, 'right': 1.0, 'bottom': 0.0, 'top': 1.0}
+# The Gate's hall: the gate sits in the outer (east) wall, so a narrower crop hugs that side.
+GATE_BAND = {'left': 0.0, 'right': 1.0, 'bottom': 0.15, 'top': 0.9, 'align': 1.0}
+# Picture families named <prefix>_<rank>.png that belong to another building, with their own band.
+ALIASES = {'gate_hall': ('gate', GATE_BAND)}
 SPECIAL = {
     'living_interior_v1': ('house', 'B', {'left': 0.0, 'right': 1.0, 'bottom': 0.0, 'top': 1.0}),
     'kitchen_interior_v1': ('kitchen', 'B', FULL),
     'guild_hall_F_v2': ('guild_hall', 'F', {'left': 0.04, 'right': 0.96, 'bottom': 0.145, 'top': 0.695}),
     # The Gate's cell: a short hallway with the gate in its outer (east) wall; the west Gate draws it mirrored.
-    'gate_hall': ('gate', 'F', {'left': 0.0, 'right': 1.0, 'bottom': 0.15, 'top': 0.9, 'align': 1.0}),
+    'gate_hall': ('gate', 'F', GATE_BAND),   # rank F; gate_hall_E .. gate_hall_SSR take the ranks above
 }
 # Superseded by a special picture at the same rank; gate_F is a guardroom painting, not a gate.
 REPLACED = {'guild_hall_F', 'gate_F'}
@@ -56,6 +60,10 @@ def main():
             continue
         building, rank = stem.rsplit('_', 1)
         if rank not in RANKS:
+            continue
+        if building in ALIASES:
+            building, band = ALIASES[building]
+            rows.append(entry(stem, building, rank, band))
             continue
         rows.append(entry(stem, building, rank, BAND))
     # Each picture serves its rank up to the rank before the building's next picture.

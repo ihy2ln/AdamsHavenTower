@@ -94,6 +94,7 @@ namespace AdamsHaven.Tower
         {
             NormalizeColony();
             EnsureDungeonBand();   // one world (TT 10.5.0): a Tower save from before the merge gets its dungeon
+            if (RoomBuilder) MigrateFurnishing();   // room builder (GDD 22): older rooms get their preset, once
             if (State.colonyVersion >= ColonyVersion) return;
             if (State.colonyVersion < 1)
             {

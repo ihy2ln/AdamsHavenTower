@@ -12,10 +12,21 @@ furniture and amenities make the rank**, and the **walls change at every rank-up
 accents). **No restrictions**: any item works in any room; items matching the room's type give a bonus. **All residents
 3D.** Order: Tower rooms, then dungeon rooms, then the town. Slices R1-R8 in GDD 22.6 run **before** the pest lure.
 
-> TT 10.5.0 room builder R1. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 22, then build
-> slice R1 (rules only, behind a `TowerRules.RoomBuilder` switch that stays off in Play until the R3 furnish UI lands):
-> `TowerFurnishing` catalog and slot grid, place/move/sell, quality -> rank, furniture-driven beds/workers/storage/
-> amenities, type-match bonus, per-resource progress, the preset-furnishing migration, EditMode tests.
+**R1 done 2026-10-05** (rules only; `TowerRules.RoomBuilder` = `ForceRoomBuilder`, off in Play until R3).
+Code map: `TowerFurnishing.cs` (24-item catalog, slot grid 4 cols x wall/back/front per bay, coverage rank, presets,
+place/move/sell, EXPAND/SHRINK, `HomePlaces`/`JobPlaces`/`BedsIn`/`StorageWeight`, `Product`/`Makes`/`YieldOf`,
+`AssignHome`, `MigrateFurnishing` via `TowerRoom.furnished`). Hooks: `Capacity`, `HousingCap`, `AvailableHome`,
+`Assign` (`HousesByDefault`), `StockCap`, `CollectAmount`/`BaseCollect`/`Collect` (multi-resource), `UpgradeRoom`
+("Furnish the room..."), `Advance` (`RefreshAllRoomRanks`), and `def.produces` -> `Product`/`Makes`/`YieldOf` in the
+colony, steward, income, rush, tick and dev code. View files (`TowerFx` bubbles, HUD labels) still read `def.produces`:
+fix them in R2/R3 before the switch goes on. Demolish does not refund furniture yet (R3). Tests: `RoomBuilderTests` 9;
+all five Tower suites 233 green.
+
+> TT 10.5.0 room builder R2. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 22, then build
+> slice R2, the 3D shell greybox: tilt the Tower camera about 12 degrees, draw each furnished room as a 3D shell per bay
+> (back wall, floor, ceiling beam, side posts) coloured by the rank's wall-ladder step, furniture as sized blocks at their
+> slots (wall / back / front rows), and residents walking the lane between back and front, stopping at their bed or
+> station. Keep the painted rooms when `RoomBuilder` is off.
 
 
 ### The direction (owner, 2026-10-04)

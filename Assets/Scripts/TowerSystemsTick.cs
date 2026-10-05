@@ -475,7 +475,7 @@ namespace AdamsHaven.Tower
                             }
                     }
                 }
-                else if (!string.IsNullOrEmpty(def.produces) && !room.ready)
+                else if (!string.IsNullOrEmpty(Product(room)) && !room.ready)
                 {
                     room.progress += rate * CycleSpeed() * dt / 90f;
                     if (room.progress >= 1) { room.progress = 1; room.ready = true; }

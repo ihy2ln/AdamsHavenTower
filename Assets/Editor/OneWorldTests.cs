@@ -148,6 +148,22 @@ public sealed class OneWorldTests
     }
 
     [Test]
+    public void TheGateRanksUpFromFLikeAnyBuilding()
+    {
+        var rules = Started();
+        rules.State.heartRank = 9;
+        var gate = rules.GateOn(1);
+        Assert.AreEqual(1, gate.level);
+        Assert.AreEqual(2, rules.Capacity(gate), "two guard posts at F");
+        Assert.IsNull(rules.UpgradeRoom(gate.uid));
+        Assert.AreEqual(2, gate.level);
+        Assert.AreEqual(1, gate.width, "the Gate stays one cell wide");
+        Assert.AreEqual(2, rules.Capacity(gate));
+        Assert.IsNull(rules.UpgradeRoom(gate.uid));
+        Assert.AreEqual(3, rules.Capacity(gate), "a post every two ranks");
+    }
+
+    [Test]
     public void DiggingPushesTheLivingBandAndTheVaultDown()
     {
         var rules = Started();

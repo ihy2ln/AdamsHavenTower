@@ -445,10 +445,10 @@ public sealed class TowerArtDirector : MonoBehaviour
                     // gatehouse painting stands in.
                     bool west = room.x < TowerRules.CoreX;
                     GameObject gateArt;
-                    if (RoomArtFor("gate", 1) != null)
+                    if (RoomArtFor("gate", room.level) != null)
                     {
                         Rect hallCrop;
-                        string hall = RoomArtFitted("gate", 1, rw - 0.07f, 2.20f, out hallCrop);
+                        string hall = RoomArtFitted("gate", room.level, rw - 0.07f, 2.20f, out hallCrop);
                         gateArt = Art("Celestium entrance hall", hall, cx, y + 0.14f, 2.6f, rw - 0.07f, 2.20f, hallCrop);
                     }
                     else

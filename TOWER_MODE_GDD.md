@@ -1159,23 +1159,32 @@ Each item has a **role**, a **tier** (F..SSR), a cost (gold plus wood or stone) 
 
 | Role | Effect anywhere | Bonus when it matches the room's type |
 | --- | --- | --- |
-| Bed | One sleeping place (counts toward housing everywhere) | +joy on waking ("slept in a proper home") |
-| Workstation | One worker slot; produces its resource (stove: food, well-pump: water, saw: firewood, anvil: trains Might ...) | +25% output |
-| Storage | Adds cap for its resource | +25% cap |
-| Amenity | Serves a need or joy (table: meal seat, tub, hearth, bar) | Stronger thought |
-| Decor / light | Beauty only | +25% beauty |
+| Bed | Sleeping places (count toward housing in any room) | Counts fully toward the rank (off-type: 80%) |
+| Workstation | Worker places; produces its resource (stove: food, pump: water, saw bench: firewood, rock drill: Celestium, still: tonics, counter: gold; anvil / war table: training places; quest board, loading cart: duty posts) | Full output (off-type stations make 80%) |
+| Storage | Storage units (stock cap) | Full cap (off-type: 80%) |
+| Amenity | Venue seats (table, wash tub) | Counts fully toward the rank |
+| Decor / light | Beauty: counts **half** toward the rank | Universal pieces always match |
+
+Built (R1): beds and stations hold 1 place per column at F-E, 2 at D-B, 3 at A-SSR; storage holds 2 units per column at
+every tier (30 stock cap per unit per rank). "Match +25%" is implemented as off-type items at 80% (1 / 0.8 = 1.25), so
+every preset room keeps its pre-builder numbers.
 
 A room of one type may hold any mix (a Shack with a stove cooks a little food; a Kitchen with beds houses people). The
 type still names the room, picks the accent, sets which items "match" and keeps type rules (Farmstead sunlit, Quarry
-underground). Production keeps the Fallout Shelter collect loop: the room fills one progress bar **per resource** its
-workstations make, and COLLECT gathers them all.
+underground). Production keeps the Fallout Shelter collect loop: the room fills **one** progress bar, and COLLECT
+splits the yield between the resources its workstations make by station weight. Assign makes a living room with no
+stations a home and anything else a workplace; `AssignHome` puts someone in the beds of any room. Training stays with
+the Forge and Deck Hall types in R1 (an anvil elsewhere is a duty post).
 
 ### 22.4 Rank from furniture
 
-- **Room quality** = sum of item points (tier value x size, matching items x 1.25) divided by the room's bays, so a
-  well-furnished 1-bay Shack can climb as high as a 3-bay hall; width buys capacity, not rank.
-- Thresholds F..SSR on quality (first pass in `TowerFurnishing`). Rank follows the furniture both ways and stays capped
-  by the Heart (`TowerTiers.BuildingCap`) and CON-7 for SSR. On every rank change the **wall kit swaps** to that rank.
+- **Coverage rule (built R1):** a room is rank r when it holds **3 weighted columns per bay** of furniture at tier r or
+  better (columns x 0.5 for decor x 0.8 off-type). Per bay, so a well-furnished 1-bay Shack climbs as high as a 3-bay
+  hall; width buys capacity, not rank, and a freshly expanded room must be furnished again to hold its rank.
+- Rank follows the furniture both ways and stays capped by the Heart (`TowerTiers.BuildingCap`) and CON-7 for SSR; an
+  older room above today's cap is never capped down. On every rank change the **wall kit swaps** to that rank.
+- Costs (first pass, owner to tune): gold = base (6-26) x 1, 2, 4, 8, 14, 22, 32, 45, 60 by tier; wood or stone = tier
+  x columns. Selling returns half. EXPAND costs 80 gold and 10 wood per current bay; SHRINK refunds half.
 - The UPGRADE button and its gold curve go away: furniture purchases are where the rank money goes. Item tiers unlock
   with the Heart rank (an item's tier can never exceed the room's cap).
 - `TowerRoom.level` keeps meaning "rank", so every rule reading it (venues, districts, adjacency, sieges) keeps working.
@@ -1196,7 +1205,7 @@ workstations make, and COLLECT gathers them all.
 
 | # | Slice | Content |
 | --- | --- | --- |
-| R1 | Rules | `TowerFurnishing` catalog + slot grid + place/move/sell API; quality -> rank; beds, workstations, storage, amenities from furniture; type-match bonus; multi-resource progress; `ColonyVersion` migration that furnishes every existing room with its type's preset at its current rank (no rank changes on load); EditMode tests |
+| R1 (done) | Rules | `TowerFurnishing` catalog + slot grid + place/move/sell API; quality -> rank; beds, workstations, storage, amenities from furniture; type-match bonus; multi-resource progress; `ColonyVersion` migration that furnishes every existing room with its type's preset at its current rank (no rank changes on load); EditMode tests |
 | R2 | 3D shell greybox | Tilted camera; room shells per bay with ladder-coloured placeholder walls; furniture as sized blocks at their slots; residents walk front/back lanes and stop at use points |
 | R3 | Furnish UI | Room card FURNISH mode: tap a slot -> compact item picker (role tabs, cost, points, match badge), drag to move, presets, rank meter with the next threshold; compact mobile rules (`TowerUiFit`) |
 | R4 | Art kit A | Wall ladder (9) + accents (5); first furniture set: Shack, Kitchen, Well, Lumber Mill + shared decor (about 30 items) |
