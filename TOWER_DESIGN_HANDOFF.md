@@ -12,18 +12,21 @@ Updated 2026-10-04 after TT 10.4.4 (docs: one world). Read this first, then `TOW
 
 | # | Batch | What | Ask the owner first |
 | --- | --- | --- | --- |
-| 1 | **TT 10.5.0 merge foundations** (next) | `ColonyVersion` 3 migration (insert B1 with `ShiftFloors`, basements become the living band, vault = lowest floor); `FloorKind` over the whole tower; zoning by band; Dungeon Gate in `RouteEntry`; dig buttons below ground; new game with B1 + vault; every `TowerRules.IsLair` branch per GDD 21.6 | Underground cap split (dungeon vs living inside the down-caps) |
-| 2 | TT 10.5.1 pest lure | Dungeon rank + XP, prey tiers, pest swarms, pest-incident spillover, Monster banner from E, four dungeon lessons in the opening | Pest timer and yields |
+| 1 | **TT 10.5.0 merge foundations** (next) | `ColonyVersion` 3 migration (insert B1 with `ShiftFloors`, basements become the living band, vault = lowest floor); `FloorKind` over the whole tower; zoning by band; Dungeon Gate in `RouteEntry`; dig buttons below ground; new game with B1 + vault; every `TowerRules.IsLair` branch per GDD 21.6; **BATTLE dock button becomes DUNGEON** (the dungeon hub) | Underground cap split (dungeon vs living inside the down-caps) |
+| 2 | TT 10.5.1 pest lure | Dungeon rank + XP, prey tiers, pest swarms, pest-incident spillover, Monster banner from E, **tutorial part 1: the dungeon tower** (living + dungeon lessons) | Pest timer and yields |
 | 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters | Beast families per region |
-| 4 | TT 10.6.0 town lots as rules | Lot functions (homes, inn, shops, quest board, healing, defence); dweller cap; growth speed; raider damage | Section 3 Q2 |
+| 4 | TT 10.6.0 town lots as rules | Lot functions (homes, inn, shops, quest board, healing, defence); dweller cap; growth speed; raider damage; **tutorial part 2: the town** (place buildings, zone a district, city-sim basics) | Section 3 Q2 |
+| 4b | TT 10.6.x expedition tutorial | **Tutorial part 3**: unlock EXPEDITIONS, a guided short run, materials home (needs the BM session's expedition hooks) | Which region and loot |
 | 5 | TT 10.6.1 town walkers and economy | Visible wanderers; purses; inn / shop / shrine spending via `TickErrand` / `VenuePrice` | Section 3 Q3-5 |
 | 6 | TT 10.6.2 humans in the dungeon | Parties form in town from Dungeon rank C; town buildings set size and rank; survivors walk back; replaces the `FinishParty` placeholder | Party balance |
 | 7 | TT 10.6.3 elite and sieges together | Siege kind + queue, Threat and Notoriety both on the HUD, named heroes | none |
 | 8 | TT 10.7.0 retire the fork | Remove the MENU switch, `AdamsHavenDungeon/`, `LairMilestones`; regenerate Tower checkpoints with the dungeon band | none |
 
+**Done 2026-10-04: TT 10.4.5 compact HUD** (e66f32b): `TowerUiFit` shrinks every open panel to its content; new panels must follow the same rule (owner: mobile first, no empty space).
+
 Track A (playing the Tower opening and fixing what breaks) pauses until batch 2 lands, because the opening gains the dungeon lessons there; urgent opening bugs can still be fixed any time.
 
-> TT 10.5.0. Tower Tycoon, one world batch 1: merge foundations. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 21 (and 20 for the Lair code), ask me the underground cap split, then build: the `ColonyVersion` 3 migration, `FloorKind` over the whole tower, zoning by band, the Dungeon Gate entry, dig buttons below ground, a new game with B1 and the vault, and the `IsLair` branches per 21.6. Keep the Dungeon Mode fork working on its own saves.
+> TT 10.5.0. Tower Tycoon, one world batch 1: merge foundations. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 21 (and 20 for the Lair code), ask me the underground cap split, then build (and turn the BATTLE dock button into DUNGEON, the dungeon hub): the `ColonyVersion` 3 migration, `FloorKind` over the whole tower, zoning by band, the Dungeon Gate entry, dig buttons below ground, a new game with B1 and the vault, and the `IsLair` branches per 21.6. Keep the Dungeon Mode fork working on its own saves.
 
 **Where the code is today (survey 2026-10-04):** `TowerState.lair` (`TowerLairState`, LairDomain.cs) is already in every Tower save; `TowerState.mode` is "tower" except saves made by `NewLair`. Rules read `TowerRules.IsLair` (LairLayout.cs, `State.mode == "lair"`); HUD, view, save folder and checkpoints read the static `TowerModes.IsLair` (LairMode.cs). About 25 rules branches, 25 HUD and 6 view branches (list in the GDD 21.6 dispositions). `Load` never checks that a save's mode matches its folder. Town lots have **no gameplay effect yet** (`TowerTownLots.cs` says so) and the town files have no mode branches; `TickTown` grows a town in both modes. The caravan event has no `IsLair` check.
 

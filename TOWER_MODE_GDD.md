@@ -1049,10 +1049,23 @@ rank sets what the lure draws in.
   pest defence.
 - **Monsters** come from the Monster banner (from Dungeon rank E) and from captured beasts (from D).
 
-### 21.3 Opening
-The TT 10.4.1-10.4.3 lesson chain stays. After the FOOD and WATER lessons come four dungeon lessons: **DIG B1**, **place a
-Spike Trap Hall**, **the first pest swarm**, **Dungeon rank E**. Humans stay locked until Dungeon rank C, around day 5 to
-10 **[TBD]**.
+### 21.3 Opening: a three-part tutorial (owner, 2026-10-04)
+The tutorial teaches the three places in order; each part is skippable per step and pays a reward, like 2.1.
+1. **The dungeon tower (living + dungeon).** Today's founding and FOOD / WATER / MATCH lessons (living space), then the
+   dungeon half: **DIG B1**, **place a Spike Trap Hall**, **the first pest swarm**, **Dungeon rank E**. Built in TT 10.5.1.
+2. **The town (a basic city-sim tutorial).** Open TOWN, place a few buildings by hand (a home, a market stall, an inn),
+   zone a district, watch a lot grow by itself, read the town's needs. Built in TT 10.6.0, once lots do something.
+3. **Expeditions.** Build the Guild, which unlocks EXPEDITIONS; send a party on a short, guided run and bring materials
+   back to the tower. Built in TT 10.6.x with hooks from the Battle / Expedition session.
+
+Humans stay locked until Dungeon rank C, around day 5 to 10 **[TBD]**.
+
+**Dock (owner, 2026-10-04):** the **BATTLE** dock button becomes **DUNGEON**, the dungeon hub: floors and traps, monsters
+(Monster summon), prey and Dungeon rank, notoriety, parties inside. Battle Mode stays reachable through sieges (DEFEND IN
+BATTLE) and expeditions. Lands with the merge (TT 10.5.0).
+
+**UI (owner, 2026-10-04):** mobile first, compact. Panels shrink to their content (no empty rows or blank headers), rows
+are dense, fonts stay readable (TT 10.4.5, `TowerUiFit`). New panels follow the same rule.
 
 ### 21.4 The town is where the two sides meet
 - **Lots become rules data.** Residential types are homes; the inn lodges visitors (more parties a day); stall and bazaar
@@ -1092,10 +1105,12 @@ Section 16 item 18 lists the numbers each batch asks the owner first.
 | # | Batch | Content |
 | --- | --- | --- |
 | 0 | TT 10.4.4 docs | This section; section 20 marked superseded; handoff section 0 |
-| 1 | TT 10.5.0 merge foundations | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8) |
-| 2 | TT 10.5.1 pest lure | Dungeon rank and XP; prey tiers; pest swarms; pest-incident spillover; Monster banner from E; the four dungeon lessons |
+| 0b | TT 10.4.5 compact HUD (done) | Panels shrink to content (`TowerUiFit`); people, room, build, tutorial, floors, goals, guild |
+| 1 | TT 10.5.0 merge foundations | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8); **BATTLE dock button becomes DUNGEON** |
+| 2 | TT 10.5.1 pest lure | Dungeon rank and XP; prey tiers; pest swarms; pest-incident spillover; Monster banner from E; **tutorial part 1** (dungeon tower) |
 | 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters |
-| 4 | TT 10.6.0 town lots as rules | Lot functions; homes and the dweller cap; growth speed; raider damage to lots |
+| 4 | TT 10.6.0 town lots as rules | Lot functions; homes and the dweller cap; growth speed; raider damage to lots; **tutorial part 2** (town, districts) |
+| 4b | TT 10.6.x expedition tutorial | **Tutorial part 3**: unlock EXPEDITIONS, a guided short run, materials home (needs the BM session's expedition hooks) |
 | 5 | TT 10.6.1 town walkers and economy | Visible wanderers; purses; inn, shop and shrine spending through `TickErrand` / `VenuePrice` |
 | 6 | TT 10.6.2 humans in the dungeon | Parties formed in town from Dungeon rank C; town buildings set size and rank; survivors walk back; Fame |
 | 7 | TT 10.6.3 elite and sieges together | Siege kind, queueing, both meters on the HUD, named heroes |
