@@ -115,10 +115,6 @@ public sealed class TowerArtDirector : MonoBehaviour
         if (hud != null && portraitTimer >= 0.4f) { portraitTimer = 0; RefreshPortraits(hud); }
     }
 
-    // The Gate's painting: a freestanding gate once its new art exists (Structure/gate_end), else the old gatehouse crop.
-    private string GatePath { get { return Resources.Load<Texture2D>(Root + "Structure/gate_end") != null ? "Structure/gate_end" : "Structure/gate"; } }
-    private Rect GateCrop { get { return GatePath == "Structure/gate_end" ? Full : new Rect(0.13f, 0.01f, 0.79f, 0.98f); } }
-
     // "+ GATE" over each open end of the ground floor while a Gate is being placed (TT 10.5.0b).
     private TextMesh[] gateMarks;
     private void UpdateGateMarks()
@@ -234,6 +230,7 @@ public sealed class TowerArtDirector : MonoBehaviour
         public string file, building;
         public int fromRank, toRank, width, height, bays;
         public float left, right, bottom, top;
+        public float align = 0.5f;   // where a narrower crop sits across the band: 0 left, 0.5 centre, 1 right
     }
     [System.Serializable] private sealed class RoomArtManifest { public List<RoomArtEntry> rooms = new List<RoomArtEntry>(); }
     private RoomArtManifest roomArt;
@@ -251,14 +248,14 @@ public sealed class TowerArtDirector : MonoBehaviour
         return null;
     }
 
-    // The crop of the entry's band whose proportions match a box `wide` x `tall`: centred across, sitting on the floor.
+    // The crop of the entry's band whose proportions match a box `wide` x `tall`: placed across by `align`, on the floor.
     private static Rect FitCrop(RoomArtEntry e, float wide, float tall)
     {
         float bandW = (e.right - e.left) * e.width, bandH = (e.top - e.bottom) * e.height;
         float want = wide / tall;
         float w = bandW, h = bandH;
         if (bandW / bandH > want) w = bandH * want; else h = bandW / want;
-        float x = e.left * e.width + (bandW - w) / 2, y = e.bottom * e.height;
+        float x = e.left * e.width + (bandW - w) * Mathf.Clamp01(e.align), y = e.bottom * e.height;
         return new Rect(x / e.width, y / e.height, w / e.width, h / e.height);
     }
 
@@ -423,12 +420,10 @@ public sealed class TowerArtDirector : MonoBehaviour
         {
             if (f.number < middle - range || f.number > middle + range) continue;
             float y = f.number * Storey;
-            // The Gates are the ends of the ground floor (owner, TT 10.5.0b): the timber frame stops before them and they
-            // stand outside it, against the sky.
-            int gateWest = f.number == 0 && tower.Rules.GateOn(-1) != null ? 1 : 0;
-            int gateEast = f.number == 0 && tower.Rules.GateOn(1) != null ? 1 : 0;
-            int startCell = 22 - tower.Rules.DrawnWest(f) + gateWest;
-            int endCell = 23 + tower.Rules.DrawnEast(f) - gateEast;
+            // The Gates are the ends of the ground floor (owner, TT 10.5.0b): each fills its cell as a short hallway inside
+            // the frame, the gate itself in the outer wall facing outward.
+            int startCell = 22 - tower.Rules.DrawnWest(f);
+            int endCell = 23 + tower.Rules.DrawnEast(f);
             float left = X(startCell), right = X(endCell);
             float width = right - left;
             float center = (left + right) / 2;
@@ -445,14 +440,20 @@ public sealed class TowerArtDirector : MonoBehaviour
                         y + 0.12f, 2, rw - 0.05f, 2.23f, new Rect(0.32f, 0, 0.36f, 1));
                 else if (room.type == "gate")
                 {
-                    // A freestanding Gate closing the floor: taller than a storey, its foot on the slab, leaning on the
-                    // frame's end post. The painting opens to the right: the west Gate is mirrored so both face outward.
+                    // The Gate's hallway (Rooms/gate_hall via the room art manifest) fills the cell like a room; the
+                    // painting faces east, so the west Gate is its mirror and both open outward. Without it, the old
+                    // gatehouse painting stands in.
                     bool west = room.x < TowerRules.CoreX;
-                    var gateTexture = Resources.Load<Texture2D>(Root + GatePath);
-                    float gateWide = GatePath == "Structure/gate_end" && gateTexture != null ?
-                        2.86f * gateTexture.width / gateTexture.height : rw * 1.22f;   // the new art keeps its proportions
-                    var gateArt = Art("Celestium entrance", GatePath, cx + (west ? 0.12f : -0.12f), y + 0.42f, 1,
-                        gateWide, 2.86f, GateCrop);
+                    GameObject gateArt;
+                    if (RoomArtFor("gate", 1) != null)
+                    {
+                        Rect hallCrop;
+                        string hall = RoomArtFitted("gate", 1, rw - 0.07f, 2.20f, out hallCrop);
+                        gateArt = Art("Celestium entrance hall", hall, cx, y + 0.14f, 2.6f, rw - 0.07f, 2.20f, hallCrop);
+                    }
+                    else
+                        gateArt = Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
+                            rw * 1.05f, 2.30f, new Rect(0.13f, 0.01f, 0.79f, 0.98f));
                     if (west) Mirror(gateArt, -1);
                 }
                 else if (room.type == "barn" && BarnModel(room, cx, y, tower.Rules.IsPowered(room)))
@@ -472,7 +473,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                 }
                 // Same-type neighbours read as one merged hall: no post between them.
                 var westNeighbour = tower.Rules.RoomAt(room.floor, room.x - 1);
-                if (room.type != "gate" && (westNeighbour == null || westNeighbour.type != room.type || room.type == "heart"))
+                if (westNeighbour == null || westNeighbour.type != room.type || room.type == "heart" || room.type == "gate")
                     Post(X(room.x), y);
                 string label = room.type == "heart" ? "HEART" : room.type == "gate" ? "GATE" :
                     TowerCatalog.Get(room.type).displayName.ToUpperInvariant();

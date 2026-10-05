@@ -11,7 +11,8 @@
    "top": 0.71,
    "width": 1024,
    "height": 840,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "barn_E",
@@ -24,7 +25,8 @@
    "top": 0.71,
    "width": 1024,
    "height": 840,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "barn_D",
@@ -37,7 +39,8 @@
    "top": 0.71,
    "width": 1024,
    "height": 840,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "cottage_F",
@@ -50,7 +53,8 @@
    "top": 0.71,
    "width": 1776,
    "height": 880,
-   "bays": 4
+   "bays": 4,
+   "align": 0.5
   },
   {
    "file": "cottage_E",
@@ -63,7 +67,8 @@
    "top": 0.71,
    "width": 1776,
    "height": 880,
-   "bays": 4
+   "bays": 4,
+   "align": 0.5
   },
   {
    "file": "cottage_D",
@@ -76,7 +81,8 @@
    "top": 0.71,
    "width": 1776,
    "height": 880,
-   "bays": 4
+   "bays": 4,
+   "align": 0.5
   },
   {
    "file": "deck_hall_F",
@@ -89,7 +95,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "deck_hall_E",
@@ -102,7 +109,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "deck_hall_D",
@@ -115,7 +123,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "farmstead_F",
@@ -128,7 +137,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "farmstead_E",
@@ -141,7 +151,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "farmstead_D",
@@ -154,7 +165,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "forge_F",
@@ -167,7 +179,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "forge_E",
@@ -180,7 +193,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "forge_D",
@@ -193,7 +207,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "frosted_mug_F",
@@ -206,7 +221,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "frosted_mug_E",
@@ -219,7 +235,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "frosted_mug_D",
@@ -232,20 +249,22 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
-   "file": "gate_F",
+   "file": "gate_hall",
    "building": "gate",
    "fromRank": 1,
    "toRank": 9,
-   "left": 0.035,
-   "right": 0.965,
-   "bottom": 0.14,
-   "top": 0.71,
-   "width": 1504,
-   "height": 576,
-   "bays": 5
+   "left": 0.0,
+   "right": 1.0,
+   "bottom": 0.17,
+   "top": 0.84,
+   "width": 1419,
+   "height": 948,
+   "bays": 2,
+   "align": 1.0
   },
   {
    "file": "guild_hall_F_v2",
@@ -258,7 +277,8 @@
    "top": 0.695,
    "width": 1774,
    "height": 887,
-   "bays": 4
+   "bays": 4,
+   "align": 0.5
   },
   {
    "file": "guild_hall_E",
@@ -271,7 +291,8 @@
    "top": 0.71,
    "width": 1984,
    "height": 800,
-   "bays": 4
+   "bays": 4,
+   "align": 0.5
   },
   {
    "file": "guild_hall_D",
@@ -284,7 +305,8 @@
    "top": 0.71,
    "width": 2176,
    "height": 720,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "house_F",
@@ -297,7 +319,8 @@
    "top": 0.71,
    "width": 1536,
    "height": 1024,
-   "bays": 3
+   "bays": 3,
+   "align": 0.5
   },
   {
    "file": "house_E",
@@ -310,7 +333,8 @@
    "top": 0.71,
    "width": 1536,
    "height": 1024,
-   "bays": 3
+   "bays": 3,
+   "align": 0.5
   },
   {
    "file": "house_D",
@@ -323,7 +347,8 @@
    "top": 0.71,
    "width": 1536,
    "height": 1024,
-   "bays": 3
+   "bays": 3,
+   "align": 0.5
   },
   {
    "file": "living_interior_v1",
@@ -336,7 +361,8 @@
    "top": 1.0,
    "width": 1536,
    "height": 1024,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "kitchen_F",
@@ -349,7 +375,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "kitchen_E",
@@ -362,7 +389,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "kitchen_D",
@@ -375,7 +403,8 @@
    "top": 0.71,
    "width": 1504,
    "height": 576,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "kitchen_interior_v1",
@@ -388,7 +417,8 @@
    "top": 1.0,
    "width": 1774,
    "height": 887,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "lumber_mill_F",
@@ -401,7 +431,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "lumber_mill_E",
@@ -414,7 +445,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "lumber_mill_D",
@@ -427,7 +459,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "manor_F",
@@ -440,7 +473,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "manor_E",
@@ -453,7 +487,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "manor_D",
@@ -466,7 +501,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "market_F",
@@ -479,7 +515,8 @@
    "top": 0.71,
    "width": 2176,
    "height": 720,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "market_E",
@@ -492,7 +529,8 @@
    "top": 0.71,
    "width": 2176,
    "height": 720,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "market_D",
@@ -505,7 +543,8 @@
    "top": 0.71,
    "width": 2176,
    "height": 720,
-   "bays": 5
+   "bays": 5,
+   "align": 0.5
   },
   {
    "file": "silo_F",
@@ -518,7 +557,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "silo_E",
@@ -531,7 +571,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "silo_D",
@@ -544,7 +585,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "terrace_row_F",
@@ -557,7 +599,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "terrace_row_E",
@@ -570,7 +613,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "terrace_row_D",
@@ -583,7 +627,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "warehouse_F",
@@ -596,7 +641,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "warehouse_E",
@@ -609,7 +655,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "warehouse_D",
@@ -622,7 +669,8 @@
    "top": 0.71,
    "width": 2240,
    "height": 576,
-   "bays": 7
+   "bays": 7,
+   "align": 0.5
   },
   {
    "file": "well_F",
@@ -635,7 +683,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "well_E",
@@ -648,7 +697,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   },
   {
    "file": "well_D",
@@ -661,7 +711,8 @@
    "top": 0.71,
    "width": 752,
    "height": 576,
-   "bays": 2
+   "bays": 2,
+   "align": 0.5
   }
  ]
 }

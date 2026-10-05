@@ -9,6 +9,7 @@ Rules (owner, 2026-10-05: pictures keep their ratio, rooms fit the picture; crop
 - A file named <type>_<rank>.png for any rank F..SSR (e.g. kitchen_C.png) takes that rank and up, until the next file.
 - The furnished interiors (living_interior_v1, kitchen_interior_v1) take the house and kitchen from rank B; the
   guild_hall_F_v2 cutaway replaces guild_hall_F.
+- `align` places a narrower crop across the band (0 left, 0.5 centre, 1 right); the Gate hall hugs its door (1).
 - `bays` is how many tower cells the picture was painted for (its band width / height against a 2.0 x 2.2 cell).
 Writes Assets/Resources/AdamsHaven/TowerPresentation/Rooms/room_art.json.
 """
@@ -26,8 +27,11 @@ SPECIAL = {
     'living_interior_v1': ('house', 'B', {'left': 0.0, 'right': 1.0, 'bottom': 0.0, 'top': 1.0}),
     'kitchen_interior_v1': ('kitchen', 'B', FULL),
     'guild_hall_F_v2': ('guild_hall', 'F', {'left': 0.04, 'right': 0.96, 'bottom': 0.145, 'top': 0.695}),
+    # The Gate's cell: a short hallway with the gate in its outer (east) wall; the west Gate draws it mirrored.
+    'gate_hall': ('gate', 'F', {'left': 0.0, 'right': 1.0, 'bottom': 0.17, 'top': 0.84, 'align': 1.0}),
 }
-REPLACED = {'guild_hall_F'}   # superseded by a special picture at the same rank
+# Superseded by a special picture at the same rank; gate_F is a guardroom painting, not a gate.
+REPLACED = {'guild_hall_F', 'gate_F'}
 
 
 def entry(stem, building, rank, band):
@@ -35,7 +39,9 @@ def entry(stem, building, rank, band):
     aspect = (band['right'] - band['left']) * w / ((band['top'] - band['bottom']) * h)
     return {'file': stem, 'building': building, 'fromRank': RANKS.index(rank) + 1, 'toRank': 9,
             'left': band['left'], 'right': band['right'], 'bottom': band['bottom'], 'top': band['top'],
-            'width': w, 'height': h, 'bays': max(1, round(aspect / CELL_ASPECT))}
+            'width': w, 'height': h, 'bays': max(1, round(aspect / CELL_ASPECT)),
+            # Where a narrower room sits across the band: 0 left, 0.5 centre, 1 right (the Gate keeps its door side).
+            'align': band.get('align', 0.5)}
 
 
 def main():

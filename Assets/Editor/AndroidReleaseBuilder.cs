@@ -52,8 +52,7 @@ public static class AndroidReleaseBuilder
     {
         if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android) { Start(); return; }
         Directory.CreateDirectory(BuildsFolder);
-        File.WriteAllText(LogPath, "started (Android, no switch) " + DateTime.Now + "
-");
+        File.WriteAllText(LogPath, "started (Android, no switch) " + DateTime.Now + Environment.NewLine);
         string name = PlayerSettings.productName;
         try { Build(); }
         catch (Exception ex) { Note("EXCEPTION " + ex); }
