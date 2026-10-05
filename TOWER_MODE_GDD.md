@@ -1029,8 +1029,12 @@ the merge migrates through `ColonyVersion` 3.
   the same Heart HP; a vault breach also steals gold and Celestium (20.4).
 - **Digging down:** the Tower's underground DIG becomes **DIG DUNGEON FLOOR** (inserts a floor above the living band) and
   **ADD LIVING FLOOR** (inserts one above the vault). The whole underground stays inside the Tower down-caps
-  (1, 3, 5, 7, 9, 12, 15, 19, 24 by Heart rank); the dungeon / living split **[TBD]**. Neither runs while prey are inside.
-- **New game:** floor 0, an empty B1 and the vault at -2. The opening lessons add the first trap (21.3).
+  (1, 3, 5, 7, 9, 12, 15, 19, 24 by Heart rank). **Decided 2026-10-04 (built TT 10.5.0):** dungeon floors use the Lair caps
+  (2, 3, 4, 6, 8, 10, 13, 16, 20), the living band 1, 1, 2, 2, 2, 3, 3, 3, 3, plus the vault (24 down at SSR, as before); the
+  Tower down-caps no longer apply underground, and older saves keep any extra basements. OPEN BELOW adds a living floor.
+  Neither runs while prey are inside.
+- **New game:** floor 0, an empty B1, one living floor and the vault at -3 (founded when ChooseStarter ends). The
+  Dungeon Gate is the stair down at B1's east end; B1's stair to the next floor is at its west end.
 - **Existing Tower saves:** the `ColonyVersion` 3 step inserts B1 at -1 with `ShiftFloors`; the old basements become the
   living band and the lowest floor's shaft cell becomes the vault.
 
@@ -1106,7 +1110,7 @@ Section 16 item 18 lists the numbers each batch asks the owner first.
 | --- | --- | --- |
 | 0 | TT 10.4.4 docs | This section; section 20 marked superseded; handoff section 0 |
 | 0b | TT 10.4.5 compact HUD (done) | Panels shrink to content (`TowerUiFit`); people, room, build, tutorial, floors, goals, guild |
-| 1 | TT 10.5.0 merge foundations | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8); **BATTLE dock button becomes DUNGEON** |
+| 1 | TT 10.5.0 merge foundations (done, 8edc228) | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8); **BATTLE dock button becomes DUNGEON** |
 | 2 | TT 10.5.1 pest lure | Dungeon rank and XP; prey tiers; pest swarms; pest-incident spillover; Monster banner from E; **tutorial part 1** (dungeon tower) |
 | 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters |
 | 4 | TT 10.6.0 town lots as rules | Lot functions; homes and the dweller cap; growth speed; raider damage to lots; **tutorial part 2** (town, districts) |
