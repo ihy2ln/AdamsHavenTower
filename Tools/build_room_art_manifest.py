@@ -52,6 +52,9 @@ def main():
     rows = []
     for png in sorted(ROOMS.glob('*.png')):
         stem = png.stem
+        # West PNGs are mirrored companion exports; the renderer mirrors the east gate at runtime.
+        if stem == 'gate_hall_west' or stem.startswith('gate_hall_west_'):
+            continue
         if stem in SPECIAL:
             building, rank, band = SPECIAL[stem]
             rows.append(entry(stem, building, rank, band))
