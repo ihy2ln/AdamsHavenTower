@@ -107,11 +107,52 @@ public sealed class TowerArtDirector : MonoBehaviour
             }
         }
         UpdateSites();
+        UpdateGateMarks();
         AnimateHeartBeam();
         var hud = Object.FindAnyObjectByType<TowerHud>();
         if (hud != null && hud != styledHud) { StyleHud(hud); styledHud = hud; }
         portraitTimer += Time.unscaledDeltaTime;
         if (hud != null && portraitTimer >= 0.4f) { portraitTimer = 0; RefreshPortraits(hud); }
+    }
+
+    // The Gate's painting: a freestanding gate once its new art exists (Structure/gate_end), else the old gatehouse crop.
+    private string GatePath { get { return Resources.Load<Texture2D>(Root + "Structure/gate_end") != null ? "Structure/gate_end" : "Structure/gate"; } }
+    private Rect GateCrop { get { return GatePath == "Structure/gate_end" ? Full : new Rect(0.13f, 0.01f, 0.79f, 0.98f); } }
+
+    // "+ GATE" over each open end of the ground floor while a Gate is being placed (TT 10.5.0b).
+    private TextMesh[] gateMarks;
+    private void UpdateGateMarks()
+    {
+        bool show = tower.Placing && tower.BuildType == "gate" && tower.Rules.Floor(0) != null;
+        if (gateMarks == null)
+        {
+            if (!show) return;
+            gateMarks = new TextMesh[2];
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject("Gate placement mark " + i, typeof(TextMesh));
+                go.transform.SetParent(transform, false);
+                var text = go.GetComponent<TextMesh>();
+                text.font = font; text.fontSize = 64; text.characterSize = 0.05f; text.text = "+\nGATE";
+                text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center;
+                text.color = new Color(1f, 0.85f, 0.45f);
+                go.GetComponent<MeshRenderer>().sharedMaterial = font.material;
+                gateMarks[i] = text;
+            }
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            int side = i == 0 ? -1 : 1;
+            bool open = show && tower.Rules.GateOn(side) == null;
+            gateMarks[i].gameObject.SetActive(open);
+            if (open)
+            {
+                float pulse = 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 4f);
+                gateMarks[i].color = new Color(1f, 0.85f, 0.45f, pulse);
+                gateMarks[i].transform.position = new Vector3(X(tower.Rules.GateEndX(side) + 0.5f), 0.2f, -2f);
+            }
+        }
     }
 
     private Sprite SpriteFor(string path, Rect crop)
@@ -184,6 +225,56 @@ public sealed class TowerArtDirector : MonoBehaviour
     // are rank B and above: shown at F they made a starting room look finished (TT 10.4.3).
     private const int InteriorFromLevel = 5;
 
+    // ---- Room art manifest (TT 10.5.0b, Tools/build_room_art_manifest.py -> Rooms/room_art.json) ----------------------
+    // Which picture a building shows at which rank, and the band of the picture that holds the room. A room shows the
+    // part of its band that fits its real on-screen size at the picture's own proportions (owner: never stretch a
+    // picture; crop while a rank lacks its own art).
+    [System.Serializable] private sealed class RoomArtEntry
+    {
+        public string file, building;
+        public int fromRank, toRank, width, height, bays;
+        public float left, right, bottom, top;
+    }
+    [System.Serializable] private sealed class RoomArtManifest { public List<RoomArtEntry> rooms = new List<RoomArtEntry>(); }
+    private RoomArtManifest roomArt;
+
+    private RoomArtEntry RoomArtFor(string type, int level)
+    {
+        if (roomArt == null)
+        {
+            var json = Resources.Load<TextAsset>(Root + "Rooms/room_art");
+            roomArt = json != null ? JsonUtility.FromJson<RoomArtManifest>(json.text) : new RoomArtManifest();
+        }
+        type = LairCatalog.ArtType(type);
+        foreach (var e in roomArt.rooms)
+            if (e.building == type && level >= e.fromRank && level <= e.toRank) return e;
+        return null;
+    }
+
+    // The crop of the entry's band whose proportions match a box `wide` x `tall`: centred across, sitting on the floor.
+    private static Rect FitCrop(RoomArtEntry e, float wide, float tall)
+    {
+        float bandW = (e.right - e.left) * e.width, bandH = (e.top - e.bottom) * e.height;
+        float want = wide / tall;
+        float w = bandW, h = bandH;
+        if (bandW / bandH > want) w = bandH * want; else h = bandW / want;
+        float x = e.left * e.width + (bandW - w) / 2, y = e.bottom * e.height;
+        return new Rect(x / e.width, y / e.height, w / e.width, h / e.height);
+    }
+
+    // The picture and crop for a room `wide` x `tall` on screen; falls back to the old fixed crop without a manifest.
+    private string RoomArtFitted(string type, int level, float wide, float tall, out Rect crop)
+    {
+        var entry = RoomArtFor(type, level);
+        if (entry != null && LairCatalog.ArtType(type) != "barn")
+        {
+            crop = FitCrop(entry, wide, tall);
+            return "Rooms/" + entry.file;
+        }
+        string grade = level >= 3 ? "D" : level == 2 ? "E" : "F";
+        return RoomArt(type, grade, out crop, level);
+    }
+
     private string RoomArt(string type, string grade, out Rect crop, int level = 1)
     {
         type = LairCatalog.ArtType(type);   // dungeon rooms borrow Tower art until they get their own
@@ -223,7 +314,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                 left = X(work.x); width = TowerTiers.Bays(work.type, 1) * Cell;
                 Rect crop;
                 string grade = "F";
-                string path = RoomArt(work.type, grade, out crop);
+                string path = RoomArtFitted(work.type, 1, width - 0.07f, 2.20f, out crop);
                 // The finished room fades in behind the timber frame as the work advances.
                 // The barn painting is a wide bay sitting on the floor line, not a full-height room.
                 float ghostHeight = work.type == "barn" ? (width - 0.07f) * 0.82f : 2.20f;
@@ -332,8 +423,13 @@ public sealed class TowerArtDirector : MonoBehaviour
         {
             if (f.number < middle - range || f.number > middle + range) continue;
             float y = f.number * Storey;
-            int endCell = 23 + tower.Rules.DrawnEast(f);
-            float left = X(22 - tower.Rules.DrawnWest(f)), right = X(endCell);
+            // The Gates are the ends of the ground floor (owner, TT 10.5.0b): the timber frame stops before them and they
+            // stand outside it, against the sky.
+            int gateWest = f.number == 0 && tower.Rules.GateOn(-1) != null ? 1 : 0;
+            int gateEast = f.number == 0 && tower.Rules.GateOn(1) != null ? 1 : 0;
+            int startCell = 22 - tower.Rules.DrawnWest(f) + gateWest;
+            int endCell = 23 + tower.Rules.DrawnEast(f) - gateEast;
+            float left = X(startCell), right = X(endCell);
             float width = right - left;
             float center = (left + right) / 2;
             // Empty founded cells still have an actual timber interior.
@@ -349,10 +445,15 @@ public sealed class TowerArtDirector : MonoBehaviour
                         y + 0.12f, 2, rw - 0.05f, 2.23f, new Rect(0.32f, 0, 0.36f, 1));
                 else if (room.type == "gate")
                 {
-                    // The painting opens to the right: the west Gate is mirrored so both open away from the tower.
-                    var gateArt = Art("Celestium entrance", "Structure/gate", cx, y + 0.17f, 1,
-                        rw * 1.05f, 2.30f, new Rect(0.13f, 0.01f, 0.79f, 0.98f));
-                    if (room.x < TowerRules.CoreX) Mirror(gateArt, -1);
+                    // A freestanding Gate closing the floor: taller than a storey, its foot on the slab, leaning on the
+                    // frame's end post. The painting opens to the right: the west Gate is mirrored so both face outward.
+                    bool west = room.x < TowerRules.CoreX;
+                    var gateTexture = Resources.Load<Texture2D>(Root + GatePath);
+                    float gateWide = GatePath == "Structure/gate_end" && gateTexture != null ?
+                        2.86f * gateTexture.width / gateTexture.height : rw * 1.22f;   // the new art keeps its proportions
+                    var gateArt = Art("Celestium entrance", GatePath, cx + (west ? 0.12f : -0.12f), y + 0.42f, 1,
+                        gateWide, 2.86f, GateCrop);
+                    if (west) Mirror(gateArt, -1);
                 }
                 else if (room.type == "barn" && BarnModel(room, cx, y, tower.Rules.IsPowered(room)))
                 {
@@ -361,7 +462,7 @@ public sealed class TowerArtDirector : MonoBehaviour
                 else
                 {
                     Rect crop;
-                    string path = RoomArt(room.type, grade, out crop, room.level);
+                    string path = RoomArtFitted(room.type, room.level, rw - 0.07f, 2.20f, out crop);
                     // Rooms the hearths cannot light go dark, Fallout Shelter style.
                     bool lit = tower.Rules.IsPowered(room);
                     Art("Furnished " + room.type + " " + room.uid, path, cx, y + 0.14f, 2.6f,
@@ -371,14 +472,14 @@ public sealed class TowerArtDirector : MonoBehaviour
                 }
                 // Same-type neighbours read as one merged hall: no post between them.
                 var westNeighbour = tower.Rules.RoomAt(room.floor, room.x - 1);
-                if (westNeighbour == null || westNeighbour.type != room.type || room.type == "heart" || room.type == "gate")
+                if (room.type != "gate" && (westNeighbour == null || westNeighbour.type != room.type || room.type == "heart"))
                     Post(X(room.x), y);
                 string label = room.type == "heart" ? "HEART" : room.type == "gate" ? "GATE" :
                     TowerCatalog.Get(room.type).displayName.ToUpperInvariant();
-                Label(label, new Vector3(cx, y + 1.38f, -1.2f), rw);
+                if (room.type != "gate") Label(label, new Vector3(cx, y + 1.38f, -1.2f), rw);   // the Gate art speaks for itself
             }
             // Tiled beams retain the scale of stonework rather than stretching one texture across a floor.
-            for (int cell = 22 - tower.Rules.DrawnWest(f); cell < endCell; cell += 2)
+            for (int cell = startCell; cell < endCell; cell += 2)
             {
                 float span = Mathf.Min(2, endCell - cell) * Cell;
                 float cx = X(cell) + span / 2;
@@ -410,7 +511,7 @@ public sealed class TowerArtDirector : MonoBehaviour
             if (f.number == 0 && tower.Rules.Floor(-1) == null)
                 Art("Ivy and stone foundation", "Structure/foundation_v1", center, y - 2.06f, 3.5f,
                     width + 2.4f, 3.1f);
-            for (int cell = 22 - tower.Rules.DrawnWest(f); cell < endCell; cell++)
+            for (int cell = startCell; cell < endCell; cell++)
                 if (cell != TowerRules.CoreX && tower.Rules.RoomAt(f.number, cell) == null &&
                     tower.Rules.WorkRoomAt(f.number, cell) == null)
                     Label("+", new Vector3(X(cell + 0.5f), y + 0.05f, -0.8f), 0.5f);

@@ -111,6 +111,42 @@ public sealed class OneWorldTests
         Assert.AreEqual(rules.RouteEast(-1) - rules.RouteWest(-1) + 1, b1.Distinct().Count(), "B1 is crossed end to end");
     }
 
+    // ---- TT 10.5.0b: the player builds the Gates; each closes an end of the ground floor --------------------------
+
+    [Test]
+    public void TheFoundingGateIsBuiltByThePlayer()
+    {
+        var rules = TowerRules.New();
+        Assert.IsNull(rules.AwakenHeart());
+        Assert.AreEqual("gate", rules.State.introPhase);
+        Assert.IsTrue(rules.GateBuildable());
+        StringAssert.Contains("ground floor", rules.BuildGate(1, 23));
+        StringAssert.Contains("left or right", rules.BuildGate(0, TowerRules.CoreX), "the shaft is not an end");
+        Assert.IsNull(rules.BuildGate(0, 23), "the first Gate is free");
+        Assert.AreEqual("shack", rules.State.introPhase);
+        Assert.AreEqual(TowerRules.CoreX + 1, rules.GateOn(1).x);
+        StringAssert.Contains("already has", rules.BuildGate(0, 23));
+    }
+
+    [Test]
+    public void TheSecondGateCostsGoldAndClosesTheOtherEnd()
+    {
+        var rules = Started();
+        Assert.IsNull(rules.GateOn(-1), "no automatic west Gate with player-built Gates");
+        Assert.IsTrue(rules.GateBuildable());
+        rules.State.gold = 10;
+        StringAssert.Contains("80 gold", rules.BuildGate(0, rules.GateEndX(-1)));
+        rules.State.gold = 100;
+        Assert.IsNull(rules.BuildGate(0, rules.GateEndX(-1) + 1), "a tap on the last founded cell takes that end");
+        Assert.AreEqual(20, rules.State.gold);
+        Assert.AreEqual(TowerRules.CoreX - rules.Floor(0).west - 1, rules.GateOn(-1).x);
+        Assert.IsFalse(rules.GateBuildable(), "both ends are closed");
+        rules.State.celestium = 999;
+        int before = rules.GateOn(1).x;
+        Assert.IsNull(rules.ExpandFloor(0, 1));
+        Assert.AreEqual(before + 1, rules.GateOn(1).x, "the Gate steps out with its end");
+    }
+
     [Test]
     public void DiggingPushesTheLivingBandAndTheVaultDown()
     {

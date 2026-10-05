@@ -13,8 +13,8 @@ public static class AndroidReleaseBuilder
 {
     private const string StageKey = "AdamsHaven.ApkBuild.Stage";
     private const string NameKey = "AdamsHaven.ApkBuild.ProductName";
-    private const string Version = "0.8.2";
-    private const int VersionCode = 10;
+    private const string Version = "0.9.0";
+    private const int VersionCode = 11;
     private const string ApkName = "AdamsHavenTowerBattle-" + Version + ".apk";
 
     private static string BuildsFolder { get { return Path.Combine(Directory.GetCurrentDirectory(), "Builds"); } }
@@ -45,6 +45,20 @@ public static class AndroidReleaseBuilder
     }
 
     private static string outputOverride;
+
+    // Build on the current target without the switch back to Windows (TT 10.5.0b): when the editor already targets
+    // Android, the switch-back costs a full reimport for nothing. Runs from a delayCall so the caller returns first.
+    public static void BuildHere()
+    {
+        if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android) { Start(); return; }
+        Directory.CreateDirectory(BuildsFolder);
+        File.WriteAllText(LogPath, "started (Android, no switch) " + DateTime.Now + "
+");
+        string name = PlayerSettings.productName;
+        try { Build(); }
+        catch (Exception ex) { Note("EXCEPTION " + ex); }
+        finally { PlayerSettings.productName = name; AssetDatabase.SaveAssets(); Note("finished " + DateTime.Now); }
+    }
 
     private static void Note(string text) { File.AppendAllText(LogPath, text + "\n"); }
 

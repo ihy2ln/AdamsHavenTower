@@ -1086,6 +1086,7 @@ public sealed class AdamsHavenPrototype : MonoBehaviour
         int x = Mathf.FloorToInt(world.x / Cell + 17.5f);
         if (Mathf.Abs(world.y - number * Storey) > 1.05f) return;
         if (Moving) { PlaceMovingRoom(number, x); return; }
+        if (Placing && buildType == "gate") { string gate = rules.BuildGate(number, x); if (gate == null) { placing = false; buildType = "house"; } Apply(gate); return; }   // TT 10.5.0b: the Gate ends the ground floor
         var room = rules.RoomAt(number, x);
         if (room != null) { SelectRoomById(room.uid); return; }
         var site = rules.WorkRoomAt(number, x);

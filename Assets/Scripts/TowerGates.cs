@@ -27,8 +27,60 @@ namespace AdamsHaven.Tower
         {
             var ground = Floor(0);
             if (ground == null) return;
-            PlaceGate(ground, 1, true);
-            PlaceGate(ground, -1, State.introPhase == "complete");
+            // Player-built Gates (owner, 2026-10-05): in play the player builds each Gate; existing ones still step out.
+            PlaceGate(ground, 1, !PlayerGates);
+            PlaceGate(ground, -1, State.introPhase == "complete" && !PlayerGates);
+        }
+
+        // ---- Player-built Gates (TT 10.5.0b): the Gate is the end of the ground floor, placed from BUILD ----------
+
+        // Play only, like one world: EditMode suites keep the automatic Gates they were written for.
+        public static bool PlayerGates { get { return OneWorld; } }
+
+        // The cell a Gate takes at that end: one beyond the founded cells (and any wing under construction).
+        public int GateEndX(int side)
+        {
+            var ground = Floor(0);
+            if (ground == null) return side < 0 ? CoreX - 1 : CoreX + 1;
+            return side < 0 ? CoreX - ground.west - 1 - PendingWing(-1) : CoreX + ground.east + 1 + PendingWing(1);
+        }
+
+        // The first Gate is free (the founding); the second costs gold.
+        public int GateCost() { return HasGate() ? 80 : 0; }
+
+        // A Gate is offered in BUILD while an end of the ground floor has none.
+        public bool GateBuildable()
+        {
+            return (State.introPhase == "gate" || State.introPhase == "complete") && Floor(0) != null &&
+                (GateOn(-1) == null || GateOn(1) == null);
+        }
+
+        // Tap anywhere on a side of the ground floor, from its last founded cell outward: the Gate takes that end.
+        public string BuildGate(int floor, int x)
+        {
+            if (State.introPhase == "dormant") return "Awaken the Heart first.";
+            if (floor != 0 || Floor(0) == null) return "A Gate stands at an end of the ground floor.";
+            if (x == CoreX) return "Tap an end of the ground floor, left or right of the Heart.";
+            int side = x < CoreX ? -1 : 1;
+            int end = GateEndX(side);
+            if (GateOn(side) != null) return "That end already has its Gate.";
+            if (side < 0 ? x > end + 1 : x < end - 1) return "Tap the very end of the ground floor: the Gate closes it.";
+            if (RoomAt(0, end) != null || WorkRoomAt(0, end) != null) return "Something already stands at that end.";
+            int cost = GateCost();
+            if (State.gold < cost) return "A second Gate costs " + cost + " gold.";
+            State.gold -= cost;
+            var gate = AddRoom("gate", 0, end);
+            gate.flip = false;
+            State.layoutVersion = LayoutVersion;
+            TouchLayout();
+            Emit("build", gate.uid, 0, "gate");
+            if (State.introPhase == "gate")
+            {
+                State.introPhase = "shack";
+                Note("The Celestium Gate closes the " + (side < 0 ? "west" : "east") + " end of the ground floor.");
+            }
+            else Note("A second Gate closes the " + (side < 0 ? "west" : "east") + " end of the ground floor.");
+            return null;
         }
 
         private void PlaceGate(TowerFloor ground, int side, bool create)

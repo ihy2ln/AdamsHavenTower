@@ -811,7 +811,10 @@ public sealed partial class TowerHud : MonoBehaviour
             325, 45, () =>
             {
                 string phase = tower.Rules.State.introPhase;
-                tower.Apply(phase == "dormant" ? tower.Rules.AwakenHeart() : tower.Rules.PlaceIntroGate());
+                if (phase == "dormant") { tower.Apply(tower.Rules.AwakenHeart()); return; }
+                // TT 10.5.0b: the player places the Gate (owner); EditMode-style automatic placement only off Play.
+                if (TowerRules.PlayerGates) { tower.FocusOnFloor(0); tower.SelectBuildType("gate"); return; }
+                tower.Apply(tower.Rules.PlaceIntroGate());
             }, Teal, 17);
         string[] ids = { "kaela", "ghislaine", "elara" };
         for (int i = 0; i < 3; i++)
@@ -917,6 +920,13 @@ public sealed partial class TowerHud : MonoBehaviour
         int number = buildPage * BuildPageSize + index;
         if (number >= available.Count) return;
         string id = available[number];
+        if (id == "gate")
+        {
+            popupBuild.gameObject.SetActive(false);
+            tower.FocusOnFloor(0);
+            tower.SelectBuildType("gate");
+            return;
+        }
         if (!tower.Rules.State.blueprints.Contains(id))
         {
             // Locked buildings open the Construction node that unlocks them.
@@ -947,6 +957,8 @@ public sealed partial class TowerHud : MonoBehaviour
     private List<string> BuildChoices()
     {
         var choices = new List<string>();
+        if (TowerRules.PlayerGates && tower.Rules.GateBuildable() && (buildCategory == "all" || buildCategory == "service"))
+            choices.Add("gate");
         foreach (var def in tower.Rules.BuildableDefs())
             if (def.kind != "heart" && def.kind != "gate" && tower.Rules.State.blueprints.Contains(def.id) &&
                 (buildCategory == "all" || CategoryOf(def) == buildCategory)) choices.Add(def.id);
@@ -1070,8 +1082,9 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void RefreshChip()
     {
+        bool gate = tower.Placing && tower.BuildType == "gate";
         bool show = (tower.Placing || tower.Moving) && !AnyPopupOpen() && tower.Rules.State.introPhase != "dormant" &&
-            tower.Rules.State.introPhase != "gate" && tower.Rules.State.introPhase != "choose";
+            (tower.Rules.State.introPhase != "gate" || gate) && tower.Rules.State.introPhase != "choose";
         chipPanel.gameObject.SetActive(show);
         if (!show) return;
         chipCancel.gameObject.SetActive(tower.Rules.State.introPhase != "shack");   // the founding Shack cannot be skipped
@@ -1080,6 +1093,13 @@ public sealed partial class TowerHud : MonoBehaviour
         {
             chipText.text = "MOVING  " + TowerCatalog.Get(moving.type).displayName.ToUpperInvariant() + "  " +
                 tower.Rules.MoveCost(moving) + "g   -  tap its new place";
+            return;
+        }
+        if (gate)
+        {
+            chipText.text = "PLACING  CELESTIUM GATE  " + (tower.Rules.GateCost() > 0 ? tower.Rules.GateCost() + "g" : "free") +
+                "   -  tap an end of the ground floor";
+            chipCancel.gameObject.SetActive(tower.Rules.State.introPhase == "complete");
             return;
         }
         var def = TowerCatalog.Get(tower.BuildType);
@@ -1500,8 +1520,15 @@ public sealed partial class TowerHud : MonoBehaviour
             if (index >= available.Count) continue;
             string id = available[index];
             var def = TowerCatalog.Get(id);
-            bool known = tower.Rules.State.blueprints.Contains(id);
+            bool known = tower.Rules.State.blueprints.Contains(id) || id == "gate";
             // Two lines: the name, then what it costs (or what unlocks it).
+            if (id == "gate")
+            {
+                buildLabels[i].text = "CELESTIUM GATE\n<color=#e8cc8c>" + (tower.Rules.GateCost() > 0 ? tower.Rules.GateCost() + "g" : "free") +
+                    "  ·  ends the ground floor</color>";
+                buildButtons[i].GetComponent<Image>().color = tower.Placing && tower.BuildType == id ? Gold : Teal;
+                continue;
+            }
             buildLabels[i].text = known ? def.displayName.ToUpperInvariant() + "\n<color=#e8cc8c>" +
                 tower.Rules.BuildCost(id) + "g  ·  " + tower.Rules.BuildWoodCost(id) + "w  ·  " +
                 tower.Rules.BuildStoneCost(id) + "s</color>" :
@@ -1510,6 +1537,21 @@ public sealed partial class TowerHud : MonoBehaviour
                     "study  " + tower.Rules.BlueprintGoldCost(id) + "g  ·  " + tower.Rules.BlueprintCelestiumCost(id) + "C") +
                 "</color>";
             buildButtons[i].GetComponent<Image>().color = tower.Placing && tower.BuildType == id && known ? Gold : Teal;
+        }
+    }
+
+    // Tutorial text that reads over the sky: bold, 18px, warm white with a dark outline (added once).
+    private static void ReadableLesson(Text text)
+    {
+        text.fontSize = 18;
+        text.fontStyle = FontStyle.Bold;
+        text.color = new Color(1f, 0.97f, 0.9f);
+        text.alignment = TextAnchor.MiddleCenter;
+        if (text.GetComponent<Outline>() == null)
+        {
+            var outline = text.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.02f, 0.03f, 0.06f, 0.95f);
+            outline.effectDistance = new Vector2(1.6f, -1.6f);
         }
     }
 
@@ -1546,13 +1588,15 @@ public sealed partial class TowerHud : MonoBehaviour
                 "7 / RECOVER  •  Keep fire, care, and defense priorities active until danger ends."
             };
             if (step < lessons.Length) tutorialTitle.text = lessons[step];
-            // TT 10.4.5: the banner is as tall as the lesson, not a fixed block.
-            tutorialTitle.fontSize = 14;
-            tutorialTitle.rectTransform.sizeDelta = new Vector2(522, 20);
-            float lesson = Mathf.Ceil(LayoutUtility.GetPreferredHeight(tutorialTitle.rectTransform)) + 2;
-            tutorialTitle.rectTransform.sizeDelta = new Vector2(522, lesson);
-            tutorialTitle.rectTransform.anchoredPosition = new Vector2(44, -9);
-            tutorialPanel.rectTransform.offsetMin = new Vector2(tutorialPanel.rectTransform.offsetMin.x, -86 - lesson - 18);
+            // TT 10.4.5: the banner is as tall as the lesson, not a fixed block. TT 10.5.0b (owner): the lesson was too small
+            // to read over the sky: 18px bold with a dark outline, across the whole banner between its carved ends.
+            ReadableLesson(tutorialTitle);
+            float wide = Mathf.Max(300, tutorialPanel.rectTransform.rect.width - 96);
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(wide, 20);
+            float lesson = Mathf.Ceil(LayoutUtility.GetPreferredHeight(tutorialTitle.rectTransform)) + 4;
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(wide, lesson);
+            tutorialTitle.rectTransform.anchoredPosition = new Vector2(48, -10);
+            tutorialPanel.rectTransform.offsetMin = new Vector2(tutorialPanel.rectTransform.offsetMin.x, -86 - lesson - 20);
             return;
         }
         tutorialTitle.rectTransform.anchoredPosition = new Vector2(9, -2);
@@ -1560,10 +1604,12 @@ public sealed partial class TowerHud : MonoBehaviour
         tutorialTitle.fontSize = 20;
         tutorialTitle.rectTransform.sizeDelta = new Vector2(592, 38);
         tutorialTitle.text = phase == "dormant" ? "Awaken the Celestium Heart" :
-            phase == "gate" ? "Place the Celestium Gate" :
+            phase == "gate" ? (TowerRules.PlayerGates ? (tower.Placing && tower.BuildType == "gate" ?
+                "Tap an end of the ground floor (left or right of the Heart): the Gate closes it" :
+                "Build the Celestium Gate: it closes the end of the ground floor") : "Place the Celestium Gate") :
             phase == "shack" ? "Build the Shack beside the Heart: tap the + lot" : "Choose your first resident";
         tutorialAction.gameObject.SetActive(phase == "dormant" || phase == "gate");
-        LabelOf(tutorialAction).text = phase == "dormant" ? "AWAKEN HEART" : "PLACE GATE";
+        LabelOf(tutorialAction).text = phase == "dormant" ? "AWAKEN HEART" : TowerRules.PlayerGates ? "BUILD THE GATE" : "PLACE GATE";
         foreach (var button in heroButtons) button.gameObject.SetActive(phase == "choose");
     }
 }
