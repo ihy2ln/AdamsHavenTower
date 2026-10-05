@@ -1111,6 +1111,7 @@ Section 16 item 18 lists the numbers each batch asks the owner first.
 | 0 | TT 10.4.4 docs | This section; section 20 marked superseded; handoff section 0 |
 | 0b | TT 10.4.5 compact HUD (done) | Panels shrink to content (`TowerUiFit`); people, room, build, tutorial, floors, goals, guild |
 | 1 | TT 10.5.0 merge foundations (done, 8edc228) | `ColonyVersion` 3 migration (B1, living band, vault); `FloorKind` for the whole tower; zoning by band; Dungeon Gate entry; dig buttons below ground; new game with B1 and the vault; `IsLair` branches per 21.6 (the fork keeps running on its own saves until batch 8); **BATTLE dock button becomes DUNGEON** |
+| 1b | **Room builder (section 22), owner 2026-10-05** | Slices R1-R8 in 22.6 come before the pest lure: Tower rooms first, then dungeon rooms, then the town |
 | 2 | TT 10.5.1 pest lure | Dungeon rank and XP; prey tiers; pest swarms; pest-incident spillover; Monster banner from E; **tutorial part 1** (dungeon tower) |
 | 3 | TT 10.5.2 beasts and taming | Bestiary beasts at D; Snare captures become monsters |
 | 4 | TT 10.6.0 town lots as rules | Lot functions; homes and the dweller cap; growth speed; raider damage to lots; **tutorial part 2** (town, districts) |
@@ -1120,3 +1121,86 @@ Section 16 item 18 lists the numbers each batch asks the owner first.
 | 7 | TT 10.6.3 elite and sieges together | Siege kind, queueing, both meters on the HUD, named heroes |
 | 8 | TT 10.7.0 retire the fork | Remove the MENU switch, `AdamsHavenDungeon/`, `LairMilestones`; regenerate Tower checkpoints with the dungeon band |
 | later | | Prison and converts, walked retreats, real dungeon art, traders, wages and rent, room fights in Battle Mode |
+
+---
+
+## 22. Room builder: furnished 3D rooms (owner, 2026-10-05, "TT 10.5.0 change of building design")
+
+**Direction.** Players design their own rooms, Sims-style, inside the Tower's side-view cutaway. Rooms stop being one
+painting per rank: each room is a **3D shell** (back wall, floor, ceiling beam, side posts) that the player **furnishes**
+item by item, and residents walk through it **front and back**. The painted F/E/D rooms become one-tap presets.
+Order: **Tower first** (most fleshed out), then the dungeon's rooms, then the town (which gets the deeper building work).
+
+### 22.1 Owner rulings (2026-10-05)
+
+| Question | Ruling |
+| --- | --- |
+| Build depth | **Furnish rooms**: pick a building type and width, then place furniture and amenities on a slot grid |
+| Ranks F-SSR | **The furniture and amenities in a room make its rank.** After each rank-up the **walls change** to match the rank |
+| Art | **Real 3D rooms**, residents navigate the back and front of the room; **well-stylized assets**, not low-poly placeholders |
+| Camera | Side-on cutaway with a **slight downward tilt** (about 12 degrees) so the floor's depth reads; furnish mode tilts a little more |
+| Walls | **One shared 9-step wall ladder** (F rough timber ... SSR Celestium crystal) + a small **category accent** (living, produce, storage, service, dungeon) |
+| Residents | **All 3D**: finish rigs for the bodies still drawn as 2D quads (tall, hourglass, villagers, children) so everyone can sit, sleep and work at furniture |
+| Function | **No restrictions**: any item works in any room. Items that **match the room's type** give a bonus |
+| Scope | Tower, then dungeon, then town |
+
+### 22.2 The slot grid
+
+- One bay = **4 columns x 3 rows**: **wall** (hung: windows, shelves, lamps, paintings; never blocks walking), **back**
+  (against the wall: stoves, beds, wardrobes, workbenches) and **front** (low items only: tables, crates, rugs, plants,
+  so the room stays readable). Residents walk the lane between back and front and step into either row to use an item.
+- Items take 1 or 2 columns (beds and big workbenches take 2) and may span a bay boundary inside one room.
+- Width: the player sets it (build at 1 bay, EXPAND adds a bay away from the Heart, SHRINK gives it back if the bay is
+  empty). v1 cap: 3 bays (tunable); single-bay buildings lose their fixed width.
+
+### 22.3 What furniture does
+
+Each item has a **role**, a **tier** (F..SSR), a cost (gold plus wood or stone) and optional **home types**.
+
+| Role | Effect anywhere | Bonus when it matches the room's type |
+| --- | --- | --- |
+| Bed | One sleeping place (counts toward housing everywhere) | +joy on waking ("slept in a proper home") |
+| Workstation | One worker slot; produces its resource (stove: food, well-pump: water, saw: firewood, anvil: trains Might ...) | +25% output |
+| Storage | Adds cap for its resource | +25% cap |
+| Amenity | Serves a need or joy (table: meal seat, tub, hearth, bar) | Stronger thought |
+| Decor / light | Beauty only | +25% beauty |
+
+A room of one type may hold any mix (a Shack with a stove cooks a little food; a Kitchen with beds houses people). The
+type still names the room, picks the accent, sets which items "match" and keeps type rules (Farmstead sunlit, Quarry
+underground). Production keeps the Fallout Shelter collect loop: the room fills one progress bar **per resource** its
+workstations make, and COLLECT gathers them all.
+
+### 22.4 Rank from furniture
+
+- **Room quality** = sum of item points (tier value x size, matching items x 1.25) divided by the room's bays, so a
+  well-furnished 1-bay Shack can climb as high as a 3-bay hall; width buys capacity, not rank.
+- Thresholds F..SSR on quality (first pass in `TowerFurnishing`). Rank follows the furniture both ways and stays capped
+  by the Heart (`TowerTiers.BuildingCap`) and CON-7 for SSR. On every rank change the **wall kit swaps** to that rank.
+- The UPGRADE button and its gold curve go away: furniture purchases are where the rank money goes. Item tiers unlock
+  with the Heart rank (an item's tier can never exceed the room's cap).
+- `TowerRoom.level` keeps meaning "rank", so every rule reading it (venues, districts, adjacency, sieges) keeps working.
+
+### 22.5 Art kit (stylized 3D)
+
+- **Walls:** 9 modular kits (back panel, window panel, door panel, floor strip, ceiling beam, side post) on the shared
+  ladder, built in Blender as clean modular pieces with hand-painted textures (ComfyUI tile paintings, not Trellis:
+  image-to-3D is poor at flat tiling parts). 5 category accent sets (trim, banners, light colour).
+- **Furniture:** reference picture first (local ComfyUI, house style of the current room paintings), then 3D via the
+  town pipeline (BiRefNet + Trellis.2 -> Blender cleanup: scale to the slot grid, origin bottom-centre, face budget,
+  baked texture) -> `Resources/AdamsHaven/TowerFurniture/<id>.fbx` -> prefab via `TowerModelImporter`.
+  v1 catalog about 100 items (4-5 per building type + about 20 shared decor, light and amenity pieces).
+- **Use points:** each furniture prefab carries a use point (sit, sleep, work) and a facing so the 3D chibis sit at
+  tables, lie in beds and work at stations (`TowerChibi3D` clips).
+
+### 22.6 Slices (one per session)
+
+| # | Slice | Content |
+| --- | --- | --- |
+| R1 | Rules | `TowerFurnishing` catalog + slot grid + place/move/sell API; quality -> rank; beds, workstations, storage, amenities from furniture; type-match bonus; multi-resource progress; `ColonyVersion` migration that furnishes every existing room with its type's preset at its current rank (no rank changes on load); EditMode tests |
+| R2 | 3D shell greybox | Tilted camera; room shells per bay with ladder-coloured placeholder walls; furniture as sized blocks at their slots; residents walk front/back lanes and stop at use points |
+| R3 | Furnish UI | Room card FURNISH mode: tap a slot -> compact item picker (role tabs, cost, points, match badge), drag to move, presets, rank meter with the next threshold; compact mobile rules (`TowerUiFit`) |
+| R4 | Art kit A | Wall ladder (9) + accents (5); first furniture set: Shack, Kitchen, Well, Lumber Mill + shared decor (about 30 items) |
+| R5 | Art kit B | Remaining furniture (about 70); use-point animations (sit, sleep, cook, saw, pump) |
+| R6 | All-3D residents | Rigs for tall and hourglass bodies, villagers and children; retire the 2D quad path in the Tower |
+| R7 | Dungeon rooms | Same builder for the living band and dungeon rooms (traps and lairs as furniture) |
+| R8 | Town interiors | Town buildings get the deeper building work (owner: "more fleshed out building wise") |

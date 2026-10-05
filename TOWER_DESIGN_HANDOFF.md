@@ -4,6 +4,20 @@ Updated 2026-10-04 after TT 10.4.4 (docs: one world). Read this first, then `TOW
 
 ## 0. Start here: one world, two sides, one town
 
+### NEW 2026-10-05: the room builder comes first (GDD section 22)
+
+Owner ("TT 10.5.0 change of building design"): players **furnish their own rooms, Sims-style**. Rooms become **real 3D
+shells** (stylized, not low-poly) seen through a slightly tilted side-on camera; residents walk front and back; **the
+furniture and amenities make the rank**, and the **walls change at every rank-up** (one shared 9-step ladder + category
+accents). **No restrictions**: any item works in any room; items matching the room's type give a bonus. **All residents
+3D.** Order: Tower rooms, then dungeon rooms, then the town. Slices R1-R8 in GDD 22.6 run **before** the pest lure.
+
+> TT 10.5.0 room builder R1. Read `TOWER_DESIGN_HANDOFF.md` section 0 and `TOWER_MODE_GDD.md` section 22, then build
+> slice R1 (rules only, behind a `TowerRules.RoomBuilder` switch that stays off in Play until the R3 furnish UI lands):
+> `TowerFurnishing` catalog and slot grid, place/move/sell, quality -> rank, furniture-driven beds/workers/storage/
+> amenities, type-match bonus, per-resource progress, the preset-furnishing migration, EditMode tests.
+
+
 ### The direction (owner, 2026-10-04)
 
 **One world, two sides, one save.** The Tower grows up from the ground; the summoner's **dungeon is dug beneath it** (ENTRANCE via a Dungeon Gate from the town, B1..Bn, LIVING, then the HEART VAULT at the bottom). The dungeon exists **from the start** but first lures **pests**; it levels up (Dungeon rank) until it can take on **humans**. **Adventurers are town visitors**: they lodge, shop, take quests in town, raid the dungeon, and survivors come back and spend. The separate Dungeon Mode fork is **retired** once the merge plays (its saves are dev checkpoints, not migrated). Full design: GDD section 21.
