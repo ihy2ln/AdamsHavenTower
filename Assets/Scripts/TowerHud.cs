@@ -73,8 +73,13 @@ public sealed partial class TowerHud : MonoBehaviour
 
     // resident and room panels
     private Text residentDetail, roomDetail, roomAdvice, rosterPageText, priorityHint, moodText, adviceText;
-    private readonly Button[] rosterButtons = new Button[4], buildButtons = new Button[6], priorityButtons = new Button[6];
-    private readonly Text[] rosterLabels = new Text[4], buildLabels = new Text[6], priorityLabels = new Text[6];
+    private Text rosterHeading, roomTitle;
+    private RectTransform leftPanel, rightPanel;
+    private GameObject workControls;
+    private Button rosterPrev, rosterNext, buildPrev, buildNext;
+    private const int BuildPageSize = 9;   // 3 x 3 cards; empty rows fold away (TT 10.4.5)
+    private readonly Button[] rosterButtons = new Button[4], buildButtons = new Button[BuildPageSize], priorityButtons = new Button[6];
+    private readonly Text[] rosterLabels = new Text[4], buildLabels = new Text[BuildPageSize], priorityLabels = new Text[6];
     private Button collect, rush, upgrade, assign, exploreSupplies, exploreRelics, explorePatrol, recall;
     private Button craftTool, craftWeapon, familyPair, tutorialAction, scheduleButton;
     private Button moveRoom, demolishRoom;
@@ -509,91 +514,96 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildBuildPopup()
     {
-        popupBuild = MakePopup("Build popup", 690, 262, false);
+        // TT 10.4.5 compact: tabs, then up to three rows of two-line cards (name, then cost), then a slim footer; the
+        // popup ends under its last row (TowerUiFit).
+        popupBuild = MakePopup("Build popup", 690, 220, false);
         for (int i = 0; i < categoryButtons.Length; i++)
         {
             int index = i;
-            float pitch = TowerModes.IsLair ? 96 : 116;
+            float pitch = TowerModes.IsLair ? 104 : 124;
             categoryButtons[i] = ButtonAt(popupBuild.transform, "Category " + categoryIds[i], categoryNames[i],
-                14 + i * pitch, 12, pitch - 6, 32, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
-                Teal, 13);
+                10 + i * pitch, 8, pitch - 4, 28, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
+                Teal, 12);
         }
         categoryButtons[5].gameObject.SetActive(TowerModes.IsLair);
-        CloseButton(popupBuild.transform, 648, 12, CloseAllPopups);
+        CloseButton(popupBuild.transform, 652, 7, CloseAllPopups);
         for (int i = 0; i < buildButtons.Length; i++)
         {
             int index = i;
-            buildButtons[i] = ButtonAt(popupBuild.transform, "Build choice " + i, "", 14 + (i % 3) * 224,
-                56 + (i / 3) * 66, 216, 58, () => ChooseBuild(index), Teal, 13);
+            buildButtons[i] = ButtonAt(popupBuild.transform, "Build choice " + i, "", 10 + (i % 3) * 225,
+                42 + (i / 3) * 50, 220, 46, () => ChooseBuild(index), Teal, 12);
             buildLabels[i] = LabelOf(buildButtons[i]);
         }
-        ButtonAt(popupBuild.transform, "Previous rooms", "‹", 14, 216, 56, 34,
-            () => { buildPage = Mathf.Max(0, buildPage - 1); Refresh(); }, Teal, 22);
-        ButtonAt(popupBuild.transform, "Floors page", "FLOORS / DIG", 76, 216, 150, 34,
-            () => TogglePopup(popupFloors), Teal, 13);
-        buildPageText = TextAt(popupBuild.transform, "Build page", "", 232, 216, 382, 34, 14, Cream,
+        float foot = 42 + 3 * 50;
+        buildPrev = ButtonAt(popupBuild.transform, "Previous rooms", "‹", 10, foot, 46, 28,
+            () => { buildPage = Mathf.Max(0, buildPage - 1); Refresh(); }, Teal, 20);
+        ButtonAt(popupBuild.transform, "Floors page", "FLOORS / DIG", 62, foot, 140, 28,
+            () => TogglePopup(popupFloors), Teal, 12);
+        buildPageText = TextAt(popupBuild.transform, "Build page", "", 208, foot, 422, 28, 12, Cream,
             TextAnchor.MiddleCenter);
-        ButtonAt(popupBuild.transform, "Next rooms", "›", 620, 216, 56, 34,
-            () => { buildPage++; Refresh(); }, Teal, 22);
+        buildNext = ButtonAt(popupBuild.transform, "Next rooms", "›", 634, foot, 46, 28,
+            () => { buildPage++; Refresh(); }, Teal, 20);
     }
 
     private void BuildFloorsPopup()
     {
-        popupFloors = MakePopup("Floors popup", 470, 296, false);
-        TextAt(popupFloors.transform, "Floors title", "FLOORS AND FOUNDATIONS", 16, 10, 380, 28, 17, Gold);
-        CloseButton(popupFloors.transform, 428, 10, CloseAllPopups);
-        ButtonAt(popupFloors.transform, "Floor down", "FLOOR −", 14, 46, 130, 42,
-            () => tower.FocusOnFloor(tower.FocusFloor - 1), Teal, 15);
-        floorText = TextAt(popupFloors.transform, "Floor", "", 150, 46, 170, 42, 18, Cream, TextAnchor.MiddleCenter);
-        ButtonAt(popupFloors.transform, "Floor up", "FLOOR +", 326, 46, 130, 42,
-            () => tower.FocusOnFloor(tower.FocusFloor + 1), Teal, 15);
-        floorOpenAbove = ButtonAt(popupFloors.transform, "Open above", "OPEN ABOVE", 14, 98, 218, 46,
-            () => TapOpenFloor(1), Teal, 14);
-        floorOpenBelow = ButtonAt(popupFloors.transform, "Open below", "OPEN BELOW", 238, 98, 218, 46,
-            () => TapOpenFloor(-1), Teal, 14);
-        floorWest = ButtonAt(popupFloors.transform, "Expand west", "< WEST", 14, 152, 218, 46,
-            () => TapWing(-1), Teal, 14);
-        floorEast = ButtonAt(popupFloors.transform, "Expand east", "EAST >", 238, 152, 218, 46,
-            () => TapWing(1), Teal, 14);
-        ButtonAt(popupFloors.transform, "Jump ground", "GROUND", 14, 206, 218, 36,
-            () => tower.FocusOnFloor(0), Teal, 13);
-        ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 238, 206, 218, 36,
-            () => tower.FocusOnFloor(HighestFloor()), Teal, 13);
-        ButtonAt(popupFloors.transform, "Districts", "DISTRICTS AND ZONING", 14, 250, 442, 36, OpenDistricts, Violet, 13);
+        // TT 10.4.5 compact: 32px rows; TowerUiFit ends the popup under the last one.
+        popupFloors = MakePopup("Floors popup", 460, 240, false);
+        TextAt(popupFloors.transform, "Floors title", "FLOORS AND FOUNDATIONS", 12, 7, 380, 26, 15, Gold);
+        CloseButton(popupFloors.transform, 422, 6, CloseAllPopups);
+        ButtonAt(popupFloors.transform, "Floor down", "FLOOR −", 10, 38, 120, 32,
+            () => tower.FocusOnFloor(tower.FocusFloor - 1), Teal, 13);
+        floorText = TextAt(popupFloors.transform, "Floor", "", 134, 38, 192, 32, 15, Cream, TextAnchor.MiddleCenter);
+        ButtonAt(popupFloors.transform, "Floor up", "FLOOR +", 330, 38, 120, 32,
+            () => tower.FocusOnFloor(tower.FocusFloor + 1), Teal, 13);
+        floorOpenAbove = ButtonAt(popupFloors.transform, "Open above", "OPEN ABOVE", 10, 74, 218, 32,
+            () => TapOpenFloor(1), Teal, 12);
+        floorOpenBelow = ButtonAt(popupFloors.transform, "Open below", "OPEN BELOW", 232, 74, 218, 32,
+            () => TapOpenFloor(-1), Teal, 12);
+        floorWest = ButtonAt(popupFloors.transform, "Expand west", "< WEST", 10, 110, 218, 32,
+            () => TapWing(-1), Teal, 12);
+        floorEast = ButtonAt(popupFloors.transform, "Expand east", "EAST >", 232, 110, 218, 32,
+            () => TapWing(1), Teal, 12);
+        ButtonAt(popupFloors.transform, "Jump ground", "GROUND", 10, 146, 145, 30,
+            () => tower.FocusOnFloor(0), Teal, 12);
+        ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 158, 146, 145, 30,
+            () => tower.FocusOnFloor(HighestFloor()), Teal, 12);
+        ButtonAt(popupFloors.transform, "Districts", "DISTRICTS", 306, 146, 144, 30, OpenDistricts, Violet, 12);
     }
 
     private void BuildTasksPopup()
     {
-        popupTasks = MakePopup("Tasks popup", 580, 428, false);
-        tabGoals = ButtonAt(popupTasks.transform, "Tab goals", "GOALS", 14, 6, 126, 30, () => tasksTab = "goals", Gold, 14);
-        tabDaily = ButtonAt(popupTasks.transform, "Tab daily", "DAILY", 146, 6, 126, 30, () => tasksTab = "daily", Teal, 14);
-        dailyBonusText = TextAt(popupTasks.transform, "Daily bonus", "", 284, 10, 244, 26, 13, Cream);
-        CloseButton(popupTasks.transform, 538, 10, CloseAllPopups);
-        Divider(popupTasks.transform, 12, 40, 556);
+        // TT 10.4.5 compact: each goal row is as tall as its two lines, the four actions are one 2 x 2 block of 32px.
+        popupTasks = MakePopup("Tasks popup", 560, 360, false);
+        tabGoals = ButtonAt(popupTasks.transform, "Tab goals", "GOALS", 10, 6, 116, 28, () => tasksTab = "goals", Gold, 13);
+        tabDaily = ButtonAt(popupTasks.transform, "Tab daily", "DAILY", 130, 6, 116, 28, () => tasksTab = "daily", Teal, 13);
+        dailyBonusText = TextAt(popupTasks.transform, "Daily bonus", "", 256, 6, 250, 28, 12, Cream);
+        CloseButton(popupTasks.transform, 522, 5, CloseAllPopups);
         for (int i = 0; i < goalTexts.Length; i++)
         {
             int index = i;
-            goalTexts[i] = TextAt(popupTasks.transform, "Goal " + i, "", 16, 56 + i * 56, 420, 48, 14, Cream);
-            goalClaims[i] = ButtonAt(popupTasks.transform, "Claim goal " + i, "CLAIM", 452, 58 + i * 56,
-                112, 40, () => tower.Apply(tower.Rules.ClaimGoal(index)), Teal, 14);
+            goalTexts[i] = TextAt(popupTasks.transform, "Goal " + i, "", 12, 40 + i * 40, 430, 34, 12, Cream);
+            goalClaims[i] = ButtonAt(popupTasks.transform, "Claim goal " + i, "CLAIM", 448, 40 + i * 40,
+                102, 32, () => tower.Apply(tower.Rules.ClaimGoal(index)), Teal, 12);
         }
         for (int i = 0; i < dailyTexts.Length; i++)
         {
             int index = i;
-            dailyTexts[i] = TextAt(popupTasks.transform, "Daily " + i, "", 16, 50 + i * 42, 420, 38, 14, Cream);
-            dailyClaims[i] = ButtonAt(popupTasks.transform, "Claim daily " + i, "CLAIM", 452, 52 + i * 42,
-                112, 34, () => tower.Apply(tower.Rules.ClaimDaily(index)), Teal, 14);
+            dailyTexts[i] = TextAt(popupTasks.transform, "Daily " + i, "", 12, 40 + i * 40, 430, 34, 12, Cream);
+            dailyClaims[i] = ButtonAt(popupTasks.transform, "Claim daily " + i, "CLAIM", 448, 40 + i * 40,
+                102, 32, () => tower.Apply(tower.Rules.ClaimDaily(index)), Teal, 12);
         }
-        TextAt(popupTasks.transform, "Events title", "TOWER EVENTS", 16, 226, 300, 26, 16, Gold);
-        incidentText = TextAt(popupTasks.transform, "Incident list", "", 16, 252, 548, 58, 14, Cream);
-        recruit = ButtonAt(popupTasks.transform, "Recruit visitor", "RECRUIT AT GATE", 14, 318, 274, 46,
-            () => tower.Apply(tower.Rules.RecruitVisitor()), Teal, 15);
-        autoHaul = ButtonAt(popupTasks.transform, "Unlock hauling", "AUTO-HAUL", 294, 318, 274, 46,
-            () => tower.Apply(tower.Rules.UnlockHauling()), Teal, 15);
-        stewardButton = ButtonAt(popupTasks.transform, "Steward", "STEWARD", 14, 370, 274, 46,
-            () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward)), Teal, 15);
-        autoAssignButton = ButtonAt(popupTasks.transform, "Auto assign", "AUTO-ASSIGN IDLE", 294, 370, 274, 46,
-            () => tower.Apply(tower.Rules.AutoAssignIdle()), Teal, 15);
+        float events = 40 + Mathf.Max(goalTexts.Length, dailyTexts.Length) * 40;
+        TextAt(popupTasks.transform, "Events title", "TOWER EVENTS", 12, events, 300, 22, 14, Gold);
+        incidentText = TextAt(popupTasks.transform, "Incident list", "", 12, events + 22, 536, 58, 12, Cream);
+        recruit = ButtonAt(popupTasks.transform, "Recruit visitor", "RECRUIT AT GATE", 10, events + 86, 268, 32,
+            () => tower.Apply(tower.Rules.RecruitVisitor()), Teal, 12);
+        autoHaul = ButtonAt(popupTasks.transform, "Unlock hauling", "AUTO-HAUL", 282, events + 86, 268, 32,
+            () => tower.Apply(tower.Rules.UnlockHauling()), Teal, 12);
+        stewardButton = ButtonAt(popupTasks.transform, "Steward", "STEWARD", 10, events + 122, 268, 32,
+            () => tower.Apply(tower.Rules.SetSteward(!tower.Rules.State.steward)), Teal, 12);
+        autoAssignButton = ButtonAt(popupTasks.transform, "Auto assign", "AUTO-ASSIGN IDLE", 282, events + 122, 268, 32,
+            () => tower.Apply(tower.Rules.AutoAssignIdle()), Teal, 12);
     }
 
     // ---------------------------------------------------------------- guild expedition board
@@ -610,24 +620,24 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildGuildPopup()
     {
-        popupGuild = MakePopup("Guild popup", 580, 296, false);
+        // TT 10.4.5 compact.
+        popupGuild = MakePopup("Guild popup", 560, 220, false);
         var t = popupGuild.transform;
-        TextAt(t, "Guild title", "SILVERBROOK ADVENTURE GUILD", 16, 10, 480, 28, 18, Gold);
-        CloseButton(t, 538, 10, CloseAllPopups);
-        Divider(t, 12, 40, 556);
-        guildInfo = TextAt(t, "Guild info", "", 16, 46, 548, 26, 14, Cream);
-        guildMap = ButtonAt(t, "Expedition map", "OPEN THE EXPEDITION MAP", 14, 76, 360, 74,
-            () => { CloseAllPopups(); tower.OpenExpedition(); }, Teal, 17);
-        ButtonAt(t, "Auto expedition", "AUTO EXPEDITION", 382, 76, 184, 35, OpenAuto, Teal, 13);
-        ButtonAt(t, "Outposts", "OUTPOSTS", 382, 115, 184, 35, OpenOutposts, Violet, 13);
-        TextAt(t, "Guild resident title", "SEND A RESIDENT", 16, 160, 300, 26, 16, Gold);
-        guildPerson = TextAt(t, "Guild resident", "", 16, 186, 548, 24, 14, Cream);
-        guildSupplies = ButtonAt(t, "Guild supplies", "SUPPLIES", 14, 220, 132, 46, () => Explore("supplies"), Teal, 15);
-        guildRelics = ButtonAt(t, "Guild relics", "RELICS", 154, 220, 132, 46, () => Explore("relics"), Teal, 15);
-        guildPatrol = ButtonAt(t, "Guild patrol", "PATROL", 294, 220, 132, 46, () => Explore("patrol"), Teal, 15);
-        guildRecall = ButtonAt(t, "Guild recall", "RECALL", 434, 220, 132, 46,
+        TextAt(t, "Guild title", "SILVERBROOK ADVENTURE GUILD", 12, 7, 480, 26, 15, Gold);
+        CloseButton(t, 522, 6, CloseAllPopups);
+        guildInfo = TextAt(t, "Guild info", "", 12, 34, 536, 22, 12, Cream);
+        guildMap = ButtonAt(t, "Expedition map", "OPEN THE EXPEDITION MAP", 10, 60, 270, 36,
+            () => { CloseAllPopups(); tower.OpenExpedition(); }, Teal, 13);
+        ButtonAt(t, "Auto expedition", "AUTO EXPEDITION", 284, 60, 133, 36, OpenAuto, Teal, 11);
+        ButtonAt(t, "Outposts", "OUTPOSTS", 421, 60, 129, 36, OpenOutposts, Violet, 11);
+        TextAt(t, "Guild resident title", "SEND A RESIDENT", 12, 102, 160, 22, 13, Gold);
+        guildPerson = TextAt(t, "Guild resident", "", 172, 102, 376, 22, 12, Cream);
+        guildSupplies = ButtonAt(t, "Guild supplies", "SUPPLIES", 10, 128, 132, 32, () => Explore("supplies"), Teal, 12);
+        guildRelics = ButtonAt(t, "Guild relics", "RELICS", 146, 128, 132, 32, () => Explore("relics"), Teal, 12);
+        guildPatrol = ButtonAt(t, "Guild patrol", "PATROL", 282, 128, 132, 32, () => Explore("patrol"), Teal, 12);
+        guildRecall = ButtonAt(t, "Guild recall", "RECALL", 418, 128, 132, 32,
             () => { if (tower.SelectedPerson != null) tower.Apply(tower.Rules.Recall(tower.SelectedPerson.id)); },
-            Alert, 15);
+            Alert, 12);
     }
 
     private void RefreshGuild()
@@ -662,101 +672,109 @@ public sealed partial class TowerHud : MonoBehaviour
 
     private void BuildLeft()
     {
-        // Only as tall as its contents, so the tower shows below it (TT 10.4.2).
-        var left = Rect("Resident panel", safeRoot, new Vector2(0, 1), new Vector2(0, 1),
-            new Vector2(0, -104 - 514), new Vector2(294, -104), Panel);
+        // TT 10.4.5 compact: one header line (count and pages), only the rows that exist, the selected resident's
+        // card sized to its text, then the tab row and the open tab. TowerUiFit stacks it and ends the panel there.
+        var left = Box("Resident panel", safeRoot, new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, -104),
+            new Vector2(280, 480), Panel);
+        leftPanel = left.rectTransform;
         TowerUiSkin.ApplyPanel(left, Glass, true);
         TowerUiFlow.Add(left, new Vector2(-24, 0));
-        TextAt(left.transform, "Resident heading", "RESIDENTS", 14, 10, 150, 32, 22, Gold);
-        Divider(left.transform, 9, 39, 279);
-        ButtonAt(left.transform, "Previous residents", "‹", 179, 10, 45, 36,
-            () => { rosterPage = Mathf.Max(0, rosterPage - 1); Refresh(); }, Teal, 23);
-        ButtonAt(left.transform, "Next residents", "›", 232, 10, 45, 36,
-            () => { rosterPage++; Refresh(); }, Teal, 23);
-        rosterPageText = TextAt(left.transform, "Roster page", "", 12, 53, 275, 20, 13, Cream);
+        rosterHeading = TextAt(left.transform, "Roster heading", "RESIDENTS", 12, 8, 170, 28, 16, Gold);
+        rosterPrev = ButtonAt(left.transform, "Previous residents", "‹", 184, 8, 40, 28,
+            () => { rosterPage = Mathf.Max(0, rosterPage - 1); Refresh(); }, Teal, 20);
+        rosterNext = ButtonAt(left.transform, "Next residents", "›", 228, 8, 40, 28,
+            () => { rosterPage++; Refresh(); }, Teal, 20);
+        // Kept for anything that reads it; the count and page now live in the heading.
+        rosterPageText = TextAt(left.transform, "Roster page", "", 12, 8, 1, 1, 1, Cream);
+        rosterPageText.gameObject.SetActive(false);
         for (int i = 0; i < rosterButtons.Length; i++)
         {
             int row = i;
-            rosterButtons[i] = ButtonAt(left.transform, "Resident row " + i, "", 12,
-                75 + i * 44, 270, 39, () => ClickResidentRow(row), Teal, 14);
+            rosterButtons[i] = ButtonAt(left.transform, "Resident row " + i, "", 10,
+                42 + i * 38, 260, 35, () => ClickResidentRow(row), Teal, 13);
             rosterLabels[i] = LabelOf(rosterButtons[i]);
             var drag = rosterButtons[i].gameObject.AddComponent<TowerResidentDrag>();
             drag.OnDrop = position => DragResidentRow(row, position);
         }
-        residentDetail = TextAt(left.transform, "Resident details", "", 14, 254, 267, 102, 14, Cream);
-        ButtonAt(left.transform, "Work tab", "WORK", 12, 360, 66, 38,
-            () => { leftTab = "work"; Refresh(); }, Teal, 13);
-        ButtonAt(left.transform, "Explore tab", "GO", 82, 360, 66, 38,
-            () => { leftTab = "explore"; Refresh(); }, Teal, 13);
-        ButtonAt(left.transform, "Family tab", "FAMILY", 152, 360, 66, 38,
-            () => { leftTab = "family"; Refresh(); }, Teal, 12);
-        ButtonAt(left.transform, "Mood tab", "MOOD", 222, 360, 66, 38,
-            () => { leftTab = "mood"; Refresh(); }, Teal, 13);
-        moodText = TextAt(left.transform, "Mood thoughts", "", 12, 402, 270, 74, 12, Cream);
-        scheduleButton = ButtonAt(left.transform, "Schedule", "SCHEDULE", 11, 478, 270, 26,
-            CycleSchedule, Teal, 13);
+        residentDetail = TextAt(left.transform, "Resident details", "", 12, 196, 258, 100, 13, Cream);
+        float tabs = 300;
+        ButtonAt(left.transform, "Work tab", "WORK", 10, tabs, 62, 30,
+            () => { leftTab = "work"; Refresh(); }, Teal, 12);
+        ButtonAt(left.transform, "Explore tab", "GO", 76, tabs, 62, 30,
+            () => { leftTab = "explore"; Refresh(); }, Teal, 12);
+        ButtonAt(left.transform, "Family tab", "FAMILY", 142, tabs, 62, 30,
+            () => { leftTab = "family"; Refresh(); }, Teal, 11);
+        ButtonAt(left.transform, "Mood tab", "MOOD", 208, tabs, 62, 30,
+            () => { leftTab = "mood"; Refresh(); }, Teal, 12);
+        float body = tabs + 36;
+        moodText = TextAt(left.transform, "Mood thoughts", "", 12, body, 258, 74, 12, Cream);
+        scheduleButton = ButtonAt(left.transform, "Schedule", "SCHEDULE", 10, body + 80, 260, 28,
+            CycleSchedule, Teal, 12);
         var work = Rect("Work controls", left.transform, new Vector2(0, 1), new Vector2(0, 1),
-            new Vector2(0, -506), new Vector2(294, -403), Color.clear);
+            new Vector2(0, -body - 72), new Vector2(280, -body), Color.clear);
         work.GetComponent<Image>().raycastTarget = false;
+        workControls = work.gameObject;
         for (int i = 0; i < priorityButtons.Length; i++)
         {
             int index = i;
             // Spaced apart so a tap lands on the button meant (TT 10.4.2).
             priorityButtons[i] = ButtonAt(work.transform, "Priority " + priorityNames[i], "",
-                12 + (i % 3) * 94, 4 + (i / 3) * 49, 78, 36,
-                () => CyclePriority(index), Teal, 13);
+                10 + (i % 3) * 88, (i / 3) * 38, 80, 32,
+                () => CyclePriority(index), Teal, 12);
             priorityLabels[i] = LabelOf(priorityButtons[i]);
         }
-        priorityHint = TextAt(left.transform, "Context hint", "", 12, 402, 270, 49, 14, Cream);
+        priorityHint = TextAt(left.transform, "Context hint", "", 12, body, 258, 48, 12, Cream);
         priorityHint.gameObject.SetActive(false);
-        exploreSupplies = ButtonAt(left.transform, "Supplies expedition", "SUPPLIES", 11, 406,
-            86, 42, () => Explore("supplies"), Teal, 13);
-        exploreRelics = ButtonAt(left.transform, "Relics expedition", "RELICS", 103, 406,
-            86, 42, () => Explore("relics"), Teal, 13);
-        explorePatrol = ButtonAt(left.transform, "Battle expedition", "BATTLE", 195, 406,
-            86, 42, OpenGuildBoard, Teal, 13);
-        recall = ButtonAt(left.transform, "Recall", "RECALL", 11, 454, 86, 43,
+        exploreSupplies = ButtonAt(left.transform, "Supplies expedition", "SUPPLIES", 10, body,
+            83, 32, () => Explore("supplies"), Teal, 12);
+        exploreRelics = ButtonAt(left.transform, "Relics expedition", "RELICS", 98, body,
+            83, 32, () => Explore("relics"), Teal, 12);
+        explorePatrol = ButtonAt(left.transform, "Battle expedition", "BATTLE", 186, body,
+            84, 32, OpenGuildBoard, Teal, 12);
+        recall = ButtonAt(left.transform, "Recall", "RECALL", 10, body + 38, 83, 32,
             () => { if (tower.SelectedPerson != null) tower.Apply(tower.Rules.Recall(tower.SelectedPerson.id)); },
-            Alert, 14);
-        craftTool = ButtonAt(left.transform, "Craft tool", "+ TOOL", 103, 454, 86, 43,
-            () => Craft("tool"), Teal, 13);
-        craftWeapon = ButtonAt(left.transform, "Craft weapon", "+ WEAPON", 195, 454, 86, 43,
-            () => Craft("weapon"), Teal, 12);
-        familyPair = ButtonAt(left.transform, "Pair family", "FORM FAMILY", 11, 455, 270, 45,
-            StartFamily, Teal, 17);
+            Alert, 12);
+        craftTool = ButtonAt(left.transform, "Craft tool", "+ TOOL", 98, body + 38, 83, 32,
+            () => Craft("tool"), Teal, 12);
+        craftWeapon = ButtonAt(left.transform, "Craft weapon", "+ WEAPON", 186, body + 38, 84, 32,
+            () => Craft("weapon"), Teal, 11);
+        familyPair = ButtonAt(left.transform, "Pair family", "FORM FAMILY", 10, body + 54, 260, 34,
+            StartFamily, Teal, 14);
     }
 
     private void BuildRight()
     {
-        var right = Rect("Room panel", safeRoot, new Vector2(1, 1), new Vector2(1, 1),
-            new Vector2(-300, -104 - 470), new Vector2(0, -104), Panel);
+        // TT 10.4.5 compact: the room's name is the title, its stats fit in two short lines, the four actions sit in
+        // a 2 x 2 grid, advice takes only the lines it needs, and MOVE / DEMOLISH close the card.
+        var right = Box("Room panel", safeRoot, new Vector2(1, 1), new Vector2(1, 1), new Vector2(0, -104),
+            new Vector2(280, 400), Panel);
+        rightPanel = right.rectTransform;
         TowerUiSkin.ApplyPanel(right, Glass, true);
         TowerUiFlow.Add(right, new Vector2(24, 0));
-        TextAt(right.transform, "Room heading", "SELECTED ROOM", 15, 11, 250, 32, 22, Gold);
-        CloseButton(right.transform, 262, 12, () =>
+        roomTitle = TextAt(right.transform, "Room title", "ROOM", 12, 8, 226, 28, 16, Gold);
+        CloseButton(right.transform, 240, 7, () =>
         {
             var director = tower.GetComponent<TowerArtDirector>();
             if (director != null) director.SetRoomOpen(false);
         });
-        Divider(right.transform, 10, 38, 280);
-        roomDetail = TextAt(right.transform, "Room details", "", 16, 52, 267, 87, 16, Cream);
-        collect = ButtonAt(right.transform, "Collect", "COLLECT", 15, 145, 128, 45,
-            () => RoomAction(r => tower.Rules.Collect(r.uid)), Teal, 16);
-        rush = ButtonAt(right.transform, "Rush", "RUSH", 155, 145, 130, 45,
-            () => RoomAction(r => tower.Rules.Rush(r.uid)), Alert, 16);
-        upgrade = ButtonAt(right.transform, "Upgrade", "UPGRADE", 15, 198, 128, 45,
-            () => RoomAction(r => tower.Rules.UpgradeRoom(r.uid)), Teal, 16);
-        assign = ButtonAt(right.transform, "Assign", "ASSIGN", 155, 198, 130, 45,
+        roomDetail = TextAt(right.transform, "Room details", "", 12, 40, 258, 60, 13, Cream);
+        collect = ButtonAt(right.transform, "Collect", "COLLECT", 10, 104, 127, 34,
+            () => RoomAction(r => tower.Rules.Collect(r.uid)), Teal, 13);
+        rush = ButtonAt(right.transform, "Rush", "RUSH", 143, 104, 127, 34,
+            () => RoomAction(r => tower.Rules.Rush(r.uid)), Alert, 13);
+        upgrade = ButtonAt(right.transform, "Upgrade", "UPGRADE", 10, 142, 127, 34,
+            () => RoomAction(r => tower.Rules.UpgradeRoom(r.uid)), Teal, 13);
+        assign = ButtonAt(right.transform, "Assign", "ASSIGN", 143, 142, 127, 34,
             () => { if (tower.SelectedRoom != null) tower.AssignSelectedToRoom(tower.SelectedRoom.uid); },
-            Teal, 16);
-        roomAdvice = TextAt(right.transform, "Assignment advice", "", 15, 252, 270, 110, 14, Cream);
-        guildOpen = ButtonAt(right.transform, "Guild expeditions", "EXPEDITIONS", 15, 366, 270, 46,
-            OpenGuildBoard, Teal, 16);
+            Teal, 13);
+        roomAdvice = TextAt(right.transform, "Assignment advice", "", 12, 182, 258, 80, 12, Cream);
+        guildOpen = ButtonAt(right.transform, "Guild expeditions", "EXPEDITIONS", 10, 266, 260, 34,
+            OpenGuildBoard, Teal, 13);
         guildOpen.gameObject.SetActive(false);
-        moveRoom = ButtonAt(right.transform, "Move room", "MOVE", 15, 418, 128, 40,
-            () => { if (tower.SelectedRoom != null) tower.BeginMove(tower.SelectedRoom.uid); }, Teal, 15);
-        demolishRoom = ButtonAt(right.transform, "Demolish room", "DEMOLISH", 155, 418, 130, 40,
-            ConfirmDemolish, Alert, 14);
+        moveRoom = ButtonAt(right.transform, "Move room", "MOVE", 10, 304, 127, 32,
+            () => { if (tower.SelectedRoom != null) tower.BeginMove(tower.SelectedRoom.uid); }, Teal, 12);
+        demolishRoom = ButtonAt(right.transform, "Demolish room", "DEMOLISH", 143, 304, 127, 32,
+            ConfirmDemolish, Alert, 12);
     }
 
     // DEMOLISH asks for a second tap within three seconds, like NEW GAME.
@@ -892,7 +910,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private void ChooseBuild(int index)
     {
         var available = BuildChoices();
-        int number = buildPage * 6 + index;
+        int number = buildPage * BuildPageSize + index;
         if (number >= available.Count) return;
         string id = available[number];
         if (!tower.Rules.State.blueprints.Contains(id))
@@ -1017,6 +1035,22 @@ public sealed partial class TowerHud : MonoBehaviour
         if (popupLair != null && popupLair.gameObject.activeSelf) RefreshLair(state);
         RefreshDev();
         RefreshChip();
+        FitPanels();
+    }
+
+    // TT 10.4.5 (mobile compact pass): every open panel ends under its last visible row and hidden rows leave no
+    // gap (TowerUiFit). The Heart hub and the main menu keep their own layouts (tabbed pages, a centred tile grid).
+    private void FitPanels()
+    {
+        if (leftPanel.gameObject.activeInHierarchy) TowerUiFit.Fit(leftPanel);
+        if (rightPanel.gameObject.activeInHierarchy) TowerUiFit.Fit(rightPanel);
+        foreach (var popup in new[] { popupBuild, popupFloors, popupTasks, popupGuild, popupAlerts, popupWork,
+            popupDistricts, popupAuto, popupOutposts, popupLair })
+            if (popup != null && popup.gameObject.activeSelf) TowerUiFit.Fit(popup.rectTransform);
+        float toastY = 106;
+        foreach (var popup in new[] { popupBuild, popupFloors, popupTasks, popupGuild })
+            if (popup.gameObject.activeSelf) toastY = Mathf.Max(toastY, 94 + popup.rectTransform.sizeDelta.y + 8);
+        toastPanel.rectTransform.anchoredPosition = new Vector2(0, toastY);
     }
 
     private void RefreshToast()
@@ -1227,8 +1261,12 @@ public sealed partial class TowerHud : MonoBehaviour
     {
         var people = tower.Rules.State.residents;
         rosterPage = Mathf.Clamp(rosterPage, 0, Mathf.Max(0, (people.Count - 1) / 4));
-        rosterPageText.text = "" + people.Count + " residents  /  page " + (rosterPage + 1) +
-            " of " + Mathf.Max(1, Mathf.CeilToInt(people.Count / 4f));
+        int rosterPages = Mathf.Max(1, Mathf.CeilToInt(people.Count / 4f));
+        rosterPageText.text = "" + people.Count + " residents  /  page " + (rosterPage + 1) + " of " + rosterPages;
+        rosterHeading.text = "RESIDENTS  " + people.Count + (rosterPages > 1 ?
+            "  <color=#c8c2b4><size=12>" + (rosterPage + 1) + "/" + rosterPages + "</size></color>" : "");
+        rosterPrev.gameObject.SetActive(rosterPages > 1);
+        rosterNext.gameObject.SetActive(rosterPages > 1);
         for (int i = 0; i < 4; i++)
         {
             int index = rosterPage * 4 + i;
@@ -1264,7 +1302,7 @@ public sealed partial class TowerHud : MonoBehaviour
         }
         bool work = leftTab == "work", explore = leftTab == "explore", family = leftTab == "family";
         bool mood = leftTab == "mood";
-        foreach (var button in priorityButtons) button.gameObject.SetActive(work);
+        workControls.SetActive(work);
         moodText.gameObject.SetActive(mood);
         scheduleButton.gameObject.SetActive(mood);
         if (mood) RefreshMood(selected);
@@ -1340,6 +1378,7 @@ public sealed partial class TowerHud : MonoBehaviour
         var room = tower.SelectedRoom;
         if (room == null)
         {
+            roomTitle.text = "ROOM";
             roomDetail.text = "Tap a room in the cutaway.";
             roomAdvice.text = "Drag a resident from the roster onto a room, or select both and press ASSIGN.";
             collect.interactable = rush.interactable = upgrade.interactable = assign.interactable = false;
@@ -1367,9 +1406,10 @@ public sealed partial class TowerHud : MonoBehaviour
                 "DARK: no firewood reaches this room" : "Production " +
                 Mathf.RoundToInt(room.progress * 100) + "%  •  " +
                 tower.Rules.ProductionRate(room).ToString("0.0") + " rate";
-        roomDetail.text = def.displayName + "   /   Floor " + room.floor +
-            "\n" + tower.Rules.LevelLabel(room) + "   Condition " + Mathf.CeilToInt(room.condition) + "%" +
-            "   Workers " + tower.Rules.WorkerCount(room.uid) +
+        roomTitle.text = def.displayName.ToUpperInvariant() + "  <color=#c8c2b4><size=12>floor " + room.floor + "</size></color>";
+        roomDetail.text = tower.Rules.LevelLabel(room) + "  ·  " + Mathf.CeilToInt(room.condition) + "% condition" +
+            (def.kind == "living" || def.kind == "heart" || def.kind == "lair" ? "" :
+                "  ·  " + tower.Rules.WorkerCount(room.uid) + " workers") +
             "\n" + activity + (TowerRules.VenueDef(room.type) != null ? "   •   " + tower.Rules.VenueLine(room) : "") +
             (tower.Rules.AdjacencyNote(room).Length > 0 ?
                 "\n" + tower.Rules.AdjacencyNote(room) : "");
@@ -1396,8 +1436,8 @@ public sealed partial class TowerHud : MonoBehaviour
         if (def.kind == "living")
         {
             int housed = tower.Rules.State.residents.FindAll(r => r.homeRoom == room.uid).Count;
-            roomAdvice.text = "Beds " + housed + "/" + tower.Rules.Capacity(room) +
-                "  •  shared housing supports family growth.";
+            // The bed count is already on the stats line.
+            roomAdvice.text = housed < tower.Rules.Capacity(room) ? "A spare bed lets a family grow here." : "";
             return;
         }
         if (def.kind == "lair") { roomAdvice.text = tower.Rules.LairRoomAdvice(room); return; }
@@ -1430,27 +1470,30 @@ public sealed partial class TowerHud : MonoBehaviour
     private void RefreshBuild()
     {
         var available = BuildChoices();
-        buildPage = Mathf.Clamp(buildPage, 0, Mathf.Max(0, (available.Count - 1) / 6));
-        buildPageText.text = "ROOMS  " + (buildPage + 1) + " / " +
-            Mathf.Max(1, Mathf.CeilToInt(available.Count / 6f)) + "     (" + available.Count + " " +
-            (buildCategory == "all" ? "total" : buildCategory) + ")";
+        buildPage = Mathf.Clamp(buildPage, 0, Mathf.Max(0, (available.Count - 1) / BuildPageSize));
+        int pages = Mathf.Max(1, Mathf.CeilToInt(available.Count / (float)BuildPageSize));
+        buildPageText.text = available.Count + " " + (buildCategory == "all" ? "rooms" : buildCategory) +
+            (pages > 1 ? "   •   page " + (buildPage + 1) + " / " + pages : "");
+        buildPrev.gameObject.SetActive(pages > 1);
+        buildNext.gameObject.SetActive(pages > 1);
         for (int i = 0; i < categoryButtons.Length; i++)
             categoryButtons[i].GetComponent<Image>().color = buildCategory == categoryIds[i] ? Gold : Teal;
         for (int i = 0; i < buildButtons.Length; i++)
         {
-            int index = buildPage * 6 + i;
+            int index = buildPage * BuildPageSize + i;
             buildButtons[i].gameObject.SetActive(index < available.Count);
             if (index >= available.Count) continue;
             string id = available[index];
             var def = TowerCatalog.Get(id);
             bool known = tower.Rules.State.blueprints.Contains(id);
-            buildLabels[i].text = known ? def.displayName.ToUpperInvariant() + "  " +
-                tower.Rules.BuildCost(id) + "g  " + tower.Rules.BuildWoodCost(id) + "w " +
-                tower.Rules.BuildStoneCost(id) + "s" :
-                (TowerRules.UnlockNode(id) != null ? "RESEARCH " + TowerRules.UnlockNode(id).id + "  " +
-                    def.displayName.ToUpperInvariant() :
-                    "STUDY " + def.displayName.ToUpperInvariant() + "  " + tower.Rules.BlueprintGoldCost(id) + "g " +
-                    tower.Rules.BlueprintCelestiumCost(id) + "C");
+            // Two lines: the name, then what it costs (or what unlocks it).
+            buildLabels[i].text = known ? def.displayName.ToUpperInvariant() + "\n<color=#e8cc8c>" +
+                tower.Rules.BuildCost(id) + "g  ·  " + tower.Rules.BuildWoodCost(id) + "w  ·  " +
+                tower.Rules.BuildStoneCost(id) + "s</color>" :
+                def.displayName.ToUpperInvariant() + "\n<color=#9fb4c8>" + (TowerRules.UnlockNode(id) != null ?
+                    "research " + TowerRules.UnlockNode(id).id :
+                    "study  " + tower.Rules.BlueprintGoldCost(id) + "g  ·  " + tower.Rules.BlueprintCelestiumCost(id) + "C") +
+                "</color>";
             buildButtons[i].GetComponent<Image>().color = tower.Placing && tower.BuildType == id && known ? Gold : Teal;
         }
     }
@@ -1488,6 +1531,13 @@ public sealed partial class TowerHud : MonoBehaviour
                 "7 / RECOVER  •  Keep fire, care, and defense priorities active until danger ends."
             };
             if (step < lessons.Length) tutorialTitle.text = lessons[step];
+            // TT 10.4.5: the banner is as tall as the lesson, not a fixed block.
+            tutorialTitle.fontSize = 14;
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(522, 20);
+            float lesson = Mathf.Ceil(LayoutUtility.GetPreferredHeight(tutorialTitle.rectTransform)) + 2;
+            tutorialTitle.rectTransform.sizeDelta = new Vector2(522, lesson);
+            tutorialTitle.rectTransform.anchoredPosition = new Vector2(44, -9);
+            tutorialPanel.rectTransform.offsetMin = new Vector2(tutorialPanel.rectTransform.offsetMin.x, -86 - lesson - 18);
             return;
         }
         tutorialTitle.rectTransform.anchoredPosition = new Vector2(9, -2);
