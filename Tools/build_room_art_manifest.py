@@ -28,7 +28,7 @@ SPECIAL = {
     'kitchen_interior_v1': ('kitchen', 'B', FULL),
     'guild_hall_F_v2': ('guild_hall', 'F', {'left': 0.04, 'right': 0.96, 'bottom': 0.145, 'top': 0.695}),
     # The Gate's cell: a short hallway with the gate in its outer (east) wall; the west Gate draws it mirrored.
-    'gate_hall': ('gate', 'F', {'left': 0.0, 'right': 1.0, 'bottom': 0.17, 'top': 0.84, 'align': 1.0}),
+    'gate_hall': ('gate', 'F', {'left': 0.0, 'right': 1.0, 'bottom': 0.15, 'top': 0.9, 'align': 1.0}),
 }
 # Superseded by a special picture at the same rank; gate_F is a guardroom painting, not a gate.
 REPLACED = {'guild_hall_F', 'gate_F'}
