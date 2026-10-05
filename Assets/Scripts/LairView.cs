@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Dungeon Mode presentation over the cutaway (GDD 20.7): adventurer parties as tokens walking the route, monster counts
-// on the lairs. Placeholder art until the dungeon gets its own; attached like TowerArtDirector, active in Dungeon Mode only.
+// on the lairs. Placeholder art until the dungeon gets its own; attached like TowerArtDirector, shown whenever a dungeon
+// exists (Dungeon Mode, or the one-world dungeon under a Tower).
 public sealed class LairView : MonoBehaviour
 {
     private const float Cell = 2.0f, Storey = 2.75f;
@@ -26,7 +27,6 @@ public sealed class LairView : MonoBehaviour
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) { Attach(); }
     private static void Attach()
     {
-        if (!TowerModes.IsLair) return;
         var controller = Object.FindAnyObjectByType<AdamsHavenPrototype>();
         if (controller != null && controller.GetComponent<LairView>() == null) controller.gameObject.AddComponent<LairView>();
     }
@@ -114,7 +114,8 @@ public sealed class LairView : MonoBehaviour
         // Where each floor's way down (or up) to the next floor is.
         foreach (var floor in rules.State.floors)
         {
-            if (floor.number == rules.HeartFloor || !rules.ShaftSealed(floor.number) && !rules.ShaftSealed(floor.number + rules.LairDir)) continue;
+            if (floor.number == rules.VaultFloor || !rules.ShaftSealed(floor.number) && !rules.ShaftSealed(floor.number + rules.LairDir)) continue;
+            if (rules.Merged && floor.number >= 0) continue;
             int x = rules.StairX(floor.number);
             if (x == TowerRules.CoreX) continue;
             var label = Text(root, rules.LairDir > 0 ? "▲ STAIRS" : "▼ STAIRS",
@@ -122,10 +123,18 @@ public sealed class LairView : MonoBehaviour
             label.characterSize = 0.03f;
             badges.Add(label.gameObject);
         }
+        if (rules.Merged)
+        {
+            // Where prey come in from the town: the top of B1's east end.
+            var gate = Text(root, "▼ DUNGEON GATE", new Vector3(X(rules.DungeonGateX + 0.5f), rules.LairDir * Storey + 1.05f, -1.4f),
+                new Color(1f, 0.6f, 0.55f));
+            gate.characterSize = 0.03f;
+            badges.Add(gate.gameObject);
+        }
         int guards = rules.HeartGuards().Count;
         if (guards > 0)
         {
-            var label = Text(root, "GUARDS " + guards, new Vector3(X(TowerRules.CoreX + 0.5f), rules.HeartFloor * Storey + 0.85f, -1.4f),
+            var label = Text(root, "GUARDS " + guards, new Vector3(X(TowerRules.CoreX + 0.5f), rules.VaultFloor * Storey + 0.85f, -1.4f),
                 new Color(1f, 0.6f, 0.55f));
             label.characterSize = 0.03f;
             badges.Add(label.gameObject);

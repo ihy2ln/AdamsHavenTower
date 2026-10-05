@@ -18,7 +18,14 @@ namespace AdamsHaven.Tower
         public int RouteWest(int floor) { var f = Floor(floor); return f == null ? CoreX : CoreX - DrawnWest(f); }
         public int RouteEast(int floor) { var f = Floor(floor); return f == null ? CoreX : CoreX + DrawnEast(f); }
 
-        private bool Walkable(int floor, int x) { return Floor(floor) != null && x >= RouteWest(floor) && x <= RouteEast(floor); }
+        // One world keeps prey below ground: the Tower's floors and the ground floor are never on the route.
+        private bool Walkable(int floor, int x)
+        {
+            if (Floor(floor) == null || x < RouteWest(floor) || x > RouteEast(floor)) return false;
+            if (!Merged) return true;
+            string kind = FloorKind(floor);
+            return kind == "dungeon" || kind == "living" || kind == "heart";
+        }
 
         // The stair from `floor` to the next floor toward the Heart: the shaft between living floors, otherwise the east
         // end on even floors and the west end on odd ones, at the outermost cell both floors have founded.
@@ -50,7 +57,7 @@ namespace AdamsHaven.Tower
             routeField = new Dictionary<long, int>();
             if (!LairFounded) return routeField;
             var queue = new Queue<Vector2Int>();
-            var start = new Vector2Int(HeartFloor, CoreX);
+            var start = new Vector2Int(VaultFloor, CoreX);
             routeField[CellKey(start.x, start.y)] = 0;
             queue.Enqueue(start);
             var next = new List<Vector2Int>();
@@ -77,19 +84,25 @@ namespace AdamsHaven.Tower
             if (Walkable(floor, x + 1)) into.Add(new Vector2Int(floor, x + 1));
             int dir = LairDir;
             // Up toward the Heart from this floor, and back down from the floor before it.
-            if (floor != HeartFloor && StairX(floor) == x && Walkable(floor + dir, x)) into.Add(new Vector2Int(floor + dir, x));
+            if (floor != VaultFloor && StairX(floor) == x && Walkable(floor + dir, x)) into.Add(new Vector2Int(floor + dir, x));
             int previous = floor - dir;
             if (floor != 0 && Floor(previous) != null && StairX(previous) == x && Walkable(previous, x))
                 into.Add(new Vector2Int(previous, x));
         }
 
         // Dungeon floors and the entrance have no shaft landing: only the living floors and the Heart share it.
+        // One world seals only the dungeon floors: residents ride the shaft past them to the living band, prey cannot.
         public bool ShaftSealed(int floor)
         {
             if (!LairFounded) return false;
             string kind = FloorKind(floor);
+            if (Merged) return kind == "dungeon";
             return kind != "living" && kind != "heart";
         }
+
+        // One world: the Dungeon Gate is the stair from the town down into B1 at its east end; B1's own stair down is at
+        // the west end (odd floor), so prey cross all of B1.
+        public int DungeonGateX { get { return Merged ? RouteEast(LairDir) : CoreX; } }
 
         // Steps left from this cell to the Heart; -1 when no path exists.
         public int RouteDistance(int floor, int x)
@@ -112,6 +125,8 @@ namespace AdamsHaven.Tower
         // The Gate farthest from the Heart, so a party crosses the whole entrance hall.
         public Vector2Int RouteEntry()
         {
+            // One world: prey come down the Dungeon Gate stair onto B1.
+            if (Merged) return new Vector2Int(LairDir, DungeonGateX);
             var gates = Gates();
             Vector2Int best = new Vector2Int(0, CoreX);
             int far = -1;

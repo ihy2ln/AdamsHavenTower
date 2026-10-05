@@ -398,14 +398,16 @@ public sealed class TowerArtDirector : MonoBehaviour
                 if (f.landing != "energy" && !sealedShaft)
                     Art("Core landing " + f.number, "Structure/" + landing, X(22.5f),
                         y + 0.06f, 1.7f, Cell * 0.90f, 2.24f);
-                Label(sealedShaft ? "SEALED" : f.landing == "freight_lift" ? "FREIGHT" : f.landing == "stairs" ? "STAIRS" : "CELESTIUM",
+                bool vault = tower.Rules.Merged && f.number == tower.Rules.VaultFloor;   // one world: the Heart's vault
+                Label(vault ? "VAULT" : sealedShaft ? "SEALED" : f.landing == "freight_lift" ? "FREIGHT" : f.landing == "stairs" ? "STAIRS" : "CELESTIUM",
                     new Vector3(X(22.5f), y + 1.38f, -1.3f), Cell);
             }
             Label(tower.Rules.FloorLabel(f.number),
                 new Vector3(left - 0.48f, y - 1.13f, -1), 0.7f);
             if (f.number == highest && tower.Rules.FloorWork(f.number + 1) == null)
                 Roof(center, y + 2.18f, width + 0.72f);
-            if (f.number == 0)
+            // The floating rock slab only crowns a tower with nothing dug beneath it; it would cover B1 or a basement.
+            if (f.number == 0 && tower.Rules.Floor(-1) == null)
                 Art("Ivy and stone foundation", "Structure/foundation_v1", center, y - 2.06f, 3.5f,
                     width + 2.4f, 3.1f);
             for (int cell = 22 - tower.Rules.DrawnWest(f); cell < endCell; cell++)

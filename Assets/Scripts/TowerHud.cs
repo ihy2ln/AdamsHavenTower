@@ -59,7 +59,7 @@ public sealed partial class TowerHud : MonoBehaviour
     private readonly string[] categoryIds = { "all", "home", "produce", "store", "service", "dungeon" };
     private readonly string[] categoryNames = { "ALL", "HOMES", "PRODUCE", "STORE", "SERVICES", "DUNGEON" };
     private string buildCategory = "all";
-    private Button floorOpenAbove, floorOpenBelow, floorWest, floorEast;
+    private Button floorOpenAbove, floorOpenBelow, floorWest, floorEast, floorDigDungeon, floorAddLiving;
     private Button recruit, autoHaul, stewardButton, autoAssignButton;
     private readonly Text[] goalTexts = new Text[TowerRules.ActiveGoals];
     private readonly Button[] goalClaims = new Button[TowerRules.ActiveGoals];
@@ -520,12 +520,11 @@ public sealed partial class TowerHud : MonoBehaviour
         for (int i = 0; i < categoryButtons.Length; i++)
         {
             int index = i;
-            float pitch = TowerModes.IsLair ? 104 : 124;
+            float pitch = 104;   // room for the DUNGEON tab, shown once a dungeon exists
             categoryButtons[i] = ButtonAt(popupBuild.transform, "Category " + categoryIds[i], categoryNames[i],
                 10 + i * pitch, 8, pitch - 4, 28, () => { buildCategory = categoryIds[index]; buildPage = 0; Refresh(); },
                 Teal, 12);
         }
-        categoryButtons[5].gameObject.SetActive(TowerModes.IsLair);
         CloseButton(popupBuild.transform, 652, 7, CloseAllPopups);
         for (int i = 0; i < buildButtons.Length; i++)
         {
@@ -569,6 +568,11 @@ public sealed partial class TowerHud : MonoBehaviour
         ButtonAt(popupFloors.transform, "Jump top", "TOP FLOOR", 158, 146, 145, 30,
             () => tower.FocusOnFloor(HighestFloor()), Teal, 12);
         ButtonAt(popupFloors.transform, "Districts", "DISTRICTS", 306, 146, 144, 30, OpenDistricts, Violet, 12);
+        // One world: the ground is dug by these two, not by OPEN BELOW (hidden then).
+        floorDigDungeon = ButtonAt(popupFloors.transform, "Dig dungeon floor", "DIG DUNGEON FLOOR", 10, 182, 218, 32,
+            () => tower.Apply(tower.Rules.LairDigFloor()), Alert, 12);
+        floorAddLiving = ButtonAt(popupFloors.transform, "Add living floor", "ADD LIVING FLOOR", 232, 182, 218, 32,
+            () => tower.Apply(tower.Rules.LairAddLivingFloor()), Teal, 12);
     }
 
     private void BuildTasksPopup()
@@ -1097,7 +1101,7 @@ public sealed partial class TowerHud : MonoBehaviour
             tower.Rules.ThreatLabel().ToUpperInvariant() + "  ·  HEART " + Mathf.CeilToInt(state.heartHp) +
                 (state.siegeWarning > 0 ? "  ·  <color=#ff7060>SIEGE " + TowerRules.Clock(state.siegeWarning) + "</color>" : "") :
             "HEART " + Mathf.CeilToInt(state.heartHp);
-        if (tower.Rules.LairFounded && state.introPhase == "complete") threatText.text = LairTopShort(state);
+        if (tower.Rules.IsLair && tower.Rules.LairFounded && state.introPhase == "complete") threatText.text = LairTopShort(state);
         RefreshTopChrome(state);
     }
 
@@ -1169,7 +1173,17 @@ public sealed partial class TowerHud : MonoBehaviour
             LabelOf(floorOpenBelow).text = "NEEDS HEART " + TowerTiers.Tier(TowerRules.HeartRankForFloor(focus - 1));
         if (above != null) LabelOf(floorOpenAbove).text = "BUILDING  " + TowerRules.Clock(above.remaining);
         if (below != null) LabelOf(floorOpenBelow).text = "BUILDING  " + TowerRules.Clock(below.remaining);
-        if (rules.LairFounded)
+        floorDigDungeon.gameObject.SetActive(rules.Merged);
+        floorAddLiving.gameObject.SetActive(rules.Merged);
+        floorOpenBelow.gameObject.SetActive(!rules.Merged);
+        if (rules.Merged)
+        {
+            floorText.text = rules.FloorLabel(focus);
+            LabelOf(floorDigDungeon).text = "DIG DUNGEON  " + rules.LairDigCost() + "C  (" + rules.DungeonFloorCount + "/" + rules.LairDigCap() + ")";
+            LabelOf(floorAddLiving).text = "ADD LIVING  " + rules.LairLivingCost() + "C  (" + rules.State.lair.livingFloors + "/" +
+                rules.LairLivingCap() + ")";
+        }
+        if (rules.IsLair && rules.LairFounded)
         {
             floorText.text = rules.FloorLabel(focus);
             LabelOf(floorOpenAbove).text = "DIG DUNGEON FLOOR  " + rules.LairDigCost() + "C";
@@ -1478,6 +1492,7 @@ public sealed partial class TowerHud : MonoBehaviour
         buildNext.gameObject.SetActive(pages > 1);
         for (int i = 0; i < categoryButtons.Length; i++)
             categoryButtons[i].GetComponent<Image>().color = buildCategory == categoryIds[i] ? Gold : Teal;
+        categoryButtons[5].gameObject.SetActive(tower.Rules.IsLair || tower.Rules.LairFounded);
         for (int i = 0; i < buildButtons.Length; i++)
         {
             int index = buildPage * BuildPageSize + i;

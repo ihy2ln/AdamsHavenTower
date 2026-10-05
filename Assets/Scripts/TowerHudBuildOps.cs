@@ -79,7 +79,7 @@ public sealed partial class TowerHud
     private void TapOpenFloor(int dir)
     {
         var rules = tower.Rules;
-        if (rules.LairFounded) { tower.Apply(dir > 0 ? rules.LairDigFloor() : rules.LairAddLivingFloor()); return; }
+        if (rules.IsLair && rules.LairFounded) { tower.Apply(dir > 0 ? rules.LairDigFloor() : rules.LairAddLivingFloor()); return; }
         var work = rules.FloorWork(tower.FocusFloor + dir);
         if (work == null) { tower.Apply(rules.OpenFloor(tower.FocusFloor + dir)); return; }
         if (!Armed(work)) { LabelOf(dir > 0 ? floorOpenAbove : floorOpenBelow).text = "TAP TO CANCEL"; return; }

@@ -92,9 +92,9 @@ public sealed partial class TowerHud
 
     // ---------------------------------------------------------------- DUNGEON popup
 
+    // Built in both modes: in one world it is the DUNGEON dock button's hub (TT 10.5.0).
     private void BuildLairPopup()
     {
-        if (!LairHud) return;
         popupLair = Box("Dungeon popup", safeRoot, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 10),
             new Vector2(720, 450), Glass);
         TowerUiSkin.ApplyPanel(popupLair, Glass, true);
@@ -133,7 +133,10 @@ public sealed partial class TowerHud
     private void OpenLair()
     {
         if (popupLair == null) return;
-        if (tower.Rules.State.introPhase != "complete") { tower.Apply("Found the dungeon first."); return; }
+        if (tower.Rules.State.introPhase != "complete" || !tower.Rules.LairFounded)
+        { tower.Apply(tower.Rules.IsLair ? "Found the dungeon first." : "The dungeon opens beneath the Tower once the founding is done."); return; }
+        // Nothing to report yet: open on the dungeon's floors instead of an empty raid log.
+        if (lairTab == "raids" && tower.Rules.State.lair.reports.Count == 0 && tower.Rules.State.lair.parties.Count == 0) lairTab = "dungeon";
         TogglePopup(popupLair);
     }
 
@@ -196,9 +199,11 @@ public sealed partial class TowerHud
     {
         var lines = new List<string>();
         lines.Add("NOTORIETY " + Mathf.RoundToInt(lair.notoriety) + "   FAME " + Mathf.RoundToInt(lair.fame) +
-            "   next party in " + TowerRules.Clock(Mathf.Max(0, lair.nextPartySeconds)) + "   kills " + lair.kills +
+            (rules.IsLair ? "   next party in " + TowerRules.Clock(Mathf.Max(0, lair.nextPartySeconds)) : "") + "   kills " + lair.kills +
             "   escapes " + lair.escapes + "   breaches " + lair.breaches);
-        if (lair.parties.Count == 0) lines.Add("No adventurers inside.");
+        // One world, TT 10.5.0: the dungeon stands ready, but its lure (pests first) has not woken yet.
+        if (lair.parties.Count == 0)
+            lines.Add(rules.IsLair ? "No adventurers inside." : "The dungeon is quiet: its lure has not woken yet. Dig floors and lay traps.");
         foreach (var party in lair.parties)
         {
             var hp = new List<string>();
@@ -235,7 +240,8 @@ public sealed partial class TowerHud
         lairText.text = "MONSTERS " + list.Count + "/" + rules.MonsterCap() + "   " +
             (selected != null && selected.type == "monster_lair" ? "TO LAIR sends them to the selected lair (" +
                 rules.MonstersIn(selected.uid).Count + "/" + rules.LairCapacity(selected) + ")" :
-                "TO LAIR fills the first lair with room") + "   ·   summon more at the Heart";
+                "TO LAIR fills the first lair with room") +
+            (rules.IsLair ? "   ·   summon more at the Heart" : "   ·   monsters answer once the dungeon's lure wakes");
         lairPageText.text = "PAGE " + (lairPage + 1) + " / " + pages + (list.Count == 0 ? "   ·   no monsters yet" : "");
         for (int i = 0; i < MonsterRows; i++)
         {
@@ -260,6 +266,7 @@ public sealed partial class TowerHud
     private void RefreshLairDungeon(TowerRules rules, TowerState state)
     {
         var lair = state.lair;
+        if (rules.Merged) { RefreshMergedDungeon(rules, state); return; }
         lairText.text = "NOTORIETY " + Mathf.RoundToInt(lair.notoriety) + " / 100  (" + rules.ThreatLabel() + "): " +
             TowerRules.NotorietyHint(lair.notoriety) + ".\n<size=12>Kills raise it; parties that flee or breach lower it; it fades 1 a minute. " +
             "At " + Mathf.RoundToInt(TowerRules.SiegeThreat) + " the guilds send an elite team.</size>" +
@@ -279,6 +286,30 @@ public sealed partial class TowerHud
         lairDetail.text = "FLOORS  " + string.Join("  ·  ", floors.ToArray()) +
             "\n\n<size=12>Dungeon floors hold traps, snares, lairs and vaults; the living floors hold the residents' rooms. Parties " +
             "zig-zag across every dungeon floor: stairs alternate ends.</size>";
+        LabelOf(lairDig).text = "DIG DUNGEON FLOOR  " + rules.LairDigCost() + "C  (" + rules.DungeonFloorCount + "/" + rules.LairDigCap() + ")";
+        LabelOf(lairLiving).text = "ADD LIVING FLOOR  " + rules.LairLivingCost() + "C  (" + lair.livingFloors + "/" + rules.LairLivingCap() + ")";
+    }
+
+    // One world: the dungeon under the Tower, top to bottom (GDD 21.1).
+    private void RefreshMergedDungeon(TowerRules rules, TowerState state)
+    {
+        var lair = state.lair;
+        lairText.text = "THE DUNGEON BENEATH THE TOWER\n<size=12>Prey come down the Dungeon Gate stair at the " +
+            (rules.DungeonGateX > TowerRules.CoreX ? "east" : "west") + " end of the ground floor, cross every dungeon floor " +
+            "end to end (stairs alternate sides), pass the living floors and try for the Heart's vault. Traps, snares, lairs " +
+            "and bait vaults go on the dungeon floors only.</size>";
+        var floors = new List<string>();
+        var numbers = new List<int>();
+        foreach (var f in state.floors) if (f.number < 0) numbers.Add(f.number);
+        numbers.Sort((a, b) => b.CompareTo(a));
+        foreach (int n in numbers)
+        {
+            int rooms = state.rooms.FindAll(r => r.floor == n && r.type != "heart").Count;
+            floors.Add(rules.FloorLabel(n) + " <color=#b7c7d6>" + (rooms > 0 ? rooms + " room" + (rooms == 1 ? "" : "s") : "empty") + "</color>");
+        }
+        lairDetail.text = "FLOORS  " + string.Join("  ·  ", floors.ToArray()) +
+            "\n\n<size=12>DIG DUNGEON FLOOR opens a new dungeon floor above the living band; ADD LIVING FLOOR opens one above " +
+            "the vault for the residents' underground rooms. The Heart's rank sets how many of each.</size>";
         LabelOf(lairDig).text = "DIG DUNGEON FLOOR  " + rules.LairDigCost() + "C  (" + rules.DungeonFloorCount + "/" + rules.LairDigCap() + ")";
         LabelOf(lairLiving).text = "ADD LIVING FLOOR  " + rules.LairLivingCost() + "C  (" + lair.livingFloors + "/" + rules.LairLivingCap() + ")";
     }

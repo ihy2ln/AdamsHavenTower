@@ -470,6 +470,7 @@ namespace AdamsHaven.Tower
             State.stone += 12;
             Note("The Tower opened. Survival rooms, 650 gold and 45 Celestium were granted.");
             if (IsLair) LairFoundedNow();
+            else if (OneWorld) FoundDungeonBand();   // one world: the dungeon opens under the new Tower (GDD 21.1)
             return null;
         }
 
@@ -616,6 +617,8 @@ namespace AdamsHaven.Tower
         public string OpenFloor(int number)
         {
             if (IsLair) return LairDigFloor();
+            // One world: below ground the Tower digs living floors above the vault; dungeon floors come from DIG DUNGEON FLOOR.
+            if (Merged && number < 0) return LairAddLivingFloor();
             if (number < FloorMin || number > FloorMax) return "Floor out of range.";
             if (Floor(number) != null) return "Floor already open.";
             if (FloorWork(number) != null) return "That floor is already being built.";

@@ -303,8 +303,9 @@ public sealed partial class TowerHud
         dockExpeditions = IconButtonAt(t, "Dock expeditions", "icons_dock", "map", "Expeditions", 288, 14, 52,
             null, Teal);
         AttachHold(dockExpeditions, ExpeditionItems, true, OpenGuildBoard);   // hold: map, auto expedition, outposts
-        dockBattle = IconButtonAt(t, "Dock battle", "icons_dock", "battle", "Battle", 374, 14, 52,
-            () => { CloseAllPopups(); tower.LaunchBattleExpedition(); }, Alert);
+        // One world (owner, 2026-10-04): the fifth slot is the DUNGEON hub; Battle Mode stays on the menu, in sieges and
+        // on expeditions.
+        dockBattle = IconButtonAt(t, "Dock dungeon", "icons_dock", "battle", "Dungeon", 374, 14, 52, OpenLair, Alert);
     }
 
     private void PulseHeart()
